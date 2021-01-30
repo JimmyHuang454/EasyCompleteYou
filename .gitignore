@@ -18,6 +18,9 @@ ECY_server.log
 .netrwhist
 *~
 *.log
+const.txt
+.root
+test.*
 # Auto-generated tag files
 tags
 # Persistent undo
