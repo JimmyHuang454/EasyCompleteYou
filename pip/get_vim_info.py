@@ -57,8 +57,23 @@ print('---------------------------')
 print('Has vim?', has_vim)
 print('Has neovim?', has_nvim)
 
+pip_load_ECY_viml_path = BASE_DIR + '/all.vim'
+
+
+def WriteLoadScript(path):
+    print('ECY will modify "%s"' % path)
+    os.makedirs(os.path.dirname(vimrc), exist_ok=True)
+    content = """
+set encoding=utf-8 " added by ECY_pip
+set fileencoding=utf-8 " added by ECY_pip
+so %s " added by ECY_pip
+    """ % (pip_load_ECY_viml_path)
+    with open(path, 'a', encoding='utf-8') as f:
+        f.write(content)
+
+
 if has_vim:
-    print('ECY will modify "%s"' % vimrc)
+    WriteLoadScript(vimrc)
 
 if has_nvim:
-    print('ECY will modify "%s"' % init)
+    WriteLoadScript(init)
