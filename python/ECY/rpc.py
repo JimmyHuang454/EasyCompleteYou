@@ -8,26 +8,37 @@ import queue
 from loguru import logger
 
 
-@logger.catch
-def DoCall(function_name, params=[]):
+def Send(types, function_name='', variable_name='', params=[]):
     global request_id
     global request_list
     request_id += 1
     cmd = {
-        'type': 'call',
+        'type': types,
         'params': params,
         'function_name': function_name,
+        'variable_name': variable_name,
         'id': request_id
     }
     request_list[request_id] = {'cmd': cmd, 'res_queue': queue.Queue()}
     print(json.dumps(cmd), flush=True)  # with "\n"
-    json_dict = request_list[request_id]['res_queue'].get()  # block here
+    json_dict = request_list[request_id]['res_queue'].get(
+        timeout=5)  # block here
     del request_list[request_id]
     return json_dict['res']
 
 
+@logger.catch
+def DoCall(function_name, params=[]):
+    return Send('call', function_name=function_name, params=params)
+
+
+@logger.catch
+def GetVaribal(variable_name):
+    return Send('get', variable_name=variable_name)
+
+
 def WriteStdOut():
-    return sys.stdin.readline()
+    return sys.stdin.write()
 
 
 def ReadStdIn():
@@ -88,7 +99,7 @@ def Daemon():  # start, call once
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
     threading.Thread(target=EventThread, daemon=True).start()
-    FallBack()
+    FallBack()  # blcok here
 
 
 def BlindEvent(classs):
