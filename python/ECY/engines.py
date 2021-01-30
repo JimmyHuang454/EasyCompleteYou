@@ -10,36 +10,44 @@ class Mannager(object):
         self.current_engine_info = None
         self.engine_dict = None
 
-    def EngineCallbackThread(self, engine):
-        res_queue = engine['res_queue']
+    def EngineCallbackThread(self, engine_info):
+        res_queue = engine_info['res_queue']
         while True:
             context = res_queue.get()
             event_name = context['event_name']
-            callback = getattr(engine['engine'], engine[event_name])
+            callback = getattr(engine_info['engine_obj'], engine_info[event_name])
             try:
-                engine['res_queue'].put(callback(context))
+                engine_info['res_queue'].put(callback(context))
             except Exception as e:
                 logger.exception(e)
 
-    def EngineEventHandler(self, engine):
-        handler_queue = engine['handler_queue']
+    def EngineEventHandler(self, engine_info):
+        handler_queue = engine_info['handler_queue']
         while True:
             context = handler_queue.get()
             event_name = context['event_name']
-            engine_func = getattr(engine['engine'], engine[event_name])
+            engine_func = getattr(engine_info['engine'], engine_info[event_name])
             try:
-                engine['res_queue'].put(engine_func())
+                engine_info['res_queue'].put(engine_func())
             except Exception as e:
                 logger.exception(e)
                 rpc.DoCall('rpc_main#echo', [
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
-                    % (engine['name'])
+                    % (engine_info['name'])
                 ])
 
     def InstallEngine(self, engine_info):
+        try:
+            pass
+        except Exception as e:
+            logger.exception(e)
+            rpc.DoCall('rpc_main#echo', [
+                'Failed to install [%s], check log info for more.' %
+                (engine_info['name'])
+            ])
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
-        engine_info['engine'] = None
+        engine_info['engine_obj'] = None
 
         threading.Thread(target=self.EngineCallbackThread(engine_info),
                          daemon=True).start()
@@ -60,6 +68,7 @@ class Mannager(object):
     def Do(self, event_name):
         if not self.CheckInstallEnginesListOK():
             return
+
         if self.current_engine_info['name'] not in self.engine_dict:
             self.InstallEngine(self.current_engine_info)
 
