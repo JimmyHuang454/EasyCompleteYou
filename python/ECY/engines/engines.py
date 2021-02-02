@@ -10,7 +10,7 @@ class Mannager(object):
     def __init__(self):
         self.current_engine_info = None
         self.engine_dict = None
-        self.InstallEngine('default_engine')
+        self.InstallEngine('ECY.engines.default_engine')
 
     def EngineCallbackThread(self, engine_info):
         res_queue = engine_info['res_queue']

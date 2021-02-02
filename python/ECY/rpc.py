@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 import json
 import io
-import time
 import sys
-import threading
 import queue
 from loguru import logger
 
@@ -97,3 +95,4 @@ def Daemon():  # start, call once
 def BlindEvent(classs):
     global blind_event_instance
     blind_event_instance = classs
+    logger.debug('BlindEvent')

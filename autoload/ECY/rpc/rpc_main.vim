@@ -1,14 +1,3 @@
-fun! rpc_main#Init()
-"{{{
-  let g:rpc_params = []
-  let g:rpc_result = ''
-  let g:rpc_seq_id = -1
-  let g:rpc_client_id = -1
-  let s:request_list = []
-  let s:is_timer_running = v:false
-"}}}
-endf
-
 fun! rpc_main#echo(msg)
   echo a:msg
 endf
@@ -22,7 +11,7 @@ fun! s:Send(msg)
     return
   endif
   let l:json = json_encode(a:msg) . "\n"
-  call job#send(l:json)
+  call job#send(g:rpc_client_id, l:json)
 endf
 
 fun! s:GetBufferEngineName()
@@ -36,7 +25,7 @@ fun! RPCEventsAll(msg)
 "{{{
   let g:rpc_seq_id += 1
   let l:temp = {'type': 'event', 'event_name': a:msg, 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': s:GetBufferEngineName()}
-  call s:Send(l:json)
+  call s:Send(l:temp)
 "}}}
 endf
 
@@ -128,6 +117,17 @@ fun! rpc_main#Get(variable_name)
   endtry
   return {'status': 0, 'res': g:rpc_result, 'res_type': type(g:rpc_result)}
   "}}}
+endf
+
+fun! rpc_main#Init()
+"{{{
+  let g:rpc_params = []
+  let g:rpc_result = ''
+  let g:rpc_seq_id = -1
+  let g:rpc_client_id = -1
+  let s:request_list = []
+  let s:is_timer_running = v:false
+"}}}
 endf
 
 call rpc_main#Init()
