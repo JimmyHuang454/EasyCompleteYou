@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
+from loguru import logger
 import json
 import io
 import sys
 import queue
-from loguru import logger
 
 
 def Send(types, function_name='', variable_name='', params=[]):

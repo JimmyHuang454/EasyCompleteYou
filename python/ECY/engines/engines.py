@@ -9,10 +9,11 @@ class Mannager(object):
     """docstring for Mannager"""
     def __init__(self):
         self.current_engine_info = None
-        self.engine_dict = None
+        self.engine_dict = {}
         self.InstallEngine('ECY.engines.default_engine')
 
-    def EngineCallbackThread(self, engine_info):
+    def EngineCallbackThread(self, *args):
+        engine_info = args[0]
         res_queue = engine_info['res_queue']
         while True:
             try:
@@ -24,7 +25,8 @@ class Mannager(object):
             except Exception as e:
                 logger.exception(e)
 
-    def EngineEventHandler(self, engine_info):
+    def EngineEventHandler(self, *args):
+        engine_info = args[0]
         handler_queue = engine_info['handler_queue']
         while True:
             context = handler_queue.get()
@@ -57,13 +59,15 @@ class Mannager(object):
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
 
-        threading.Thread(target=self.EngineCallbackThread(engine_info),
+        threading.Thread(target=self.EngineCallbackThread,
+                         args=(engine_info,),
                          daemon=True).start()
 
-        threading.Thread(target=self.EngineEventHandler(engine_info),
+        threading.Thread(target=self.EngineEventHandler,
+                         args=(engine_info,),
                          daemon=True).start()
 
-        logger.debug(engine_info)
+        logger.debug("fuck")
         self.engine_dict[engine_pack_name] = engine_info
         return self.engine_dict[engine_pack_name]
 
