@@ -20,10 +20,12 @@ def Send(types, function_name='', variable_name='', params=[]):
     }
     request_list[request_id] = {'cmd': cmd, 'res_queue': queue.Queue()}
     print(json.dumps(cmd), flush=True)  # with "\n"
-    json_dict = request_list[request_id]['res_queue'].get(
+    context = request_list[request_id]['res_queue'].get(
         timeout=5)  # block here
+    if context['status'] != 0:
+        logger.error(context)
     del request_list[request_id]
-    return json_dict['res']
+    return context['res']
 
 
 def EventHandler():
@@ -31,7 +33,8 @@ def EventHandler():
     global g_event_handle_thread
     while True:
         try:
-            blind_event_instance.DoEvent(g_event_handle_thread.get())
+            context = g_event_handle_thread.get()
+            blind_event_instance.DoEvent(context)
         except Exception as e:
             raise e
 

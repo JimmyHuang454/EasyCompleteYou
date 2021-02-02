@@ -29,7 +29,7 @@ fun! RPCInitEvent()
     autocmd TextChangedI  * call s:Call({'event_name': 'OnTextChangedI'})
 
     autocmd InsertLeave   * call s:Call({'event_name': 'OnInsertLeave'})
-    autocmd InsertEnter   * call s:Call({'event_name': 'OnTextChangedI'})
+    autocmd InsertEnter   * call s:Call({'event_name': 'OnCompletion'})
   augroup END
 "}}}
 endf

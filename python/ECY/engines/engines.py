@@ -22,7 +22,6 @@ class Mannager(object):
             try:
                 callback_context = res_queue.get()
                 event_name = callback_context['event_name']
-                logger.debug(callback_context)
                 self.CallFunction(self.events_callback, event_name,
                                   engine_name, callback_context)
             except Exception as e:
