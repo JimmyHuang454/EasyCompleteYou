@@ -45,16 +45,9 @@ def ReadStdIn():
     return sys.stdin.readline()
 
 
-def EventThread():
-    global g_event_handle_thread
-    logger.debug('lisenting EventThread()')
-    while True:
-        event = g_event_handle_thread.get()
-        NotifyEvent(event['event_name'])
-
-
 def FallBack():
     global g_event_handle_thread
+    global blind_event_instance
     content2 = ''
     logger.debug('Started RPC')
     while True:
@@ -71,14 +64,14 @@ def FallBack():
             while i < (lens - 1):
                 if content_split[i] == '':
                     continue
-                json_dict = json.loads(content_split[i], encoding='utf-8')
-                if json_dict['type'] == 'event':
-                    g_event_handle_thread.put(json_dict)
-                elif json_dict['type'] == 'fallback':
-                    re_id = json_dict['request_id']
+                context = json.loads(content_split[i], encoding='utf-8')
+                if context['type'] == 'event':
+                    blind_event_instance.DoEvent(context)
+                elif context['type'] == 'fallback':
+                    re_id = context['request_id']
                     if re_id not in request_list:
                         continue
-                    request_list[re_id]['res_queue'].put(json_dict)
+                    request_list[re_id]['res_queue'].put(context)
                 else:
                     pass
                 i += 1
@@ -98,21 +91,9 @@ def Daemon():  # start, call once
     sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
-    threading.Thread(target=EventThread, daemon=True).start()
     FallBack()  # blcok here
 
 
 def BlindEvent(classs):
     global blind_event_instance
     blind_event_instance = classs
-
-
-def NotifyEvent(event_name):
-    global blind_event_instance
-    if not hasattr(blind_event_instance, event_name):
-        return
-    temp = getattr(blind_event_instance, event_name)
-    try:
-        temp()
-    except Exception as e:
-        logger.exception(e)

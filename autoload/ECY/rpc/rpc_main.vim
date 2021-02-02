@@ -17,13 +17,13 @@ fun! rpc_main#GetBuffer(msg) " return list
   echo a:msg
 endf
 
-fun! RPCEventsAll(event_name)
+fun! RPCEventsAll(msg)
 "{{{
   if g:rpc_client_id == -1
     return
   endif
   let g:rpc_seq_id += 1
-  let l:temp = {'type': 'event', 'event_name': a:event_name, 'id': g:rpc_seq_id}
+  let l:temp = {'type': 'event', 'event_name': a:msg, 'id': g:rpc_seq_id, 'params': a:msg['params']}
   let l:json = json_encode(l:temp) . "\n"
 
   call job#send(g:rpc_client_id, l:json)

@@ -1,5 +1,6 @@
 from loguru import logger
 import queue
+import importlib
 import threading
 from ECY import rpc
 
@@ -13,10 +14,11 @@ class Mannager(object):
     def EngineCallbackThread(self, engine_info):
         res_queue = engine_info['res_queue']
         while True:
-            context = res_queue.get()
-            event_name = context['event_name']
-            callback = getattr(engine_info['engine_obj'], engine_info[event_name])
             try:
+                context = res_queue.get(timeout=5)
+                event_name = context['event_name']
+                callback = getattr(engine_info['engine_obj'],
+                                   engine_info[event_name])
                 engine_info['res_queue'].put(callback(context))
             except Exception as e:
                 logger.exception(e)
@@ -26,9 +28,11 @@ class Mannager(object):
         while True:
             context = handler_queue.get()
             event_name = context['event_name']
-            engine_func = getattr(engine_info['engine'], engine_info[event_name])
+            engine_func = getattr(engine_info['engine'],
+                                  engine_info[event_name])
             try:
-                engine_info['res_queue'].put(engine_func())
+                # engine_info['res_queue'].put(engine_func())
+                engine_func()
             except Exception as e:
                 logger.exception(e)
                 rpc.DoCall('rpc_main#echo', [
@@ -36,18 +40,20 @@ class Mannager(object):
                     % (engine_info['name'])
                 ])
 
-    def InstallEngine(self, engine_info):
+    def InstallEngine(self, engine_pack_name):
+        engine_info = {}
         try:
-            pass
+            module_obj = importlib.import_module(engine_pack_name)
+            engine_info['engine_obj'] = module_obj.Operate()
         except Exception as e:
             logger.exception(e)
             rpc.DoCall('rpc_main#echo', [
                 'Failed to install [%s], check log info for more.' %
                 (engine_info['name'])
             ])
+            return False
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
-        engine_info['engine_obj'] = None
 
         threading.Thread(target=self.EngineCallbackThread(engine_info),
                          daemon=True).start()
@@ -56,21 +62,23 @@ class Mannager(object):
                          daemon=True).start()
 
         logger.debug(engine_info)
+        self.engine_dict[engine_pack_name] = engine_info
+        return self.engine_dict[engine_pack_name]
 
-    def CheckInstallEnginesListOK(self):
-        if self.engine_dict is None:
-            self.engine_dict = rpc.GetVaribal('g:ECY_installed_engines_list')
+    def _get_engine_obj(self):
+        engine_pack_name = rpc.GetVaribal('g:ECY_current_buffer_engine_name')
+        if engine_pack_name not in self.engine_dict:
+            if self.InstallEngine(engine_pack_name) is False:
+                # using default engine
+                engine_pack_name = 'Label'
+        return self.engine_dict[engine_pack_name]
 
-        if self.engine_dict is None:
-            return False
-        return True
-
-    def Do(self, event_name):
-        if not self.CheckInstallEnginesListOK():
-            return
-
-        if self.current_engine_info['name'] not in self.engine_dict:
-            self.InstallEngine(self.current_engine_info)
+    def DoEvent(self, context):
+        engine_obj = self._get_engine_obj()
+        engine_obj['handler_queue'].put({
+            'event_name': context['context'],
+            'context': context
+        })
 
     def BufEnter(self, context):
         path = rpc.DoCall('ECY#utility#GetCurrentBufferPath')
