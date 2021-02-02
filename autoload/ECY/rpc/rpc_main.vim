@@ -25,10 +25,17 @@ fun! s:Send(msg)
   call job#send(l:json)
 endf
 
+fun! s:GetBufferEngineName()
+    if !exists('b:buffer_engine_name')
+        let b:buffer_engine_name = 'label'
+    endif
+    return b:buffer_engine_name
+endf
+
 fun! RPCEventsAll(msg)
 "{{{
   let g:rpc_seq_id += 1
-  let l:temp = {'type': 'event', 'event_name': a:msg, 'id': g:rpc_seq_id, 'params': a:msg['params']}
+  let l:temp = {'type': 'event', 'event_name': a:msg, 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': s:GetBufferEngineName()}
   call s:Send(l:json)
 "}}}
 endf
