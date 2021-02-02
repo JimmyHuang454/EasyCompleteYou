@@ -2,7 +2,7 @@
 
 fun! s:Call(params)
     call RPCEventsAll({'event_name': a:params['event_name'], 'params': {
-                \'buffer_path': '', 
+                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
                 \'buffer_id': s:GetBufferID()
                 \}})
 endf
@@ -17,7 +17,7 @@ endf
 
 fun! RPCInitEvent()
 "{{{
-  augroup EasyCompleteYou
+  augroup EasyCompleteYou2
     autocmd!
     autocmd FileType      * call s:Call({'event_name': 'OnBufferEnter'})
     autocmd BufEnter      * call s:Call({'event_name': 'OnBufferEnter'})
@@ -29,7 +29,7 @@ fun! RPCInitEvent()
     autocmd TextChangedI  * call s:Call({'event_name': 'OnTextChangedI'})
 
     autocmd InsertLeave   * call s:Call({'event_name': 'OnInsertLeave'})
-    autocmd InsertEnter   * call s:Call({'event_name': 'OnVimInsertEnter'})
+    autocmd InsertEnter   * call s:Call({'event_name': 'OnTextChangedI'})
   augroup END
 "}}}
 endf

@@ -1,3 +1,5 @@
+from loguru import logger
+
 class Operate(object):
     """
     """
@@ -5,5 +7,4 @@ class Operate(object):
         self.engine_name = 'label'
 
     def OnBufferEnter(self, context):
-        context['hah'] = 1
         return context

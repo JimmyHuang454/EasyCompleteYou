@@ -3,6 +3,7 @@ import queue
 import importlib
 import threading
 from ECY import rpc
+from ECY.engines import events_callback
 
 
 class Mannager(object):
@@ -11,38 +12,49 @@ class Mannager(object):
         self.current_engine_info = None
         self.engine_dict = {}
         self.InstallEngine('ECY.engines.default_engine')
+        self.events_callback = events_callback.Operate()
 
     def EngineCallbackThread(self, *args):
         engine_info = args[0]
         res_queue = engine_info['res_queue']
+        engine_name = engine_info['name']
         while True:
             try:
                 callback_context = res_queue.get()
                 event_name = callback_context['event_name']
-                callback = getattr(engine_info['engine_obj'],
-                                   engine_info[event_name])
-                engine_info['res_queue'].put(callback(callback_context))
+                logger.debug(callback_context)
+                self.CallFunction(self.events_callback, event_name,
+                                  engine_name, callback_context)
             except Exception as e:
                 logger.exception(e)
+
+    def CallFunction(self, obj, method, engine_name, context):
+        if not hasattr(obj, method):
+            # logger.debug('%s missing function to do %s' %
+            #              (engine_name, method))
+            return None
+        engine_func = getattr(obj, method)
+        return engine_func(context)
 
     def EngineEventHandler(self, *args):
         engine_info = args[0]
         handler_queue = engine_info['handler_queue']
+        engine_name = engine_info['name']
         while True:
             context = handler_queue.get()
             event_name = context['event_name']
-            logger.debug(event_name)
-            engine_func = getattr(engine_info['engine'],
-                                  engine_info[event_name])
             try:
-                callback_context = engine_func(context)
-                callback_context['event_name'] = event_name
+                callback_context = self.CallFunction(engine_info['engine_obj'],
+                                                     event_name, engine_name,
+                                                     context)
+                if callback_context is None:
+                    continue
                 engine_info['res_queue'].put(callback_context)
             except Exception as e:
                 logger.exception(e)
                 rpc.DoCall('rpc_main#echo', [
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
-                    % (engine_info['name'])
+                    % (engine_name)
                 ])
 
     def InstallEngine(self, engine_pack_name):
@@ -58,6 +70,7 @@ class Mannager(object):
             return False
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
+        engine_info['name'] = engine_pack_name
 
         threading.Thread(target=self.EngineCallbackThread,
                          args=(engine_info, ),

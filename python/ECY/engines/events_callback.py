@@ -7,6 +7,6 @@ class Operate():
         pass
 
     def OnBufferEnter(self, context):
-        logger.debug('sdfsf')
+        logger.debug('-------------------------')
         return context
 
