@@ -18,3 +18,9 @@ function GetCurrentLine() abort
   return getline(".")
 "}}}
 endfunction
+
+function GetCurrentBufferContent() abort " return list
+"{{{
+  return getbufline(bufnr(), 1, "$")
+"}}}
+endfunction
