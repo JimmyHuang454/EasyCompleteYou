@@ -47,9 +47,9 @@ if res.find('vimrc') != -1:
     has_nvim = True
     init = GetVimrcPath(res)
 
-if has_nvim == False and has_vim == False:
+if has_nvim == False or has_vim == False:
     print(
-        "-- Missing 'vim' or 'neovim' in your shell, please install one of them and put their path into your env to let shell can index them."
+        "\n\n--Quited-- Missing 'vim' or 'neovim' in your shell, please install one of them and put their path into your env to let shell can index them."
     )
     quit()
 
@@ -61,7 +61,7 @@ pip_load_ECY_viml_path = BASE_DIR + '/all.vim'
 
 
 def WriteLoadScript(path):
-    print('ECY will modify "%s"' % path)
+    print('ECY will modify "%s" to make vim to load ECY' % path)
     os.makedirs(os.path.dirname(vimrc), exist_ok=True)
     content = """
 set encoding=utf-8 " added by ECY_pip
