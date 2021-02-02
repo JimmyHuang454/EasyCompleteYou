@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from loguru import logger
 import json
+import threading
 import io
 import sys
 import queue
@@ -25,6 +26,16 @@ def Send(types, function_name='', variable_name='', params=[]):
     return json_dict['res']
 
 
+def EventHandler():
+    global blind_event_instance
+    global g_event_handle_thread
+    while True:
+        try:
+            blind_event_instance.DoEvent(g_event_handle_thread.get())
+        except Exception as e:
+            raise e
+
+
 @logger.catch
 def DoCall(function_name, params=[]):
     return Send('call', function_name=function_name, params=params)
@@ -45,7 +56,6 @@ def ReadStdIn():
 
 def FallBack():
     global g_event_handle_thread
-    global blind_event_instance
     content2 = ''
     logger.debug('Started RPC')
     while True:
@@ -64,7 +74,7 @@ def FallBack():
                     continue
                 context = json.loads(content_split[i], encoding='utf-8')
                 if context['type'] == 'event':
-                    blind_event_instance.DoEvent(context)
+                    g_event_handle_thread.put(context)
                 elif context['type'] == 'fallback':
                     re_id = context['request_id']
                     if re_id not in request_list:
@@ -89,6 +99,7 @@ def Daemon():  # start, call once
     sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+    threading.Thread(target=EventHandler, daemon=True).start()
     FallBack()  # blcok here
 
 

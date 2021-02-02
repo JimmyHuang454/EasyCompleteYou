@@ -28,7 +28,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:jobidseq = 0
-let s:jobs = {} " { job, opts, type: 'vimjob|nvimjob'}
+let g:job_jobs = {} " { job, opts, type: 'vimjob|nvimjob'}
 let s:job_type_nvimjob = 'nvimjob'
 let s:job_type_vimjob = 'vimjob'
 let s:job_error_unsupported_job_type = -2 " unsupported job type
@@ -64,14 +64,14 @@ function! s:exit_cb(jobid, opts, job, status) abort
     if has_key(a:opts, 'on_exit')
         call a:opts.on_exit(a:jobid, a:status, 'exit')
     endif
-    if has_key(s:jobs, a:jobid)
-        call remove(s:jobs, a:jobid)
+    if has_key(g:job_jobs, a:jobid)
+        call remove(g:job_jobs, a:jobid)
     endif
 endfunction
 
 function! s:on_stdout(jobid, data, event) abort
-    if has_key(s:jobs, a:jobid)
-        let l:jobinfo = s:jobs[a:jobid]
+    if has_key(g:job_jobs, a:jobid)
+        let l:jobinfo = g:job_jobs[a:jobid]
         if has_key(l:jobinfo.opts, 'on_stdout')
             call l:jobinfo.opts.on_stdout(a:jobid, a:data, a:event)
         endif
@@ -79,8 +79,8 @@ function! s:on_stdout(jobid, data, event) abort
 endfunction
 
 function! s:on_stderr(jobid, data, event) abort
-    if has_key(s:jobs, a:jobid)
-        let l:jobinfo = s:jobs[a:jobid]
+    if has_key(g:job_jobs, a:jobid)
+        let l:jobinfo = g:job_jobs[a:jobid]
         if has_key(l:jobinfo.opts, 'on_stderr')
             call l:jobinfo.opts.on_stderr(a:jobid, a:data, a:event)
         endif
@@ -88,13 +88,13 @@ function! s:on_stderr(jobid, data, event) abort
 endfunction
 
 function! s:on_exit(jobid, status, event) abort
-    if has_key(s:jobs, a:jobid)
-        let l:jobinfo = s:jobs[a:jobid]
+    if has_key(g:job_jobs, a:jobid)
+        let l:jobinfo = g:job_jobs[a:jobid]
         if has_key(l:jobinfo.opts, 'on_exit')
             call l:jobinfo.opts.on_exit(a:jobid, a:status, a:event)
         endif
-        if has_key(s:jobs, a:jobid)
-            call remove(s:jobs, a:jobid)
+        if has_key(g:job_jobs, a:jobid)
+            call remove(g:job_jobs, a:jobid)
         endif
     endif
 endfunction
@@ -144,11 +144,11 @@ function! s:job_start(cmd, opts) abort
             return l:job
         endif
         let l:jobid = l:job " nvimjobid and internal jobid is same
-        let s:jobs[l:jobid] = {
+        let g:job_jobs[l:jobid] = {
             \ 'type': s:job_type_nvimjob,
             \ 'opts': a:opts,
         \ }
-        let s:jobs[l:jobid].job = l:job
+        let g:job_jobs[l:jobid].job = l:job
     elseif l:jobtype == s:job_type_vimjob
         let s:jobidseq = s:jobidseq + 1
         let l:jobid = s:jobidseq
@@ -165,7 +165,7 @@ function! s:job_start(cmd, opts) abort
         if job_status(l:job) !=? 'run'
             return -1
         endif
-        let s:jobs[l:jobid] = {
+        let g:job_jobs[l:jobid] = {
             \ 'type': s:job_type_vimjob,
             \ 'opts': a:opts,
             \ 'job': l:job,
@@ -180,8 +180,8 @@ function! s:job_start(cmd, opts) abort
 endfunction
 
 function! s:job_stop(jobid) abort
-    if has_key(s:jobs, a:jobid)
-        let l:jobinfo = s:jobs[a:jobid]
+    if has_key(g:job_jobs, a:jobid)
+        let l:jobinfo = g:job_jobs[a:jobid]
         if l:jobinfo.type == s:job_type_nvimjob
             " See: vital-Whisky/System.Job
             try
@@ -192,17 +192,17 @@ function! s:job_stop(jobid) abort
               " silently for 'E900: Invalid job id' exception
             endtry
         elseif l:jobinfo.type == s:job_type_vimjob
-            if type(s:jobs[a:jobid].job) == v:t_job
-                call job_stop(s:jobs[a:jobid].job)
-            elseif type(s:jobs[a:jobid].job) == v:t_channel
-                call ch_close(s:jobs[a:jobid].job)
+            if type(g:job_jobs[a:jobid].job) == v:t_job
+                call job_stop(g:job_jobs[a:jobid].job)
+            elseif type(g:job_jobs[a:jobid].job) == v:t_channel
+                call ch_close(g:job_jobs[a:jobid].job)
             endif
         endif
     endif
 endfunction
 
 function! s:job_send(jobid, data, opts) abort
-    let l:jobinfo = s:jobs[a:jobid]
+    let l:jobinfo = g:job_jobs[a:jobid]
     let l:close_stdin = get(a:opts, 'close_stdin', 0)
     if l:jobinfo.type == s:job_type_nvimjob
         call jobsend(a:jobid, a:data)
@@ -236,7 +236,7 @@ endfunction
 function! s:flush_vim_sendraw(jobid, timer) abort
     " https://github.com/vim/vim/issues/2548
     " https://github.com/natebosch/vim-lsc/issues/67#issuecomment-357469091
-    let l:jobinfo = s:jobs[a:jobid]
+    let l:jobinfo = g:job_jobs[a:jobid]
     sleep 1m
     if len(l:jobinfo.buffer) <= 4096
         call ch_sendraw(l:jobinfo.channel, l:jobinfo.buffer)
@@ -250,11 +250,11 @@ function! s:flush_vim_sendraw(jobid, timer) abort
 endfunction
 
 function! s:job_wait_single(jobid, timeout, start) abort
-    if !has_key(s:jobs, a:jobid)
+    if !has_key(g:job_jobs, a:jobid)
         return -3
     endif
 
-    let l:jobinfo = s:jobs[a:jobid]
+    let l:jobinfo = g:job_jobs[a:jobid]
     if l:jobinfo.type == s:job_type_nvimjob
         let l:timeout = a:timeout - reltimefloat(reltime(a:start)) * 1000
         return jobwait([a:jobid], float2nr(l:timeout))[0]
@@ -291,11 +291,11 @@ function! s:job_wait(jobids, timeout) abort
 endfunction
 
 function! s:job_pid(jobid) abort
-    if !has_key(s:jobs, a:jobid)
+    if !has_key(g:job_jobs, a:jobid)
         return 0
     endif
 
-    let l:jobinfo = s:jobs[a:jobid]
+    let l:jobinfo = g:job_jobs[a:jobid]
     if l:jobinfo.type == s:job_type_nvimjob
         return jobpid(a:jobid)
     elseif l:jobinfo.type == s:job_type_vimjob
@@ -317,35 +317,35 @@ function! s:close_cb(jobid, opts, ch) abort
     if has_key(a:opts, 'on_exit')
         call a:opts.on_exit(a:jobid, 'closed', 'exit')
     endif
-    if has_key(s:jobs, a:jobid)
-        call remove(s:jobs, a:jobid)
+    if has_key(g:job_jobs, a:jobid)
+        call remove(g:job_jobs, a:jobid)
     endif
 endfunction
 
 " public apis {{{
-function! job#start(cmd, opts) abort
+function! ECY2_job#start(cmd, opts) abort
     return s:job_start(a:cmd, a:opts)
 endfunction
 
-function! job#stop(jobid) abort
+function! ECY2_job#stop(jobid) abort
     call s:job_stop(a:jobid)
 endfunction
 
-function! job#send(jobid, data, ...) abort
+function! ECY2_job#send(jobid, data, ...) abort
     let l:opts = get(a:000, 0, {})
     call s:job_send(a:jobid, a:data, l:opts)
 endfunction
 
-function! job#wait(jobids, ...) abort
+function! ECY2_job#wait(jobids, ...) abort
     let l:timeout = get(a:000, 0, -1)
     return s:job_wait(a:jobids, l:timeout)
 endfunction
 
-function! job#pid(jobid) abort
+function! ECY2_job#pid(jobid) abort
     return s:job_pid(a:jobid)
 endfunction
 
-function! job#connect(addr, opts) abort
+function! ECY2_job#connect(addr, opts) abort
     let s:jobidseq = s:jobidseq + 1
     let l:jobid = s:jobidseq
     let l:retry = 0
@@ -362,7 +362,7 @@ function! job#connect(addr, opts) abort
         sleep 100m
         let l:retry += 1
     endwhile
-    let s:jobs[l:jobid] = {
+    let g:job_jobs[l:jobid] = {
         \ 'type': s:job_type_vimjob,
         \ 'opts': a:opts,
         \ 'job': l:ch,

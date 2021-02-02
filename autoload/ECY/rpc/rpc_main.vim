@@ -7,16 +7,20 @@ fun! rpc_main#GetBuffer(msg) " return list
 endf
 
 fun! s:Send(msg)
-  if g:rpc_client_id == -1
+  if g:fuck == -1
     return
   endif
   let l:json = json_encode(a:msg) . "\n"
-  call job#send(g:rpc_client_id, l:json)
+  try
+    call ECY2_job#send(g:fuck, l:json)
+  catch 
+    call rpc_main#echo('ECY lost connection.')
+  endtry
 endf
 
 fun! s:GetBufferEngineName()
     if !exists('b:buffer_engine_name')
-        let b:buffer_engine_name = 'label'
+        let b:buffer_engine_name = 'ECY.engines.default_engine'
     endif
     return b:buffer_engine_name
 endf
@@ -77,9 +81,10 @@ endf
 
 fun! rpc_main#NewClient(cmd)
 "{{{
-  let g:rpc_client_id = job#start(a:cmd, {
+  let g:fuck = ECY2_job#start(a:cmd, {
       \ 'on_stdout': function('rpc_main#Input')
       \ })
+  call RPCInitEvent()
 "}}}
 endf
 
@@ -124,7 +129,7 @@ fun! rpc_main#Init()
   let g:rpc_params = []
   let g:rpc_result = ''
   let g:rpc_seq_id = -1
-  let g:rpc_client_id = -1
+  let g:fuck = -1
   let s:request_list = []
   let s:is_timer_running = v:false
 "}}}

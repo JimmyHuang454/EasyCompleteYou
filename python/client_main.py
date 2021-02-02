@@ -4,7 +4,7 @@ from ECY import rpc
 import ECY.engines.engines as engines
 
 logger.add(
-    "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/ECY_Debug_log/{time}.log",
+    "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/ECY_Debug_log/ECY_debug.log",
     level="DEBUG")
 
 rpc.BlindEvent(engines.Mannager())

@@ -31,6 +31,7 @@ class Mannager(object):
         while True:
             context = handler_queue.get()
             event_name = context['event_name']
+            logger.debug(event_name)
             engine_func = getattr(engine_info['engine'],
                                   engine_info[event_name])
             try:
@@ -50,35 +51,35 @@ class Mannager(object):
             module_obj = importlib.import_module(engine_pack_name)
             engine_info['engine_obj'] = module_obj.Operate()
         except Exception as e:
-            logger.exception(e)
             rpc.DoCall('rpc_main#echo', [
                 'Failed to install [%s], check log info for more.' %
-                (engine_info['name'])
+                (engine_pack_name)
             ])
             return False
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
 
         threading.Thread(target=self.EngineCallbackThread,
-                         args=(engine_info,),
+                         args=(engine_info, ),
                          daemon=True).start()
 
         threading.Thread(target=self.EngineEventHandler,
-                         args=(engine_info,),
+                         args=(engine_info, ),
                          daemon=True).start()
 
-        logger.debug("fuck")
+        logger.debug("installed engine %s" % (engine_info))
         self.engine_dict[engine_pack_name] = engine_info
         return self.engine_dict[engine_pack_name]
 
     def _get_engine_obj(self, engine_pack_name):
         if engine_pack_name not in self.engine_dict:
             if self.InstallEngine(engine_pack_name) is False:
-                engine_pack_name = 'default_engine'
+                engine_pack_name = 'ECY.engines.default_engine'
         return self.engine_dict[engine_pack_name]
 
     def DoEvent(self, context):
         engine_obj = self._get_engine_obj(context['engine_name'])
+
         engine_obj['handler_queue'].put({
             'event_name': context['event_name'],
             'context': context

@@ -15,7 +15,7 @@ fun! s:GetBufferID()
     return b:buffer_id
 endf
 
-fun! s:InitEvent()
+fun! RPCInitEvent()
 "{{{
   augroup EasyCompleteYou
     autocmd!
@@ -33,5 +33,3 @@ fun! s:InitEvent()
   augroup END
 "}}}
 endf
-
-call s:InitEvent()
