@@ -17,16 +17,19 @@ fun! rpc_main#GetBuffer(msg) " return list
   echo a:msg
 endf
 
-fun! RPCEventsAll(msg)
-"{{{
+fun! s:Send(msg)
   if g:rpc_client_id == -1
     return
   endif
+  let l:json = json_encode(a:msg) . "\n"
+  call job#send(l:json)
+endf
+
+fun! RPCEventsAll(msg)
+"{{{
   let g:rpc_seq_id += 1
   let l:temp = {'type': 'event', 'event_name': a:msg, 'id': g:rpc_seq_id, 'params': a:msg['params']}
-  let l:json = json_encode(l:temp) . "\n"
-
-  call job#send(g:rpc_client_id, l:json)
+  call s:Send(l:json)
 "}}}
 endf
 
@@ -36,8 +39,7 @@ fun! s:FallBack(original_request, res) " responce request that send from python
   let l:res = a:res
   let l:res['request_id'] = l:request_id
   let l:res['type'] = 'fallback'
-
-  call job#send(g:rpc_client_id, json_encode(l:res) . "\n")
+  call s:Send(l:res)
 "}}}
 endf
 
