@@ -8,8 +8,10 @@ import queue
 
 
 def Send(types, function_name='', variable_name='', params=[]):
-    global request_id
     global request_list
+    global request_id
+    global g_lock
+    g_lock.acquire()
     request_id += 1
     cmd = {
         'type': types,
@@ -18,13 +20,18 @@ def Send(types, function_name='', variable_name='', params=[]):
         'variable_name': variable_name,
         'id': request_id
     }
-    request_list[request_id] = {'cmd': cmd, 'res_queue': queue.Queue()}
-    print(json.dumps(cmd), flush=True)  # with "\n"
-    context = request_list[request_id]['res_queue'].get(
-        timeout=5)  # block here
-    if context['status'] != 0:
-        logger.error(context)
-    del request_list[request_id]
+    res_queue = queue.Queue()
+    request_list[request_id] = res_queue
+    # print(json.dumps(cmd), flush=True)  # with "\n"
+    sys.stdout.write(json.dumps(cmd) + "\n")
+    sys.stdout.flush()
+    g_lock.release()
+    try:
+        context = res_queue.get()  # block here
+        if context['status'] != 0:
+            logger.error(context)
+    except:
+        logger.exception('timeout')
     return context['res']
 
 
@@ -39,12 +46,10 @@ def EventHandler():
             raise e
 
 
-@logger.catch
 def DoCall(function_name, params=[]):
     return Send('call', function_name=function_name, params=params)
 
 
-@logger.catch
 def GetVaribal(variable_name):
     return Send('get', variable_name=variable_name)
 
@@ -59,6 +64,7 @@ def ReadStdIn():
 
 def FallBack():
     global g_event_handle_thread
+    global request_list
     content2 = ''
     logger.debug('Started RPC')
     while True:
@@ -82,7 +88,7 @@ def FallBack():
                     re_id = context['request_id']
                     if re_id not in request_list:
                         continue
-                    request_list[re_id]['res_queue'].put(context)
+                    request_list[re_id].put(context)
                 else:
                     pass
                 i += 1
@@ -94,10 +100,12 @@ def FallBack():
 def Daemon():  # start, call once
     global request_id
     global g_event_handle_thread
+    global request_list
+    global g_lock
+    g_lock = threading.RLock()
     request_id = 0
     g_event_handle_thread = queue.Queue()
 
-    global request_list
     request_list = {}
     sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')

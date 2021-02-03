@@ -4,6 +4,7 @@ import importlib
 import threading
 from ECY import rpc
 from ECY.engines import events_callback
+from ECY.engines import events_pre
 
 
 class Mannager(object):
@@ -13,6 +14,7 @@ class Mannager(object):
         self.engine_dict = {}
         self.InstallEngine('ECY.engines.default_engine')
         self.events_callback = events_callback.Operate()
+        self.events_pre = events_pre.Operate()
 
     def EngineCallbackThread(self, *args):
         engine_info = args[0]
@@ -43,9 +45,13 @@ class Mannager(object):
             context = handler_queue.get()
             event_name = context['event_name']
             try:
+                pre_context = self.CallFunction(self.events_pre, event_name,
+                                                engine_name, context)
+                if pre_context is False:
+                    continue
                 callback_context = self.CallFunction(engine_info['engine_obj'],
                                                      event_name, engine_name,
-                                                     context)
+                                                     pre_context)
                 if callback_context is None:
                     continue
                 engine_info['res_queue'].put(callback_context)

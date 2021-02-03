@@ -43,23 +43,15 @@ fun! s:FallBack(original_request, res) " responce request that send from python
 "}}}
 endf
 
-fun! s:Do(timer_id)
+fun! s:Do(context)
 "{{{
-  let i = 0
-  while i < len(s:request_list)
-    let l:item = remove(s:request_list, 0) " pop first item to l:data_dict
-    let l:data_dict = l:item['data']
-    let l:type = l:data_dict['type']
-    if l:type == 'call'
-      let l:res = rpc_main#Call(l:data_dict['function_name'], l:data_dict['params'])
-    elseif l:type == 'get'
-      let l:res = rpc_main#Get(l:data_dict['variable_name'])
-    endif
-    call s:FallBack(l:data_dict, l:res)
-    let i += 1
-  endw
-  let s:is_timer_running = v:false
-  " call timer_start(1, function('s:Do'))
+  let l:type = a:context['type']
+  if l:type == 'call'
+    let l:res = rpc_main#Call(a:context['function_name'], a:context['params'])
+  elseif l:type == 'get'
+    let l:res = rpc_main#Get(a:context['variable_name'])
+  endif
+  call s:FallBack(a:context, l:res)
 "}}}
 endf
 
@@ -69,12 +61,11 @@ fun! rpc_main#Input(id, data, event)
     if item == ''
       continue " an additional part when splitting line with '\n'
     endif
-    let l:data_dict = json_decode(item)
-    call add(s:request_list, {'id': a:id, 'data': l:data_dict})
-    if s:is_timer_running == v:false
-      let s:is_timer_running = v:true
-      call timer_start(1, function('s:Do'))
-    endif
+    try
+      let l:data_dict = json_decode(item)
+      call s:Do(l:data_dict)
+    catch 
+    endtry
   endfor
 "}}}
 endf

@@ -1,4 +1,4 @@
-fun! s:GetBufferID()
+fun! GetBufferIDNotChange()
 "{{{
     if !exists('b:buffer_id')
       return -1
@@ -32,23 +32,42 @@ endf
 fun! DoCompletion(context)
 "{{{
   if ECY#utility#GetCurrentBufferPath() != a:context['context']['params']['buffer_path'] 
-        \|| s:GetBufferID() != a:context['context']['params']['buffer_id']
+        \|| GetBufferIDNotChange() != a:context['context']['params']['buffer_id']
     return
   endif
   if a:context['show_list'] == []
     return
   endif
 
-  let l:show_list = s:Indent(a:context['show_list'])
+  " let l:show_list = s:Indent(a:context['show_list'])
+  let l:show_list = a:context['show_list']
 
   let l:show_windows = []
   for item in l:show_list
     let l:line = item['abbr']
     if has_key(item, 'kind')
       let l:line .= item['kind']
-    endif
+    endif 
     call add(l:show_windows, l:line)
   endfor
   let g:abc = l:show_windows
+  call popup_atcursor(l:show_windows, {})
 "}}}
 endf
+
+fun! s:Init()
+"{{{
+  if has('nvim') && exists('*nvim_win_set_config')
+    let g:has_floating_windows_support = 'nvim'
+    " TODO:
+    let g:has_floating_windows_support = 'has_no'
+  elseif has('textprop') && has('popupwin')
+    let g:has_floating_windows_support = 'vim'
+  else
+    let g:has_floating_windows_support = 'has_no'
+  endif
+"}}}
+endf
+
+
+call s:Init()
