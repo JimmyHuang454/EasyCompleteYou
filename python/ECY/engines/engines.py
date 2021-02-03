@@ -97,11 +97,7 @@ class Mannager(object):
 
     def DoEvent(self, context):
         engine_obj = self._get_engine_obj(context['engine_name'])
-
-        engine_obj['handler_queue'].put({
-            'event_name': context['event_name'],
-            'context': context
-        })
+        engine_obj['handler_queue'].put(context)
 
     def BufEnter(self, context):
         path = rpc.DoCall('ECY#utility#GetCurrentBufferPath')

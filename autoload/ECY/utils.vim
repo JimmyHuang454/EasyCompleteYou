@@ -24,3 +24,16 @@ function GetCurrentBufferContent() abort " return list
   return getbufline(bufnr(), 1, "$")
 "}}}
 endfunction
+
+function DefineColor(name, colora) abort " return list
+"{{{
+  if hlexists(a:name) 
+    return
+  endif
+  exe 'hi '.a:name . ' '. a:colora
+  try
+    call prop_type_add(a:name, {'highlight': a:name}) " vim
+  catch 
+  endtry
+"}}}
+endfunction

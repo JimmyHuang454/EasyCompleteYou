@@ -97,7 +97,7 @@ fun! rpc_main#Call(Function_name, params)
   try
     exe l:temp
   catch 
-    return {'status': -1, 'res': '', 'msg': v:exception}
+    return {'status': -1, 'res': v:throwpoint, 'msg': v:exception}
   endtry
   return {'status': 0, 'res': g:rpc_result, 'res_type': type(g:rpc_result)}
   "}}}
@@ -109,7 +109,7 @@ fun! rpc_main#Get(variable_name)
   try
     exe l:temp
   catch 
-    return {'status': -1, 'res': '', 'msg': v:exception}
+    return {'status': -1, 'res': v:throwpoint, 'msg': v:exception}
   endtry
   return {'status': 0, 'res': g:rpc_result, 'res_type': type(g:rpc_result)}
   "}}}

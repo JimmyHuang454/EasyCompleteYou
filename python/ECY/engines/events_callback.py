@@ -1,4 +1,5 @@
 from loguru import logger
+from ECY import utils
 from ECY import rpc
 from ECY.engines import fuzzy_match
 
@@ -22,20 +23,38 @@ class Operate():
         self._get_opts()
 
     def OnCompletion(self, context):
-        if 'show_list' not in context or 'start_position' not in context:
-            logger.debug('missing params.')
+        if 'show_list' not in context:
+            logger.debug('missing params. "show_list"')
             return
 
-        current_line = rpc.DoCall('GetCurrentLine')
+        params = context['params']
+        current_line = params['buffer_line']
         current_line = bytes(current_line, encoding='utf-8')
 
         context['next_key'] = str(
-            current_line[context['start_position']['colum']:],
+            current_line[params['buffer_position']['colum']:],
             encoding='utf-8')
 
         context['prev_key'] = str(
-            current_line[:context['start_position']['colum']],
+            current_line[:params['buffer_position']['colum']],
             encoding='utf-8')
+
+        if 'regex' in context:
+            regex = context['regex']
+        else:
+            regex = r'[\w+]'
+            current_colum, filter_words, last_key = utils.MatchFilterKeys(
+                context['prev_key'], regex)
+
+            logger.debug(current_colum)
+            logger.debug(filter_words)
+
+            context['filter_key'] = filter_words
+            context['start_position'] = {
+                'line': params['buffer_position']['line'],
+                'colum': current_colum
+            }
+
 
         context['show_list'] = self.fuzzy_match.FilterItems(
             context['filter_key'],

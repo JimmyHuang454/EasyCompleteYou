@@ -1,9 +1,14 @@
 
 fun! s:Call(params)
-    call RPCEventsAll({'event_name': a:params['event_name'], 'params': {
+  let l:event_name = a:params['event_name']
+  let l:send_msg = {'event_name': l:event_name, 'params': {
                 \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+                \'buffer_line': GetCurrentLine(), 
+                \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
                 \'buffer_id': GetBufferIDChange()
-                \}})
+                \}}
+  call RPCEventsAll(l:send_msg)
 endf
 
 fun! GetBufferIDChange()

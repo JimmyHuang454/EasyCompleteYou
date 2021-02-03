@@ -32,7 +32,5 @@ class Operate(object):
 
     def OnCompletion(self, context):
         context['show_list'] = self.content_cache
-        context['filter_key'] = 're'
-        current_position = rpc.DoCall('GetCurrentLineAndPosition')
-        context['start_position'] = current_position
+        context['filter_key'] = 'sd'
         return context
