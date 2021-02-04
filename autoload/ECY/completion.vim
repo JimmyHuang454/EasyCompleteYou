@@ -42,6 +42,10 @@ fun! DoCompletion_vim(context)
   let l:fliter_words = a:context['filter_key']
   let l:items_info = a:context['show_list']
 
+  if len(l:items_info) == 0
+    return
+  endif
+
   let l:offset_of_cursor = len(l:fliter_words)
   let l:col  = 'cursor-' . l:offset_of_cursor
   let l:opts = {'pos': 'topleft',
@@ -118,7 +122,10 @@ endf
 
 function! CloseCompletionWindows() abort
   if g:has_floating_windows_support == 'vim'
-    call popup_close(s:popup_windows_nr)
+    try
+      call popup_close(s:popup_windows_nr)
+    catch 
+    endtry
     let s:popup_windows_nr = -1
   else
     "TODO: neovim
@@ -142,10 +149,13 @@ fun! s:Init()
   call DefineColor('ECY_floating_windows_normal', 'guifg=#839496	guibg=#073642	ctermfg=white	ctermbg=darkBlue')
   call DefineColor('ECY_floating_windows_seleted_matched', 'guifg=#FFFF99	guibg=#586e75	ctermfg=red	ctermbg=Blue')
   call DefineColor('ECY_floating_windows_seleted', 'guifg=#eee8d5	guibg=#586e75	ctermfg=white	ctermbg=Blue')
+
+  augroup ECY_completion
+    autocmd!
+    autocmd TextChangedI  * call CloseCompletionWindows()
+    autocmd InsertLeave   * call CloseCompletionWindows()
+  augroup END
 "}}}
 endf
-
-
-
 
 call s:Init()

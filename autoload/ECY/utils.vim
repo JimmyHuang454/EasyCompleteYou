@@ -25,7 +25,7 @@ function GetCurrentBufferContent() abort " return list
 "}}}
 endfunction
 
-function DefineColor(name, colora) abort " return list
+function DefineColor(name, colora) abort
 "{{{
   if hlexists(a:name) 
     return
