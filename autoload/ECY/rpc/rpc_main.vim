@@ -21,6 +21,8 @@ endf
 fun! s:GetBufferEngineName()
     if !exists('b:buffer_engine_name')
         let b:buffer_engine_name = 'ECY.engines.default_engine'
+        let b:buffer_engine_name = 'ECY_engines.python.pyls.pyls'
+        let b:buffer_engine_name = 'ECY_engines.cpp.clangd.clangd'
     endif
     return b:buffer_engine_name
 endf

@@ -8,8 +8,8 @@ class Operate():
     def __init__(self):
         pass
 
-    def OnBufferEnter(self, context):
-        return context
+    # def OnBufferEnter(self, context):
+    #     return context
 
     def OnCompletion(self, context):
         if context['params']['buffer_id'] != rpc.DoCall(

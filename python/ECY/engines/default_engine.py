@@ -39,3 +39,4 @@ class Operate(object):
 
     def OnInsertLeave(self, context):
         self.OnBufferEnter(context)
+        return None

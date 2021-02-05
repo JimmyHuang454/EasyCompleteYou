@@ -1,5 +1,6 @@
 from loguru import logger
 import queue
+import sys
 import importlib
 import threading
 from ECY import rpc
@@ -47,8 +48,10 @@ class Mannager(object):
             try:
                 pre_context = self.CallFunction(self.events_pre, event_name,
                                                 engine_name, context)
-                if pre_context is False:
+                if pre_context is False:  # filter this event
                     continue
+                if pre_context is None:  # has no pre event
+                    pre_context = context
                 callback_context = self.CallFunction(engine_info['engine_obj'],
                                                      event_name, engine_name,
                                                      pre_context)
@@ -65,13 +68,18 @@ class Mannager(object):
     def InstallEngine(self, engine_pack_name):
         engine_info = {}
         try:
-            module_obj = importlib.import_module(engine_pack_name)
+            if type(engine_pack_name) is dict:
+                sys.path.append(engine_pack_name['dir'])
+                module_obj = importlib.import_module(engine_pack_name['name'])
+            else:
+                module_obj = importlib.import_module(engine_pack_name)
             engine_info['engine_obj'] = module_obj.Operate()
         except Exception as e:
-            rpc.DoCall('rpc_main#echo', [
-                'Failed to install [%s], check log info for more.' %
-                (engine_pack_name)
-            ])
+            logger.exception(e)
+            # rpc.DoCall('rpc_main#echo', [
+            #     'Failed to install [%s], check log info for more.' %
+            #     (engine_pack_name)
+            # ])
             return False
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
