@@ -1,6 +1,25 @@
-
 fun! s:Call(params)
+"{{{
+
   let l:event_name = a:params['event_name']
+
+  if g:popup_windows_is_selecting && l:event_name == 'OnCompletion'
+    let g:popup_windows_is_selecting = v:false
+    return
+  endif
+
+  if !has_key(g:event_pre, l:event_name)
+    let g:event_pre[l:event_name] = []
+  endif
+
+  if !has_key(g:event_callback, l:event_name)
+    let g:event_callback[l:event_name] = []
+  endif
+
+  for Function in g:event_pre[l:event_name]
+    call Function(l:event_name)
+  endfor
+
   let l:send_msg = {'event_name': l:event_name, 'params': {
                 \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
@@ -9,6 +28,29 @@ fun! s:Call(params)
                 \'buffer_id': GetBufferIDChange()
                 \}}
   call RPCEventsAll(l:send_msg)
+
+  for Function in g:event_pre[l:event_name]
+    call Function(l:event_name)
+  endfor
+"}}}
+endf
+
+fun! AddEventCallbackPre(event_name, Function)
+"{{{
+  if !has_key(g:event_pre, a:event_name)
+    let g:event_pre[a:event_name] = []
+  endif
+  call add(g:event_pre[l:event_name], a:Function)
+"}}}
+endf
+
+fun! AddEventCallback(event_name, Function)
+"{{{
+  if !has_key(g:event_callback, a:event_name)
+    let g:event_callback[a:event_name] = []
+  endif
+  call add(g:event_callback[l:event_name], a:Function)
+"}}}
 endf
 
 fun! GetBufferIDChange()
@@ -35,5 +77,7 @@ fun! RPCInitEvent()
     autocmd InsertLeave   * call s:Call({'event_name': 'OnInsertLeave'})
     autocmd InsertEnter   * call s:Call({'event_name': 'OnCompletion'})
   augroup END
+  let g:event_pre = {}
+  let g:event_callback = {}
 "}}}
 endf
