@@ -25,7 +25,6 @@ class Operate(object):
             raise
         self._lsp = language_server_protocol.LSP()
         starting_cmd = 'pyls'
-        starting_cmd = 'clangd'
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
         self._lsp.GetResponse(temp['Method'],
@@ -76,7 +75,6 @@ class Operate(object):
         }
 
         temp = self._lsp.completion(uri, current_start_postion)
-        logger.debug(temp)
         return_data = self._waitting_for_response(temp['Method'], temp['ID'])
 
         if return_data is None:
@@ -85,20 +83,19 @@ class Operate(object):
         if return_data['result'] is None:
             return
 
-        if return_data['result']['isIncomplete'] is True:
-            self.completion_cache = []
-            for item in return_data['result']['items']:
-                results_format = {
-                    'abbr': item['label'],
-                    'word': item['insertText'],
-                    'kind': '',
-                    'menu': '',
-                    'info': '',
-                    'user_data': ''
-                }
-                results_format['kind'] = self._lsp.GetKindNameByNumber(
-                    item['kind'])
-                self.completion_cache.append(results_format)
+        self.completion_cache = []
+        for item in return_data['result']['items']:
+            results_format = {
+                'abbr': item['label'],
+                'word': item['insertText'],
+                'kind': '',
+                'menu': '',
+                'info': '',
+                'user_data': ''
+            }
+            results_format['kind'] = self._lsp.GetKindNameByNumber(
+                item['kind'])
+            self.completion_cache.append(results_format)
         logger.debug(return_data)
         context['show_list'] = self.completion_cache
         return context
