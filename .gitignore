@@ -18,6 +18,7 @@ ECY_server.log
 .netrwhist
 *~
 *.log
+ECY_config.txt
 const.txt
 .root
 test.*

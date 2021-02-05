@@ -98,16 +98,11 @@ fun! s:Init()
 
   let g:ECY_file_type_info2 = {}
 
-  if filewritable(g:ECY_config_path) " exists
-      try
-          let s:config = readfile(g:ECY_config_path)
-          let s:config = json_encode(s:config)
-      catch 
-          let s:config = {}
-      endtry
-  else
-      let s:config = {} " default setting
-  endif
+  try
+      let g:ECY_config = json_decode(readfile(g:ECY_config_path)[0])
+  catch 
+      let g:ECY_config = {}
+  endtry
 
   augroup ECY_config
     autocmd!
@@ -152,23 +147,27 @@ endf
 
 fun! VimLeave()
 "{{{
-    try
-        call writefile([json_decode(s:config)], g:ECY_config_path, 'w')
-    catch 
-    endtry
+  try
+    for key in keys(g:ECY_file_type_info2)
+      let l:temp = g:ECY_file_type_info2[key]
+      let g:ECY_config[key] = l:temp['filetype_using']
+    endfor
+    call writefile([json_encode(g:ECY_config)], g:ECY_config_path, 'w')
+  catch 
+  endtry
 "}}}
 endf
 
 fun! InitDefaultEngine(file_type)
 "{{{
-    if !has_key(s:config, a:file_type)
-        let s:config[a:file_type] = g:ECY_default_engine
+    if !has_key(g:ECY_config, a:file_type)
+        let g:ECY_config[a:file_type] = g:ECY_default_engine
     endif
 
     if !has_key(g:ECY_file_type_info2, a:file_type)
         let g:ECY_file_type_info2[a:file_type] = {
                     \'available_sources': [], 
-                    \'filetype_using': s:config[a:file_type]
+                    \'filetype_using': g:ECY_config[a:file_type]
                     \}
         for item in g:ECY_all_buildin_engine
             if !IsInList(a:file_type, item['file_type']) && !IsInList('all', item['file_type'])
@@ -184,7 +183,7 @@ fun! GetBufferEngineName()
 "{{{
     let l:file_type = &filetype
     call InitDefaultEngine(l:file_type)
-    return s:config[l:file_type]
+    return g:ECY_file_type_info2[l:file_type]['filetype_using']
 "}}}
 endf
 
