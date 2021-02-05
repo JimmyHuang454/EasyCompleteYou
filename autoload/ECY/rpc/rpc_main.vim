@@ -18,20 +18,10 @@ fun! s:Send(msg)
   endtry
 endf
 
-fun! s:GetBufferEngineName()
-    if !exists('b:buffer_engine_name')
-        let b:buffer_engine_name = 'ECY.engines.default_engine'
-        let b:buffer_engine_name = 'ECY_engines.python.pyls.pyls'
-        let b:buffer_engine_name = 'ECY_engines.python.jedi.jedi'
-        " let b:buffer_engine_name = 'ECY_engines.cpp.clangd.clangd'
-    endif
-    return b:buffer_engine_name
-endf
-
 fun! RPCEventsAll(msg)
 "{{{
   let g:rpc_seq_id += 1
-  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': s:GetBufferEngineName()}
+  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': GetBufferEngineName()}
   call s:Send(l:temp)
 "}}}
 endf

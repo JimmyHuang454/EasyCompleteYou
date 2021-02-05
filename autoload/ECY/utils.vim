@@ -37,3 +37,17 @@ function DefineColor(name, colora) abort
   endtry
 "}}}
 endfunction
+
+
+function! IsInList(item, list) abort
+"{{{
+  let i = 0
+  while i < len(a:list)
+    if a:item == a:list[i]
+      return v:true
+    endif
+    let i += 1
+  endw
+  return v:false
+"}}}
+endfunction

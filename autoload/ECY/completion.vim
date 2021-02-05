@@ -288,17 +288,6 @@ fun! s:Init()
 
   " let g:ECY_select_items = ['h','<S-TAB>']
 
-  if has('nvim') && exists('*nvim_win_set_config')
-    " TODO:
-    let g:has_floating_windows_support = 'neovim'
-    let g:has_floating_windows_support = 'has_no' 
-  elseif has('textprop') && has('popupwin')
-    let g:has_floating_windows_support = 'vim'
-  else
-    let g:has_floating_windows_support = 'has_no'
-    let g:ECY_use_floating_windows_to_be_popup_windows = v:false
-  endif
-
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
   call DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596	guibg=#073642	ctermfg=red	  ctermbg=darkBlue')
