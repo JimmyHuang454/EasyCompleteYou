@@ -10,7 +10,6 @@ class Operate(object):
     """
     def __init__(self):
         self.engine_name = 'pyls'
-        self.position_cache = {}
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
@@ -46,13 +45,11 @@ class Operate(object):
         logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri, 'c', text, version=0)
+            return_id = self._lsp.didopen(uri, 'c', text, version=version)
             self._did_open_list[uri] = {}
-            self._did_open_list[uri]['change_version'] = 0
         else:
             self._did_open_list[uri]['change_version'] += 1
-            return_id = self._lsp.didchange(
-                uri, text, version=self._did_open_list[uri]['change_version'])
+            return_id = self._lsp.didchange(uri, text, version=version)
 
 
 # }}}
@@ -108,12 +105,6 @@ class Operate(object):
             'character': current_cache['current_colum']
         }
 
-        # if (current_cache == self.position_cache
-        #         and self.position_cache != {}):
-        #     context['show_list'] = self.results_list
-        #     return context
-
-        self.position_cache = current_cache
         self.results_list = []
 
         temp = self._lsp.completion(uri, current_start_postion)
