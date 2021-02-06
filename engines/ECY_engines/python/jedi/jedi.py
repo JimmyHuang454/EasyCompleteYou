@@ -232,6 +232,16 @@ class Operate():
         return False
         # }}}
 
+    def _is_need_to_update(self, context, regex):
+        params = context['params']
+        current_colum = params['buffer_position']['colum']
+        # current_line = params['buffer_position']['line']
+        current_line_content = params['buffer_position']['line_content']
+        temp = bytes(current_line_content, encoding='utf-8')
+        prev_key = str(temp[:current_colum], encoding='utf-8')
+
+        return utils.MatchFilterKeys(prev_key, regex)
+
     def OnCompletion(self, context):
         # {{{
         params = context['params']

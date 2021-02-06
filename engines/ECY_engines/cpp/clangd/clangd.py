@@ -1,4 +1,5 @@
 import threading
+from ECY import utils
 from loguru import logger
 from ECY.lsp import language_server_protocol
 from ECY import rpc
@@ -9,19 +10,21 @@ class Operate(object):
     """
     def __init__(self):
         self.engine_name = 'pyls'
+        self.position_cache = {}
         self._did_open_list = {}
+        self.results_list = []
+        self.is_InComplete = False
         self._start_server()
 
     def _start_server(self):
         self._lsp = language_server_protocol.LSP()
         starting_cmd = 'clangd'
-        starting_cmd += ' --limit-results=500 --offset-encoding=utf-8'
+        starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
         self._lsp.GetResponse(temp['Method'],
                               timeout_=5)  # failed to load if timeout
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
-        self.completion_cache = []
         self._lsp.initialized()
 
     def _handle_log_msg(self):
@@ -72,6 +75,23 @@ class Operate(object):
     # def OnBufferEnter(self, context):
     #     self._did_open_or_change(context)
 
+    def _is_need_to_update(self, context, regex):
+        params = context['params']
+        current_colum = params['buffer_position']['colum']
+        current_line = params['buffer_position']['line']
+        current_line_content = params['buffer_position']['line_content']
+        temp = bytes(current_line_content, encoding='utf-8')
+        prev_key = str(temp[:current_colum], encoding='utf-8')
+
+        current_colum, filter_words, last_key = utils.MatchFilterKeys(
+            prev_key, regex)
+        cache = {
+            'current_line': current_line,
+            'current_colum': current_colum,
+            'line_counts': len(params['buffer_content'])
+        }
+        return cache
+
     def OnCompletion(self, context):
         if rpc.GetVaribal('&filetype') != 'cpp':
             return
@@ -82,10 +102,19 @@ class Operate(object):
 
         start_position = params['buffer_position']
 
+        current_cache = self._is_need_to_update(context, r'[\w+]')
         current_start_postion = {
             'line': start_position['line'],
-            'character': start_position['colum']
+            'character': current_cache['current_colum']
         }
+
+        # if (current_cache == self.position_cache
+        #         and self.position_cache != {}):
+        #     context['show_list'] = self.results_list
+        #     return context
+
+        self.position_cache = current_cache
+        self.results_list = []
 
         temp = self._lsp.completion(uri, current_start_postion)
         return_data = self._waitting_for_response(temp['Method'], temp['ID'])
@@ -96,7 +125,8 @@ class Operate(object):
         if return_data['result'] is None:
             return
 
-        self.completion_cache = []
+        self.is_InComplete = return_data['result']['isIncomplete']
+
         for item in return_data['result']['items']:
             results_format = {
                 'abbr': '',
@@ -120,7 +150,6 @@ class Operate(object):
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 
-            self.completion_cache.append(results_format)
-
-        context['show_list'] = self.completion_cache
+            self.results_list.append(results_format)
+        context['show_list'] = self.results_list
         return context

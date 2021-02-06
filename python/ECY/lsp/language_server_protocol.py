@@ -27,11 +27,15 @@ class LSP(conec.Operate):
         threading.Thread(target=self._classify_response, daemon=True).start()
         self._using_server_id = None
 
+    def Debug(self, msg):
+        return
+        logger.info(msg)
+
     def _classify_response(self):
         while 1:
             todo = self.GetTodo()
             debug = "<---" + todo['data']
-            logger.debug(debug)
+            self.Debug(debug)
             todo = json.loads(todo['data'])
             if 'id' not in todo.keys():
                 # a notification send from server
@@ -132,7 +136,7 @@ class LSP(conec.Operate):
         context = json.dumps(context)
         context_lenght = len(context)
         debug = "--->" + context
-        logger.debug(debug)
+        self.Debug(debug)
         message = ("Content-Length: {}\r\n\r\n"
                    "{}".format(context_lenght, context))
         self.SendData(self.GetUsingServerID(),
