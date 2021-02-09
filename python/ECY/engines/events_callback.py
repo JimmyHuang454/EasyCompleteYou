@@ -18,6 +18,8 @@ class Operate():
         self.is_get_opts_done = True
         if rpc.GetVaribal('g:has_floating_windows_support') == 'has_no':
             self.is_indent = False
+        else:
+            self.is_indent = True
 
     def OnBufferEnter(self, context):
         self._get_opts()
@@ -57,5 +59,14 @@ class Operate():
             context['show_list'],
             isindent=self.is_indent,
             isreturn_match_point=self.is_indent)
+
+        if 'must_show' not in context:
+            if 'trigger_key' in context:
+                if last_key in context['trigger_key']:
+                    context['must_show'] = True
+                else:
+                    context['must_show'] = False
+            else:
+                context['must_show'] = False
 
         rpc.DoCall('DoCompletion', [context])

@@ -9,19 +9,19 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'pyls'
+        self.engine_name = 'rust_analyzer'
         self._did_open_list = {}
         self.results_list = []
-        self.is_InComplete = False
-        self.trigger_key = ['.', '>', ':', '*']
+        # self.is_InComplete = False
+        self.trigger_key = ['.', ':']
         self._start_server()
 
     def _start_server(self):
         self._lsp = language_server_protocol.LSP()
-        starting_cmd = 'clangd'
-        starting_cmd += ' --limit-results=500'
+        starting_cmd = 'rust_analyzer'
         self._lsp.StartJob(starting_cmd)
-        temp = self._lsp.initialize()
+        temp = self._lsp.initialize(rootUri=self._lsp.PathToUri(
+            "C:/Users/qwer/Desktop/vimrc/myproject/test/rust/hello_world"))
         self._lsp.GetResponse(temp['Method'],
                               timeout_=5)  # failed to load if timeout
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
@@ -46,7 +46,7 @@ class Operate(object):
         logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri, 'c', text, version=version)
+            return_id = self._lsp.didopen(uri, 'rust', text, version=version)
             self._did_open_list[uri] = {}
         else:
             return_id = self._lsp.didchange(uri, text, version=version)
@@ -118,7 +118,7 @@ class Operate(object):
         if return_data['result'] is None:
             return
 
-        self.is_InComplete = return_data['result']['isIncomplete']
+        # self.is_InComplete = return_data['result']['isIncomplete']
 
         for item in return_data['result']['items']:
             results_format = {
@@ -134,12 +134,6 @@ class Operate(object):
                 item['kind'])
 
             item_name = item['filterText']
-
-            if results_format['kind'] == 'File':
-                name_len = len(item_name)
-                if item_name[name_len - 1] in ['>', '"'] and name_len >= 2:
-                    item_name = item_name[:name_len - 1]
-
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 

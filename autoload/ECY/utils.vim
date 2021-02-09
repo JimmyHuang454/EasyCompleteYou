@@ -38,7 +38,6 @@ function DefineColor(name, colora) abort
 "}}}
 endfunction
 
-
 function! IsInList(item, list) abort
 "{{{
   let i = 0

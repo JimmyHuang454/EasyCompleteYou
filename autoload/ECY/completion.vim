@@ -115,7 +115,8 @@ endf
 
 fun! DoCompletion(context)
 "{{{
-  if g:popup_windows_is_selecting
+  if (g:popup_windows_is_selecting || len(a:context['filter_key']) <= g:ECY_triggering_length) 
+        \&& !a:context['must_show']
     return
   endif
 
@@ -285,6 +286,9 @@ fun! s:Init()
 
   let g:ECY_select_items
         \= get(g:, 'ECY_select_items',['h','<S-TAB>'])
+
+  let g:ECY_triggering_length
+        \= get(g:,'ECY_triggering_length',1)
 
   " let g:ECY_select_items = ['h','<S-TAB>']
 

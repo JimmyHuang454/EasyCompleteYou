@@ -133,6 +133,20 @@ call AddEngine({
             \'path': 'pip', 
             \'file_type':['python']
             \})
+
+call AddEngine({
+            \'engine_name': 'ECY_engines.golang.gopls.gopls', 
+            \'ability': [], 
+            \'path': 'pip', 
+            \'file_type':['go']
+            \})
+
+call AddEngine({
+            \'engine_name': 'ECY_engines.rust.rust_analyzer.rust_analyzer', 
+            \'ability': [], 
+            \'path': 'pip', 
+            \'file_type':['rust']
+            \})
 "}}}
 endf
 

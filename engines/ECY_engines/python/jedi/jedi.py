@@ -60,6 +60,7 @@ class Operate():
             'force': None,
             'force_version': None
         }
+        self.trigger_key = ['.', '>', ':', '*']
 
     def _GetJediScript(self, context):
         try:
@@ -244,6 +245,7 @@ class Operate():
 
     def OnCompletion(self, context):
         # {{{
+        context['trigger_key'] = self.trigger_key
         params = context['params']
         current_colum = params['buffer_position']['colum']
         current_line = params['buffer_position']['line']

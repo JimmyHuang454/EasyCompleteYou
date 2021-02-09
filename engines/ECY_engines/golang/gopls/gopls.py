@@ -9,21 +9,25 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'pyls'
+        self.engine_name = 'gopls'
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
-        self.trigger_key = ['.', '>', ':', '*']
+        self.trigger_key = ['.', '\"']
+        self.commands = []
         self._start_server()
 
     def _start_server(self):
         self._lsp = language_server_protocol.LSP()
-        starting_cmd = 'clangd'
-        starting_cmd += ' --limit-results=500'
+        starting_cmd = 'gopls'
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
-        self._lsp.GetResponse(temp['Method'],
-                              timeout_=5)  # failed to load if timeout
+        temp = self._lsp.GetResponse(temp['Method'],
+                                     timeout_=5)  # failed to load if timeout
+
+        self.commands = temp['result']['capabilities'][
+            'executeCommandProvider']['commands']
+
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         self._lsp.initialized()
 
@@ -46,7 +50,7 @@ class Operate(object):
         logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri, 'c', text, version=version)
+            return_id = self._lsp.didopen(uri, 'golang', text, version=version)
             self._did_open_list[uri] = {}
         else:
             return_id = self._lsp.didchange(uri, text, version=version)
