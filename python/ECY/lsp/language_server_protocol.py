@@ -23,12 +23,12 @@ class LSP(conec.Operate):
         self.server_id = -1
         self._queue_dict = {}
         self._waitting_response = {}
+        self.workDoneToken_id = 0
         super().__init__()
         threading.Thread(target=self._classify_response, daemon=True).start()
         self._using_server_id = None
 
     def Debug(self, msg):
-        return
         logger.info(msg)
 
     def _classify_response(self):
@@ -385,6 +385,16 @@ class LSP(conec.Operate):
     def completionItem_resolve(self, completion_item):
         params = {'CompletionItem': completion_item}
         return self._build_send(params, 'completionItem/resolve')
+
+    def executeCommand(self, command, workDoneToken=None, arguments=[]):
+        if workDoneToken is None:
+            self.workDoneToken_id += 1
+            workDoneToken = self.workDoneToken_id
+
+        params = {'workDoneToken': workDoneToken, 'command': command}
+        if arguments != []:
+            params['arguments'] = arguments
+        return self._build_send(params, 'workspace/executeCommand')
 
     def completion(self, uri, position, triggerKind=1, triggerCharacter=None):
         TextDocumentIdentifier = {'uri': uri}

@@ -6,6 +6,7 @@ import shlex
 import queue
 import threading
 import re
+from loguru import logger
 
 
 class ThreadOfJob(object):
@@ -64,6 +65,8 @@ class ThreadOfJob(object):
         while self.IsServerAlive():
             temp = self._sub_object.stderr.readline()
             temp = str(temp.decode("UTF-8"))
+            logger.debug(temp)
+        logger.debug("server die")
 
     def IsServerAlive(self):
         if self._sub_object.poll() is None:
