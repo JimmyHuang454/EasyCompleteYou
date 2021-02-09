@@ -386,6 +386,21 @@ class LSP(conec.Operate):
         params = {'CompletionItem': completion_item}
         return self._build_send(params, 'completionItem/resolve')
 
+    def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
+        if workDoneToken is None:
+            self.workDoneToken_id += 1
+            workDoneToken = self.workDoneToken_id
+        if ProgressToken is None:
+            self.workDoneToken_id += 1
+            ProgressToken = self.workDoneToken_id
+
+        params = {
+            'workDoneToken': workDoneToken,
+            'partialResultToken': ProgressToken,
+            'textDocument': uri
+        }
+        return self._build_send(params, 'textDocument/codeLens')
+
     def executeCommand(self, command, workDoneToken=None, arguments=[]):
         if workDoneToken is None:
             self.workDoneToken_id += 1
