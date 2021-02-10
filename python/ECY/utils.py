@@ -25,3 +25,20 @@ def MatchFilterKeys(line_text, regex):
         elif text_len >= 0:
             last_key = line_text[0]
     return start_position, match_words, last_key
+
+def IsNeedToUpdate(context, regex):
+    params = context['params']
+    current_colum = params['buffer_position']['colum']
+    current_line = params['buffer_position']['line']
+    current_line_content = params['buffer_position']['line_content']
+    temp = bytes(current_line_content, encoding='utf-8')
+    prev_key = str(temp[:current_colum], encoding='utf-8')
+
+    current_colum, filter_words, last_key = utils.MatchFilterKeys(
+        prev_key, regex)
+    cache = {
+        'current_line': current_line,
+        'current_colum': current_colum,
+        'line_counts': len(params['buffer_content'])
+    }
+    return cache

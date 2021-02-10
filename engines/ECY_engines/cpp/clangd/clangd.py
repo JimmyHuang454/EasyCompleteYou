@@ -22,9 +22,9 @@ class Operate(object):
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
-        self._lsp.GetResponse(temp['Method'],
-                              timeout_=5)  # failed to load if timeout
+        self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
+        threading.Thread(target=self._get_diagnosis, daemon=True).start()
         self._lsp.initialized()
 
     def _handle_log_msg(self):
@@ -72,23 +72,6 @@ class Operate(object):
     # def OnBufferEnter(self, context):
     #     self._did_open_or_change(context)
 
-    def _is_need_to_update(self, context, regex):
-        params = context['params']
-        current_colum = params['buffer_position']['colum']
-        current_line = params['buffer_position']['line']
-        current_line_content = params['buffer_position']['line_content']
-        temp = bytes(current_line_content, encoding='utf-8')
-        prev_key = str(temp[:current_colum], encoding='utf-8')
-
-        current_colum, filter_words, last_key = utils.MatchFilterKeys(
-            prev_key, regex)
-        cache = {
-            'current_line': current_line,
-            'current_colum': current_colum,
-            'line_counts': len(params['buffer_content'])
-        }
-        return cache
-
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
 
@@ -101,7 +84,7 @@ class Operate(object):
 
         start_position = params['buffer_position']
 
-        current_cache = self._is_need_to_update(context, r'[\w+]')
+        current_cache = utils.IsNeedToUpdate(context, r'[\w+]')
 
         current_start_postion = {
             'line': start_position['line'],
@@ -172,7 +155,77 @@ class Operate(object):
             self._lsp.executeCommand(params['cmd_name'],
                                      arguments=params['param_list'])
 
-    def GetCodeLens(self, context):
-        params = context['params']
-        uri = self._lsp.PathToUri(params['buffer_path'])
-        self._lsp.codeLens(uri)
+    def _get_diagnosis(self):
+        while True:
+            try:
+                temp = self._lsp.GetResponse('textDocument/publishDiagnostics',
+                                             timeout_=-1)
+                self._diagnosis_cache = temp
+                lists = self._diagnosis_analysis(temp['params'])
+                # rpc.do
+            except Exception as e:
+                logger.exception(e)
+
+    def _diagnosis_analysis(self, params):
+        results_list = []
+        file_path = self._lsp.UriToPath(params['uri'])
+        if file_path == '':
+            return results_list
+        for item in params['diagnostics']:
+            ranges = item['range']
+            start_line = ranges['start']['line'] + 1
+            start_colum = ranges['start']['character']
+            end_line = ranges['end']['line'] + 1
+            end_colum = ranges['end']['character']
+            pos_string = '[%s, %s]' % (str(start_line), str(start_colum))
+
+            position = {
+                'line': start_line,
+                'range': {
+                    'start': {
+                        'line': start_line,
+                        'colum': start_colum
+                    },
+                    'end': {
+                        'line': end_line,
+                        'colum': end_colum
+                    }
+                }
+            }
+            diagnosis = item['message']
+            if item['severity'] == 1:
+                kind = 1
+            else:
+                kind = 2
+            kind_name = self._lsp.GetDiagnosticSeverity(item['severity'])
+            temp = [{
+                'name': '1',
+                'content': {
+                    'abbr': diagnosis
+                }
+            }, {
+                'name': '2',
+                'content': {
+                    'abbr': kind_name
+                }
+            }, {
+                'name': '3',
+                'content': {
+                    'abbr': file_path
+                }
+            }, {
+                'name': '4',
+                'content': {
+                    'abbr': pos_string
+                }
+            }]
+            temp = {
+                'items': temp,
+                'type': 'diagnosis',
+                'file_path': file_path,
+                'kind': kind,
+                'diagnosis': diagnosis,
+                'position': position
+            }
+            results_list.append(temp)
+        return results_list
