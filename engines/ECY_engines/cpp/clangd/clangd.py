@@ -89,10 +89,11 @@ class Operate(object):
         }
         return cache
 
-    def OnCompletion(self, context):
-        # if rpc.GetVaribal('&filetype') != 'cpp':
-        #     return
+    def OnBufferEnter(self, context):
         self._did_open_or_change(context)
+
+    def OnCompletion(self, context):
+        self.OnBufferEnter(context)
         context['trigger_key'] = self.trigger_key
         params = context['params']
         uri = params['buffer_path']
@@ -146,3 +147,32 @@ class Operate(object):
             self.results_list.append(results_format)
         context['show_list'] = self.results_list
         return context
+
+    def DoCmd(self, context):
+        params = context['params']
+        uri = self._lsp.PathToUri(params['buffer_path'])
+        try:
+            open_style = params['open_style']
+        except:
+            open_style = 'v'
+
+        if params[
+                'cmd_name'] == 'switch_source_and_header':  # only supports by clangd
+            params = {'uri': uri}
+            temp = self._lsp._build_send(params,
+                                         'textDocument/switchSourceHeader')
+            temp = self._lsp.GetResponse(temp['Method'], timeout_=5)
+            if temp['result'] is not None:
+                path = self._lsp.UriToPath(temp['result'])
+                rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
+            else:
+                rpc.DoCall('utils#echo',
+                           ["Can not find it's header/source. Try it latter."])
+        else:
+            self._lsp.executeCommand(params['cmd_name'],
+                                     arguments=params['param_list'])
+
+    def GetCodeLens(self, context):
+        params = context['params']
+        uri = self._lsp.PathToUri(params['buffer_path'])
+        self._lsp.codeLens(uri)

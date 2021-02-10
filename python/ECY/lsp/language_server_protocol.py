@@ -397,9 +397,41 @@ class LSP(conec.Operate):
         params = {
             'workDoneToken': workDoneToken,
             'partialResultToken': ProgressToken,
-            'textDocument': uri
+            'textDocument': {
+                'uri': uri
+            }
         }
         return self._build_send(params, 'textDocument/codeLens')
+
+    def codeAction(self,
+                   uri,
+                   start_position,
+                   end_position,
+                   diagnostic=[],
+                   workDoneToken=None,
+                   ProgressToken=None):
+
+        if workDoneToken is None:
+            self.workDoneToken_id += 1
+            workDoneToken = self.workDoneToken_id
+        if ProgressToken is None:
+            self.workDoneToken_id += 1
+            ProgressToken = self.workDoneToken_id
+
+        ranges = {'start': start_position, 'end': end_position}
+
+        params = {
+            'workDoneToken': workDoneToken,
+            'partialResultToken': ProgressToken,
+            'range': ranges,
+            'context': {
+                'diagnostic': diagnostic
+            },
+            'textDocument': {
+                'uri': uri
+            }
+        }
+        return self._build_send(params, 'textDocument/codeAction')
 
     def executeCommand(self, command, workDoneToken=None, arguments=[]):
         if workDoneToken is None:

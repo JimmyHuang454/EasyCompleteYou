@@ -60,7 +60,7 @@ class Mannager(object):
                 engine_info['res_queue'].put(callback_context)
             except Exception as e:
                 logger.exception(e)
-                rpc.DoCall('rpc_main#echo', [
+                rpc.DoCall('utils#echo', [
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
                     % (engine_name)
                 ])

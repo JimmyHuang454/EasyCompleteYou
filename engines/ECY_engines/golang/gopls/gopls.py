@@ -28,8 +28,18 @@ class Operate(object):
         self.commands = temp['result']['capabilities'][
             'executeCommandProvider']['commands']
 
+        threading.Thread(target=self._handle_show_msg, daemon=True).start()
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         self._lsp.initialized()
+
+    def _handle_show_msg(self):
+        while 1:
+            try:
+                response = self._lsp.GetResponse('window/showMessage',
+                                                 timeout_=-1)
+                rpc.DoCall('utils#echo', [response])
+            except:
+                pass
 
     def _handle_log_msg(self):
         while 1:
@@ -150,3 +160,14 @@ class Operate(object):
             self.results_list.append(results_format)
         context['show_list'] = self.results_list
         return context
+
+    def DoCmd(self, context):
+        params = context['params']
+        if params['cmd_name'] not in self.commands:
+            return
+        self._lsp.executeCommand(params['cmd_name'],
+                                 arguments=params['param_list'])
+
+    def GetCodeLens(self, context):
+        params = context['params']
+        self._lsp.codeLens(self._lsp.PathToUri(params['buffer_path']))
