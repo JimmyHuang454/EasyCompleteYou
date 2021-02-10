@@ -429,7 +429,7 @@ class LSP(conec.Operate):
             'partialResultToken': ProgressToken,
             'range': ranges,
             'context': {
-                'diagnostic': diagnostic
+                'diagnostics': diagnostic
             },
             'textDocument': {
                 'uri': uri
