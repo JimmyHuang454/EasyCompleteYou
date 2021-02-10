@@ -14,6 +14,8 @@ class Operate(object):
         self.results_list = []
         self.is_InComplete = False
         self.trigger_key = ['.', '>', ':', '*']
+        self.workspace_cache = []
+        self._diagnosis_cache = []
         self._start_server()
 
     def _start_server(self):
@@ -21,7 +23,9 @@ class Operate(object):
         starting_cmd = 'clangd'
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
-        temp = self._lsp.initialize()
+        self.workspace_cache.append(
+            rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
+        temp = self._lsp.initialize(rootUri=self.workspace_cache[0])
         self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
@@ -69,14 +73,16 @@ class Operate(object):
         return return_data
         # }}}
 
-    # def OnBufferEnter(self, context):
-    #     self._did_open_or_change(context)
-
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
+        temp = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        if temp not in self.workspace_cache and temp != '':
+            self.workspace_cache.append(temp)
+            add_workspace = {'uri': self._lsp.PathToUri(temp), 'name': temp}
+            self._lsp.didChangeWorkspaceFolders(add_workspace=[add_workspace])
 
     def OnCompletion(self, context):
-        self.OnBufferEnter(context)
+        self._did_open_or_change(context)
         context['trigger_key'] = self.trigger_key
         params = context['params']
         uri = params['buffer_path']
@@ -162,9 +168,20 @@ class Operate(object):
                                              timeout_=-1)
                 self._diagnosis_cache = temp
                 lists = self._diagnosis_analysis(temp['params'])
+                logger.debug(lists)
                 # rpc.do
             except Exception as e:
                 logger.exception(e)
+
+    def DoCodeAction(self, context):
+        params = context['params']
+        uri = self._lsp.PathToUri(params['buffer_path'])
+        start_position = {}
+        end_position = {}
+        returns = self._lsp.codeAction(uri,
+                                       start_position,
+                                       end_position,
+                                       diagnostic=self._diagnosis_cache)
 
     def _diagnosis_analysis(self, params):
         results_list = []

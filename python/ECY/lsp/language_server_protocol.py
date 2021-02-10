@@ -330,6 +330,10 @@ class LSP(conec.Operate):
         return self._build_send(params, 'initialize')
 
     def didChangeWorkspaceFolders(self, add_workspace=[], remove_workspace=[]):
+        # add_workspace = {'uri': 'xx', 'name': 'yyy'}
+        if add_workspace == [] and remove_workspace == []:
+            return
+
         params = {
             'event': {
                 'added': add_workspace,
