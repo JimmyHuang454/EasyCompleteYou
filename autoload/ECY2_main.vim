@@ -8,38 +8,45 @@ endf
 fun! ECY2_main#DoCmd(cmd_name, param_list)
 "{{{
 
-  " call ECY2_main#DoCmd('gopls.tidy', [])
-  let l:send_msg = {'event_name': 'DoCmd', 'params': {
-                \'buffer_content': GetCurrentBufferContent(), 
+  let l:params = {
                 \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
-                \'buffer_id': GetBufferIDChange(),
+                \'buffer_line': GetCurrentLine(), 
+                \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
                 \'param_list': a:param_list,
-                \'cmd_name': a:cmd_name
+                \'cmd_name': a:cmd_name,
+                \'buffer_id': GetBufferIDNotChange()
                 \}}
-  call RPCEventsAll(l:send_msg)
+
+  call RPCCall({'event_name': 'DoCmd', 'params': l:params})
 "}}}
 endf
 
 fun! ECY2_main#GetCodeLens()
 "{{{
-  let l:send_msg = {'event_name': 'GetCodeLens', 'params': {
-                \'buffer_content': GetCurrentBufferContent(), 
+  let l:params = {
                 \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
-                \'buffer_id': GetBufferIDChange()
+                \'buffer_line': GetCurrentLine(), 
+                \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
+                \'buffer_id': GetBufferIDNotChange()
                 \}}
-  call RPCEventsAll(l:send_msg)
+
+  call RPCCall({'event_name': 'GetCodeLens', 'params': l:params})
 "}}}
 endf
 
 fun! ECY2_main#DoCodeAction()
 "{{{
 
-  " call ECY2_main#DoCmd('gopls.tidy', [])
-  let l:send_msg = {'event_name': 'DoCodeAction', 'params': {
-                \'buffer_content': GetCurrentBufferContent(), 
+  let l:params = {
                 \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
-                \'buffer_id': GetBufferIDChange()
+                \'buffer_line': GetCurrentLine(), 
+                \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
+                \'buffer_id': GetBufferIDNotChange()
                 \}}
-  call RPCEventsAll(l:send_msg)
+
+  call RPCCall({'event_name': 'DoCodeAction', 'params': l:params})
 "}}}
 endf
