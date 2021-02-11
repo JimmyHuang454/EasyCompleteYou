@@ -70,3 +70,9 @@ class Operate():
                 context['must_show'] = False
 
         rpc.DoCall('DoCompletion', [context])
+
+    def DoCodeAction(self, context):
+        if 'result' not in context:
+            logger.debug('missing params. "result"')
+            return
+        rpc.DoCall('DoCodeAction', [context])

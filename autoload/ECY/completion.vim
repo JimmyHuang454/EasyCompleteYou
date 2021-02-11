@@ -31,10 +31,6 @@ endf
 
 fun! DoCompletion_vim(context)
 "{{{
-  if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
-        \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
-    return
-  endif
 
   if s:popup_windows_nr != -1
     call CloseCompletionWindows()
@@ -117,6 +113,11 @@ fun! DoCompletion(context)
 "{{{
   if (g:popup_windows_is_selecting || len(a:context['filter_key']) <= g:ECY_triggering_length) 
         \&& !a:context['must_show']
+    return
+  endif
+
+  if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+        \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
     return
   endif
 

@@ -30,3 +30,16 @@ fun! ECY2_main#GetCodeLens()
   call RPCEventsAll(l:send_msg)
 "}}}
 endf
+
+fun! ECY2_main#DoCodeAction()
+"{{{
+
+  " call ECY2_main#DoCmd('gopls.tidy', [])
+  let l:send_msg = {'event_name': 'DoCodeAction', 'params': {
+                \'buffer_content': GetCurrentBufferContent(), 
+                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+                \'buffer_id': GetBufferIDChange()
+                \}}
+  call RPCEventsAll(l:send_msg)
+"}}}
+endf

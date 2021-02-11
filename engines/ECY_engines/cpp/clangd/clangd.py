@@ -166,9 +166,8 @@ class Operate(object):
             try:
                 temp = self._lsp.GetResponse('textDocument/publishDiagnostics',
                                              timeout_=-1)
-                self._diagnosis_cache = temp
+                self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
-                logger.debug(lists)
                 # rpc.do
             except Exception as e:
                 logger.exception(e)
@@ -176,12 +175,17 @@ class Operate(object):
     def DoCodeAction(self, context):
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
-        start_position = {}
-        end_position = {}
+        start_position = {'line': 0, 'character': 0}
+        end_position = {'line': 0, 'character': 0}
+
+        if self._diagnosis_cache == []:
+            return
         returns = self._lsp.codeAction(uri,
                                        start_position,
                                        end_position,
                                        diagnostic=self._diagnosis_cache)
+        context['result'] = returns
+        return context
 
     def _diagnosis_analysis(self, params):
         results_list = []
