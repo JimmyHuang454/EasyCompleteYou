@@ -193,7 +193,9 @@ class Operate(object):
         return context
 
     def _get_buffer_version(self, uri):
-        
+        if uri not in self._did_open_list:
+            return 1
+        return self._did_open_list[uri]['buffer_id']
 
     def _code_action_analysis(self, results):
         change_list = []

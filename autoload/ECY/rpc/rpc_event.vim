@@ -2,6 +2,14 @@ fun! s:Call(params)
 "{{{
 
   let l:event_name = a:params['event_name']
+  let l:params = a:params['params']
+  let l:params = {
+                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+                \'buffer_line': GetCurrentLine(), 
+                \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
+                \'buffer_id': GetBufferIDChange()
+                \}}
 
   if g:popup_windows_is_selecting && l:event_name == 'OnCompletion'
     let g:popup_windows_is_selecting = v:false
@@ -20,13 +28,7 @@ fun! s:Call(params)
     call Function(l:event_name)
   endfor
 
-  let l:send_msg = {'event_name': l:event_name, 'params': {
-                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDChange()
-                \}}
+  let l:send_msg = {'event_name': l:event_name, 'params': l:params}
   call RPCEventsAll(l:send_msg)
 
   for Function in g:event_pre[l:event_name]
@@ -83,21 +85,46 @@ fun! GetBufferIDChange()
 "}}}
 endf
 
+fun! s:OnBufferEnter()
+"{{{
+"}}}
+endf
+
+fun! s:OnVimLeavePre()
+"{{{
+"}}}
+endf
+
+fun! s:OnTextChanged()
+"{{{
+"}}}
+endf
+
+fun! s:OnCompletion()
+"{{{
+"}}}
+endf
+
+fun! s:OnInsertLeave()
+"{{{
+"}}}
+endf
+
 fun! RPCInitEvent()
 "{{{
   augroup EasyCompleteYou2
     autocmd!
-    autocmd FileType      * call s:Call({'event_name': 'OnBufferEnter'})
-    autocmd BufEnter      * call s:Call({'event_name': 'OnBufferEnter'})
-    autocmd VimLeavePre   * call s:Call({'event_name': 'OnVimLeavePre'})
+    autocmd FileType      * call s:OnBufferEnter()
+    autocmd BufEnter      * call s:OnBufferEnter()
+    autocmd VimLeavePre   * call s:OnVimLeavePre()
 
     " will send full buffer data to the server.
     " invoked after typing a character into the buffer or user sept in insert mode  
-    autocmd TextChanged   * call s:Call({'event_name': 'OnTextChanged'})
-    autocmd TextChangedI  * call s:Call({'event_name': 'OnCompletion'})
+    autocmd TextChanged   * call s:OnTextChanged()
+    autocmd InsertLeave   * call s:OnInsertLeave()
 
-    autocmd InsertLeave   * call s:Call({'event_name': 'OnInsertLeave'})
-    autocmd InsertEnter   * call s:Call({'event_name': 'OnCompletion'})
+    autocmd TextChangedI  * call s:OnCompletion()
+    autocmd InsertEnter   * call s:OnCompletion()
   augroup END
   let g:event_pre = {}
   let g:event_callback = {}
