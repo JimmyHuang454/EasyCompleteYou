@@ -75,4 +75,7 @@ class Operate():
         if 'result' not in context:
             logger.debug('missing params. "result"')
             return
+        results = context['result']['result']
+        for item in results:
+            pass
         rpc.DoCall('DoCodeAction', [context])

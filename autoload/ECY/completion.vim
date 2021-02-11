@@ -1,12 +1,3 @@
-fun! GetBufferIDNotChange()
-"{{{
-    if !exists('b:buffer_id')
-      return -1
-    endif
-    return b:buffer_id
-"}}}
-endf
-
 fun! s:Indent(show_list)
 "{{{
   let l:max = 0

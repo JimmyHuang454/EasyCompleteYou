@@ -53,12 +53,34 @@ fun! AddEventCallback(event_name, Function)
 "}}}
 endf
 
+fun! GetBufferIDNotChange()
+"{{{
+  let l:buffer_path = ECY#utility#GetCurrentBufferPath()
+  if !has_key(g:ECY_buffer_version, l:buffer_path)
+      let g:ECY_buffer_version[l:buffer_path] = 0
+  endif
+  return g:ECY_buffer_version[l:buffer_path]
+"}}}
+endf
+
+fun! GetBufferIDByPath(path)
+"{{{
+  if !has_key(g:ECY_buffer_version, a:path)
+    throw "Bad path."
+  endif
+  return g:ECY_buffer_version[a:path]
+"}}}
+endf
+
 fun! GetBufferIDChange()
-    if !exists('b:buffer_id')
-        let b:buffer_id = 0
-    endif
-    let b:buffer_id += 1
-    return b:buffer_id
+"{{{
+  let l:buffer_path = ECY#utility#GetCurrentBufferPath()
+  if !has_key(g:ECY_buffer_version, l:buffer_path)
+      let g:ECY_buffer_version[l:buffer_path] = 0
+  endif
+  let g:ECY_buffer_version[l:buffer_path] += 1
+  return g:ECY_buffer_version[l:buffer_path]
+"}}}
 endf
 
 fun! RPCInitEvent()

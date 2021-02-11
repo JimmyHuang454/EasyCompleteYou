@@ -51,9 +51,10 @@ class Operate(object):
         # LSP requires the edit-version
         if uri not in self._did_open_list:
             return_id = self._lsp.didopen(uri, 'c', text, version=version)
-            self._did_open_list[uri] = {}
+            self._did_open_list[uri] = {'buffer_id': version}
         else:
             return_id = self._lsp.didchange(uri, text, version=version)
+            self._did_open_list[uri]['buffer_id'] = version
 
 
 # }}}
@@ -80,6 +81,9 @@ class Operate(object):
             self.workspace_cache.append(temp)
             add_workspace = {'uri': self._lsp.PathToUri(temp), 'name': temp}
             self._lsp.didChangeWorkspaceFolders(add_workspace=[add_workspace])
+
+    def OnTextChanged(self, context):
+        self._did_open_or_change(context)
 
     def OnCompletion(self, context):
         self._did_open_or_change(context)
@@ -184,8 +188,33 @@ class Operate(object):
                                        start_position,
                                        end_position,
                                        diagnostic=self._diagnosis_cache)
+        returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
         context['result'] = returns
         return context
+
+    def _get_buffer_version(self, uri):
+        
+
+    def _code_action_analysis(self, results):
+        change_list = []
+        command_list = []
+        for item in results:
+            if 'diagnostics' in item:
+                for item2 in item['edit']:
+                    if 'changes' in item2:
+                        for change in item2['changes']:
+                            path = self._lsp.UriToPath(change)
+                            change_list.append({
+                                'file_path': path,
+                                'edit': item2['changes'][change]
+                            })
+                    if 'command' in item2:
+                        # TODO
+                        pass
+            else:
+                # TODO
+                pass
+        return {'change_list': change_list, 'command_list': command_list}
 
     def _diagnosis_analysis(self, params):
         results_list = []

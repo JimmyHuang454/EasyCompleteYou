@@ -15,5 +15,6 @@ endif
 " must put these outside a function
 let g:ECY_base_dir = expand( '<sfile>:p:h:h' )
 let g:ECY_base_dir = tr(g:ECY_base_dir, '\', '/')
+let g:ECY_buffer_version = {}
 
 let g:ECY_python_script_folder_path = g:ECY_base_dir . '/python'

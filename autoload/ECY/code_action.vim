@@ -2,19 +2,21 @@
 
 fun! DoCodeAction(context)
 "{{{
-  " if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
-  "       \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
-  "   return
-  " endif
+  if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+        \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
+    return
+  endif
 
   let l:current_buffer_path = ECY#utility#GetCurrentBufferPath()
   let l:results = a:context['result']['result']
+  let l:edit_res = {}
   if len(l:results) == 0
-    throw " nothing to act.
+    call utils#echo('Nothing to act.')
+    return
   endif
   for item in l:results
     if has_key(item, 'diagnostics')
-      call s:ApplyEdit(item['edit'])
+      let l:edit_res = s:ApplyEdit(item['edit'])
 
       if has_key(item, 'command')
         
@@ -25,6 +27,8 @@ fun! DoCodeAction(context)
   endfor
 
   call s:Switch(l:current_buffer_path)
+  redraw!
+  echo l:edit_res
 
   "}}}
 endf
@@ -78,15 +82,19 @@ endfunction
 
 fun! s:ApplyEdit(workspace_edit)
 "{{{
+  let l:changed = []
   if has_key(a:workspace_edit, 'changes')
     for item in keys(a:workspace_edit['changes'])
       let l:path = UriToPath(item)
       call s:Switch(l:path)
       for item2 in a:workspace_edit['changes'][item]
         call s:Apply(l:path, item2, GetCurrentBufferPosition())
+        call add(l:changed, l:path)
       endfor
     endfor
   endif
+
+  return {'changed': l:changed}
 "}}}
 endf
 
@@ -181,4 +189,4 @@ function! s:get_fixendofline(buf) abort
 endfunction
 "}}}
 
-call DoCodeAction({'result': {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}})
+" call DoCodeAction({'result': {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}})
