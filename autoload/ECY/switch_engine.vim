@@ -31,7 +31,6 @@ function! s:ChooseSource_Echoing() abort
       call ChooseSource('pre')
     else
       " a callback
-      call ECY_main#AfterUserChooseASource()
       return
     endif
   endwhile
@@ -159,10 +158,10 @@ endf
 
 fun! AddEngine(info)
 "{{{
-if !exists('g:ECY_all_buildin_engine')
-    let g:ECY_all_buildin_engine = []
-endif
-call add(g:ECY_all_buildin_engine, a:info)
+  if !exists('g:ECY_all_buildin_engine')
+      let g:ECY_all_buildin_engine = []
+  endif
+  call add(g:ECY_all_buildin_engine, a:info)
 "}}}
 endf
 
