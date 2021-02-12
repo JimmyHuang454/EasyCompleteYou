@@ -19,6 +19,7 @@ ECY_server.log
 *~
 *.log
 ECY_config.txt
+deps
 const.txt
 .root
 test.*

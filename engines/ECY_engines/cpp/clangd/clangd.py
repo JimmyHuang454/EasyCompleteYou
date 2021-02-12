@@ -13,14 +13,19 @@ class Operate(object):
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
-        self.trigger_key = ['.', '>', ':', '*']
+        self.trigger_key = [".", "<", ">", ":", "\"", "/"]
         self.workspace_cache = []
         self._diagnosis_cache = []
         self._start_server()
 
     def _start_server(self):
+        try:
+            import ECY_windows_clangd
+            has_ECY_windows_clangd = True
+        except:
+            has_ECY_windows_clangd = False
         self._lsp = language_server_protocol.LSP()
-        starting_cmd = 'clangd'
+        starting_cmd = ECY_windows_clangd.exe_path
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
         self.workspace_cache.append(
