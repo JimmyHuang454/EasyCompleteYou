@@ -3,6 +3,7 @@
 " endif
 
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/plugin/easycompleteyou2.vim
+so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY/rooter.vim
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY/code_action.vim
 so C:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou\autoload\ECY\utils.vim
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY/switch_engine.vim
@@ -11,6 +12,7 @@ so C:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou\autoload\ECY\co
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY2_main.vim
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY/rpc/rpc_event.vim
 so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/autoload/ECY/rpc/rpc_main.vim
+so C:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou\autoload\ECY\vim_lsp\main.vim
 
 call ECY2_main#Init()
 

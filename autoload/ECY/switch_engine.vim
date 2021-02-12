@@ -142,6 +142,13 @@ call AddEngine({
             \})
 
 call AddEngine({
+            \'engine_name': 'ECY_engines.vim_lsp.vim_lsp', 
+            \'ability': [], 
+            \'path': 'pip', 
+            \'file_type':['all']
+            \})
+
+call AddEngine({
             \'engine_name': 'ECY_engines.rust.rust_analyzer.rust_analyzer', 
             \'ability': [], 
             \'path': 'pip', 

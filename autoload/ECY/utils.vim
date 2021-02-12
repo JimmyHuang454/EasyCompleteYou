@@ -2,6 +2,14 @@ fun! utils#echo(msg)
   echo a:msg
 endf
 
+function! GetCurrentBufferPath(...) abort
+"{{{
+  " let l:full_path = fnamemodify(@%, ':p')
+  let l:full_path = expand('%:p')
+  return l:full_path
+"}}}
+endfunction
+
 function GetCurrentBufferPosition() abort
 "{{{ utf-8]
   return { 'line': line('.') - 1, 'colum': col('.') - 1}
@@ -34,10 +42,9 @@ function DefineColor(name, colora) abort
     return
   endif
   exe 'hi '.a:name . ' '. a:colora
-  try
-    call prop_type_add(a:name, {'highlight': a:name}) " vim
-  catch 
-  endtry
+  if g:has_floating_windows_support == 'vim'
+    call prop_type_add(a:name, {'highlight': a:name})
+  endif
 "}}}
 endfunction
 
@@ -81,7 +88,7 @@ function! MoveToBuffer(line, colum, file_path, windows_to_show) abort
     " use current buffer's windows to open that buffer if current buffer is
     " not that buffer, and if current buffer is that buffer, it will fit
     " perfectly.
-    if ECY#utility#GetCurrentBufferPath() != a:file_path
+    if GetCurrentBufferPath() != a:file_path
       silent exe "hide edit " .  a:file_path
     endif
   endif
@@ -130,3 +137,9 @@ else
         return s:decode_uri(a:uri[len('file://'):])
     endfunction
 endif
+
+function! SendKeys(keys) abort
+"{{{
+  call feedkeys( a:keys, 'in' )
+"}}}
+endfunction

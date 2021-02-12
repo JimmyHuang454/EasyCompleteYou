@@ -2,12 +2,12 @@
 
 fun! DoCodeAction(context)
 "{{{
-  if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+  if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
     return
   endif
 
-  let l:current_buffer_path = ECY#utility#GetCurrentBufferPath()
+  let l:current_buffer_path = GetCurrentBufferPath()
   let l:results = a:context['result']['result']
   let l:edit_res = {}
   if len(l:results) == 0

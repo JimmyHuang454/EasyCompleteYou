@@ -82,7 +82,7 @@ fun! DoCompletion_vim(context)
     let j = 0
     let l:point = l:to_show_matched_point[i]
     while j < len(l:to_show[i])
-      if ECY#utility#IsInList(j, l:point)
+      if IsInList(j, l:point)
         let l:hightlight = 'ECY_floating_windows_normal_matched'
       else
         let l:hightlight = 'ECY_floating_windows_normal'
@@ -107,7 +107,7 @@ fun! DoCompletion(context)
     return
   endif
 
-  if ECY#utility#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+  if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
     return
   endif
@@ -206,7 +206,7 @@ function! SelectItems_vim(next_or_pre) abort
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if ECY#utility#IsInList(i, l:point)
+      if GetCurrentBufferPath(i, l:point)
         let l:hightlight = 'ECY_floating_windows_seleted_matched'
       else
         let l:hightlight = 'ECY_floating_windows_seleted'
@@ -232,7 +232,7 @@ function! SelectItems_vim(next_or_pre) abort
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if ECY#utility#IsInList(i, l:point)
+      if IsInList(i, l:point)
         let l:hightlight = 'ECY_floating_windows_normal_matched'
       else
         let l:hightlight = 'ECY_floating_windows_normal'
@@ -262,7 +262,7 @@ endfunction
 function! SelectItems(next_or_prev, send_key) abort
 "{{{
   if !IsMenuOpen()
-    call ECY#utility#SendKeys(a:send_key)
+    call SendKeys(a:send_key)
   else
     let g:popup_windows_is_selecting = v:true
     call SelectItems_vim(a:next_or_prev)
@@ -277,15 +277,14 @@ fun! s:Init()
         \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
 
   let g:ECY_select_items
-        \= get(g:, 'ECY_select_items',['h','<S-TAB>'])
+        \= get(g:, 'ECY_select_items',['<TAB>','<S-TAB>'])
 
   let g:ECY_triggering_length
         \= get(g:,'ECY_triggering_length',1)
 
-  " let g:ECY_select_items = ['h','<S-TAB>']
-
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
+
   call DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596	guibg=#073642	ctermfg=red	  ctermbg=darkBlue')
   call DefineColor('ECY_floating_windows_normal', 'guifg=#839496	guibg=#073642	ctermfg=white	ctermbg=darkBlue')
   call DefineColor('ECY_floating_windows_seleted_matched', 'guifg=#FFFF99	guibg=#586e75	ctermfg=red	ctermbg=Blue')

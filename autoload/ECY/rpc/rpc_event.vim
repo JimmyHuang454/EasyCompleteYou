@@ -50,7 +50,7 @@ endf
 
 fun! GetBufferIDNotChange()
 "{{{
-  let l:buffer_path = ECY#utility#GetCurrentBufferPath()
+  let l:buffer_path = GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -69,7 +69,7 @@ endf
 
 fun! GetBufferIDChange()
 "{{{
-  let l:buffer_path = ECY#utility#GetCurrentBufferPath()
+  let l:buffer_path = GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -81,13 +81,12 @@ endf
 "{{{
 fun! s:OnBufferEnter()
 "{{{
-  let l:params = {
-                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+  let l:params = {'buffer_path': GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
                 \'buffer_position': GetCurrentLineAndPosition(), 
                 \'buffer_content': GetCurrentBufferContent(), 
                 \'buffer_id': GetBufferIDNotChange()
-                \}}
+                \}
 
   call RPCCall({'event_name': 'OnBufferEnter', 'params': l:params})
 "}}}
@@ -101,13 +100,12 @@ endf
 
 fun! s:OnTextChanged()
 "{{{ normal mode
-  let l:params = {
-                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+  let l:params = {'buffer_path': GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
                 \'buffer_position': GetCurrentLineAndPosition(), 
                 \'buffer_content': GetCurrentBufferContent(), 
                 \'buffer_id': GetBufferIDChange()
-                \}}
+                \}
 
   call RPCCall({'event_name': 'OnTextChanged', 'params': l:params})
 "}}}
@@ -115,13 +113,12 @@ endf
 
 fun! s:OnCompletion()
 "{{{
-  let l:params = {
-                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+  let l:params = {'buffer_path': GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
                 \'buffer_position': GetCurrentLineAndPosition(), 
                 \'buffer_content': GetCurrentBufferContent(), 
                 \'buffer_id': GetBufferIDChange()
-                \}}
+                \}
 
   call RPCCall({'event_name': 'OnCompletion', 'params': l:params})
 "}}}
@@ -129,12 +126,12 @@ endf
 
 fun! s:OnInsertLeave()
 "{{{
-  let l:params = {
-                \'buffer_path': ECY#utility#GetCurrentBufferPath(), 
+  let l:params = {'buffer_path': GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
                 \'buffer_position': GetCurrentLineAndPosition(), 
+                \'buffer_content': GetCurrentBufferContent(), 
                 \'buffer_id': GetBufferIDNotChange()
-                \}}
+                \}
 
   call RPCCall({'event_name': 'OnInsertLeave', 'params': l:params})
 "}}}
