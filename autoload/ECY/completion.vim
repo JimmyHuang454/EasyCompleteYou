@@ -114,8 +114,8 @@ function! ECY_ExpandSnippet() abort
       if l:selecting_item_nr != 0
         let l:item_info = 
               \g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
+        let l:user_data_index    = l:selecting_item_nr - 1
         let l:item_kind          = l:item_info['kind']
-        let l:user_data_index    = l:item_info['user_data']
         let l:item_name_selected = l:item_info['word']
       endif
     elseif g:has_floating_windows_support == 'neovim' && 
@@ -132,8 +132,6 @@ function! ECY_ExpandSnippet() abort
     try
       " maybe, some item have no snippet. so we try.
       let l:snippet   = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]['snippet']
-
-      let g:abc = l:snippet
       call UltiSnips#Anon(l:snippet,l:item_name_selected,'have no desriction','w')
       return ''
     catch

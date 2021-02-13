@@ -153,6 +153,13 @@ call AddEngine({
             \'path': 'pip', 
             \'file_type':['rust']
             \})
+
+call AddEngine({
+            \'engine_name': 'ECY_engines.snippet.ultisnips.ultisnips', 
+            \'ability': [], 
+            \'path': 'pip', 
+            \'file_type':['all']
+            \})
 "}}}
 endf
 
