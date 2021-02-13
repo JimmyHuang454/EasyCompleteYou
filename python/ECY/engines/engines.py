@@ -13,7 +13,8 @@ class Mannager(object):
     def __init__(self):
         self.current_engine_info = None
         self.engine_dict = {}
-        self.InstallEngine('ECY.engines.default_engine')
+        self.default_engine_name = 'ECY.engines.default_engine'
+        self.InstallEngine(self.default_engine_name)
         self.events_callback = events_callback.Operate()
         self.events_pre = events_pre.Operate()
 
@@ -100,8 +101,11 @@ class Mannager(object):
     def _get_engine_obj(self, engine_pack_name):
         if engine_pack_name not in self.engine_dict:
             if self.InstallEngine(engine_pack_name) is False:
-                engine_pack_name = 'ECY.engines.default_engine'
+                return self._get_default_engine()
         return self.engine_dict[engine_pack_name]
+
+    def _get_default_engine(self):
+        return self.engine_dict[self.default_engine_name]
 
     def DoEvent(self, context):
         engine_obj = self._get_engine_obj(context['engine_name'])

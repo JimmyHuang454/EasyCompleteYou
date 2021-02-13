@@ -225,7 +225,13 @@ fun! DoCompletion(context)
 
   if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
-        \|| len(a:context['show_list']) == 0
+    return
+  endif
+
+  if len(a:context['show_list']) == 0
+    if GetBufferEngineName() != g:ECY_default_engine
+      call UseSpecifyEngineOnce(g:ECY_default_engine)
+    endif
     return
   endif
 
@@ -432,8 +438,7 @@ fun! s:Init()
     exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
   endif
 
-  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key.
-      \ ' <C-R>=ECY_ExpandSnippet()<cr>'
+  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY_ExpandSnippet()<cr>'
 
   exe 'let g:ECY_expand_snippets_key = "\'.g:ECY_expand_snippets_key.'"'
 

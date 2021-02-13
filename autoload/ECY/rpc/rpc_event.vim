@@ -111,7 +111,7 @@ fun! s:OnTextChanged()
 "}}}
 endf
 
-fun! s:OnCompletion()
+fun! ECY_OnCompletion()
 "{{{
   let l:params = {'buffer_path': GetCurrentBufferPath(), 
                 \'buffer_line': GetCurrentLine(), 
@@ -151,8 +151,8 @@ fun! RPCInitEvent()
     autocmd TextChanged   * call s:OnTextChanged()
     autocmd InsertLeave   * call s:OnInsertLeave()
 
-    autocmd TextChangedI  * call s:OnCompletion()
-    autocmd InsertEnter   * call s:OnCompletion()
+    autocmd TextChangedI  * call ECY_OnCompletion()
+    autocmd InsertEnter   * call ECY_OnCompletion()
   augroup END
   let g:event_pre = {}
   let g:event_callback = {}
