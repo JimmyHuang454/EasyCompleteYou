@@ -1,5 +1,8 @@
 fun! RPCCall(params)
 "{{{
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
 
   let l:event_name = a:params['event_name']
   let l:params = a:params['params']

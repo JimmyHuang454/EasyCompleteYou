@@ -50,3 +50,32 @@ fun! ECY2_main#DoCodeAction()
   call RPCCall({'event_name': 'DoCodeAction', 'params': l:params})
 "}}}
 endf
+
+fun! ECY2_main#IsWorkAtCurrentBuffer()
+"{{{
+  if exists( 'b:ECY_is_work_at_current_buffer' )
+    return b:ECY_is_work_at_current_buffer
+  endif
+
+  let l:file_type = &filetype
+  for item in g:ECY_file_type_blacklist
+    if l:file_type =~ item
+      return v:false
+    endif
+  endfor
+
+  let l:threshold = g:ECY_disable_for_files_larger_than_kb * 1024
+
+  let b:ECY_is_work_at_current_buffer =
+        \ l:threshold > 0 && getfsize(GetCurrentBufferPath()) > l:threshold
+
+  let b:ECY_is_work_at_current_buffer = !b:ECY_is_work_at_current_buffer
+
+  if b:ECY_is_work_at_current_buffer
+    " only echo once because this will only check once
+    call utils#echo("ECY unavailable: the file exceeded the max size.")
+  endif
+
+  return b:ECY_is_work_at_current_buffer
+"}}}
+endf

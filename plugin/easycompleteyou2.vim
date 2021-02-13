@@ -19,3 +19,13 @@ let g:ECY_base_dir = tr(g:ECY_base_dir, '\', '/')
 let g:ECY_buffer_version = {}
 
 let g:ECY_python_script_folder_path = g:ECY_base_dir . '/python'
+
+if exists('g:ycm_disable_for_files_larger_than_kb')
+  let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
+else
+  let g:ECY_disable_for_files_larger_than_kb
+        \= get(g:,'ECY_disable_for_files_larger_than_kb', 1024)
+endif
+
+let g:ECY_file_type_blacklist
+      \= get(g:,'ECY_file_type_blacklist', ['log'])

@@ -142,6 +142,44 @@ class Operate(object):
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 
+            try:
+                if item['insertTextFormat'] == 2:
+                    temp = item['insertText']
+                    if '$' in temp or '(' in temp or '{' in temp:
+                        temp = temp.replace('{\\}', '\{\}')
+                        results_format['snippet'] = temp
+                        results_format['kind'] += '~'
+            except:
+                pass
+
+            detail = []
+            if 'detail' in item:
+                detail = item['detail'].split('\n')
+                if len(detail) == 2:
+                    results_format['menu'] = detail[1]
+                else:
+                    results_format['menu'] = item['detail']
+
+            document = []
+            if 'label' in item:
+                temp = item['label']
+                if temp[0] == ' ':
+                    temp = temp[1:]
+                if results_format['kind'] == 'Function':
+                    temp = detail[0] + ' ' + temp
+                document.append(temp)
+                document.append('')
+
+            if 'documentation' in item:
+                if type(item['documentation']) is str:
+                    temp = item['documentation'].split('\n')
+                elif type(item['documentation']) is dict:
+                    temp = item['documentation']['value'].split('\n')
+
+                document.extend(temp)
+
+            results_format['info'] = '\n'.join(document)
+
             self.results_list.append(results_format)
         context['show_list'] = self.results_list
         return context
