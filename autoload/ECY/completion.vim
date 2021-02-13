@@ -102,6 +102,57 @@ fun! DoCompletion_vim(context)
 "}}}
 endf
 
+function! ECY_ExpandSnippet() abort
+"{{{ this function will not tirgger when there are no UltiSnips plugin.
+  if IsMenuOpen() 
+    " we can see that we require every item of completion must contain full
+    " infos which is a dict with all key.
+    if g:has_floating_windows_support == 'vim' && 
+          \g:ECY_use_floating_windows_to_be_popup_windows
+      let l:selecting_item_nr = 
+            \g:ECY_current_popup_windows_info['selecting_item']
+      if l:selecting_item_nr != 0
+        let l:item_info = 
+              \g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
+        let l:item_kind          = l:item_info['kind']
+        let l:user_data_index    = l:item_info['user_data']
+        let l:item_name_selected = l:item_info['word']
+      endif
+    elseif g:has_floating_windows_support == 'neovim' && 
+          \g:ECY_use_floating_windows_to_be_popup_windows
+      " TODO
+    else
+      let l:item_kind          = v:completed_item['kind']
+      let l:user_data_index    = v:completed_item['user_data']
+      let l:item_name_selected = v:completed_item['word']
+    endif
+
+    " the user_data_index is a number that can index the g:ECY_completion_data which is
+    " a dict to get more than just a string msg.
+    try
+      " maybe, some item have no snippet. so we try.
+      let l:snippet   = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]['snippet']
+
+      let g:abc = l:snippet
+      call UltiSnips#Anon(l:snippet,l:item_name_selected,'have no desriction','w')
+      return ''
+    catch
+    endtry
+
+    try
+      if l:item_kind == '[Snippet]'
+        call UltiSnips#ExpandSnippet() 
+        return ''
+      endif
+    catch
+    endtry
+  endif
+
+  call SendKeys(g:ECY_expand_snippets_key)
+  return ''
+"}}}
+endfunction
+
 function! s:SetUpCompleteopt() abort 
 "{{{
   " can't format here:
@@ -350,6 +401,9 @@ fun! s:Init()
   let g:ECY_use_floating_windows_to_be_popup_windows = 
         \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
 
+  let g:ECY_expand_snippets_key
+        \= get(g:,'ECY_expand_snippets_key','<CR>')
+
   let g:ECY_select_items
         \= get(g:, 'ECY_select_items',['<TAB>','<S-TAB>'])
 
@@ -379,6 +433,11 @@ fun! s:Init()
     exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
     exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
   endif
+
+  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key.
+      \ ' <C-R>=ECY_ExpandSnippet()<cr>'
+
+  exe 'let g:ECY_expand_snippets_key = "\'.g:ECY_expand_snippets_key.'"'
 
   let s:show_item_position = 0
   let s:show_item_list = []
