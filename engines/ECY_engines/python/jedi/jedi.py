@@ -313,7 +313,6 @@ class Operate():
                 'current_colum': current_colum,
                 'line_counts': content_len
             }
-            logger.debug(self._jedi_cache)
         else:
             results_list = self._jedi_cache['src']
 

@@ -2,7 +2,6 @@ from loguru import logger
 from ECY import utils
 from ECY import rpc
 from ECY.engines import fuzzy_match
-from ECY.engines import default_engine
 
 
 class Operate():
@@ -12,10 +11,9 @@ class Operate():
         self.fuzzy_match = fuzzy_match.FuzzyMatch()
         self.is_get_opts_done = False
         self.is_indent = True
-        self.buffer_engine = default_engine.Operate()
 
     def _get_opts(self):
-        if self.is_done:
+        if self.is_get_opts_done:
             return
         self.is_get_opts_done = True
         if rpc.GetVaribal('g:has_floating_windows_support') == 'has_no':
@@ -23,15 +21,12 @@ class Operate():
         else:
             self.is_indent = True
 
-    def OnBufferEnter(self, context):
-        self._get_opts()
-        logger.debug('1')
-
     def OnCompletion(self, context):
         if 'show_list' not in context:
             logger.debug('missing params. "show_list"')
             return
 
+        self._get_opts()
         params = context['params']
         current_line = params['buffer_line']
         current_line = bytes(current_line, encoding='utf-8')
@@ -73,14 +68,11 @@ class Operate():
                 context['must_show'] = False
 
         if len(context['show_list']) == 0:
-            buffer_list = self.buffer_engine.cache_dict
-
             context['show_list'] = self.fuzzy_match.FilterItems(
                 context['filter_key'],
-                buffer_list,
+                context['buffer_show_list'],
                 isindent=self.is_indent,
                 isreturn_match_point=self.is_indent)
-            logger.debug(buffer_list)
 
         rpc.DoCall('DoCompletion', [context])
 

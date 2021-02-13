@@ -264,6 +264,7 @@ function! CloseCompletionWindows() abort
     "TODO: neovim
   endif
   call ClosePreview()
+  call RecoverIndent()
 "}}}
 endfunction
 
@@ -400,6 +401,7 @@ function! SelectItems(next_or_prev, send_key) abort
           \&& g:has_floating_windows_support == 'vim'
       let g:popup_windows_is_selecting = v:true
       call ClosePreview()
+      call DisableIndent()
       call SelectItems_vim(a:next_or_prev)
     elseif g:has_floating_windows_support == 'neovim'
       "TODO
@@ -407,6 +409,29 @@ function! SelectItems(next_or_prev, send_key) abort
     call OpenPreview()
   endif
   return ''
+"}}}
+endfunction
+
+function! SaveIndent() abort
+"{{{
+  if !exists('b:indentexpr_temp')
+    let b:indentexpr_temp = &indentexpr
+  endif
+"}}}
+endfunction
+
+function! DisableIndent() abort
+"{{{ DisableIndent temporally.
+  call SaveIndent()
+  let &indentexpr = ''
+"}}}
+endfunction
+
+function! RecoverIndent() abort
+"{{{
+  if exists('b:indentexpr_temp')
+    let &indentexpr = b:indentexpr_temp
+  endif
 "}}}
 endfunction
 

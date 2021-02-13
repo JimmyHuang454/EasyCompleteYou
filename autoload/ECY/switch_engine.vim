@@ -79,6 +79,7 @@ fun! SwitchingEngine()
   else
     call s:ChooseSource_neovim()
   endif
+  doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
   "}}}
 endf
 

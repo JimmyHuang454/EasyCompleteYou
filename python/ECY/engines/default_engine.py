@@ -12,10 +12,10 @@ class Operate(object):
         self.cache_string = []
 
     def OnBufferEnter(self, context):
+        self.cache_string = []
         line_text = '\n'.join(context['params']['buffer_content'])
-        items_list = list(set(re.findall(r'\w+', line_text)))
-        self.cache_string.extend(items_list)
-        self.cache_string = list(set(self.cache_string))
+        self.cache_string = list(set(re.findall(r'\w+', line_text)))
+        # self.cache_string.extend(items_list)
         self.cache_dict = []
         for item in self.cache_string:
             # the results_format must at least contain the following keys.
