@@ -63,9 +63,11 @@ fun! DoCompletion_vim(context)
     let j += 1
   endw
   let s:popup_windows_nr = popup_create(l:to_show, l:opts)
+  let s:show_item_position = a:context['start_position']
+  let s:show_item_position['colum'] = len(a:context['prev_key']) - len(a:context['filter_key'])
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,
-        \'start_position': a:context['start_position'],
+        \'start_position': s:show_item_position,
         \'items_info': l:items_info,
         \'opts': popup_getoptions(s:popup_windows_nr)}
   " In vim, there are no API to get the floating windows' width, we calculate
@@ -100,6 +102,71 @@ fun! DoCompletion_vim(context)
 "}}}
 endf
 
+function! s:SetUpCompleteopt() abort 
+"{{{
+  " can't format here:
+  if g:has_floating_windows_support == 'vim' && 
+        \g:ECY_use_floating_windows_to_be_popup_windows == v:true
+    " use ours popup windows
+    set completeopt-=menuone
+    set completeopt+=menu
+  else
+    set completeopt-=menu
+    set completeopt+=menuone
+  endif
+  set completeopt-=longest
+  set shortmess+=c
+  set completefunc=ECY_CompleteFunc
+"}}}
+endfunction
+
+function! ECY_CompleteFunc(findstart, base) abort 
+"{{{
+  if a:findstart
+    return s:show_item_position " a number
+  endif
+  return {'words': s:show_item_list}
+"}}}
+endfunction
+
+function! GetValue(dicts, key, default_value) abort 
+"{{{
+  if !has_key(a:dicts, a:key)
+    return a:default_value
+  endif
+  return a:dicts[a:key]
+"}}}
+endfunction
+
+fun! DoCompletion_old_school(context)
+"{{{
+  " a complete item in vim look like this and must be string.
+  " so we have to use a triky way to do more thing.
+
+  let l:items_info = a:context['show_list']
+  let g:ECY_current_popup_windows_info['items_info'] = a:context['show_list']
+  let l:fliter_words = a:context['filter_key']
+  let s:show_item_position = len(a:context['prev_key']) - len(a:context['filter_key'])
+
+  let i = 0
+  let s:show_item_list = []
+
+  for item in l:items_info
+    let results_format = {'abbr': GetValue(item, 'abbr', ''),
+          \'word': GetValue(item, 'word', ''),
+          \'kind': GetValue(item, 'kind', ''),
+          \'menu': GetValue(item, 'menu', ''),
+          \'info': GetValue(item, 'info', ''),
+          \'user_data': string(i)}
+
+    call add(s:show_item_list, l:results_format)
+    let i += 1
+  endfor
+
+  call SendKeys("\<C-X>\<C-U>\<C-P>")
+"}}}
+endf
+
 fun! DoCompletion(context)
 "{{{
   if (g:popup_windows_is_selecting || len(a:context['filter_key']) <= g:ECY_triggering_length) 
@@ -109,13 +176,18 @@ fun! DoCompletion(context)
 
   if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
+        \|| len(a:context['show_list']) == 0
     return
   endif
 
-  if g:has_floating_windows_support == 'vim'
+  if g:has_floating_windows_support == 'vim' 
+        \&& g:ECY_use_floating_windows_to_be_popup_windows
     call DoCompletion_vim(a:context)
   elseif g:has_floating_windows_support == 'neovim'
+        \&& g:ECY_use_floating_windows_to_be_popup_windows
+    "TODO
   else " has no
+    call DoCompletion_old_school(a:context)
   endif
 "}}}
 endf
@@ -147,6 +219,8 @@ function! IsMenuOpen() abort
       return v:true
     endif
     return v:false
+  elseif g:has_floating_windows_support == 'neovim'
+    "TODO
   elseif g:has_floating_windows_support == 'has_no'
     return pumvisible()
   endif
@@ -305,6 +379,11 @@ fun! s:Init()
     exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
     exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
   endif
+
+  let s:show_item_position = 0
+  let s:show_item_list = []
+  let g:ECY_current_popup_windows_info = {}
+  call s:SetUpCompleteopt()
 "}}}
 endf
 

@@ -25,7 +25,6 @@ function! s:handle_completion(server, context, data) abort
     if lsp#client#is_error(a:data) || !has_key(a:data, 'response') || !has_key(a:data['response'], 'result')
         return
     endif
-    let g:abc = a:context
     let l:context = a:context
 
     " let l:context['server_info'] = a:server

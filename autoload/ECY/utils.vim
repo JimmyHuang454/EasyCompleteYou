@@ -143,3 +143,12 @@ function! SendKeys(keys) abort
   call feedkeys( a:keys, 'in' )
 "}}}
 endfunction
+
+function! GetValue(dicts, key, default_value) abort 
+"{{{
+  if !has_key(a:dicts, a:key)
+    return a:default_value
+  endif
+  return a:dicts[a:key]
+"}}}
+endfunction

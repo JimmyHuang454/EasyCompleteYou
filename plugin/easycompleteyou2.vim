@@ -11,6 +11,7 @@ else
   let g:has_floating_windows_support = 'has_no'
   let g:ECY_use_floating_windows_to_be_popup_windows = v:false
 endif
+" let g:ECY_use_floating_windows_to_be_popup_windows = v:false
 
 " must put these outside a function
 let g:ECY_base_dir = expand( '<sfile>:p:h:h' )

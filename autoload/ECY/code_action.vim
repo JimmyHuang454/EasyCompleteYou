@@ -51,7 +51,6 @@ fun! s:HandleEdit(edit_dict)
     " endif
 
     if !has_key(item, 'edit')
-      let g:abc = item
       call add(l:not_to_do_action, item)
       continue
     endif

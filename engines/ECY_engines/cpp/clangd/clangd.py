@@ -20,12 +20,12 @@ class Operate(object):
 
     def _start_server(self):
         try:
-            import ECY_windows_clangd
+            import ECY_clangd
             has_ECY_windows_clangd = True
         except:
             has_ECY_windows_clangd = False
         self._lsp = language_server_protocol.LSP()
-        starting_cmd = ECY_windows_clangd.exe_path
+        starting_cmd = ECY_clangd.exe_path
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
         self.workspace_cache.append(
