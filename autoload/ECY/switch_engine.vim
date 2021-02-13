@@ -8,7 +8,7 @@ function! s:ChooseSource_Echoing() abort
       " show erro
       break
     endif
-    let l:text1 = "Detected FileTpye--[".l:filetype."], available completor's sources:\n"
+    let l:text1 = "Detected FileTpye--[".l:filetype."], available engines:\n"
     let l:text2 = "(Press ".'j/k'." to switch item that you want)\n------------------------------------------\n"
     let l:i     = 1
     for support_complete_name in l:info['available_sources']

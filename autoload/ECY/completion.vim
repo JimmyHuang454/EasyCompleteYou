@@ -225,15 +225,16 @@ fun! DoCompletion(context)
 
   if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
+        \|| len(a:context['show_list']) == 0
     return
   endif
 
-  if len(a:context['show_list']) == 0
-    if GetBufferEngineName() != g:ECY_default_engine
-      call UseSpecifyEngineOnce(g:ECY_default_engine)
-    endif
-    return
-  endif
+  " if len(a:context['show_list']) == 0
+  "   if GetBufferEngineName() != g:ECY_default_engine
+  "     call UseSpecifyEngineOnce(g:ECY_default_engine)
+  "   endif
+  "   return
+  " endif
 
   if g:has_floating_windows_support == 'vim' 
         \&& g:ECY_use_floating_windows_to_be_popup_windows
@@ -252,6 +253,7 @@ function! CloseCompletionWindows() abort
   if g:popup_windows_is_selecting
     return
   endif
+
   if g:has_floating_windows_support == 'vim'
     try
       call popup_close(s:popup_windows_nr)
@@ -261,6 +263,7 @@ function! CloseCompletionWindows() abort
   else
     "TODO: neovim
   endif
+  call ClosePreview()
 "}}}
 endfunction
 
@@ -393,8 +396,15 @@ function! SelectItems(next_or_prev, send_key) abort
   if !IsMenuOpen()
     call SendKeys(a:send_key)
   else
-    let g:popup_windows_is_selecting = v:true
-    call SelectItems_vim(a:next_or_prev)
+    if g:ECY_use_floating_windows_to_be_popup_windows 
+          \&& g:has_floating_windows_support == 'vim'
+      let g:popup_windows_is_selecting = v:true
+      call ClosePreview()
+      call SelectItems_vim(a:next_or_prev)
+    elseif g:has_floating_windows_support == 'neovim'
+      "TODO
+    endif
+    call OpenPreview()
   endif
   return ''
 "}}}
