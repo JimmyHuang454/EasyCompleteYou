@@ -84,13 +84,15 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
   " endif
 
 "{{{ this two keys will be contained in the formmat whether it's None or not.
-  let l:item_info   = a:msg['info']
+  let l:item_info = a:msg['info']
+  if type(l:item_info) == v:t_string
+    let l:item_info = split(l:item_info, "\n")
+  endif
   " info is a list and can be split by python.
-  let l:item_menu   = a:msg['menu']
+  let l:item_menu = a:msg['menu']
   " menu should be one line.
 "}}}
-
-
+"
   if l:item_menu != ''
     let l:to_show_list = split(l:item_menu, "\n")
     call add(l:to_show_list, s:cut_line)
@@ -98,9 +100,7 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
     let l:to_show_list = []
   endif
 
-  for item in l:item_info
-    call add(l:to_show_list, item)
-  endfor
+  call extend(l:to_show_list, l:item_info)
 
   if len(l:to_show_list) == 0
     return -1
