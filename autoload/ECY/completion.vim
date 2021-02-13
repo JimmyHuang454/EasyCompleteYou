@@ -226,6 +226,7 @@ fun! DoCompletion(context)
   if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
         \|| len(a:context['show_list']) == 0
+        \|| mode() == 'n'
     return
   endif
 

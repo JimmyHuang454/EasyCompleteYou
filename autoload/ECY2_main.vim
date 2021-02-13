@@ -69,12 +69,12 @@ fun! ECY2_main#IsWorkAtCurrentBuffer()
   let b:ECY_is_work_at_current_buffer =
         \ l:threshold > 0 && getfsize(GetCurrentBufferPath()) > l:threshold
 
-  let b:ECY_is_work_at_current_buffer = !b:ECY_is_work_at_current_buffer
-
   if b:ECY_is_work_at_current_buffer
     " only echo once because this will only check once
     call utils#echo("ECY unavailable: the file exceeded the max size.")
   endif
+
+  let b:ECY_is_work_at_current_buffer = !b:ECY_is_work_at_current_buffer
 
   return b:ECY_is_work_at_current_buffer
 "}}}
