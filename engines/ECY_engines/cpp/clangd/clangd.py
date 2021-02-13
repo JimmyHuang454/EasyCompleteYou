@@ -28,8 +28,9 @@ class Operate(object):
         starting_cmd = ECY_clangd.exe_path
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
-        self.workspace_cache.append(
+        temp = self._lsp.PathToUri(
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
+        self.workspace_cache.append(temp)
         temp = self._lsp.initialize(rootUri=self.workspace_cache[0])
         self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
@@ -89,6 +90,9 @@ class Operate(object):
 
     def OnTextChanged(self, context):
         self._did_open_or_change(context)
+
+    def OnWorkSpaceSymbol(self, context):
+        self._lsp.workspaceSymbos()
 
     def OnCompletion(self, context):
         self._did_open_or_change(context)

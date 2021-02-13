@@ -390,13 +390,23 @@ class LSP(conec.Operate):
         params = {'CompletionItem': completion_item}
         return self._build_send(params, 'completionItem/resolve')
 
+    def _get_progress_token(self):
+        if self.workDoneToken_id is None:
+            self.workDoneToken_id = 0
+        self.workDoneToken_id += 1
+        return self.workDoneToken_id
+
+    def _get_workdone_token(self):
+        if workDoneToken is None:
+            self.workDoneToken_id = 0
+        self.workDoneToken_id += 1
+        return self.workDoneToken_id
+
     def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
         if workDoneToken is None:
-            self.workDoneToken_id += 1
-            workDoneToken = self.workDoneToken_id
+            workDoneToken = self._get_workdone_token()
         if ProgressToken is None:
-            self.workDoneToken_id += 1
-            ProgressToken = self.workDoneToken_id
+            ProgressToken = self._get_progress_token()
 
         params = {
             'workDoneToken': workDoneToken,
@@ -474,6 +484,22 @@ class LSP(conec.Operate):
         # few of Server supports this feature.
         params = {'query': query}
         return self._build_send(params, 'workspace/symbol')
+
+    def signatureHelp(self, uri, position, ProgressToken=None, context=None):
+        if ProgressToken is None:
+            ProgressToken = self._get_progress_token()
+
+        # position = {'line': 0 , 'character': 0}
+        textDocument = {'uri': uri}
+        params = {
+            'textDocument': textDocument,
+            'position': position,
+            'progressToken': ProgressToken
+        }
+
+        if context is not None:
+            params['context'] = context
+        return self._build_send(params, 'textDocument/signatureHelp')
 
     def references(self,
                    position,

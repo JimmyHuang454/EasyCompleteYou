@@ -36,6 +36,14 @@ fun! ECY2_main#GetCodeLens()
 "}}}
 endf
 
+fun! ECY2_main#GetWorkSpaceSymbol()
+"{{{
+  let l:params = {}
+
+  call RPCCall({'event_name': 'OnWorkSpaceSymbol', 'params': l:params})
+"}}}
+endf
+
 fun! ECY2_main#DoCodeAction()
 "{{{
 
