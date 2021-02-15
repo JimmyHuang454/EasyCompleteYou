@@ -1,7 +1,7 @@
 fun! ECY2_main#Init()
 "{{{
-  " test
-  call ECY#rpc#rpc_main#NewClient('python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/python/client_main.py')
+  let l:run_cmd = g:ECY_python_cmd . ' ' . g:ECY_python_script_folder_path . '/client_main.py'
+  call ECY#rpc#rpc_main#NewClient(l:run_cmd)
 "}}}
 endf
 
