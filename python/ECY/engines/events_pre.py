@@ -12,7 +12,7 @@ class Operate():
     def OnCompletion(self, context):
         context = self.buffer_engine.OnCompletion(context)
         if context['params']['buffer_id'] != rpc.DoCall(
-                'GetBufferIDNotChange'):
+                'ECY#rpc#rpc_event#GetBufferIDNotChange'):
             logger.debug('filter a context')
             return False
         return context

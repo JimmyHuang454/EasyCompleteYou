@@ -3,7 +3,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let g:ECY_starttime = reltimefloat(reltime())
-let g:loaded_ECY2 = v:false
 
 function! s:restore_cpo()
   let g:loaded_ECY2 = v:true
@@ -16,7 +15,7 @@ let g:is_vim = !has('nvim')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                check require                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if g:loaded_ECY2
+if exists('g:loaded_ECY2')
   finish
 elseif v:version < 800
   echohl WarningMsg |
@@ -98,4 +97,5 @@ call ECY2_main#Init()
 
 let g:ECY_endtime = reltimefloat(reltime())
 let g:ECY_start_time = g:ECY_endtime - g:ECY_starttime
+
 call s:restore_cpo()

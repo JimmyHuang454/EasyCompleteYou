@@ -85,7 +85,9 @@ endf
 
 fun! ECY#switch_engine#Init()
   "{{{
+
   call s:InitUsableEngine()
+
   let g:ECY_show_switching_source_popup
         \= get(g:,'ECY_show_switching_source_popup','<Tab>')
 
