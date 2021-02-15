@@ -1,5 +1,5 @@
 " can only have one preview windows
-function! s:Init() abort
+function! ECY#preview_windows#Init() abort
 "{{{ 
   let s:preview_windows_nr = -1
   " let g:ECY_enable_preview_snippet = get(g:,'ECY_enable_preview_snippet', v:true)
@@ -142,5 +142,3 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
   return l:nr
 "}}}
 endfunction
-
-call s:Init()

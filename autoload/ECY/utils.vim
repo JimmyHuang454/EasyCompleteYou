@@ -36,7 +36,7 @@ function ECY#utils#GetCurrentBufferContent() abort " return list
 "}}}
 endfunction
 
-function DefineColor(name, colora) abort
+function ECY#utils#DefineColor(name, colora) abort
 "{{{
   if hlexists(a:name) 
     return

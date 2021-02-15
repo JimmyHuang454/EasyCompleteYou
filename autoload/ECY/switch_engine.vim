@@ -83,7 +83,7 @@ fun! ECY#switch_engine#Do()
   "}}}
 endf
 
-fun! s:Init()
+fun! ECY#switch_engine#Init()
   "{{{
   call s:InitUsableEngine()
   let g:ECY_show_switching_source_popup
@@ -225,5 +225,3 @@ function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = l:current_engine_name
   "}}}
 endfunction
-
-call s:Init()

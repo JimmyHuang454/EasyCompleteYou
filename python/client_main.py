@@ -4,9 +4,9 @@ from ECY import rpc
 import ECY.engines.engines as engines
 import sys
 
-path = "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/ECY_Debug_log/ECY_debug.log"
+path = "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/ECY_Debug_log/ECY_debug.log"
 
-sys.path.append('C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/engines')
+sys.path.append('C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines')
 
 logger.remove()
 with open(path, 'w', encoding='utf-8') as f:

@@ -3,10 +3,10 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let g:ECY_starttime = reltimefloat(reltime())
-let g:loaded_easycomplete = v:false
+let g:loaded_ECY2 = v:false
 
 function! s:restore_cpo()
-  let g:loaded_easycomplete = v:true
+  let g:loaded_ECY2 = v:true
   let &cpo = s:save_cpo
   unlet s:save_cpo
 endfunction
@@ -16,7 +16,7 @@ let g:is_vim = !has('nvim')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                check require                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if g:loaded_easycomplete
+if g:loaded_ECY2
   finish
 elseif v:version < 800
   echohl WarningMsg |
@@ -91,6 +91,9 @@ let g:ECY_file_type_blacklist
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call ECY#completion#Init()
+call ECY#preview_windows#Init()
+call ECY#switch_engine#Init()
 call ECY2_main#Init()
 
 let g:ECY_endtime = reltimefloat(reltime())

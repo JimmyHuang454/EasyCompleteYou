@@ -1,7 +1,7 @@
 fun! ECY2_main#Init()
 "{{{
   " test
-  call ECY#rpc#rpc_main#NewClient('python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou/python/client_main.py')
+  call ECY#rpc#rpc_main#NewClient('python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/python/client_main.py')
 "}}}
 endf
 
@@ -9,10 +9,10 @@ fun! ECY2_main#DoCmd(cmd_name, param_list)
 "{{{
 
   let l:params = {
-                \'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'param_list': a:param_list,
                 \'cmd_name': a:cmd_name,
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
@@ -25,10 +25,10 @@ endf
 fun! ECY2_main#GetCodeLens()
 "{{{
   let l:params = {
-                \'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -48,10 +48,10 @@ fun! ECY2_main#DoCodeAction()
 "{{{
 
   let l:params = {
-                \'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -75,11 +75,11 @@ fun! ECY2_main#IsWorkAtCurrentBuffer()
   let l:threshold = g:ECY_disable_for_files_larger_than_kb * 1024
 
   let b:ECY_is_work_at_current_buffer =
-        \ l:threshold > 0 && getfsize(utils#GetCurrentBufferPath()) > l:threshold
+        \ l:threshold > 0 && getfsize(ECY#utils#GetCurrentBufferPath()) > l:threshold
 
   if b:ECY_is_work_at_current_buffer
     " only echo once because this will only check once
-    call utils#echo("ECY unavailable: the file exceeded the max size.")
+    call ECY#utils#echo("ECY unavailable: the file exceeded the max size.")
   endif
 
   let b:ECY_is_work_at_current_buffer = !b:ECY_is_work_at_current_buffer

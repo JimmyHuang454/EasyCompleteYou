@@ -12,7 +12,7 @@ fun! s:Send(msg)
   endif
   let l:json = json_encode(a:msg) . "\n"
   try
-    call ECY2_job#send(g:fuck, l:json)
+    call ECY#rpc#ECY2_job#send(g:fuck, l:json)
   catch 
     call rpc_main#echo('ECY lost connection.')
   endtry
@@ -21,7 +21,7 @@ endf
 fun! ECY#rpc#rpc_main#RPCEventsAll(msg)
 "{{{
   let g:rpc_seq_id += 1
-  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': GetBufferEngineName()}
+  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': ECY#switch_engine#GetBufferEngineName()}
   call s:Send(l:temp)
 "}}}
 endf
@@ -65,7 +65,7 @@ endf
 
 fun! ECY#rpc#rpc_main#NewClient(cmd)
 "{{{
-  let g:fuck = ECY2_job#start(a:cmd, {
+  let g:fuck = ECY#rpc#ECY2_job#start(a:cmd, {
       \ 'on_stdout': function('rpc_main#Input')
       \ })
   call ECY#rpc#rpc_event#Init()

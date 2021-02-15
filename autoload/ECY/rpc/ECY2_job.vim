@@ -323,29 +323,29 @@ function! s:close_cb(jobid, opts, ch) abort
 endfunction
 
 " public apis {{{
-function! ECY2_job#start(cmd, opts) abort
+function! ECY#rpc#ECY2_job#start(cmd, opts) abort
     return s:job_start(a:cmd, a:opts)
 endfunction
 
-function! ECY2_job#stop(jobid) abort
+function! ECY#rpc#ECY2_job#stop(jobid) abort
     call s:job_stop(a:jobid)
 endfunction
 
-function! ECY2_job#send(jobid, data, ...) abort
+function! ECY#rpc#ECY2_job#send(jobid, data, ...) abort
     let l:opts = get(a:000, 0, {})
     call s:job_send(a:jobid, a:data, l:opts)
 endfunction
 
-function! ECY2_job#wait(jobids, ...) abort
+function! ECY#rpc#ECY2_job#wait(jobids, ...) abort
     let l:timeout = get(a:000, 0, -1)
     return s:job_wait(a:jobids, l:timeout)
 endfunction
 
-function! ECY2_job#pid(jobid) abort
+function! ECY#rpc#ECY2_job#pid(jobid) abort
     return s:job_pid(a:jobid)
 endfunction
 
-function! ECY2_job#connect(addr, opts) abort
+function! ECY#rpc#ECY2_job#connect(addr, opts) abort
     let s:jobidseq = s:jobidseq + 1
     let l:jobid = s:jobidseq
     let l:retry = 0

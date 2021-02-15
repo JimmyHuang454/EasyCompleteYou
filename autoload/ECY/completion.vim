@@ -427,7 +427,7 @@ function! s:RecoverIndent() abort
 "}}}
 endfunction
 
-fun! s:Init()
+fun! ECY#completion#Init()
 "{{{
   let g:ECY_use_floating_windows_to_be_popup_windows = 
         \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
@@ -444,10 +444,10 @@ fun! s:Init()
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
 
-  call DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596	guibg=#073642	ctermfg=red	  ctermbg=darkBlue')
-  call DefineColor('ECY_floating_windows_normal', 'guifg=#839496	guibg=#073642	ctermfg=white	ctermbg=darkBlue')
-  call DefineColor('ECY_floating_windows_seleted_matched', 'guifg=#FFFF99	guibg=#586e75	ctermfg=red	ctermbg=Blue')
-  call DefineColor('ECY_floating_windows_seleted', 'guifg=#eee8d5	guibg=#586e75	ctermfg=white	ctermbg=Blue')
+  call ECY#utils#DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596	guibg=#073642	ctermfg=red	  ctermbg=darkBlue')
+  call ECY#utils#DefineColor('ECY_floating_windows_normal', 'guifg=#839496	guibg=#073642	ctermfg=white	ctermbg=darkBlue')
+  call ECY#utils#DefineColor('ECY_floating_windows_seleted_matched', 'guifg=#FFFF99	guibg=#586e75	ctermfg=red	ctermbg=Blue')
+  call ECY#utils#DefineColor('ECY_floating_windows_seleted', 'guifg=#eee8d5	guibg=#586e75	ctermfg=white	ctermbg=Blue')
 
   augroup ECY_completion
     autocmd!
@@ -475,5 +475,3 @@ fun! s:Init()
   call s:SetUpCompleteopt()
 "}}}
 endf
-
-call s:Init()
