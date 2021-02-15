@@ -74,7 +74,7 @@ class Operate():
                 isindent=self.is_indent,
                 isreturn_match_point=self.is_indent)
 
-        rpc.DoCall('DoCompletion', [context])
+        rpc.DoCall('ECY#completion#Open', [context])
 
     def DoCodeAction(self, context):
         if 'result' not in context:
@@ -83,4 +83,4 @@ class Operate():
         results = context['result']['result']
         for item in results:
             pass
-        rpc.DoCall('DoCodeAction', [context])
+        rpc.DoCall('ECY#ECY#code_action#Do', [context])

@@ -9,30 +9,30 @@ fun! ECY2_main#DoCmd(cmd_name, param_list)
 "{{{
 
   let l:params = {
-                \'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
+                \'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
                 \'param_list': a:param_list,
                 \'cmd_name': a:cmd_name,
-                \'buffer_id': GetBufferIDNotChange()
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call RPCCall({'event_name': 'DoCmd', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'DoCmd', 'params': l:params})
 "}}}
 endf
 
 fun! ECY2_main#GetCodeLens()
 "{{{
   let l:params = {
-                \'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDNotChange()
+                \'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call RPCCall({'event_name': 'GetCodeLens', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GetCodeLens', 'params': l:params})
 "}}}
 endf
 
@@ -40,7 +40,7 @@ fun! ECY2_main#GetWorkSpaceSymbol()
 "{{{
   let l:params = {}
 
-  call RPCCall({'event_name': 'OnWorkSpaceSymbol', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnWorkSpaceSymbol', 'params': l:params})
 "}}}
 endf
 
@@ -48,14 +48,14 @@ fun! ECY2_main#DoCodeAction()
 "{{{
 
   let l:params = {
-                \'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDNotChange()
+                \'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call RPCCall({'event_name': 'DoCodeAction', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'DoCodeAction', 'params': l:params})
 "}}}
 endf
 
@@ -75,7 +75,7 @@ fun! ECY2_main#IsWorkAtCurrentBuffer()
   let l:threshold = g:ECY_disable_for_files_larger_than_kb * 1024
 
   let b:ECY_is_work_at_current_buffer =
-        \ l:threshold > 0 && getfsize(GetCurrentBufferPath()) > l:threshold
+        \ l:threshold > 0 && getfsize(utils#GetCurrentBufferPath()) > l:threshold
 
   if b:ECY_is_work_at_current_buffer
     " only echo once because this will only check once

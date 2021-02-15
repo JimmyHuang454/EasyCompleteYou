@@ -1,13 +1,13 @@
 " {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}
 
-fun! DoCodeAction(context)
+fun! ECY#code_action#Do(context)
 "{{{
-  if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
-        \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
+  let l:current_buffer_path = utils#GetCurrentBufferPath()
+  if l:current_buffer_path != a:context['params']['buffer_path'] 
+        \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
     return
   endif
 
-  let l:current_buffer_path = GetCurrentBufferPath()
   let l:results = a:context['result']['result']
   let l:edit_res = {}
   if len(l:results) == 0
@@ -39,7 +39,7 @@ fun! s:HandleEdit(edit_dict)
   let l:not_to_do_action = []
   for item in a:edit_dict
     " if has_key(item, 'range')
-    "   let current_position = GetCurrentBufferPosition()
+    "   let current_position = utils#GetCurrentBufferPosition()
     "   if current_position['line'] > item['range']['end']['line'] || 
     "         \current_position['line'] < item['range']['start']['line'] ||
     "         \current_position['colum'] > item['range']['end']['character'] || 
@@ -87,7 +87,7 @@ fun! s:ApplyEdit(workspace_edit)
       let l:path = UriToPath(item)
       call s:Switch(l:path)
       for item2 in a:workspace_edit['changes'][item]
-        call s:Apply(l:path, item2, GetCurrentBufferPosition())
+        call s:Apply(l:path, item2, utils#GetCurrentBufferPosition())
         call add(l:changed, l:path)
       endfor
     endfor
@@ -188,4 +188,4 @@ function! s:get_fixendofline(buf) abort
 endfunction
 "}}}
 
-" call DoCodeAction({'result': {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}})
+" call ECY#code_action#Do({'result': {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}})

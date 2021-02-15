@@ -22,7 +22,7 @@ function! s:Init() abort
 "}}}
 endfunction
 
-function! OpenPreview() abort
+function! ECY#preview_windows#Open() abort
 "{{{ won't be triggered when there are no floating windows features.
   if g:has_floating_windows_support == 'vim'
     let l:selecting_item_nr = 
@@ -39,7 +39,7 @@ function! OpenPreview() abort
 "}}}
 endfunction
 
-function! ClosePreview() abort
+function! ECY#preview_windows#Close() abort
 "{{{
   if g:has_floating_windows_support == 'vim'
     if s:preview_windows_nr != -1

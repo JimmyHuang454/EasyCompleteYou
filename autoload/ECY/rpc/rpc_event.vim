@@ -1,4 +1,4 @@
-fun! RPCCall(params)
+fun! ECY#rpc#rpc_event#call(params)
 "{{{
   if !ECY2_main#IsWorkAtCurrentBuffer()
     return
@@ -25,7 +25,7 @@ fun! RPCCall(params)
   endfor
 
   let l:send_msg = {'event_name': l:event_name, 'params': l:params}
-  call RPCEventsAll(l:send_msg)
+  call ECY#rpc#rpc_main#RPCEventsAll(l:send_msg)
 
   for Function in g:event_pre[l:event_name]
     call Function(l:event_name)
@@ -33,7 +33,7 @@ fun! RPCCall(params)
 "}}}
 endf
 
-fun! AddEventCallbackPre(event_name, Function)
+fun! ECY#rpc#rpc_event#AddEventCallbackPre(event_name, Function)
 "{{{
   if !has_key(g:event_pre, a:event_name)
     let g:event_pre[a:event_name] = []
@@ -42,7 +42,7 @@ fun! AddEventCallbackPre(event_name, Function)
 "}}}
 endf
 
-fun! AddEventCallback(event_name, Function)
+fun! ECY#rpc#rpc_event#AddEventCallback(event_name, Function)
 "{{{
   if !has_key(g:event_callback, a:event_name)
     let g:event_callback[a:event_name] = []
@@ -51,9 +51,9 @@ fun! AddEventCallback(event_name, Function)
 "}}}
 endf
 
-fun! GetBufferIDNotChange()
+fun! ECY#rpc#rpc_event#GetBufferIDNotChange()
 "{{{
-  let l:buffer_path = GetCurrentBufferPath()
+  let l:buffer_path = utils#GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -70,9 +70,9 @@ fun! GetBufferIDByPath(path)
 "}}}
 endf
 
-fun! GetBufferIDChange()
+fun! ECY#rpc#rpc_event#GetBufferIDChange()
 "{{{
-  let l:buffer_path = GetCurrentBufferPath()
+  let l:buffer_path = utils#GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -84,64 +84,64 @@ endf
 "{{{
 fun! s:OnBufferEnter()
 "{{{
-  let l:params = {'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDNotChange()
+  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call RPCCall({'event_name': 'OnBufferEnter', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnBufferEnter', 'params': l:params})
 "}}}
 endf
 
 fun! s:OnVimLeavePre()
 "{{{
-  call RPCCall({'event_name': 'OnVimLeavePre', 'params': {}})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnVimLeavePre', 'params': {}})
 "}}}
 endf
 
 fun! s:OnTextChanged()
 "{{{ normal mode
-  let l:params = {'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDChange()
+  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 
-  call RPCCall({'event_name': 'OnTextChanged', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnTextChanged', 'params': l:params})
 "}}}
 endf
 
-fun! ECY_OnCompletion()
+fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
-  let l:params = {'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDChange()
+  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 
-  call RPCCall({'event_name': 'OnCompletion', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnCompletion', 'params': l:params})
 "}}}
 endf
 
 fun! s:OnInsertLeave()
 "{{{
-  let l:params = {'buffer_path': GetCurrentBufferPath(), 
-                \'buffer_line': GetCurrentLine(), 
-                \'buffer_position': GetCurrentLineAndPosition(), 
-                \'buffer_content': GetCurrentBufferContent(), 
-                \'buffer_id': GetBufferIDNotChange()
+  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
+                \'buffer_line': utils#GetCurrentLine(), 
+                \'buffer_position': utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call RPCCall({'event_name': 'OnInsertLeave', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnInsertLeave', 'params': l:params})
 "}}}
 endf
 "}}}
 
-fun! RPCInitEvent()
+fun! ECY#rpc#rpc_event#Init()
 "{{{
   augroup EasyCompleteYou2
     autocmd!
@@ -154,8 +154,8 @@ fun! RPCInitEvent()
     autocmd TextChanged   * call s:OnTextChanged()
     autocmd InsertLeave   * call s:OnInsertLeave()
 
-    autocmd TextChangedI  * call ECY_OnCompletion()
-    autocmd InsertEnter   * call ECY_OnCompletion()
+    autocmd TextChangedI  * call ECY#rpc#rpc_event#OnCompletion()
+    autocmd InsertEnter   * call ECY#rpc#rpc_event#OnCompletion()
   augroup END
   let g:event_pre = {}
   let g:event_callback = {}

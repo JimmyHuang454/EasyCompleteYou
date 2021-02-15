@@ -31,6 +31,6 @@ function! s:handle_completion(server, context, data) abort
     let l:context['response'] = a:data['response']
     let l:context['is_vim_lsp_callback'] = v:true
 
-    call RPCCall({'event_name': 'OnCompletion', 'params': l:context})
+    call ECY#rpc#rpc_event#call({'event_name': 'OnCompletion', 'params': l:context})
 "}}}
 endfunction

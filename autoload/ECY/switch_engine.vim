@@ -26,9 +26,9 @@ function! s:ChooseSource_Echoing() abort
     let l:c = nr2char(getchar())
     redraw!
     if l:c == "j"
-      call ChooseSource('next')
+      call s:ChooseSource('next')
     elseif l:c == "k"
-      call ChooseSource('pre')
+      call s:ChooseSource('pre')
     else
       " a callback
       return
@@ -37,7 +37,7 @@ function! s:ChooseSource_Echoing() abort
   "}}}
 endfunction
 
-function! ChooseSource(next_or_pre) abort
+function! s:ChooseSource(next_or_pre) abort
   "{{{ this will call by 'user_ui.vim'
   let l:filetype = &filetype
   if !exists("g:ECY_file_type_info2[".string(l:filetype)."]")
@@ -66,10 +66,10 @@ function! ChooseSource(next_or_pre) abort
   "}}}
 endfunction
 
-fun! SwitchingEngine()
+fun! ECY#switch_engine#Do()
   "{{{
   let l:file_type = &filetype
-  call InitDefaultEngine(l:file_type)
+  call s:InitDefaultEngine(l:file_type)
 
   if g:has_floating_windows_support == 'has_no'
     call s:ChooseSource_Echoing()
@@ -85,12 +85,12 @@ endf
 
 fun! s:Init()
   "{{{
-  call InitUsableEngine()
+  call s:InitUsableEngine()
   let g:ECY_show_switching_source_popup
         \= get(g:,'ECY_show_switching_source_popup','<Tab>')
 
   exe 'nmap ' . g:ECY_show_switching_source_popup .
-        \ ' :call SwitchingEngine()<CR>'
+        \ ' :call ECY#switch_engine#Do()<CR>'
 
   let g:ECY_config_path = g:ECY_base_dir.'/ECY_config.txt'
 
@@ -106,56 +106,56 @@ fun! s:Init()
 
   augroup ECY_config
     autocmd!
-    autocmd VimLeave  * call VimLeave()
+    autocmd VimLeave  * call s:VimLeave()
   augroup END
   "}}}
 endf
 
-fun! InitUsableEngine()
+fun! s:InitUsableEngine()
   "{{{
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY.engines.default_engine', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['all']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.cpp.clangd.clangd', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['c', 'cpp']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.python.jedi.jedi', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['python']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.golang.gopls.gopls', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['go']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.vim_lsp.vim_lsp', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['all']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.rust.rust_analyzer.rust_analyzer', 
         \'ability': [], 
         \'path': 'pip', 
         \'file_type':['rust']
         \})
 
-  call AddEngine({
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.snippet.ultisnips.ultisnips', 
         \'ability': [], 
         \'path': 'pip', 
@@ -164,7 +164,7 @@ fun! InitUsableEngine()
   "}}}
 endf
 
-fun! AddEngine(info)
+fun! ECYAddEngine(info)
   "{{{
   if !exists('g:ECY_all_buildin_engine')
     let g:ECY_all_buildin_engine = []
@@ -173,7 +173,7 @@ fun! AddEngine(info)
   "}}}
 endf
 
-fun! VimLeave()
+fun! s:VimLeave()
   "{{{
   try
     for key in keys(g:ECY_file_type_info2)
@@ -186,7 +186,7 @@ fun! VimLeave()
   "}}}
 endf
 
-fun! InitDefaultEngine(file_type)
+fun! s:InitDefaultEngine(file_type)
   "{{{
   if !has_key(g:ECY_config, a:file_type)
     let g:ECY_config[a:file_type] = g:ECY_default_engine
@@ -207,21 +207,21 @@ fun! InitDefaultEngine(file_type)
   "}}}
 endf
 
-fun! GetBufferEngineName()
+fun! ECY#switch_engine#GetBufferEngineName()
   "{{{
   let l:file_type = &filetype
-  call InitDefaultEngine(l:file_type)
+  call s:InitDefaultEngine(l:file_type)
   return g:ECY_file_type_info2[l:file_type]['filetype_using']
   "}}}
 endf
 
-function! UseSpecifyEngineOnce(engine_name) abort
+function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
   "{{{
   let l:file_type = &filetype
-  let l:current_engine_name = GetBufferEngineName()
+  let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
   let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
-  call ECY_OnCompletion()
+  call ECY#rpc#rpc_event#OnCompletion()
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = l:current_engine_name
   "}}}
 endfunction

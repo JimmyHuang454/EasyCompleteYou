@@ -20,11 +20,11 @@ fun! s:Indent(show_list)
 "}}}
 endf
 
-fun! DoCompletion_vim(context)
+fun! s:DoCompletion_vim(context)
 "{{{
 
   if s:popup_windows_nr != -1
-    call CloseCompletionWindows()
+    call ECY#completion#Close()
   endif
 
   let l:fliter_words = a:context['filter_key']
@@ -102,9 +102,9 @@ fun! DoCompletion_vim(context)
 "}}}
 endf
 
-function! ECY_ExpandSnippet() abort
+function! ECY#completion#ExpandSnippet() abort
 "{{{ this function will not tirgger when there are no UltiSnips plugin.
-  if IsMenuOpen() 
+  if ECY#completion#IsMenuOpen() 
     " we can see that we require every item of completion must contain full
     " infos which is a dict with all key.
     if g:has_floating_windows_support == 'vim' && 
@@ -146,7 +146,7 @@ function! ECY_ExpandSnippet() abort
     endtry
   endif
 
-  call SendKeys(g:ECY_expand_snippets_key)
+  call utils#SendKeys(g:ECY_expand_snippets_key)
   return ''
 "}}}
 endfunction
@@ -165,11 +165,11 @@ function! s:SetUpCompleteopt() abort
   endif
   set completeopt-=longest
   set shortmess+=c
-  set completefunc=ECY_CompleteFunc
+  set completefunc=ECY#completion#Func
 "}}}
 endfunction
 
-function! ECY_CompleteFunc(findstart, base) abort 
+function! ECY#completion#Func(findstart, base) abort 
 "{{{
   if a:findstart
     return s:show_item_position " a number
@@ -178,16 +178,7 @@ function! ECY_CompleteFunc(findstart, base) abort
 "}}}
 endfunction
 
-function! GetValue(dicts, key, default_value) abort 
-"{{{
-  if !has_key(a:dicts, a:key)
-    return a:default_value
-  endif
-  return a:dicts[a:key]
-"}}}
-endfunction
-
-fun! DoCompletion_old_school(context)
+fun! s:DoCompletion_old_school(context)
 "{{{
   " a complete item in vim look like this and must be string.
   " so we have to use a triky way to do more thing.
@@ -201,30 +192,30 @@ fun! DoCompletion_old_school(context)
   let s:show_item_list = []
 
   for item in l:items_info
-    let results_format = {'abbr': GetValue(item, 'abbr', ''),
-          \'word': GetValue(item, 'word', ''),
-          \'kind': GetValue(item, 'kind', ''),
-          \'menu': GetValue(item, 'menu', ''),
-          \'info': GetValue(item, 'info', ''),
+    let results_format = {'abbr': utils#GetValue(item, 'abbr', ''),
+          \'word': utils#GetValue(item, 'word', ''),
+          \'kind': utils#GetValue(item, 'kind', ''),
+          \'menu': utils#GetValue(item, 'menu', ''),
+          \'info': utils#GetValue(item, 'info', ''),
           \'user_data': string(i)}
 
     call add(s:show_item_list, l:results_format)
     let i += 1
   endfor
 
-  call SendKeys("\<C-X>\<C-U>\<C-P>")
+  call utils#SendKeys("\<C-X>\<C-U>\<C-P>")
 "}}}
 endf
 
-fun! DoCompletion(context)
+fun! ECY#completion#Open(context)
 "{{{
   if (g:popup_windows_is_selecting || len(a:context['filter_key']) <= g:ECY_triggering_length) 
         \&& !a:context['must_show']
     return
   endif
 
-  if GetCurrentBufferPath() != a:context['params']['buffer_path'] 
-        \|| GetBufferIDNotChange() != a:context['params']['buffer_id']
+  if utils#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+        \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
         \|| len(a:context['show_list']) == 0
         \|| mode() == 'n'
     return
@@ -232,24 +223,24 @@ fun! DoCompletion(context)
 
   " if len(a:context['show_list']) == 0
   "   if GetBufferEngineName() != g:ECY_default_engine
-  "     call UseSpecifyEngineOnce(g:ECY_default_engine)
+  "     call ECY#switch_engine#UseSpecifyEngineOnce(g:ECY_default_engine)
   "   endif
   "   return
   " endif
 
   if g:has_floating_windows_support == 'vim' 
         \&& g:ECY_use_floating_windows_to_be_popup_windows
-    call DoCompletion_vim(a:context)
+    call s:DoCompletion_vim(a:context)
   elseif g:has_floating_windows_support == 'neovim'
         \&& g:ECY_use_floating_windows_to_be_popup_windows
     "TODO
   else " has no
-    call DoCompletion_old_school(a:context)
+    call s:DoCompletion_old_school(a:context)
   endif
 "}}}
 endf
 
-function! CloseCompletionWindows() abort
+function! ECY#completion#Close() abort
 "{{{
   if g:popup_windows_is_selecting
     return
@@ -264,12 +255,12 @@ function! CloseCompletionWindows() abort
   else
     "TODO: neovim
   endif
-  call ClosePreview()
-  call RecoverIndent()
+  call ECY#preview_windows#Close()
+  call s:RecoverIndent()
 "}}}
 endfunction
 
-function! IsMenuOpen() abort
+function! ECY#completion#IsMenuOpen() abort
 "{{{
   if g:has_floating_windows_support == 'vim'
     if g:ECY_use_floating_windows_to_be_popup_windows == v:false
@@ -287,7 +278,7 @@ function! IsMenuOpen() abort
 "}}}
 endfunction
 
-function! Complete(position, words) abort
+function! s:Complete(position, words) abort
 "{{{
    let l:current_colum = (col('.') - 1)
    let l:complete_col = a:position['colum']
@@ -302,7 +293,7 @@ function! Complete(position, words) abort
 "}}}
 endfunction
 
-function! SelectItems_vim(next_or_pre) abort
+function! s:SelectItems_vim(next_or_pre) abort
 "{{{
   if a:next_or_pre == 0
     let l:round = 1
@@ -310,7 +301,7 @@ function! SelectItems_vim(next_or_pre) abort
     let l:round = -1
   endif
   let l:start_colum = g:ECY_current_popup_windows_info['start_position']['colum']
-  " call Complete(g:ECY_current_popup_windows_info['start_position'], 'sdf')
+  " call s:Complete(g:ECY_current_popup_windows_info['start_position'], 'sdf')
 
   " loop
   let l:items_info       = g:ECY_current_popup_windows_info['items_info']
@@ -340,7 +331,7 @@ function! SelectItems_vim(next_or_pre) abort
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if GetCurrentBufferPath(i, l:point)
+      if utils#GetCurrentBufferPath(i, l:point)
         let l:hightlight = 'ECY_floating_windows_seleted_matched'
       else
         let l:hightlight = 'ECY_floating_windows_seleted'
@@ -393,27 +384,27 @@ function! SelectItems_vim(next_or_pre) abort
 "}}}
 endfunction
 
-function! SelectItems(next_or_prev, send_key) abort
+function! ECY#completion#SelectItems(next_or_prev, send_key) abort
 "{{{
-  if !IsMenuOpen()
-    call SendKeys(a:send_key)
+  if !ECY#completion#IsMenuOpen()
+    call utils#SendKeys(a:send_key)
   else
     if g:ECY_use_floating_windows_to_be_popup_windows 
           \&& g:has_floating_windows_support == 'vim'
       let g:popup_windows_is_selecting = v:true
-      call ClosePreview()
-      call DisableIndent()
-      call SelectItems_vim(a:next_or_prev)
+      call ECY#preview_windows#Close()
+      call s:DisableIndent()
+      call s:SelectItems_vim(a:next_or_prev)
     elseif g:has_floating_windows_support == 'neovim'
       "TODO
     endif
-    call OpenPreview()
+    call ECY#preview_windows#Open()
   endif
   return ''
 "}}}
 endfunction
 
-function! SaveIndent() abort
+function! s:SaveIndent() abort
 "{{{
   if !exists('b:indentexpr_temp')
     let b:indentexpr_temp = &indentexpr
@@ -421,14 +412,14 @@ function! SaveIndent() abort
 "}}}
 endfunction
 
-function! DisableIndent() abort
+function! s:DisableIndent() abort
 "{{{ DisableIndent temporally.
-  call SaveIndent()
+  call s:SaveIndent()
   let &indentexpr = ''
 "}}}
 endfunction
 
-function! RecoverIndent() abort
+function! s:RecoverIndent() abort
 "{{{
   if exists('b:indentexpr_temp')
     let &indentexpr = b:indentexpr_temp
@@ -460,8 +451,8 @@ fun! s:Init()
 
   augroup ECY_completion
     autocmd!
-    autocmd TextChangedI  * call CloseCompletionWindows()
-    autocmd InsertLeave   * call CloseCompletionWindows()
+    autocmd TextChangedI  * call ECY#completion#Close()
+    autocmd InsertLeave   * call ECY#completion#Close()
   augroup END
 
   if g:ECY_use_floating_windows_to_be_popup_windows == v:false
@@ -470,11 +461,11 @@ fun! s:Init()
     exe 'inoremap <expr>' . g:ECY_select_items[1] .
           \ ' pumvisible() ? "\<C-p>" : "\' . g:ECY_select_items[1] .'"'
   else
-    exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
-    exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
+    exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
+    exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
   endif
 
-  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY_ExpandSnippet()<cr>'
+  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
 
   exe 'let g:ECY_expand_snippets_key = "\'.g:ECY_expand_snippets_key.'"'
 

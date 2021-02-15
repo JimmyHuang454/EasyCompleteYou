@@ -2,7 +2,7 @@ fun! utils#echo(msg)
   echo a:msg
 endf
 
-function! GetCurrentBufferPath(...) abort
+function! utils#GetCurrentBufferPath(...) abort
 "{{{
   " let l:full_path = fnamemodify(@%, ':p')
   let l:full_path = expand('%:p')
@@ -10,27 +10,27 @@ function! GetCurrentBufferPath(...) abort
 "}}}
 endfunction
 
-function GetCurrentBufferPosition() abort
+function utils#GetCurrentBufferPosition() abort
 "{{{ utf-8]
   return { 'line': line('.') - 1, 'colum': col('.') - 1}
 "}}}
 endfunction
 
-function GetCurrentLineAndPosition() abort
+function utils#GetCurrentLineAndPosition() abort
 "{{{
-  let l:temp = GetCurrentBufferPosition()
+  let l:temp = utils#GetCurrentBufferPosition()
   let l:temp['line_content'] = getline(".")
   return l:temp
 "}}}
 endfunction
 
-function GetCurrentLine() abort
+function utils#GetCurrentLine() abort
 "{{{
   return getline(".")
 "}}}
 endfunction
 
-function GetCurrentBufferContent() abort " return list
+function utils#GetCurrentBufferContent() abort " return list
 "{{{
   return getbufline(bufnr(), 1, "$")
 "}}}
@@ -88,7 +88,7 @@ function! MoveToBuffer(line, colum, file_path, windows_to_show) abort
     " use current buffer's windows to open that buffer if current buffer is
     " not that buffer, and if current buffer is that buffer, it will fit
     " perfectly.
-    if GetCurrentBufferPath() != a:file_path
+    if utils#GetCurrentBufferPath() != a:file_path
       silent exe "hide edit " .  a:file_path
     endif
   endif
@@ -96,7 +96,7 @@ function! MoveToBuffer(line, colum, file_path, windows_to_show) abort
 "}}}
 endfunction
 
- function! PathToUri(path) abort
+function! PathToUri(path) abort
     return s:encode_uri(a:path, 0, 'file://')
 endfunction
 
@@ -138,13 +138,13 @@ else
     endfunction
 endif
 
-function! SendKeys(keys) abort
+function! utils#SendKeys(keys) abort
 "{{{
   call feedkeys( a:keys, 'in' )
 "}}}
 endfunction
 
-function! GetValue(dicts, key, default_value) abort 
+function! utils#GetValue(dicts, key, default_value) abort 
 "{{{
   if !has_key(a:dicts, a:key)
     return a:default_value

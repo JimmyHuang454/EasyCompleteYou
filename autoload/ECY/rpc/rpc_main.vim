@@ -18,7 +18,7 @@ fun! s:Send(msg)
   endtry
 endf
 
-fun! RPCEventsAll(msg)
+fun! ECY#rpc#rpc_main#RPCEventsAll(msg)
 "{{{
   let g:rpc_seq_id += 1
   let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': GetBufferEngineName()}
@@ -68,7 +68,7 @@ fun! rpc_main#NewClient(cmd)
   let g:fuck = ECY2_job#start(a:cmd, {
       \ 'on_stdout': function('rpc_main#Input')
       \ })
-  call RPCInitEvent()
+  call ECY#rpc#rpc_event#Init()
 "}}}
 endf
 
