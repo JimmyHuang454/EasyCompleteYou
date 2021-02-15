@@ -37,7 +37,7 @@ class Operate(object):
             try:
                 response = self._lsp.GetResponse('window/showMessage',
                                                  timeout_=-1)
-                rpc.DoCall('utils#echo', [response])
+                rpc.DoCall('ECY#utils#echo', [response])
             except:
                 pass
 

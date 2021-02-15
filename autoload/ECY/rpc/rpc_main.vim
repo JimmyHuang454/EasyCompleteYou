@@ -63,7 +63,7 @@ fun! rpc_main#Input(id, data, event)
 "}}}
 endf
 
-fun! rpc_main#NewClient(cmd)
+fun! ECY#rpc#rpc_main#NewClient(cmd)
 "{{{
   let g:fuck = ECY2_job#start(a:cmd, {
       \ 'on_stdout': function('rpc_main#Input')

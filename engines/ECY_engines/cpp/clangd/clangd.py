@@ -206,7 +206,7 @@ class Operate(object):
                 path = self._lsp.UriToPath(temp['result'])
                 rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
             else:
-                rpc.DoCall('utils#echo',
+                rpc.DoCall('ECY#utils#echo',
                            ["Can not find it's header/source. Try it latter."])
         else:
             self._lsp.executeCommand(params['cmd_name'],

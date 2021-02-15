@@ -2,7 +2,7 @@
 
 fun! ECY#code_action#Do(context)
 "{{{
-  let l:current_buffer_path = utils#GetCurrentBufferPath()
+  let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
   if l:current_buffer_path != a:context['params']['buffer_path'] 
         \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
     return
@@ -11,7 +11,7 @@ fun! ECY#code_action#Do(context)
   let l:results = a:context['result']['result']
   let l:edit_res = {}
   if len(l:results) == 0
-    call utils#echo('Nothing to act.')
+    call ECY#utils#echo('Nothing to act.')
     return
   endif
   for item in l:results
@@ -39,7 +39,7 @@ fun! s:HandleEdit(edit_dict)
   let l:not_to_do_action = []
   for item in a:edit_dict
     " if has_key(item, 'range')
-    "   let current_position = utils#GetCurrentBufferPosition()
+    "   let current_position = ECY#utils#GetCurrentBufferPosition()
     "   if current_position['line'] > item['range']['end']['line'] || 
     "         \current_position['line'] < item['range']['start']['line'] ||
     "         \current_position['colum'] > item['range']['end']['character'] || 
@@ -87,7 +87,7 @@ fun! s:ApplyEdit(workspace_edit)
       let l:path = UriToPath(item)
       call s:Switch(l:path)
       for item2 in a:workspace_edit['changes'][item]
-        call s:Apply(l:path, item2, utils#GetCurrentBufferPosition())
+        call s:Apply(l:path, item2, ECY#utils#GetCurrentBufferPosition())
         call add(l:changed, l:path)
       endfor
     endfor

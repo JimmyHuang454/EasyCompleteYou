@@ -1,8 +1,8 @@
-fun! utils#echo(msg)
+fun! ECY#utils#echo(msg)
   echo a:msg
 endf
 
-function! utils#GetCurrentBufferPath(...) abort
+function! ECY#utils#GetCurrentBufferPath(...) abort
 "{{{
   " let l:full_path = fnamemodify(@%, ':p')
   let l:full_path = expand('%:p')
@@ -10,27 +10,27 @@ function! utils#GetCurrentBufferPath(...) abort
 "}}}
 endfunction
 
-function utils#GetCurrentBufferPosition() abort
+function ECY#utils#GetCurrentBufferPosition() abort
 "{{{ utf-8]
   return { 'line': line('.') - 1, 'colum': col('.') - 1}
 "}}}
 endfunction
 
-function utils#GetCurrentLineAndPosition() abort
+function ECY#utils#GetCurrentLineAndPosition() abort
 "{{{
-  let l:temp = utils#GetCurrentBufferPosition()
+  let l:temp = ECY#utils#GetCurrentBufferPosition()
   let l:temp['line_content'] = getline(".")
   return l:temp
 "}}}
 endfunction
 
-function utils#GetCurrentLine() abort
+function ECY#utils#GetCurrentLine() abort
 "{{{
   return getline(".")
 "}}}
 endfunction
 
-function utils#GetCurrentBufferContent() abort " return list
+function ECY#utils#GetCurrentBufferContent() abort " return list
 "{{{
   return getbufline(bufnr(), 1, "$")
 "}}}
@@ -88,7 +88,7 @@ function! MoveToBuffer(line, colum, file_path, windows_to_show) abort
     " use current buffer's windows to open that buffer if current buffer is
     " not that buffer, and if current buffer is that buffer, it will fit
     " perfectly.
-    if utils#GetCurrentBufferPath() != a:file_path
+    if ECY#utils#GetCurrentBufferPath() != a:file_path
       silent exe "hide edit " .  a:file_path
     endif
   endif
@@ -138,13 +138,13 @@ else
     endfunction
 endif
 
-function! utils#SendKeys(keys) abort
+function! ECY#utils#SendKeys(keys) abort
 "{{{
   call feedkeys( a:keys, 'in' )
 "}}}
 endfunction
 
-function! utils#GetValue(dicts, key, default_value) abort 
+function! ECY#utils#GetValue(dicts, key, default_value) abort 
 "{{{
   if !has_key(a:dicts, a:key)
     return a:default_value

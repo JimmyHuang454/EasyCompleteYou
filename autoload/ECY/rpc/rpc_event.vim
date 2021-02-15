@@ -53,7 +53,7 @@ endf
 
 fun! ECY#rpc#rpc_event#GetBufferIDNotChange()
 "{{{
-  let l:buffer_path = utils#GetCurrentBufferPath()
+  let l:buffer_path = ECY#utils#GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -72,7 +72,7 @@ endf
 
 fun! ECY#rpc#rpc_event#GetBufferIDChange()
 "{{{
-  let l:buffer_path = utils#GetCurrentBufferPath()
+  let l:buffer_path = ECY#utils#GetCurrentBufferPath()
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -84,10 +84,10 @@ endf
 "{{{
 fun! s:OnBufferEnter()
 "{{{
-  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -103,10 +103,10 @@ endf
 
 fun! s:OnTextChanged()
 "{{{ normal mode
-  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 
@@ -116,10 +116,10 @@ endf
 
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
-  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 
@@ -129,10 +129,10 @@ endf
 
 fun! s:OnInsertLeave()
 "{{{
-  let l:params = {'buffer_path': utils#GetCurrentBufferPath(), 
-                \'buffer_line': utils#GetCurrentLine(), 
-                \'buffer_position': utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': utils#GetCurrentBufferContent(), 
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 

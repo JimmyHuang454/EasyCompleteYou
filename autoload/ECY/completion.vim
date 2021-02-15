@@ -146,7 +146,7 @@ function! ECY#completion#ExpandSnippet() abort
     endtry
   endif
 
-  call utils#SendKeys(g:ECY_expand_snippets_key)
+  call ECY#utils#SendKeys(g:ECY_expand_snippets_key)
   return ''
 "}}}
 endfunction
@@ -192,18 +192,18 @@ fun! s:DoCompletion_old_school(context)
   let s:show_item_list = []
 
   for item in l:items_info
-    let results_format = {'abbr': utils#GetValue(item, 'abbr', ''),
-          \'word': utils#GetValue(item, 'word', ''),
-          \'kind': utils#GetValue(item, 'kind', ''),
-          \'menu': utils#GetValue(item, 'menu', ''),
-          \'info': utils#GetValue(item, 'info', ''),
+    let results_format = {'abbr': ECY#utils#GetValue(item, 'abbr', ''),
+          \'word': ECY#utils#GetValue(item, 'word', ''),
+          \'kind': ECY#utils#GetValue(item, 'kind', ''),
+          \'menu': ECY#utils#GetValue(item, 'menu', ''),
+          \'info': ECY#utils#GetValue(item, 'info', ''),
           \'user_data': string(i)}
 
     call add(s:show_item_list, l:results_format)
     let i += 1
   endfor
 
-  call utils#SendKeys("\<C-X>\<C-U>\<C-P>")
+  call ECY#utils#SendKeys("\<C-X>\<C-U>\<C-P>")
 "}}}
 endf
 
@@ -214,7 +214,7 @@ fun! ECY#completion#Open(context)
     return
   endif
 
-  if utils#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
+  if ECY#utils#GetCurrentBufferPath() != a:context['params']['buffer_path'] 
         \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
         \|| len(a:context['show_list']) == 0
         \|| mode() == 'n'
@@ -331,7 +331,7 @@ function! s:SelectItems_vim(next_or_pre) abort
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if utils#GetCurrentBufferPath(i, l:point)
+      if ECY#utils#GetCurrentBufferPath(i, l:point)
         let l:hightlight = 'ECY_floating_windows_seleted_matched'
       else
         let l:hightlight = 'ECY_floating_windows_seleted'
@@ -387,7 +387,7 @@ endfunction
 function! ECY#completion#SelectItems(next_or_prev, send_key) abort
 "{{{
   if !ECY#completion#IsMenuOpen()
-    call utils#SendKeys(a:send_key)
+    call ECY#utils#SendKeys(a:send_key)
   else
     if g:ECY_use_floating_windows_to_be_popup_windows 
           \&& g:has_floating_windows_support == 'vim'
