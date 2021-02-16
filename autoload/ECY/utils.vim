@@ -2,6 +2,21 @@ fun! ECY#utils#echo(msg)
   echo a:msg
 endf
 
+fun! ECY#utils#show(msg, style, title)
+"{{{
+  if type(a:msg) != v:t_string
+    let l:msg = join(a:msg, "\n")
+  else
+    let l:msg = a:msg
+  endif
+  if a:style == 'buffer'
+    exe 'new ' . a:title
+    " let l:current_buffer_nr = bufnr()
+    call setline(1, l:msg)
+  endif
+"}}}
+endf
+
 function! ECY#utils#GetCurrentBufferPath(...) abort
 "{{{
   " let l:full_path = fnamemodify(@%, ':p')

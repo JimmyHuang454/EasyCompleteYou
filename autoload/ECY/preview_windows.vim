@@ -3,8 +3,10 @@ function! ECY#preview_windows#Init() abort
 "{{{ 
   let s:preview_windows_nr = -1
   " let g:ECY_enable_preview_snippet = get(g:,'ECY_enable_preview_snippet', v:true)
+
   let g:ECY_preview_windows_size = 
-        \get(g:,'ECY_preview_windows_size',[[30, 50], [2, 14]])
+        \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
+
   let i = g:ECY_preview_windows_size[0][1]
   let s:cut_line = ''
   while i != 0

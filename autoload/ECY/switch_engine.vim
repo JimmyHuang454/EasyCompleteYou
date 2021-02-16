@@ -163,6 +163,13 @@ fun! s:InitUsableEngine()
         \'path': 'pip', 
         \'file_type':['all']
         \})
+
+  call ECYAddEngine({
+        \'engine_name': 'ECY_engines.pygment.pygment', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['all']
+        \})
   "}}}
 endf
 
