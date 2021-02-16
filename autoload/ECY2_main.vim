@@ -22,6 +22,20 @@ fun! ECY2_main#DoCmd(cmd_name, param_list)
 "}}}
 endf
 
+fun! ECY2_main#CheckAllEngine()
+"{{{
+
+  let l:engine_list = []
+  for item in g:ECY_all_buildin_engine
+    call add(l:engine_list, item['engine_name'])
+  endfor
+
+  let l:params = {'engine_list': l:engine_list}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'OnCheckEngine', 'params': l:params})
+"}}}
+endf
+
 fun! ECY2_main#GetCodeLens()
 "{{{
   let l:params = {

@@ -47,6 +47,9 @@ class Mannager(object):
             context = handler_queue.get()
             event_name = context['event_name']
             try:
+                if event_name == 'OnCheckEngine':
+                    self.CheckEngine(context)
+                    continue
                 pre_context = self.CallFunction(self.events_pre, event_name,
                                                 engine_name, context)
                 if pre_context is False:  # filter this event
@@ -108,9 +111,6 @@ class Mannager(object):
         return self.engine_dict[self.default_engine_name]
 
     def DoEvent(self, context):
-        if context['event_name'] == 'OnCheckEngine':
-            self.CheckEngine(context)
-            return
         engine_obj = self._get_engine_obj(context['engine_name'])
         engine_obj['handler_queue'].put(context)
 
@@ -121,16 +121,18 @@ class Mannager(object):
         for item in to_be_check_engine_list:
             temp = self._get_engine_obj(item)
             if temp == self.default_engine_name:
-                res[temp] = ['{Error} Engine not exists.']
+                res[item] = [
+                    '{Error} Engine not exists or having critical errors.'
+                ]
             else:
                 check_res = self.CallFunction(temp, 'Check', item, context)
                 if check_res is None:
-                    res[temp] = ['{Warning} Has no check function.']
+                    res[item] = ['{Warning} Has no check function.']
                 elif 'res' not in check_res or type(
                         check_res['res']) is not list:
-                    res[temp] = ["{Error} ECY can NOT parse engine's return."]
+                    res[item] = ["{Error} ECY can NOT parse engine's return."]
                 else:
-                    res[temp] = check_res['res']
+                    res[item] = check_res['res']
 
         returns = []
         i = 0
