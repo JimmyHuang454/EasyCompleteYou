@@ -121,17 +121,16 @@ class Mannager(object):
         for item in to_be_check_engine_list:
             temp = self._get_engine_obj(item)
             if temp == self.default_engine_name:
-                res[temp] = ['Engine not exists.']
+                res[temp] = ['{Error} Engine not exists.']
             else:
                 check_res = self.CallFunction(temp, 'Check', item, context)
                 if check_res is None:
-                    res[temp] = ['Has no check function.']
+                    res[temp] = ['{Warning} Has no check function.']
+                elif 'res' not in check_res or type(
+                        check_res['res']) is not list:
+                    res[temp] = ["{Error} ECY can NOT parse engine's return."]
                 else:
-                    if 'res' not in check_res or type(
-                            check_res['res']) is not list:
-                        res[temp] = ["ECY can NOT parse engine's return."]
-                    else:
-                        res[temp] = check_res['res']
+                    res[temp] = check_res['res']
 
         returns = []
         i = 0
