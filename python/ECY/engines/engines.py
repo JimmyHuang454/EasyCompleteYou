@@ -61,7 +61,7 @@ class Mannager(object):
                 engine_info['res_queue'].put(callback_context)
             except Exception as e:
                 logger.exception(e)
-                rpc.DoCall('utils#echo', [
+                rpc.DoCall('ECY#utils#echo', [
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
                     % (engine_name)
                 ])
@@ -108,9 +108,36 @@ class Mannager(object):
         return self.engine_dict[self.default_engine_name]
 
     def DoEvent(self, context):
+        if context['event_name'] == 'OnCheckEngine':
+            self.CheckEngine(context)
+            return
         engine_obj = self._get_engine_obj(context['engine_name'])
         engine_obj['handler_queue'].put(context)
 
-    def BufEnter(self, context):
-        path = rpc.DoCall('ECY#utility#GetCurrentBufferPath')
-        logger.debug('On BufEnter %s' % (path))
+    def CheckEngine(self, context):
+        params = context['params']
+        to_be_check_engine_list = params['engine_list']
+        res = {}
+        for item in to_be_check_engine_list:
+            temp = self._get_engine_obj(item)
+            if temp == self.default_engine_name:
+                res[temp] = ['Engine not exists.']
+            else:
+                check_res = self.CallFunction(temp, 'Check', item, context)
+                if check_res is None:
+                    res[temp] = ['Has no check function.']
+                else:
+                    if 'res' not in check_res or type(
+                            check_res['res']) is not list:
+                        res[temp] = ["ECY can NOT parse engine's return."]
+                    else:
+                        res[temp] = check_res['res']
+
+        returns = []
+        i = 0
+        for item in res:
+            returns.append('%s. Engine name: [%s] \n' % (str(i), item))
+            returns.extend(res[item])
+            returns.append('\n')
+            i += 1
+        rpc.DoCall('ECY#utils#show', [returns, 'buffer', 'ECY_check'])
