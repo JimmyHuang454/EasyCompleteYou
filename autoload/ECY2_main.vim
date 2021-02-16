@@ -1,6 +1,9 @@
 fun! ECY2_main#Init()
 "{{{
   let l:run_cmd = g:ECY_python_cmd . ' ' . g:ECY_python_script_folder_path . '/client_main.py'
+  if g:ECY_is_debug
+    let l:run_cmd .= ' --debug_log'
+  endif
   call ECY#rpc#rpc_main#NewClient(l:run_cmd)
 "}}}
 endf
