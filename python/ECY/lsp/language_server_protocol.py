@@ -408,19 +408,27 @@ class LSP(conec.Operate):
                text,
                version,
                position,
+               new_name,
                workDoneToken=None):
 
         if workDoneToken is None:
             workDoneToken = self._get_workdone_token()
+
+        if new_name == '':
+            raise "new_name can not be None"
+
         textDocument = {
             'uri': uri,
             'languageId': languageId,
             'text': text,
-            'workDoneToken': workDoneToken,
-            'position': position,
             'version': version
         }
-        params = {'textDocument': textDocument}
+        params = {
+            'textDocument': textDocument,
+            'position': position,
+            'workDoneToken': workDoneToken,
+            'newName': new_name
+        }
         return self._build_send(params, 'textDocument/rename')
 
     def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
