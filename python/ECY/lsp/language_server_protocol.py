@@ -402,6 +402,27 @@ class LSP(conec.Operate):
         self.workDoneToken_id += 1
         return self.workDoneToken_id
 
+    def rename(self,
+               uri,
+               languageId,
+               text,
+               version,
+               position,
+               workDoneToken=None):
+
+        if workDoneToken is None:
+            workDoneToken = self._get_workdone_token()
+        textDocument = {
+            'uri': uri,
+            'languageId': languageId,
+            'text': text,
+            'workDoneToken': workDoneToken,
+            'position': position,
+            'version': version
+        }
+        params = {'textDocument': textDocument}
+        return self._build_send(params, 'textDocument/rename')
+
     def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
         if workDoneToken is None:
             workDoneToken = self._get_workdone_token()

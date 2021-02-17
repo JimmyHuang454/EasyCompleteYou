@@ -98,6 +98,9 @@ call ECY#preview_windows#Init()
 call ECY#switch_engine#Init()
 call ECY2_main#Init()
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                    end                                     "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ECY_endtime = reltimefloat(reltime())
 let g:ECY_start_time = g:ECY_endtime - g:ECY_starttime
 
