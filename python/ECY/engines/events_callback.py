@@ -39,18 +39,19 @@ class Operate():
             current_line[:params['buffer_position']['colum']],
             encoding='utf-8')
 
-        if 'regex' in context and 'filter_key' in context:
+        if 'regex' in context:
             regex = context['regex']
-        else:
+        else:  # default one
             regex = r'[\w+]'
-            current_colum, filter_words, last_key = utils.MatchFilterKeys(
-                context['prev_key'], regex)
 
-            context['filter_key'] = filter_words
-            context['start_position'] = {
-                'line': params['buffer_position']['line'],
-                'colum': current_colum
-            }
+        current_colum, filter_words, last_key = utils.MatchFilterKeys(
+            context['prev_key'], regex)
+
+        context['filter_key'] = filter_words
+        context['start_position'] = {
+            'line': params['buffer_position']['line'],
+            'colum': current_colum
+        }
 
         context['show_list'] = self.fuzzy_match.FilterItems(
             context['filter_key'],
@@ -83,4 +84,4 @@ class Operate():
         results = context['result']['result']
         for item in results:
             pass
-        rpc.DoCall('ECY#ECY#code_action#Do', [context])
+        rpc.DoCall('ECY#code_action#Do', [context])

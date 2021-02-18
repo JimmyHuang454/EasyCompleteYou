@@ -170,6 +170,20 @@ fun! s:InitUsableEngine()
         \'path': 'pip', 
         \'file_type':['all']
         \})
+
+  call ECYAddEngine({
+        \'engine_name': 'ECY_engines.javascript.theia.theia', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['javascript']
+        \})
+
+  call ECYAddEngine({
+        \'engine_name': 'ECY_engines.html.lsp.html_lsp', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['html', 'xhtml', 'vue']
+        \})
   "}}}
 endf
 

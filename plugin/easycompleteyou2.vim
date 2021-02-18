@@ -26,7 +26,7 @@ elseif v:version < 800
 elseif &encoding !~? 'utf-\?8'
   echohl WarningMsg |
         \ echomsg "ECY unavailable: requires UTF-8 encoding. " .
-        \ "Put the line 'set encoding=utf-8' in your vimrc." |
+        \ "Put the line 'set encoding=utf-8' into your vimrc." |
         \ echohl None
   call s:restore_cpo()
   finish
