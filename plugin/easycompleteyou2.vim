@@ -73,6 +73,7 @@ endif
 let g:ECY_base_dir = expand( '<sfile>:p:h:h' )
 let g:ECY_base_dir = tr(g:ECY_base_dir, '\', '/')
 let g:ECY_buffer_version = {}
+let g:ECY_windows_are_showing = {}
 
 let g:ECY_python_script_folder_path = g:ECY_base_dir . '/python'
 
@@ -96,6 +97,7 @@ let g:ECY_file_type_blacklist
 call ECY#completion#Init()
 call ECY#preview_windows#Init()
 call ECY#switch_engine#Init()
+call ECY#diagnostics#Init()
 call ECY2_main#Init()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

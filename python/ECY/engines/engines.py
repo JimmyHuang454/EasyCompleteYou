@@ -47,7 +47,7 @@ class Mannager(object):
             context = handler_queue.get()
             event_name = context['event_name']
             try:
-                before_context = self.CallFunction(self.events_pre,
+                before_context = self.CallFunction(engine_info['engine_obj'],
                                                    'OnRequest', engine_name,
                                                    context)
 

@@ -5,6 +5,7 @@ function ECY#diagnostics#Init() abort
 "{{{ var init
   let g:ECY_enable_diagnostics
         \= get(g:,'ECY_enable_diagnostics', v:true)
+
   if !g:ECY_enable_diagnostics
     return
   endif
@@ -40,10 +41,10 @@ function ECY#diagnostics#Init() abort
 
   let s:supports_sign_groups = has('nvim-0.4.2') || exists('*sign_define')
   let s:supports_sign_groups = v:false
-  let s:sign_id_dict                         = {}
+  let s:sign_id_dict                           = {}
   let s:current_diagnostics                    = {}
-  let g:ECY_windows_are_showing['diagnostics'] = -1
   let g:ECY_diagnostics_items_all              = []
+  let g:ECY_windows_are_showing['diagnostics'] = -1
   let g:ECY_diagnostics_items_with_engine_name = {'nothing': []}
   let g:ECY_show_diagnostics_when_cursor_hold = v:false
   " user don't want to update diagnostics in insert mode, but engine had
@@ -267,7 +268,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
         \ 'padding': [0,1,0,1],
         \ 'zindex': 2000}
     let l:nr = popup_atcursor(l:text, l:opts)
-    call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_d')
+    call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_diagnostics')
     " call win_execute(l:nr, l:exe)
     let g:ECY_windows_are_showing['diagnostics'] = l:nr
   endif
@@ -506,6 +507,7 @@ function! s:UpdateSignLists(engine_name) abort
     " {'name':'2', 'content': {'abbr': 'yyy'}}
     "  ],
     " 'position':{...}, 'diagnostics': 'strings'}
+
     call s:PlaceSignAndHighlight(item['position'], 
           \item['diagnostics'],
           \item['items'], item['kind'],

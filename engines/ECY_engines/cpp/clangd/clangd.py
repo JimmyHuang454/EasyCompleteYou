@@ -9,7 +9,7 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = None
+        self.engine_name = 'clangd'
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
@@ -18,9 +18,9 @@ class Operate(object):
         self._diagnosis_cache = []
         self._start_server()
 
-    def OnRequest(self, context):
-        self.engine_name = context['engine_name']
-        return context
+    # def OnRequest(self, context):
+    #     self.engine_name = context['engine_name']
+    #     return context
 
     def _start_server(self):
         try:
@@ -336,7 +336,7 @@ class Operate(object):
                 'type': 'diagnosis',
                 'file_path': file_path,
                 'kind': kind,
-                'diagnosis': diagnosis,
+                'diagnostics': diagnosis,
                 'position': position
             }
             results_list.append(temp)
