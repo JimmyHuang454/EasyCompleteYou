@@ -1,5 +1,5 @@
 
-function! Vim_lspRequestCompletion(context) abort
+function! ECY#vim_lsp#main#Request(context) abort
 "{{{
     let l:server_name = lsp#get_allowed_servers()[0]
 

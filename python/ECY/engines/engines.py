@@ -47,6 +47,12 @@ class Mannager(object):
             context = handler_queue.get()
             event_name = context['event_name']
             try:
+                before_context = self.CallFunction(self.events_pre, 'OnRequest',
+                                            engine_name, context)
+
+                if before_context is None: # filter this event
+                    continue
+
                 if event_name == 'OnCheckEngine':
                     self.CheckEngine(context)
                     continue
@@ -59,7 +65,7 @@ class Mannager(object):
                 callback_context = self.CallFunction(engine_info['engine_obj'],
                                                      event_name, engine_name,
                                                      pre_context)
-                if callback_context is None:
+                if callback_context is None: # filter this event
                     continue
                 engine_info['res_queue'].put(callback_context)
             except Exception as e:
@@ -112,6 +118,7 @@ class Mannager(object):
 
     def DoEvent(self, context):
         engine_obj = self._get_engine_obj(context['engine_name'])
+        context['engine_name'] = engine_obj['name']
         engine_obj['handler_queue'].put(context)
 
     def CheckEngine(self, context):

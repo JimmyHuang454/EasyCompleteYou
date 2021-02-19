@@ -48,10 +48,8 @@ class Operate(object):
             logger.debug('request')
             params['vim_lsp_position'] = current_start_postion
             params['buffer_content'] = ''
-            rpc.DoCall('Vim_lspRequestCompletion', [params])
+            rpc.DoCall('ECY#vim_lsp#main#Request', [params])
             return
-        else:
-            logger.debug('okkkkkkkkkkkk')
 
         self.results_list = []
 

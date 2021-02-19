@@ -76,7 +76,7 @@ function! IsInList(item, list) abort
 "}}}
 endfunction
 
-function! MoveToBuffer(line, colum, file_path, windows_to_show) abort
+function! ECY#utils#MoveToBuffer(line, colum, file_path, windows_to_show) abort
 "{{{ move cursor to windows, in normal mode
 " a:colum is 0-based
 " a:line is 1-based
@@ -165,5 +165,15 @@ function! ECY#utils#GetValue(dicts, key, default_value) abort
     return a:default_value
   endif
   return a:dicts[a:key]
+"}}}
+endfunction
+
+function! ECY#utils#StartLeaderfSelecting(content, callback_name) abort
+"{{{
+  try
+    call leaderf_ECY#items_selecting#Start(a:content, a:callback_name)
+  catch 
+    call ECY#utility#ShowMsg("[ECY] You are missing 'Leaderf' or its version is too low. Please install/update it.", 2)
+  endtry
 "}}}
 endfunction

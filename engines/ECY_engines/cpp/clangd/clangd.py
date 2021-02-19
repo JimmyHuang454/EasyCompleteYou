@@ -9,7 +9,7 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'pyls'
+        self.engine_name = None
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
@@ -17,6 +17,10 @@ class Operate(object):
         self.workspace_cache = []
         self._diagnosis_cache = []
         self._start_server()
+
+    def OnRequest(self, context):
+        self.engine_name = context['engine_name']
+        return context
 
     def _start_server(self):
         try:
@@ -219,9 +223,18 @@ class Operate(object):
                                              timeout_=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
-                # rpc.do
+                rpc.DoCall('ECY#diagnostics#PlaceSign',
+                           [{
+                               'engine_name': self._get_engine_name(),
+                               'res_list': lists
+                           }])
             except Exception as e:
                 logger.exception(e)
+
+    def _get_engine_name(self):
+        if self.engine_name is None:
+            return 'nothing'
+        return self.engine_name
 
     def DoCodeAction(self, context):
         params = context['params']
