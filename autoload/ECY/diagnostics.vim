@@ -100,7 +100,7 @@ function! ECY#diagnostics#ShowCurrentLineDiagnosis(is_triggered_by_event) abort
 "{{{ show diagnostics msg in normal mode.
   if !g:ECY_enable_diagnostics || mode() != 'n'
     if !a:is_triggered_by_event
-      call ECY#utils#echo("[ECY] Diagnosis had been turn off.", 2)
+      call ECY#utils#echo("[ECY] Diagnosis had been turn off.")
     endif
     return ''
   endif
@@ -140,7 +140,7 @@ function! ECY#diagnostics#Show(file_path, line, colum, is_triggered_by_event) ab
 
   if len(l:index_list) == 0
     if !a:is_triggered_by_event
-      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.", 2)
+      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.")
     endif
     return
   endif
@@ -170,7 +170,7 @@ function! ECY#diagnostics#ShowNextDiagnosis(next_or_pre) abort
     call s:InitDiagnosisLists()
     let l:items_len = len(g:ECY_diagnostics_items_all)
     if l:items_len == 0
-      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.", 2)
+      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.")
       return ''
     endif
   endif
@@ -198,7 +198,7 @@ function! ECY#diagnostics#ShowNextDiagnosis(next_or_pre) abort
       endif
     endfor
     if !exists('l:line')
-      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.", 2)
+      call ECY#utils#echo("[ECY] Diagnosis has nothing to show at current buffer line.")
       return ''
     endif
   endif
@@ -286,7 +286,7 @@ function! s:ShowDiagnosis_all(index_list) abort
     endif
     let i += 1
   endfor
-  call ECY#utils#echo(l:temp, 2)
+  call ECY#utils#echo(l:temp)
 "}}}
 endfunction
 
@@ -561,7 +561,7 @@ function! ECY#diagnostics#Toggle() abort
     let g:ECY_diagnostics_items_all = []
     let g:ECY_diagnostics_items_with_engine_name = {}
   endif
-  call ECY#utils#echo('[ECY] Diagnosis status: ' . l:status, 2)
+  call ECY#utils#echo('[ECY] Diagnosis status: ' . l:status)
 "}}}
 endfunction
 
