@@ -16,6 +16,11 @@ class Operate(object):
         self.trigger_key = [".", "<", ">", ":", "\"", "/"]
         self.workspace_cache = []
         self._diagnosis_cache = []
+
+        ###############
+        #  user opts  #
+        ###############
+        self.user_clangd_path = 'g:ECY_clangd_cmd'
         self._start_server()
 
     # def OnRequest(self, context):
@@ -23,13 +28,19 @@ class Operate(object):
     #     return context
 
     def _start_server(self):
-        try:
-            import ECY_clangd
-            has_ECY_windows_clangd = True
-        except:
-            has_ECY_windows_clangd = False
+        has_ECY_windows_clangd_pip = None
+
+        if rpc.DoCall('exists', [self.user_clangd_path]):
+            starting_cmd = rpc.GetVaribal(self.user_clangd_path)
+        else:
+            try:
+                import ECY_clangd
+                has_ECY_windows_clangd_pip = True
+            except:
+                has_ECY_windows_clangd_pip = False
+            starting_cmd = ECY_clangd.exe_path
+
         self._lsp = language_server_protocol.LSP()
-        starting_cmd = ECY_clangd.exe_path
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.PathToUri(

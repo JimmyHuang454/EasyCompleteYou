@@ -1,5 +1,6 @@
 from loguru import logger
 from ECY import rpc
+import time
 
 
 class Operate(object):
@@ -51,6 +52,14 @@ class Operate(object):
 
     def OnCompletion(self, context):
         file_type = self._get_filetype()
+        # start = time.time()
+
+        # for item in range(1000):
+        #     file_type = self._get_filetype()
+        # end = time.time()
+        # logger.debug((end - start))
+        # logger.debug((end - start) / 1000)
+
         if file_type not in self.snippet_cache:
             return
         context['show_list'] = self.snippet_cache[file_type]
