@@ -211,8 +211,8 @@ class Operate(object):
         except:
             open_style = 'v'
 
-        if params[
-                'cmd_name'] == 'switch_source_and_header':  # only supports by clangd
+        cmd_name = params['cmd_name']
+        if cmd_name == 'switch_source_and_header':  # only supports by clangd
             params = {'uri': uri}
             temp = self._lsp._build_send(params,
                                          'textDocument/switchSourceHeader')
@@ -223,9 +223,10 @@ class Operate(object):
             else:
                 rpc.DoCall('ECY#utils#echo',
                            ["Can not find it's header/source. Try it latter."])
+        elif cmd_name == 'get_ast':
+            self._get_AST(context)
         else:
-            self._lsp.executeCommand(params['cmd_name'],
-                                     arguments=params['param_list'])
+            self._lsp.executeCommand(cmd_name, arguments=params['param_list'])
 
     def _get_diagnosis(self):
         while True:
@@ -288,6 +289,35 @@ class Operate(object):
                 # TODO
                 pass
         return {'change_list': change_list, 'command_list': command_list}
+
+    def _get_AST(self, context):
+        uri = context['params']['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+
+        text = context['params']['buffer_content']
+        text = "\n".join(text)
+
+        textDocument = {
+            'uri': uri,
+            'languageId': 'c',
+            'text': text,
+            'version': 0
+        }
+
+        ranges = {
+            'start': {
+                'line': 0,
+                'character': 0
+            },
+            'end': {
+                'line': 0,
+                'character': 0
+            }
+        }
+
+        params = {'textDocument': textDocument, 'range': ranges}
+        temp = self._lsp._build_send(params, 'textDocument/ast')
+        self._lsp.GetResponse(temp['Method'], timeout_=5)
 
     def _diagnosis_analysis(self, params):
         results_list = []
