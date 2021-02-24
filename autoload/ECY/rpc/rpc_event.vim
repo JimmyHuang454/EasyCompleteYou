@@ -102,7 +102,7 @@ fun! s:OnVimLeavePre()
 endf
 
 fun! s:OnTextChanged()
-"{{{ normal mode
+"{{{ normal and insert mode
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
@@ -114,13 +114,26 @@ fun! s:OnTextChanged()
 "}}}
 endf
 
+fun! s:TextChangedI()
+"{{{
+  call s:OnTextChanged()
+  call ECY#rpc#rpc_event#OnCompletion()
+"}}}
+endf
+
+fun! s:InsertEnter()
+"{{{
+  call ECY#rpc#rpc_event#OnCompletion()
+"}}}
+endf
+
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
   call ECY#rpc#rpc_event#call({'event_name': 'OnCompletion', 'params': l:params})
@@ -154,8 +167,8 @@ fun! ECY#rpc#rpc_event#Init()
     autocmd TextChanged   * call s:OnTextChanged()
     autocmd InsertLeave   * call s:OnInsertLeave()
 
-    autocmd TextChangedI  * call ECY#rpc#rpc_event#OnCompletion()
-    autocmd InsertEnter   * call ECY#rpc#rpc_event#OnCompletion()
+    autocmd TextChangedI  * call s:TextChangedI()
+    autocmd InsertEnter   * call s:InsertEnter()
   augroup END
   let g:event_pre = {}
   let g:event_callback = {}
