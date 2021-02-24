@@ -43,22 +43,31 @@ class Operate(object):
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
 
+        opts = {
+            'clangdFileStatus':
+            True,
+            'fallbackFlags':
+            utils.GetDefaultValue('g:ECY_clangd_fallback_flags', [])
+        }
+
+        compilationDatabasePath = utils.GetDefaultValue(
+            'g:ECY_clangd_compilationDatabasePath', None)
+
+        if compilationDatabasePath is not None:
+            opts['compilationDatabasePath'] = compilationDatabasePath
+
         # The compile command will be approximately clang $FILE $fallbackFlags in this case.
         temp = self._lsp.initialize(rootUri=self.workspace_cache[0],
-                                    initializationOptions={
-                                        'clangdFileStatus':
-                                        True,
-                                        'fallbackFlags':
-                                        utils.GetDefaultValue(
-                                            'g:ECY_clangd_fallback_flags', [])
-                                    })
+                                    initializationOptions=opts)
 
         self._lsp.GetResponse(temp['Method'], timeout_=5)
+
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
         if utils.GetDefaultValue('g:ECY_clangd_show_file_state', False):
             threading.Thread(target=self._handle_file_status,
                              daemon=True).start()
+
         self._lsp.initialized()
 
     def _handle_file_status(self):
@@ -273,7 +282,9 @@ class Operate(object):
         elif cmd_name == 'get_ast':
             self._get_AST(context)
         elif cmd_name == 'change_setting':
-            self._lsp.didChangeConfiguration(cmd_params['settings'])
+            # TODO
+            self._lsp.didChangeConfiguration(
+                {'compilationDatabaseChanges': cmd_params['compile_commands']})
         else:
             self._lsp.executeCommand(cmd_name, arguments=params['param_list'])
 
