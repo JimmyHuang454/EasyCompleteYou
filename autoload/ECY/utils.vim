@@ -1,7 +1,80 @@
-fun! ECY#utils#echo(msg)
-  if mode() == 'n'
-    echo a:msg
+" for echo
+let s:show_msg_windows_nr = -1
+let s:show_msg_windows_text_list = []
+let s:show_msg_time = 5
+let s:show_msg_timer_id = -1
+
+function! g:ShowMsg_cb(id, key) abort
+"{{{
+  let s:show_msg_windows_nr = -1
+"}}}
+endfunction
+
+function! g:ShowMsg_timer(timer_id)
+"{{{
+  if a:timer_id != s:show_msg_timer_id
+    return
   endif
+  if s:show_msg_time != 0 
+    let s:show_msg_time -= 1
+  else
+    if s:show_msg_windows_nr != -1
+      call popup_close(s:show_msg_windows_nr)
+    endif
+    return
+  endif
+ let l:temp = 'Message Box Closing in ' . string(s:show_msg_time) . 's '
+ call popup_setoptions(s:show_msg_windows_nr, {'title': l:temp})
+ let s:show_msg_timer_id = timer_start(1000, function('g:ShowMsg_timer'))
+"}}}
+endfunction
+
+fun! ECY#utils#echo(msg)
+"{{{
+  if g:has_floating_windows_support == 'vim'
+"{{{
+    let s:show_msg_time = 10
+    let l:temp = 'Message Box Closing in ' . string(s:show_msg_time) . 's '
+    let l:opts = {
+          \ 'callback': 'g:ShowMsg_cb',
+          \ 'minwidth': g:ECY_preview_windows_size[0][0],
+          \ 'maxwidth': g:ECY_preview_windows_size[0][1],
+          \ 'minheight': g:ECY_preview_windows_size[1][0],
+          \ 'maxheight': g:ECY_preview_windows_size[1][1],
+          \ 'title': l:temp,
+          \ 'moved': 'WORD',
+          \ 'border': [],
+          \}
+    if s:show_msg_windows_nr == -1
+      let s:show_msg_windows_text_list = []
+    else
+      call add(s:show_msg_windows_text_list, '--------------------')
+    endif
+    if type(a:msg) == 3
+      " == list
+      call extend(s:show_msg_windows_text_list, a:msg)
+    else
+      call add(s:show_msg_windows_text_list, a:msg)
+    endif
+    if s:show_msg_windows_nr == -1
+      let s:show_msg_windows_nr = popup_create(s:show_msg_windows_text_list, l:opts)
+    else
+      " delay, have new msg.
+      call popup_settext(s:show_msg_windows_nr, s:show_msg_windows_text_list)
+    endif
+    let s:show_msg_timer_id = timer_start(1000, function('g:ShowMsg_timer'))
+"}}}
+  elseif g:has_floating_windows_support == 'has_no' 
+    if type(a:msg) == 3
+      let l:temp = join(a:msg, '|')
+    else
+      let l:temp = a:msg
+    endif
+    echohl WarningMsg |
+          \ echomsg l:temp |
+          \ echohl None
+  endif
+"}}}
 endf
 
 fun! ECY#utils#show(msg, style, title)

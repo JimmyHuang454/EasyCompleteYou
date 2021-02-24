@@ -51,6 +51,7 @@ fun! ECY#rpc#rpc_event#AddEventCallback(event_name, Function)
 "}}}
 endf
 
+"{{{buffer version
 fun! ECY#rpc#rpc_event#GetBufferIDNotChange()
 "{{{
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
@@ -86,8 +87,9 @@ fun! ECY#rpc#rpc_event#GetBufferIDChange()
   return g:ECY_buffer_version[l:buffer_path]
 "}}}
 endf
+"}}}
 
-"{{{
+"{{{event functions
 fun! s:OnBufferEnter()
 "{{{
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 

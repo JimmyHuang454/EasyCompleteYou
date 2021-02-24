@@ -2,6 +2,7 @@
 # License: WTFPL
 
 import subprocess
+import json
 import shlex
 import queue
 import threading
@@ -65,7 +66,15 @@ class ThreadOfJob(object):
         while self.IsServerAlive():
             temp = self._sub_object.stderr.readline()
             temp = str(temp.decode("UTF-8"))
-            logger.debug(temp)
+            data = {
+                'method': 'window/logMessage',
+                'params': {
+                    'message': temp,
+                    'type': 4
+                }
+            }
+            temp = {'server_id': self.server_id, 'data': json.dumps(data)}
+            self.__queue.put(temp)
         logger.debug("server die")
 
     def IsServerAlive(self):

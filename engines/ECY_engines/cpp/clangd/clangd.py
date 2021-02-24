@@ -9,7 +9,7 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'clangd'
+        self.engine_name = 'ECY_engines.cpp.clangd.clangd'
         self._did_open_list = {}
         self.results_list = []
         self.is_InComplete = False
@@ -22,10 +22,6 @@ class Operate(object):
         ###############
         self.user_clangd_path = 'g:ECY_clangd_cmd'
         self._start_server()
-
-    # def OnRequest(self, context):
-    #     self.engine_name = context['engine_name']
-    #     return context
 
     def _start_server(self):
         has_ECY_windows_clangd_pip = None
@@ -54,7 +50,7 @@ class Operate(object):
         self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
-        if utils.GetDefaultValue('g:ECY_clangd_show_file_state', True):
+        if utils.GetDefaultValue('g:ECY_clangd_show_file_state', False):
             threading.Thread(target=self._handle_file_status,
                              daemon=True).start()
         self._lsp.initialized()
@@ -70,17 +66,21 @@ class Operate(object):
                 current_buffer_path = rpc.DoCall(
                     'ECY#utils#GetCurrentBufferPath')
                 if res_path == current_buffer_path:
-                    rpc.DoCall(
-                        'ECY#utils#echo',
-                        ['[ECY_clangd] %s' % (response['params']['state'])])
+                    self._show_msg(response['params']['state'])
             except:
                 pass
+
+    def _show_msg(self, msg):
+        rpc.DoCall('ECY#utils#echo', ['[ECY_clangd] %s' % (msg)])
 
     def _handle_log_msg(self):
         while 1:
             try:
                 response = self._lsp.GetResponse('window/logMessage',
                                                  timeout_=-1)
+                msg = response['params']['message']
+                if msg.find('compile_commands') != -1:
+                    self._show_msg(msg)
                 logger.debug(response)
             except:
                 pass
@@ -134,7 +134,7 @@ class Operate(object):
         self._did_open_or_change(context)
 
     def OnWorkSpaceSymbol(self, context):
-        self._lsp.workspaceSymbos() # not works in clangd
+        self._lsp.workspaceSymbos()  # not works in clangd
 
     def OnDocumentSymbol(self, context):
         params = context['params']
@@ -152,6 +152,13 @@ class Operate(object):
         start_position = params['buffer_position']
 
         current_cache = utils.IsNeedToUpdate(context, r'[\w+]')
+
+        if current_cache['last_key'] in ['(', ',']:
+            current_start_postion = {
+                'line': start_position['line'],
+                'character': start_position['colum']
+            }
+            self._lsp.signatureHelp(uri, current_start_postion)
 
         current_start_postion = {
             'line': start_position['line'],
@@ -268,18 +275,12 @@ class Operate(object):
                                              timeout_=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
-                rpc.DoCall('ECY#diagnostics#PlaceSign',
-                           [{
-                               'engine_name': self._get_engine_name(),
-                               'res_list': lists
-                           }])
+                rpc.DoCall('ECY#diagnostics#PlaceSign', [{
+                    'engine_name': self.engine_name,
+                    'res_list': lists
+                }])
             except Exception as e:
                 logger.exception(e)
-
-    def _get_engine_name(self):
-        if self.engine_name is None:
-            return 'nothing'
-        return self.engine_name
 
     def DoCodeAction(self, context):
         params = context['params']

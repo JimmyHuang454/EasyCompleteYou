@@ -40,6 +40,7 @@ def IsNeedToUpdate(context, regex):
     cache = {
         'current_line': current_line,
         'current_colum': current_colum,
+        'last_key': last_key,
         'line_counts': len(params['buffer_content'])
     }
     return cache

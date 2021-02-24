@@ -20,12 +20,12 @@ function ECY#diagnostics#Init() abort
 
   " 1 means ask diagnostics when there are changes not including user in insert mode, trigger by DoCompletion()
   " 2 means ask diagnostics when there are changes including user in insert mode, trigger by OnBufferTextChanged().
-  let g:ECY_update_diagnostics_mode
-        \= get(g:,'ECY_update_diagnostics_mode', 1)
-  if g:ECY_update_diagnostics_mode == 2
-    let g:ECY_update_diagnostics_mode = v:true
+  let g:ECY_is_update_diagnostics_in_insert_mode
+        \= get(g:,'ECY_is_update_diagnostics_in_insert_mode', 1)
+  if g:ECY_is_update_diagnostics_in_insert_mode == 2
+    let g:ECY_is_update_diagnostics_in_insert_mode = v:true
   else
-    let g:ECY_update_diagnostics_mode = v:false
+    let g:ECY_is_update_diagnostics_in_insert_mode = v:false
   endif
 
   " can not use sign_define()
@@ -50,7 +50,6 @@ function ECY#diagnostics#Init() abort
   " user don't want to update diagnostics in insert mode, but engine had
   " returned diagnostics, so we cache it and update after user leave insert
   " mode.
-  let s:need_to_update_diagnostics_after_user_leave_insert_mode = v:false
 
 
   call s:SetUpEvent()
@@ -63,9 +62,19 @@ function ECY#diagnostics#Init() abort
 "}}}
 endfunction
 
+fun! s:InsertLeave()
+"{{{
+  if !g:ECY_enable_diagnostics
+    return
+  endif
+  call ECY#diagnostics#FlushCurrentBufferUI()
+"}}}
+endf
+
 function s:SetUpEvent() abort
   augroup EasyCompleteYou_Diagnosis
-    autocmd CursorHold * call s:OnCursorHold()
+    autocmd CursorHold  * call s:OnCursorHold()
+    autocmd InsertLeave * call s:InsertLeave()
   augroup END
 endfunction
 
@@ -75,7 +84,7 @@ python3 <<endpython
 import vim
 
 def CalculateScreenSign(start, end):
-  engine_name = vim.eval('ECY_main#GetCurrentUsingSourceName()')
+  engine_name = vim.eval('ECY#switch_engine#GetBufferEngineName()')
   lists = "g:ECY_diagnostics_items_with_engine_name['" + engine_name + "']"
   lists = vim.eval(lists)
   file_path = vim.eval('ECY#utils#GetCurrentBufferPath()')
@@ -115,7 +124,7 @@ function! ECY#diagnostics#ShowCurrentLineDiagnosis(is_triggered_by_event) abort
 endfunction
 
 function! ECY#diagnostics#CurrentBufferErrorAndWarningCounts() abort
-  let l:current_engine = ECY_main#GetCurrentUsingSourceName()
+  let l:current_engine = ECY#switch_engine#GetBufferEngineName()
   if !has_key(g:ECY_diagnostics_items_with_engine_name, l:current_engine)
     return 0
   endif
@@ -407,19 +416,6 @@ function! s:UnplaceAllSignByEngineName(engine_name) abort
 "}}}
 endfunction
 
-function! ECY#diagnostics#OnInsertModeLeave() abort
-"{{{ show all.
-  if !g:ECY_enable_diagnostics
-    return
-  endif
-  if s:need_to_update_diagnostics_after_user_leave_insert_mode
-    let s:need_to_update_diagnostics_after_user_leave_insert_mode = v:false
-    let l:engine_name = ECY_main#GetCurrentUsingSourceName()
-    call s:UpdateSignLists(l:engine_name)
-  endif
-"}}}
-endfunction
-
 function! s:PartlyPlaceSign_timer_cb(starts, ends, engine_name) abort
 "{{{
   if !exists('g:ECY_diagnostics_items_with_engine_name[a:engine_name]')
@@ -467,34 +463,44 @@ function! ECY#diagnostics#PartlyPlaceSign(msg) abort
   call s:StartUpdateTimer()
 endfunction
 
-function! ECY#diagnostics#PlaceSign(msg) abort
-"{{{Place Sign and highlight it. partly or all
-  let l:engine_name = a:msg['engine_name']
-  if !g:ECY_enable_diagnostics || l:engine_name == '' || type(a:msg) != 4 || 
-        \!has_key(a:msg, 'res_list') || type(a:msg['res_list']) != 3
+function! ECY#diagnostics#FlushCurrentBufferUI() abort
+"{{{
+
+  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() != 'n'
+    " don't want to update diagnostics in insert mode
     return
   endif
-  call s:UpdateDiagnosisByEngineName(a:msg) " but don't show sign, just update variable.
-  if len(a:msg['res_list']) > 80
-    let s:need_to_update_diagnostics_after_user_leave_insert_mode = v:false
+
+  let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+
+  if v:false
     call ECY#diagnostics#PartlyPlaceSign(a:msg)
     return
   else
     call s:StopUpdateTimer()
-  endif
-  if g:ECY_update_diagnostics_mode == v:false && mode() != 'n'
-    " don't want to update diagnostics in insert mode
-    let s:need_to_update_diagnostics_after_user_leave_insert_mode = v:true
-    return
   endif
   " show sign.
   call s:UpdateSignLists(l:engine_name)
 "}}}
 endfunction
 
+function! ECY#diagnostics#PlaceSign(msg) abort
+"{{{Place Sign and highlight it. partly or all
+
+  let l:engine_name = a:msg['engine_name']
+  if !g:ECY_enable_diagnostics || l:engine_name == '' || type(a:msg) != 4 || 
+        \!has_key(a:msg, 'res_list') || type(a:msg['res_list']) != 3
+    return
+  endif
+
+  call s:UpdateDiagnosisByEngineName(a:msg) " but don't show sign, just update variable.
+  call ECY#diagnostics#FlushCurrentBufferUI()
+"}}}
+endfunction
+
 function! s:UpdateSignLists(engine_name) abort
 "{{{
-  if !exists('g:ECY_diagnostics_items_with_engine_name[a:engine_name]')
+  if !has_key(g:ECY_diagnostics_items_with_engine_name, a:engine_name)
     return
   endif
   call ECY#diagnostics#CleanAllSignHighlight()
@@ -593,7 +599,7 @@ function! s:UpdateSignEvent(timer_id) abort
     call s:StopUpdateTimer()
     return
   endif
-  if g:ECY_update_diagnostics_mode == v:false && mode() != 'n'
+  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() != 'n'
     return
   endif
   let l:start = line('w0')
@@ -605,7 +611,7 @@ function! s:UpdateSignEvent(timer_id) abort
     let s:windows_end = l:end
     let s:windows_nr = l:windows_nr
     call s:PartlyPlaceSign_timer_cb(s:windows_start, s:windows_end,
-          \ECY_main#GetCurrentUsingSourceName())
+          \ECY#switch_engine#GetBufferEngineName())
   endif
 "}}}
 endfunction
