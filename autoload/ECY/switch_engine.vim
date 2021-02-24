@@ -273,6 +273,7 @@ function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
   endtry
   let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
+  call ECY#rpc#rpc_event#OnBufferEnter()
   return ''
   "}}}
 endfunction

@@ -90,7 +90,7 @@ endf
 "}}}
 
 "{{{event functions
-fun! s:OnBufferEnter()
+fun! ECY#rpc#rpc_event#OnBufferEnter()
 "{{{
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -166,8 +166,8 @@ fun! ECY#rpc#rpc_event#Init()
 "{{{
   augroup EasyCompleteYou2
     autocmd!
-    autocmd FileType      * call s:OnBufferEnter()
-    autocmd BufEnter      * call s:OnBufferEnter()
+    autocmd FileType      * call ECY#rpc#rpc_event#OnBufferEnter()
+    autocmd BufEnter      * call ECY#rpc#rpc_event#OnBufferEnter()
     autocmd VimLeavePre   * call s:OnVimLeavePre()
 
     " will send full buffer data to the server.
