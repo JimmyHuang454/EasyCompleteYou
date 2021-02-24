@@ -54,6 +54,9 @@ endf
 fun! ECY#rpc#rpc_event#GetBufferIDNotChange()
 "{{{
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
+  if l:buffer_path == ''
+    let l:buffer_path = 'nothing'
+  endif
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
@@ -73,6 +76,9 @@ endf
 fun! ECY#rpc#rpc_event#GetBufferIDChange()
 "{{{
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
+  if l:buffer_path == ''
+    let l:buffer_path = 'nothing'
+  endif
   if !has_key(g:ECY_buffer_version, l:buffer_path)
       let g:ECY_buffer_version[l:buffer_path] = 0
   endif
