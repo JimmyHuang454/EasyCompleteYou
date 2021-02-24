@@ -46,11 +46,35 @@ class Operate(object):
         temp = self._lsp.PathToUri(
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
-        temp = self._lsp.initialize(rootUri=self.workspace_cache[0])
+
+        temp = self._lsp.initialize(
+            rootUri=self.workspace_cache[0],
+            initializationOptions={'clangdFileStatus': True})
+
         self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
+        if utils.GetDefaultValue('g:ECY_clangd_show_file_state', True):
+            threading.Thread(target=self._handle_file_status,
+                             daemon=True).start()
         self._lsp.initialized()
+
+    def _handle_file_status(self):
+        # clangd 8+
+        while 1:
+            try:
+                response = self._lsp.GetResponse(
+                    'textDocument/clangd.fileStatus', timeout_=-1)
+                res_path = response['params']['uri']
+                res_path = self._lsp.UriToPath(res_path)
+                current_buffer_path = rpc.DoCall(
+                    'ECY#utils#GetCurrentBufferPath')
+                if res_path == current_buffer_path:
+                    rpc.DoCall(
+                        'ECY#utils#echo',
+                        ['[ECY_clangd] %s' % (response['params']['state'])])
+            except:
+                pass
 
     def _handle_log_msg(self):
         while 1:
@@ -97,6 +121,9 @@ class Operate(object):
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
+        # self._change_workspace_folder(context)
+
+    def _change_workspace_folder(self, context):
         temp = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
         if temp not in self.workspace_cache and temp != '':
             self.workspace_cache.append(temp)
@@ -107,7 +134,13 @@ class Operate(object):
         self._did_open_or_change(context)
 
     def OnWorkSpaceSymbol(self, context):
-        self._lsp.workspaceSymbos()
+        self._lsp.workspaceSymbos() # not works in clangd
+
+    def OnDocumentSymbol(self, context):
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        self._lsp.documentSymbos(uri)
 
     def OnCompletion(self, context):
         self._did_open_or_change(context)

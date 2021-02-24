@@ -1,5 +1,7 @@
 fun! ECY#utils#echo(msg)
-  echo a:msg
+  if mode() == 'n'
+    echo a:msg
+  endif
 endf
 
 fun! ECY#utils#show(msg, style, title)

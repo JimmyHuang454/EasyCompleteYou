@@ -1,4 +1,5 @@
 import re
+from ECY import rpc
 
 
 def MatchFilterKeys(line_text, regex):
@@ -42,3 +43,9 @@ def IsNeedToUpdate(context, regex):
         'line_counts': len(params['buffer_content'])
     }
     return cache
+
+
+def GetDefaultValue(var_name, default_value):
+    if rpc.DoCall('exists', [var_name]):
+        default_value = rpc.GetVaribal(var_name)
+    return default_value
