@@ -26,6 +26,7 @@ class LSP(conec.Operate):
         self.workDoneToken_id = 0
         super().__init__()
         threading.Thread(target=self._classify_response, daemon=True).start()
+        self.queue_maxsize = 20
         self._using_server_id = None
 
     def Debug(self, msg):
@@ -56,7 +57,8 @@ class LSP(conec.Operate):
     def GetResponse(self, _method_name, timeout_=5):
         if _method_name not in self._queue_dict:
             # new
-            self._queue_dict[_method_name] = queue.Queue()
+            self._queue_dict[_method_name] = queue.Queue(
+                maxsize=self.queue_maxsize)
         queue_obj = None
         try:
             if timeout_ == -1:
@@ -65,7 +67,9 @@ class LSP(conec.Operate):
                 queue_obj = self._queue_dict[_method_name].get(
                     timeout=timeout_)
         except:
-            self._queue_dict[_method_name] = queue.Queue()
+            del self._queue_dict[_method_name]
+            self._queue_dict[_method_name] = queue.Queue(
+                maxsize=self.queue_maxsize)
         if queue_obj is None:
             raise 'queue time out.'
         return queue_obj
@@ -76,7 +80,7 @@ class LSP(conec.Operate):
         if _method_name in self._queue_dict:
             obj_ = self._queue_dict[_method_name]
         else:
-            # obj_ = queue.Queue()
+            # obj_ = queue.Queue(maxsize=self.queue_maxsize)
             # self._queue_dict[_method_name] = obj_
 
             # user should call GetResponse() once to create a queue
@@ -328,6 +332,12 @@ class LSP(conec.Operate):
             'trace': trace
         }
         return self._build_send(params, 'initialize')
+
+    def didChangeConfiguration(self, setting):
+        params = {'settings': setting}
+        return self._build_send(params,
+                                'workspace/didChangeConfiguration',
+                                isNotification=True)
 
     def didChangeWorkspaceFolders(self, add_workspace=[], remove_workspace=[]):
         # add_workspace = {'uri': 'xx', 'name': 'yyy'}
