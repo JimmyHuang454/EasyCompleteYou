@@ -126,7 +126,7 @@ fun! s:InitUsableEngine()
         \'engine_name': 'ECY_engines.cpp.clangd.clangd', 
         \'ability': [], 
         \'path': 'pip', 
-        \'file_type':['c', 'cpp']
+        \'file_type':['c', 'cpp', 'cuda']
         \})
 
   call ECYAddEngine({

@@ -43,9 +43,15 @@ class Operate(object):
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
 
-        temp = self._lsp.initialize(
-            rootUri=self.workspace_cache[0],
-            initializationOptions={'clangdFileStatus': True})
+        # The compile command will be approximately clang $FILE $fallbackFlags in this case.
+        temp = self._lsp.initialize(rootUri=self.workspace_cache[0],
+                                    initializationOptions={
+                                        'clangdFileStatus':
+                                        True,
+                                        'fallbackFlags':
+                                        utils.GetDefaultValue(
+                                            'g:ECY_clangd_fallback_flags', [])
+                                    })
 
         self._lsp.GetResponse(temp['Method'], timeout_=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
@@ -80,7 +86,7 @@ class Operate(object):
                                                  timeout_=-1)
                 msg = response['params']['message']
                 if msg.find('compile_commands') != -1:
-                    self._show_msg(msg)
+                    self._show_msg(msg.split('\n'))
                 logger.debug(response)
             except:
                 pass
@@ -245,6 +251,7 @@ class Operate(object):
 
     def DoCmd(self, context):
         params = context['params']
+        cmd_params = params['cmd_params']
         uri = self._lsp.PathToUri(params['buffer_path'])
         try:
             open_style = params['open_style']
@@ -265,6 +272,8 @@ class Operate(object):
                            ["Can not find it's header/source. Try it latter."])
         elif cmd_name == 'get_ast':
             self._get_AST(context)
+        elif cmd_name == 'change_setting':
+            self._lsp.didChangeConfiguration(cmd_params['settings'])
         else:
             self._lsp.executeCommand(cmd_name, arguments=params['param_list'])
 

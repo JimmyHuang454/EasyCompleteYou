@@ -8,7 +8,7 @@ fun! ECY2_main#Init()
 "}}}
 endf
 
-fun! ECY2_main#DoCmd(cmd_name, param_list)
+fun! ECY2_main#DoCmd(cmd_name, cmd_params)
 "{{{
 
   let l:params = {
@@ -16,7 +16,7 @@ fun! ECY2_main#DoCmd(cmd_name, param_list)
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
-                \'param_list': a:param_list,
+                \'cmd_params': a:cmd_params,
                 \'cmd_name': a:cmd_name,
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
