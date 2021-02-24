@@ -377,7 +377,15 @@ class LSP(conec.Operate):
                                 'textDocument/didOpen',
                                 isNotification=True)
 
-    def didchange(self, uri, text, version=None, range_=None, rangLength=None):
+    def didchange(self,
+                  uri,
+                  text,
+                  version=None,
+                  range_=None,
+                  rangLength=None,
+                  wantDiagnostics=True):
+        # wantDiagnostics is only for clangd
+
         textDocument = {'version': version, 'uri': uri}
         params = {'textDocument': textDocument}
         if range_ is not None:
@@ -390,6 +398,7 @@ class LSP(conec.Operate):
             TextDocumentContentChangeEvent = {'text': text}
         params = {
             'textDocument': textDocument,
+            'wantDiagnostics': wantDiagnostics,
             'contentChanges': [TextDocumentContentChangeEvent]
         }
         return self._build_send(params,
