@@ -32,7 +32,7 @@ function! ECY#preview_windows#Open() abort
     if l:selecting_item_nr != 0
       let l:item_info = 
             \g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
-      let l:highlight = &filetype
+      let l:highlight = ECY#utils#GetCurrentBufferFileType()
       let s:preview_windows_nr = s:PreviewWindows_vim(l:item_info, l:highlight)
     endif
   else
@@ -82,7 +82,7 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
 
   " TODO
   " if a:msg['kind'] == '[Snippet]' && g:ECY_enable_preview_snippet
-  "   call GetPreviewSnippet(a:msg['word'], &filetype)
+  "   call GetPreviewSnippet(a:msg['word'], ECY#utils#GetCurrentBufferFileType())
   " endif
 
 "{{{ this two keys will be contained in the formmat whether it's None or not.

@@ -20,12 +20,6 @@ class Operate(object):
         self.snippet_cache = {}
         self._start_server()
 
-    def _get_filetype(self):
-        file_type = rpc.GetVaribal('&filetype')
-        if file_type == '':
-            return 'nothing'
-        return file_type
-
     def _start_server(self):
         # npm install --global vscode-html-languageserver-bin
         starting_cmd = 'html-languageserver'
@@ -52,7 +46,7 @@ class Operate(object):
                 pass
 
     def _get_snippets(self, context):
-        file_type = self._get_filetype()
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
 
         if file_type in self.snippet_cache:
             return self.snippet_cache[file_type]

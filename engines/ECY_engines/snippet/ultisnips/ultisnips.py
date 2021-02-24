@@ -10,14 +10,8 @@ class Operate(object):
         self.engine_name = 'ultisnipts'
         self.snippet_cache = {}
 
-    def _get_filetype(self):
-        file_type = rpc.GetVaribal('&filetype')
-        if file_type == '':
-            return 'nothing'
-        return file_type
-
     def OnBufferEnter(self, context):
-        file_type = self._get_filetype()
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
 
         if file_type in self.snippet_cache:
             return
@@ -51,15 +45,7 @@ class Operate(object):
         return None
 
     def OnCompletion(self, context):
-        file_type = self._get_filetype()
-        # start = time.time()
-
-        # for item in range(1000):
-        #     file_type = self._get_filetype()
-        # end = time.time()
-        # logger.debug((end - start))
-        # logger.debug((end - start) / 1000)
-
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
         if file_type not in self.snippet_cache:
             return
         context['show_list'] = self.snippet_cache[file_type]

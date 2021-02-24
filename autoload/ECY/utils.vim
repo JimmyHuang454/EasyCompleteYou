@@ -77,6 +77,15 @@ fun! ECY#utils#echo(msg)
 "}}}
 endf
 
+fun! ECY#utils#GetCurrentBufferFileType()
+"{{{
+  if &filetype == ''
+    return 'nothing'
+  endif
+  return &filetype
+"}}}
+endf
+
 fun! ECY#utils#show(msg, style, title)
 "{{{
   if type(a:msg) != v:t_string

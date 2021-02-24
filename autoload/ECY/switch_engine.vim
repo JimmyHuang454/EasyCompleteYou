@@ -1,7 +1,7 @@
 
 function! s:ChooseSource_Echoing() abort
   "{{{ the versatitle way. could be used in many versions of vim or neovim.
-  let l:filetype = &filetype
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
   let l:info  = g:ECY_file_type_info2[l:filetype]
   while 1
     if len(l:info['available_sources']) == 0
@@ -39,7 +39,7 @@ endfunction
 
 function! s:ChooseSource(next_or_pre) abort
   "{{{ this will call by 'user_ui.vim'
-  let l:filetype = &filetype
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
   if !exists("g:ECY_file_type_info2[".string(l:filetype)."]")
     " server should init it first
     return
@@ -68,7 +68,7 @@ endfunction
 
 fun! ECY#switch_engine#Do()
   "{{{
-  let l:file_type = &filetype
+  let l:file_type = ECY#utils#GetCurrentBufferFileType()
   call s:InitDefaultEngine(l:file_type)
 
   if g:has_floating_windows_support == 'has_no'
@@ -85,7 +85,7 @@ endf
 
 fun! s:InsertLeave()
 "{{{
-  let l:file_type = &filetype
+  let l:file_type = ECY#utils#GetCurrentBufferFileType()
   if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
     return
   endif
@@ -257,7 +257,7 @@ endf
 
 fun! ECY#switch_engine#GetBufferEngineName()
   "{{{
-  let l:file_type = &filetype
+  let l:file_type = ECY#utils#GetCurrentBufferFileType()
   call s:InitDefaultEngine(l:file_type)
   return g:ECY_file_type_info2[l:file_type]['filetype_using']
   "}}}
@@ -265,7 +265,7 @@ endf
 
 function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
   "{{{
-  let l:file_type = &filetype
+  let l:file_type = ECY#utils#GetCurrentBufferFileType()
   let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
   try
     if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == a:engine_name 

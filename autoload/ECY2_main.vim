@@ -110,7 +110,7 @@ fun! ECY2_main#IsWorkAtCurrentBuffer()
     return b:ECY_is_work_at_current_buffer
   endif
 
-  let l:file_type = &filetype
+  let l:file_type = ECY#utils#GetCurrentBufferFileType()
   for item in g:ECY_file_type_blacklist
     if l:file_type =~ item
       return v:false
