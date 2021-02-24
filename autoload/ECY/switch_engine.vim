@@ -83,6 +83,22 @@ fun! ECY#switch_engine#Do()
   "}}}
 endf
 
+fun! s:InsertLeave()
+"{{{
+  let l:file_type = &filetype
+  if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
+    return
+  endif
+  if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == 'nothing'
+    return
+  endif
+  let g:ECY_file_type_info2[l:file_type]['filetype_using'] = 
+        \g:ECY_file_type_info2[l:file_type]['last_engine_name']
+
+  let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = 'nothing'
+"}}}
+endf
+
 fun! ECY#switch_engine#Init()
   "{{{
 
@@ -90,6 +106,12 @@ fun! ECY#switch_engine#Init()
 
   let g:ECY_show_switching_source_popup
         \= get(g:,'ECY_show_switching_source_popup','<Tab>')
+
+  let g:ECY_use_snippet
+        \= get(g:,'ECY_use_snippet',"<C-b>")
+
+  exe 'inoremap <expr>' . g:ECY_use_snippet . 
+          \" ECY#switch_engine#UseSpecifyEngineOnce('ECY_engines.snippet.ultisnips.ultisnips')"
 
   exe 'nmap ' . g:ECY_show_switching_source_popup .
         \ ' :call ECY#switch_engine#Do()<CR>'
@@ -108,7 +130,8 @@ fun! ECY#switch_engine#Init()
 
   augroup ECY_config
     autocmd!
-    autocmd VimLeave  * call s:VimLeave()
+    autocmd VimLeave    * call s:VimLeave()
+    autocmd InsertLeave * call s:InsertLeave()
   augroup END
   "}}}
 endf
@@ -242,9 +265,14 @@ function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
   "{{{
   let l:file_type = &filetype
   let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
+  try
+    if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == a:engine_name 
+      return ''
+    endif
+  catch 
+  endtry
   let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
-  call ECY#rpc#rpc_event#OnCompletion()
-  let g:ECY_file_type_info2[l:file_type]['filetype_using'] = l:current_engine_name
+  return ''
   "}}}
 endfunction
