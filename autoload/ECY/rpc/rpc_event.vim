@@ -148,7 +148,7 @@ fun! ECY#rpc#rpc_event#OnCompletion()
 "}}}
 endf
 
-fun! s:OnInsertLeave()
+fun! ECY#rpc#rpc_event#OnInsertLeave()
 "{{{
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -173,7 +173,7 @@ fun! ECY#rpc#rpc_event#Init()
     " will send full buffer data to the server.
     " invoked after typing a character into the buffer or user sept in insert mode  
     autocmd TextChanged   * call s:OnTextChanged()
-    autocmd InsertLeave   * call s:OnInsertLeave()
+    autocmd InsertLeave   * call ECY#rpc#rpc_event#OnInsertLeave()
 
     autocmd TextChangedI  * call s:TextChangedI()
     autocmd InsertEnter   * call s:InsertEnter()

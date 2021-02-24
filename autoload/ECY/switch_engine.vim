@@ -96,6 +96,8 @@ fun! s:InsertLeave()
         \g:ECY_file_type_info2[l:file_type]['last_engine_name']
 
   let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = 'nothing'
+  doautocmd <nomodeline> BufEnter
+  doautocmd <nomodeline> InsertLeave
 "}}}
 endf
 
