@@ -305,11 +305,10 @@ class Operate(object):
     def DoCodeAction(self, context):
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
-        start_position = {'line': 0, 'character': 0}
-        end_position = {'line': 0, 'character': 0}
+        ranges = params['buffer_range']
+        start_position = ranges['start']
+        end_position = ranges['end']
 
-        if self._diagnosis_cache == []:
-            return
         returns = self._lsp.codeAction(uri,
                                        start_position,
                                        end_position,

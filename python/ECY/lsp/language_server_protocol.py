@@ -272,7 +272,11 @@ class LSP(conec.Operate):
                 "dynamicRegistration": False,
                 "codeActionLiteralSupport": {
                     "codeActionKind": {
-                        "valueSet": []
+                        "valueSet": [
+                            'quickfix', 'refactor', 'refactor.extract',
+                            'refactor.inline', 'refactor.rewrite', 'source',
+                            'source.organizeImports'
+                        ]
                     }
                 }
             },

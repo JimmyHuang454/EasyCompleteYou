@@ -92,10 +92,17 @@ endf
 fun! ECY2_main#DoCodeAction()
 "{{{
 
+  if mode() == 'v'
+    let l:buffer_range = ECY#utils#GetSelectRange()
+  else
+    let l:buffer_range = ECY#utils#GetCurrentLineRange()
+  endif
+
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_range': l:buffer_range, 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}

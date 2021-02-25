@@ -252,6 +252,53 @@ function! ECY#utils#GetValue(dicts, key, default_value) abort
 "}}}
 endfunction
 
+function! ECY#utils#GetSelectRange() abort 
+"{{{
+  let l:pos = getpos('.')[1 : 2]
+  let l:range = {}
+  let l:range['start'] = s:VimPostionToLSPPosition('%', l:pos)
+  let l:range['end'] = s:VimPostionToLSPPosition('%', [l:pos[0], l:pos[1] + strlen(getline(l:pos[0])) + 1])
+  return l:range
+"}}}
+endfunction
+
+" The inverse version of `s:to_col`.
+" Convert [lnum, col] to LSP's `Position`.
+function! s:to_char(expr, lnum, col) abort
+"{{{
+    let l:lines = getbufline(a:expr, a:lnum)
+    if l:lines == []
+        if type(a:expr) != v:t_string || !filereadable(a:expr)
+            " invalid a:expr
+            return a:col - 1
+        endif
+        " a:expr is a file that is not yet loaded as a buffer
+        let l:lines = readfile(a:expr, '', a:lnum)
+    endif
+    let l:linestr = l:lines[-1]
+    return strchars(strpart(l:linestr, 0, a:col - 1))
+"}}}
+endfunction
+
+function! s:VimPostionToLSPPosition(expr, pos) abort
+"{{{
+    return {
+         \   'line': a:pos[0] - 1,
+         \   'character': s:to_char(a:expr, a:pos[0], a:pos[1])
+         \ }
+"}}}
+endfunction
+
+function! ECY#utils#GetCurrentLineRange() abort
+"{{{
+  let l:pos = getpos('.')[1 : 2]
+  let l:range = {}
+  let l:range['start'] = s:VimPostionToLSPPosition('%', l:pos)
+  let l:range['end'] = s:VimPostionToLSPPosition('%', [l:pos[0], l:pos[1] + strlen(getline(l:pos[0])) + 1])
+  return l:range
+"}}}
+endfunction
+
 function! ECY#utils#StartLeaderfSelecting(content, callback_name) abort
 "{{{
   try

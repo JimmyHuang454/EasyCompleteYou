@@ -1,5 +1,7 @@
 " {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}
 
+" {"id":24,"jsonrpc":"2.0","result":[{"command":{"arguments":[{"file":"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp","selection":{"end":{"character":51,"line":14},"start":{"character":9,"line":14}},"tweakID":"ExtractVariable"}],"command":"clangd.applyTweak","title":"Extract subexpression to variable"},"kind":"refactor","title":"Extract subexpression to variable"}]}
+
 fun! ECY#code_action#Do(context)
 "{{{
   let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
@@ -14,15 +16,24 @@ fun! ECY#code_action#Do(context)
     call ECY#utils#echo('Nothing to act.')
     return
   endif
+
   for item in l:results
-    if has_key(item, 'diagnostics')
+    if has_key(item, 'edit')
       let l:edit_res = s:ApplyEdit(item['edit'])
 
-      if has_key(item, 'command')
-        
+    endif
+
+    if has_key(item, 'command')
+      if type(item['command']) == v:t_string
+        " it is a command response.
+        let l:temp = item
+      else
+        " code_action with command
+        let l:temp = item['command']
       endif
-    else
-     " it is all command
+      let l:cmd_name = l:temp['command']
+      let l:cmd_args = get(l:temp, 'arguments', [])
+      call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
     endif
   endfor
 
