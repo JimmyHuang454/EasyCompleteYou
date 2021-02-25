@@ -361,13 +361,26 @@ class LSP(conec.Operate):
     def initialized(self):
         return self._build_send({}, 'initialized', isNotification=True)
 
-    def configuration(self, ids, results=[]):
+    def configuration_response(self, ids, results=[]):
         """ workspace/configuration, a response send to Server.
         """
         return self._build_response(results, ids)
 
-    def wordDoneProgress(self, ids):
+    def wordDoneProgress_response(self, ids):
         return self._build_response(None, ids)
+
+    def applyEdit_response(self,
+                           ids,
+                           applied,
+                           failureReason="",
+                           failedChange=0):
+
+        result = {'applied': applied}
+        if failureReason != "":
+            result['failureReason'] = failureReason
+        if failedChange != 0:
+            result['failedChange'] = failedChange
+        return self._build_response(result, ids)
 
     def didopen(self, uri, languageId, text, version=None):
         textDocument = {
@@ -505,8 +518,13 @@ class LSP(conec.Operate):
             workDoneToken = self.workDoneToken_id
 
         params = {'workDoneToken': workDoneToken, 'command': command}
+
+        if type(arguments) is not list:
+            raise "type of arguments must be list."
+
         if arguments != []:
             params['arguments'] = arguments
+
         return self._build_send(params, 'workspace/executeCommand')
 
     def completion(self, uri, position, triggerKind=1, triggerCharacter=None):

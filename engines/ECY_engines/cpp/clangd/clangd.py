@@ -64,11 +64,32 @@ class Operate(object):
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
+        threading.Thread(target=self._handle_edit, daemon=True).start()
         if utils.GetDefaultValue('g:ECY_clangd_show_file_state', False):
             threading.Thread(target=self._handle_file_status,
                              daemon=True).start()
 
         self._lsp.initialized()
+
+    def _handle_edit(self):
+        while 1:
+            try:
+                response = self._lsp.GetResponse('workspace/applyEdit',
+                                                 timeout_=-1)
+
+                try:
+                    applied = rpc.DoCall('ECY#code_action#ApplyEdit',
+                                         [response['params']['edit']])
+                    if applied != 0:
+                        applied = False
+                    else:
+                        applied = True
+                except:
+                    applied = False
+
+                self._lsp.applyEdit_response(response['id'], applied)
+            except:
+                pass
 
     def _handle_file_status(self):
         # clangd 8+
@@ -286,7 +307,7 @@ class Operate(object):
             self._lsp.didChangeConfiguration(
                 {'compilationDatabaseChanges': cmd_params['compile_commands']})
         else:
-            self._lsp.executeCommand(cmd_name, arguments=params['param_list'])
+            self._lsp.executeCommand(cmd_name, arguments=cmd_params)
 
     def _get_diagnosis(self):
         while True:

@@ -5,10 +5,10 @@
 fun! ECY#code_action#Do(context)
 "{{{
   let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
-  if l:current_buffer_path != a:context['params']['buffer_path'] 
-        \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
-    return
-  endif
+  " if l:current_buffer_path != a:context['params']['buffer_path'] 
+  "       \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
+  "   return
+  " endif
 
   let l:results = a:context['result']['result']
   let l:edit_res = {}
@@ -19,8 +19,7 @@ fun! ECY#code_action#Do(context)
 
   for item in l:results
     if has_key(item, 'edit')
-      let l:edit_res = s:ApplyEdit(item['edit'])
-
+      let l:edit_res = ECY#code_action#ApplyEdit(item['edit'])
     endif
 
     if has_key(item, 'command')
@@ -40,7 +39,7 @@ fun! ECY#code_action#Do(context)
   call s:Switch(l:current_buffer_path)
   redraw!
   echo l:edit_res
-
+  return 0
   "}}}
 endf
 
@@ -68,7 +67,7 @@ fun! s:HandleEdit(edit_dict)
 
     try
       " do this action
-      call s:ApplyEdit(item['edit'])
+      call ECY#code_action#ApplyEdit(item['edit'])
       call add(l:to_be_done_action, item)
     catch 
       call add(l:not_to_do_action, item)
@@ -90,7 +89,9 @@ function! s:Switch(path) abort
 "}}}
 endfunction
 
-fun! s:ApplyEdit(workspace_edit)
+" edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":"int extracted(struct abc &dd) {\n  return dd.a == 'd' || dd.a == 'c' || dd.a == 'a';\n}\n","range":{"end":{"character":0,"line":10},"start":{"character":0,"line":10}}},{"newText":"return extracted(dd);\n  ","range":{"end":{"character":50,"line":14},"start":{"character":2,"line":14}}}]}}
+
+fun! ECY#code_action#ApplyEdit(workspace_edit)
 "{{{
   let l:changed = []
   if has_key(a:workspace_edit, 'changes')
@@ -159,6 +160,19 @@ function! s:Apply(bufnr, text_edit, cursor_position) abort
 
     " set lines.
     call setline(a:text_edit['range']['start']['line'] + 1, l:new_lines)
+"}}}
+endfunction
+
+function! s:delete(bufnr, start, end) abort
+"{{{
+  if exists('*deletebufline')
+      call deletebufline(a:bufnr, a:start, a:end)
+  else
+      let l:foldenable = &foldenable
+      setlocal nofoldenable
+      execute printf('%s,%sdelete _', a:start, a:end)
+      let &foldenable = l:foldenable
+  endif
 "}}}
 endfunction
 

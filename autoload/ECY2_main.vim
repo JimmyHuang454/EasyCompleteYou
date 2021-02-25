@@ -1,4 +1,4 @@
-fun! ECY2_main#Init()
+fun! ECY2_main#Init() abort
 "{{{
   let l:run_cmd = g:ECY_python_cmd . ' ' . g:ECY_python_script_folder_path . '/client_main.py'
   if g:ECY_is_debug
@@ -8,7 +8,7 @@ fun! ECY2_main#Init()
 "}}}
 endf
 
-fun! ECY2_main#DoCmd(cmd_name, cmd_params)
+fun! ECY2_main#DoCmd(cmd_name, cmd_params) abort
 "{{{
 
   let l:params = {
@@ -25,7 +25,7 @@ fun! ECY2_main#DoCmd(cmd_name, cmd_params)
 "}}}
 endf
 
-fun! ECY2_main#CheckAllEngine()
+fun! ECY2_main#CheckAllEngine() abort
 "{{{
 
   let l:engine_list = []
@@ -39,7 +39,7 @@ fun! ECY2_main#CheckAllEngine()
 "}}}
 endf
 
-fun! ECY2_main#GetCodeLens()
+fun! ECY2_main#GetCodeLens() abort
 "{{{
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
@@ -53,7 +53,7 @@ fun! ECY2_main#GetCodeLens()
 "}}}
 endf
 
-fun! ECY2_main#Rename()
+fun! ECY2_main#Rename() abort
 "{{{
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
@@ -67,7 +67,7 @@ fun! ECY2_main#Rename()
 "}}}
 endf
 
-fun! ECY2_main#GetWorkSpaceSymbol()
+fun! ECY2_main#GetWorkSpaceSymbol() abort
 "{{{
   let l:params = {}
 
@@ -75,7 +75,7 @@ fun! ECY2_main#GetWorkSpaceSymbol()
 "}}}
 endf
 
-fun! ECY2_main#GetDocumentSymbol()
+fun! ECY2_main#GetDocumentSymbol() abort
 "{{{
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
@@ -89,10 +89,10 @@ fun! ECY2_main#GetDocumentSymbol()
 "}}}
 endf
 
-fun! ECY2_main#DoCodeAction()
+fun! ECY2_main#DoCodeAction(range_type) abort
 "{{{
 
-  if mode() == 'v'
+  if a:range_type == 'selected_range'
     let l:buffer_range = ECY#utils#GetSelectRange()
   else
     let l:buffer_range = ECY#utils#GetCurrentLineRange()
@@ -111,7 +111,7 @@ fun! ECY2_main#DoCodeAction()
 "}}}
 endf
 
-fun! ECY2_main#IsWorkAtCurrentBuffer()
+fun! ECY2_main#IsWorkAtCurrentBuffer() abort
 "{{{
   if exists( 'b:ECY_is_work_at_current_buffer' )
     return b:ECY_is_work_at_current_buffer
