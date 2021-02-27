@@ -87,6 +87,7 @@ class Operate(object):
                 except:
                     applied = False
 
+                logger.debug(response)
                 self._lsp.applyEdit_response(response['id'], applied)
             except:
                 pass
@@ -334,8 +335,10 @@ class Operate(object):
                                        start_position,
                                        end_position,
                                        diagnostic=self._diagnosis_cache)
+
         returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
         context['result'] = returns
+        logger.debug(context)
         return context
 
     def _get_buffer_version(self, uri):

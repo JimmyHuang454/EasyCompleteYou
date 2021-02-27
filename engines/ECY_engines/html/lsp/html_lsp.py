@@ -46,7 +46,7 @@ class Operate(object):
                 pass
 
     def _get_snippets(self, context):
-        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
 
         if file_type in self.snippet_cache:
             return self.snippet_cache[file_type]

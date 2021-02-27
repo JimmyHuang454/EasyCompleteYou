@@ -89,10 +89,10 @@ fun! ECY2_main#GetDocumentSymbol() abort
 "}}}
 endf
 
-fun! ECY2_main#DoCodeAction(range_type) abort
+fun! ECY2_main#DoCodeAction(params) abort
 "{{{
 
-  if a:range_type == 'selected_range'
+  if a:params['range_type'] == 'selected_range'
     let l:buffer_range = ECY#utils#GetSelectRange()
   else
     let l:buffer_range = ECY#utils#GetCurrentLineRange()

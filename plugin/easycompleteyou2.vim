@@ -91,6 +91,9 @@ let g:ECY_file_type_blacklist
       \= get(g:,'ECY_file_type_blacklist', ['log'])
 
 
+vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
+nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

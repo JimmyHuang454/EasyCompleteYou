@@ -265,10 +265,24 @@ function! ECY#utils#GetSelectRange() abort
   endif
 
   let l:range = {}
-  let l:range['start'] = s:VimPostionToLSPPosition('%', l:start_pos)
-  let l:range['end'] = s:VimPostionToLSPPosition('%', l:end_pos)
+  let l:range['start'] = ECY#utils#VimPostionToLSPPosition('%', l:start_pos)
+  let l:range['end'] = ECY#utils#VimPostionToLSPPosition('%', l:end_pos)
   return l:range
 "}}}
+endfunction
+
+function! s:to_col(expr, lnum, char) abort
+    let l:lines = getbufline(a:expr, a:lnum)
+    if l:lines == []
+        if type(a:expr) != v:t_string || !filereadable(a:expr)
+            " invalid a:expr
+            return a:char + 1
+        endif
+        " a:expr is a file that is not yet loaded as a buffer
+        let l:lines = readfile(a:expr, '', a:lnum)
+    endif
+    let l:linestr = l:lines[-1]
+    return strlen(strcharpart(l:linestr, 0, a:char)) + 1
 endfunction
 
 " The inverse version of `s:to_col`.
@@ -289,7 +303,7 @@ function! s:to_char(expr, lnum, col) abort
 "}}}
 endfunction
 
-function! s:VimPostionToLSPPosition(expr, pos) abort
+function! ECY#utils#VimPostionToLSPPosition(expr, pos) abort
 "{{{
     return {
          \   'line': a:pos[0] - 1,
@@ -298,12 +312,30 @@ function! s:VimPostionToLSPPosition(expr, pos) abort
 "}}}
 endfunction
 
+function! ECY#utils#LSPPositionToVimPostion(expr, position) abort
+  let l:line = ECY#utils#LSPLineToVim(a:expr, a:position)
+  let l:col = ECY#utils#LSPCharacterToVim(a:expr, a:position)
+  return [l:line, l:col]
+endfunction
+
+function! ECY#utils#LSPLineToVim(expr, position) abort
+  return a:position['line'] + 1
+endfunction
+
+function! ECY#utils#LSPCharacterToVim(expr, position) abort
+"{{{
+  let l:line = a:position['line'] + 1 " optimize function overhead by not calling lsp_line_to_vim
+  let l:char = a:position['character']
+  return s:to_col(a:expr, l:line, l:char)
+"}}}
+endfunction
+
 function! ECY#utils#GetCurrentLineRange() abort
 "{{{
   let l:pos = getpos('.')[1 : 2]
   let l:range = {}
-  let l:range['start'] = s:VimPostionToLSPPosition('%', l:pos)
-  let l:range['end'] = s:VimPostionToLSPPosition('%', [l:pos[0], l:pos[1] + strlen(getline(l:pos[0])) + 1])
+  let l:range['start'] = ECY#utils#VimPostionToLSPPosition('%', l:pos)
+  let l:range['end'] = ECY#utils#VimPostionToLSPPosition('%', [l:pos[0], l:pos[1] + strlen(getline(l:pos[0])) + 1])
   return l:range
 "}}}
 endfunction

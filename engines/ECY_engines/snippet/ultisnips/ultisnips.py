@@ -11,7 +11,7 @@ class Operate(object):
         self.snippet_cache = {}
 
     def OnBufferEnter(self, context):
-        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
 
         if file_type in self.snippet_cache:
             return
@@ -45,7 +45,7 @@ class Operate(object):
         return None
 
     def OnCompletion(self, context):
-        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType()')
+        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
         if file_type not in self.snippet_cache:
             return
         context['show_list'] = self.snippet_cache[file_type]

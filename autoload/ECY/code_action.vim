@@ -43,42 +43,6 @@ fun! ECY#code_action#Do(context)
   "}}}
 endf
 
-fun! s:HandleEdit(edit_dict)
-"{{{
-  let l:to_be_done_action = []
-  let l:not_to_do_action = []
-  for item in a:edit_dict
-    " if has_key(item, 'range')
-    "   let current_position = ECY#utils#GetCurrentBufferPosition()
-    "   if current_position['line'] > item['range']['end']['line'] || 
-    "         \current_position['line'] < item['range']['start']['line'] ||
-    "         \current_position['colum'] > item['range']['end']['character'] || 
-    "         \current_position['colum'] < item['range']['start']['character']
-
-    "     call add(l:not_to_do_action, item)
-    "     continue
-    "   endif
-    " endif
-
-    if !has_key(item, 'edit')
-      call add(l:not_to_do_action, item)
-      continue
-    endif
-
-    try
-      " do this action
-      call ECY#code_action#ApplyEdit(item['edit'])
-      call add(l:to_be_done_action, item)
-    catch 
-      call add(l:not_to_do_action, item)
-    endtry
-
-  endfor
-  echo l:to_be_done_action
-  echo l:not_to_do_action
-"}}}
-endf
-
 function! s:Switch(path) abort
 "{{{
   if bufnr(a:path) >= 0
@@ -98,10 +62,11 @@ fun! ECY#code_action#ApplyEdit(workspace_edit)
     for item in keys(a:workspace_edit['changes'])
       let l:path = UriToPath(item)
       call s:Switch(l:path)
-      for item2 in a:workspace_edit['changes'][item]
-        call s:Apply(l:path, item2, ECY#utils#GetCurrentBufferPosition())
-        call add(l:changed, l:path)
-      endfor
+      call ECY#text_edit#apply(item, a:workspace_edit['changes'][item])
+      " for item2 in a:workspace_edit['changes'][item]
+      "   call s:Apply(l:path, item2, ECY#utils#GetCurrentBufferPosition())
+      "   call add(l:changed, l:path)
+      " endfor
     endfor
   endif
 
@@ -212,5 +177,3 @@ function! s:get_fixendofline(buf) abort
 "}}}
 endfunction
 "}}}
-
-" call ECY#code_action#Do({'result': {"id":9,"jsonrpc":"2.0","result":[{"diagnostics":[{"code":"expected_semi_after_expr","message":"Expected ';' after expression (fix available)","range":{"end":{"character":4,"line":9},"start":{"character":2,"line":9}},"severity":1,"source":"clang"}],"edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":";","range":{"end":{"character":8,"line":8},"start":{"character":8,"line":8}}}]}},"kind":"quickfix","title":"insert ';'"}]}})
