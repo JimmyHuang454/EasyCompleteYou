@@ -50,15 +50,15 @@ fun! ECY#code_action#Do(context)
       let l:cmd_args = get(l:temp, 'arguments', [])
       " call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
     endif
-    let g:anc .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
     let i += 1
+    let g:anc .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
   endfor
 
   call s:Switch(l:current_buffer_path)
   redraw!
   echo g:anc
   let l:int = str2nr(input('Index:'))
-  if l:int > len(s:results)
+  if l:int > len(s:results) || l:int == 0
     call ECY#utils#echo('Quited')
     return
   endif
