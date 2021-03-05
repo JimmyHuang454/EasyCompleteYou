@@ -4,14 +4,13 @@
 
 fun! ECY#code_action#Do(context)
 "{{{
-  let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
   " if l:current_buffer_path != a:context['params']['buffer_path'] 
   "       \|| ECY#rpc#rpc_event#GetBufferIDNotChange() != a:context['params']['buffer_id']
   "   return
   " endif
 
   let s:results = a:context['result']
-  let g:anc = ''
+  let s:show = ''
 
   let i = 0
 
@@ -36,13 +35,13 @@ fun! ECY#code_action#Do(context)
     if has_key(item, 'command')
       if type(item['command']) == v:t_string
         " it is a command response.
-        let l:type = 'Commnand '
+        let l:type .= '& Commnand '
         let l:temp = item
         if has_key(l:temp, 'kind')
           let l:kind .= item['kind']
         endif
       else
-        let l:type .= '& Commnand '
+        let l:type = 'Commnand '
         " code_action with command
         let l:temp = item['command']
       endif
@@ -51,20 +50,45 @@ fun! ECY#code_action#Do(context)
       " call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
     endif
     let i += 1
-    let g:anc .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
+    let s:show .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
   endfor
 
-  call s:Switch(l:current_buffer_path)
   redraw!
-  echo g:anc
+  echo s:show
   let l:int = str2nr(input('Index:'))
   if l:int > len(s:results) || l:int == 0
     call ECY#utils#echo('Quited')
     return
   endif
+  let l:int -= 1
+  call s:Do(s:results[l:int])
   return 0
   "}}}
 endf
+
+function! s:Do(item) abort
+"{{{
+  let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
+
+  if has_key(a:item, 'edit')
+    let l:edit_res = ECY#code_action#ApplyEdit(a:item['edit'])
+  endif
+
+  if has_key(a:item, 'command')
+    if type(a:item['command']) == v:t_string
+      " it is a command response.
+      let l:temp = a:item
+    else
+      " code_action with command
+      let l:temp = a:item['command']
+    endif
+    let l:cmd_name = l:temp['command']
+    let l:cmd_args = get(l:temp, 'arguments', [])
+    call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
+  endif
+  call s:Switch(l:current_buffer_path)
+"}}}
+endfunction
 
 function! s:Switch(path) abort
 "{{{
