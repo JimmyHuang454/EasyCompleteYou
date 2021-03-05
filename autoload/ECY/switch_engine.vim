@@ -155,6 +155,13 @@ fun! s:InitUsableEngine()
         \})
 
   call ECYAddEngine({
+        \'engine_name': 'ECY_engines.tex.texlab.texlab', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['latex', 'tex']
+        \})
+
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.python.jedi.jedi', 
         \'ability': [], 
         \'path': 'pip', 

@@ -30,8 +30,7 @@ class LSP(conec.Operate):
         self._using_server_id = None
 
     def Debug(self, msg):
-        pass
-        # logger.info(msg)
+        logger.info(msg)
 
     def _classify_response(self):
         while 1:
