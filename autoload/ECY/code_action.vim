@@ -10,35 +10,58 @@ fun! ECY#code_action#Do(context)
   "   return
   " endif
 
-  let l:results = a:context['result']['result']
-  let l:edit_res = {}
-  if len(l:results) == 0
-    call ECY#utils#echo('Nothing to act.')
-    return
-  endif
+  let s:results = a:context['result']
+  let g:anc = ''
 
-  for item in l:results
+  let i = 0
+
+  for item in s:results
+    let l:type = ''
+    let l:kind = ''
+    let l:title = ''
+
     if has_key(item, 'edit')
-      let l:edit_res = ECY#code_action#ApplyEdit(item['edit'])
+      let l:type .= 'Edit '
+      " let l:edit_res = ECY#code_action#ApplyEdit(item['edit'])
+    endif
+
+    if has_key(item, 'kind')
+      let l:kind .= item['kind']
+    endif
+
+    if has_key(item, 'title')
+      let l:title .= item['title']
     endif
 
     if has_key(item, 'command')
       if type(item['command']) == v:t_string
         " it is a command response.
+        let l:type = 'Commnand '
         let l:temp = item
+        if has_key(l:temp, 'kind')
+          let l:kind .= item['kind']
+        endif
       else
+        let l:type .= '& Commnand '
         " code_action with command
         let l:temp = item['command']
       endif
       let l:cmd_name = l:temp['command']
       let l:cmd_args = get(l:temp, 'arguments', [])
-      call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
+      " call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
     endif
+    let g:anc .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
+    let i += 1
   endfor
 
   call s:Switch(l:current_buffer_path)
   redraw!
-  echo l:edit_res
+  echo g:anc
+  let l:int = str2nr(input('Index:'))
+  if l:int > len(s:results)
+    call ECY#utils#echo('Quited')
+    return
+  endif
   return 0
   "}}}
 endf

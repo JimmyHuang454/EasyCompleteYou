@@ -274,7 +274,3 @@ endfunction
 function! s:GetFixeddoline(bufnr) abort
     return s:get_fixendofline(a:bufnr)
 endfunction
-
-" edit":{"changes":{"file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp":[{"newText":"int extracted(struct abc &dd) {\n  return dd.a == 'd' || dd.a == 'c' || dd.a == 'a';\n}\n","range":{"end":{"character":0,"line":10},"start":{"character":0,"line":10}}},{"newText":"return extracted(dd);\n  ","range":{"end":{"character":50,"line":14},"start":{"character":2,"line":14}}}]}}
-
-" call ECY#text_edit#apply('file:///C:/Users/qwer/Desktop/vimrc/myproject/test.cpp', [{'newText': 'void extracted(struct abc &dd, int &a, int &b, int &c) {\n  c = 1 + dd.a + a + dd.a;\n  b = 2 + dd.a + a + dd.a;\n}\n', 'range': {'end': {'character': 0, 'line': 10}, 'start': {'character': 0, 'line': 10}}}, {'newText': 'extracted(dd, a, b, c)', 'range': {'end': {'character': 25, 'line': 16}, 'start': {'character': 2, 'line': 15}}}])

@@ -12,7 +12,6 @@ class Operate(object):
         self.engine_name = 'ECY_engines.cpp.clangd.clangd'
         self._did_open_list = {}
         self.results_list = []
-        self.is_InComplete = False
         self.trigger_key = [".", "<", ">", ":", "\"", "/"]
         self.workspace_cache = []
         self._diagnosis_cache = []
@@ -213,8 +212,6 @@ class Operate(object):
         if return_data['result'] is None:
             return
 
-        self.is_InComplete = return_data['result']['isIncomplete']
-
         for item in return_data['result']['items']:
             results_format = {
                 'abbr': '',
@@ -337,7 +334,7 @@ class Operate(object):
                                        diagnostic=self._diagnosis_cache)
 
         returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
-        context['result'] = returns
+        context['result'] = returns['result']
         logger.debug(context)
         return context
 

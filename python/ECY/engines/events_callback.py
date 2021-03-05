@@ -81,7 +81,10 @@ class Operate():
         if 'result' not in context:
             logger.debug('missing params. "result"')
             return
-        results = context['result']['result']
+        results = context['result']
+        if len(results) == 0:
+            rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
+            return
         for item in results:
             pass
         rpc.DoCall('ECY#code_action#Do', [context])
