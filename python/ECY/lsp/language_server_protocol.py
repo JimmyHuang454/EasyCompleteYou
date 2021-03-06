@@ -16,14 +16,38 @@ from loguru import logger
 from ECY.lsp import stand_IO_connection as conec
 
 
+class LSPRequest(object):
+    """
+    """
+    def __init__(self, method_name, ids):
+        """
+        """
+        self.Method = method_name
+        self.ID = ids
+        self.response_queue = None
+
+    def GetResponse(self, timeout=None):
+        if type(timeout) is int and timeout != -1 and timeout != 0:
+            self.response_queue = queue.Queue(timeout)
+        else:
+            self.response_queue = queue.Queue()
+        return self.response_queue.get()
+
+    def ResponseArrive(self, response):
+        if self.response_queue is None:
+            # user have no intention to get request's response.
+            return
+        self.response_queue.put(response)
+
+
 class LSP(conec.Operate):
     def __init__(self):
         self._id = 0
-        self._lock = threading.Lock()
         self.server_id = -1
         self._queue_dict = {}
         self._waitting_response = {}
         self.workDoneToken_id = 0
+        self.id_lock = threading.Lock()
         super().__init__()
         threading.Thread(target=self._classify_response, daemon=True).start()
         self.queue_maxsize = 20
@@ -35,82 +59,55 @@ class LSP(conec.Operate):
     def _classify_response(self):
         while 1:
             todo = self.GetTodo()
-            debug = "<---" + todo['data']
-            self.Debug(debug)
+            self.Debug("<---" + todo['data'])
             todo = json.loads(todo['data'])
-            if 'id' not in todo.keys():
+            if 'id' not in todo:
                 # a notification send from server
                 self._add_queue(todo['method'], todo)
+            elif todo['id'] in self._waitting_response and 'method' not in todo:
+                # a response
+                ids = todo['id']
+                if ids not in self._waitting_response:
+                    self.Debug("a response that can Not recognize")
+                    continue
+                self._waitting_response[ids].ResponseArrive(todo)
+                del self._waitting_response[ids]
             else:
-                if todo['id'] in self._waitting_response or\
-                        'method' not in todo.keys():
-                    # a response
-                    method_name = self._pop_waitting(todo['id'])
-                    self._add_queue(method_name, todo)
-                else:
-                    # a request that send from the server
-                    self._add_queue(todo['method'], todo)
+                # a request that send from the server
+                self._add_queue(todo['method'], todo)
 
     def GetServerStatus_(self):
         return self.GetServerStatus(self.server_id)
 
-    def GetResponse(self, _method_name, timeout_=5):
+    def GetRequestOrNotification(self, _method_name, timeout_=5):
         if _method_name not in self._queue_dict:
             # new
             self._queue_dict[_method_name] = queue.Queue(
                 maxsize=self.queue_maxsize)
         queue_obj = None
         try:
-            if timeout_ == -1:
+            if timeout_ == -1 or timeout_ == None:
+                # never timeout
                 queue_obj = self._queue_dict[_method_name].get()
             else:
                 queue_obj = self._queue_dict[_method_name].get(
                     timeout=timeout_)
         except:
             del self._queue_dict[_method_name]
-            self._queue_dict[_method_name] = queue.Queue(
-                maxsize=self.queue_maxsize)
         if queue_obj is None:
             raise 'queue time out.'
         return queue_obj
 
-    def _add_queue(self, _method_name, _todo):
-        if _method_name is None:
+    def _add_queue(self, method_name, _todo):
+        if method_name is None:
             return None
-        if _method_name in self._queue_dict:
-            obj_ = self._queue_dict[_method_name]
-        else:
-            # obj_ = queue.Queue(maxsize=self.queue_maxsize)
-            # self._queue_dict[_method_name] = obj_
 
-            # user should call GetResponse() once to create a queue
-            # if don't, this msg will be abandomed.
-            return None
-        obj_.put(_todo)
-        return obj_
+        if method_name in self._queue_dict:
+            obj_ = self._queue_dict[method_name]
+            obj_.put(_todo)
+            return self._queue_dict[method_name]
 
-    def _add_waitting(self, _id, _method_name):
-        """ waiting lists
-        """
-        try:
-            self._lock.acquire()
-            self._waitting_response[_id] = _method_name
-        finally:
-            self._lock.release()
-
-    def _pop_waitting(self, _id):
-        """get the response of method name by id to classify
-        """
-        try:
-            self._lock.acquire()
-            if _id in self._waitting_response:
-                method_ = self._waitting_response[_id]
-                self._waitting_response.pop(_id)
-                return method_
-            else:
-                return None
-        finally:
-            self._lock.release()
+        self.Debug('abandom')
 
     def ChangeUsingServerID(self, id_nr):
         if id_nr > self.server_count:
@@ -127,25 +124,26 @@ class LSP(conec.Operate):
            or notification.
         """
         if self.server_id <= 0:
-            # raise an erro:
-            # return 'E002: you have to send a initialize request first.'
-            return None
-        context = {'jsonrpc': '2.0', 'method': method, 'params': params}
-        # we have to increase the ID all the time for distinguished by ECY
+            raise 'E002: you have to send a initialize request first.'
+        send = {'jsonrpc': '2.0', 'method': method, 'params': params}
+
+        self.id_lock.acquire()
         self._id += 1
         if not isNotification:
             # id_text       = "ECY_"+str(self._id)
-            context['id'] = self._id
-            self._add_waitting(self._id, method)
-        context = json.dumps(context)
-        context_lenght = len(context)
-        debug = "--->" + context
-        self.Debug(debug)
+            send['id'] = self._id
+        context = LSPRequest(method, self._id)
+        self._waitting_response[self._id] = context
+        self.id_lock.release()
+
+        send = json.dumps(send)
+        context_lenght = len(send)
+        self.Debug("--->" + send)
         message = ("Content-Length: {}\r\n\r\n"
-                   "{}".format(context_lenght, context))
+                   "{}".format(context_lenght, send))
         self.SendData(self.GetUsingServerID(),
                       message.encode(encoding="utf-8"))
-        return {'ID': self._id, 'Method': method}
+        return context
 
     def _build_response(self, results, ids, error=None):
         if self.server_id <= 0:
@@ -595,6 +593,14 @@ class LSP(conec.Operate):
     def definition(self, position, uri):
         params = {'textDocument': {'uri': uri}, 'position': position}
         return self._build_send(params, 'textDocument/definition')
+
+    def typeDefinition(self, position, uri):
+        params = {'textDocument': {'uri': uri}, 'position': position}
+        return self._build_send(params, 'textDocument/typeDefinition')
+
+    def implementation(self, position, uri):
+        params = {'textDocument': {'uri': uri}, 'position': position}
+        return self._build_send(params, 'textDocument/implementation')
 
     def declaration(self, position, uri):
         params = {'textDocument': {'uri': uri}, 'position': position}

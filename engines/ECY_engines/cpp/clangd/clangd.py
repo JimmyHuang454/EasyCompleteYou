@@ -56,10 +56,8 @@ class Operate(object):
             opts['compilationDatabasePath'] = compilationDatabasePath
 
         # The compile command will be approximately clang $FILE $fallbackFlags in this case.
-        temp = self._lsp.initialize(rootUri=self.workspace_cache[0],
-                                    initializationOptions=opts)
-
-        self._lsp.GetResponse(temp['Method'], timeout_=5)
+        self._lsp.initialize(rootUri=self.workspace_cache[0],
+                             initializationOptions=opts).GetResponse(timeout=5)
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
@@ -73,8 +71,8 @@ class Operate(object):
     def _handle_edit(self):
         while 1:
             try:
-                response = self._lsp.GetResponse('workspace/applyEdit',
-                                                 timeout_=-1)
+                response = self._lsp.GetRequestOrNotification(
+                    'workspace/applyEdit', timeout_=-1)
 
                 try:
                     applied = rpc.DoCall('ECY#code_action#ApplyEdit',
@@ -95,7 +93,7 @@ class Operate(object):
         # clangd 8+
         while 1:
             try:
-                response = self._lsp.GetResponse(
+                response = self._lsp.GetRequestOrNotification(
                     'textDocument/clangd.fileStatus', timeout_=-1)
                 res_path = response['params']['uri']
                 res_path = self._lsp.UriToPath(res_path)
@@ -112,8 +110,8 @@ class Operate(object):
     def _handle_log_msg(self):
         while 1:
             try:
-                response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout_=-1)
+                response = self._lsp.GetRequestOrNotification(
+                    'window/logMessage', timeout_=-1)
                 msg = response['params']['message']
                 if msg.find('compile_commands') != -1:
                     self._show_msg(msg.split('\n'))
@@ -139,21 +137,6 @@ class Operate(object):
 
 
 # }}}
-
-    def _waitting_for_response(self, method_, version_id):
-        # {{{
-        while 1:
-            try:
-                # GetTodo() will only wait for 5s,
-                # after that will raise an erro
-                return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
-                if return_data['id'] == version_id:
-                    break
-            except:  # noqa
-                return None
-        return return_data
-        # }}}
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
@@ -203,8 +186,8 @@ class Operate(object):
 
         self.results_list = []
 
-        temp = self._lsp.completion(uri, current_start_postion)
-        return_data = self._waitting_for_response(temp['Method'], temp['ID'])
+        return_data = self._lsp.completion(
+            uri, current_start_postion).GetResponse(timeout=5)
 
         if return_data is None:
             return
@@ -289,11 +272,11 @@ class Operate(object):
         cmd_name = params['cmd_name']
         if cmd_name == 'switch_source_and_header':  # only supports by clangd
             params = {'uri': uri}
-            temp = self._lsp._build_send(params,
-                                         'textDocument/switchSourceHeader')
-            temp = self._lsp.GetResponse(temp['Method'], timeout_=5)
-            if temp['result'] is not None:
-                path = self._lsp.UriToPath(temp['result'])
+            result = self._lsp._build_send(
+                params,
+                'textDocument/switchSourceHeader').GetResponse(timeout=5)
+            if result['result'] is not None:
+                path = self._lsp.UriToPath(result['result'])
                 rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
             else:
                 rpc.DoCall('ECY#utils#echo',
@@ -310,8 +293,8 @@ class Operate(object):
     def _get_diagnosis(self):
         while True:
             try:
-                temp = self._lsp.GetResponse('textDocument/publishDiagnostics',
-                                             timeout_=-1)
+                temp = self._lsp.GetRequestOrNotification(
+                    'textDocument/publishDiagnostics', timeout_=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 rpc.DoCall('ECY#diagnostics#PlaceSign', [{
@@ -328,12 +311,12 @@ class Operate(object):
         start_position = ranges['start']
         end_position = ranges['end']
 
-        returns = self._lsp.codeAction(uri,
-                                       start_position,
-                                       end_position,
-                                       diagnostic=self._diagnosis_cache)
+        returns = self._lsp.codeAction(
+            uri,
+            start_position,
+            end_position,
+            diagnostic=self._diagnosis_cache).GetResponse(timeout=5)
 
-        returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
         context['result'] = returns['result']
         logger.debug(context)
         return context
@@ -390,8 +373,8 @@ class Operate(object):
         }
 
         params = {'textDocument': textDocument, 'range': ranges}
-        temp = self._lsp._build_send(params, 'textDocument/ast')
-        self._lsp.GetResponse(temp['Method'], timeout_=5)
+        temp = self._lsp._build_send(params,
+                                     'textDocument/ast').GetResponse(timeout=5)
 
     def _diagnosis_analysis(self, params):
         results_list = []
