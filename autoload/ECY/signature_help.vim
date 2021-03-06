@@ -1,5 +1,5 @@
 
-fun! signature_help#Init() abort
+fun! ECY#signature_help#Init() abort
 "{{{
   let g:ECY_windows_are_showing['signature_help'] = -1
   let g:ECY_signature_help_activeParameter = ''
@@ -13,7 +13,7 @@ endf
 
 fun! s:OnInsertLeave() abort
 "{{{
-  call signature_help#Close()
+  call ECY#signature_help#Close()
 "}}}
 endf
 
@@ -27,6 +27,14 @@ fun! s:Translate(origin) abort
       let l:translated .= "\\*"
     elseif item == '+'
       let l:translated .= "\\+"
+    elseif item == '{'
+      let l:translated .= "\\{"
+    elseif item == '}'
+      let l:translated .= "\\}"
+    elseif item == '['
+      let l:translated .= "\\["
+    elseif item == ']'
+      let l:translated .= "\\]"
     else
       let l:translated .= item
     endif
@@ -36,7 +44,7 @@ fun! s:Translate(origin) abort
 "}}}
 endf
 
-fun! signature_help#Show(results) abort
+fun! ECY#signature_help#Show(results) abort
 "{{{
   if g:has_floating_windows_support == 'vim'
     call s:Vim(a:results)
@@ -46,7 +54,7 @@ fun! signature_help#Show(results) abort
   "}}}
 endf
 
-fun! signature_help#Close() abort
+fun! ECY#signature_help#Close() abort
 "{{{
   if g:has_floating_windows_support == 'vim'
     if g:ECY_windows_are_showing['signature_help'] != -1
@@ -63,7 +71,7 @@ endf
 
 fun! s:Vim(results) abort
 "{{{
-  call signature_help#Close()
+  call ECY#signature_help#Close()
   let l:to_show = []
   for item in a:results['signatures']
     call add(l:to_show, item['label'])
@@ -79,8 +87,11 @@ fun! s:Vim(results) abort
       \ 'scrollbar': 1,
       \ 'firstline': 1,
       \ 'padding': [0,1,0,1],
-      \ 'zindex': 2000}
-  let l:nr = popup_atcursor(l:to_show, l:opts)
+      \ 'zindex': 2000,
+      \'pos':'botleft',
+      \'line':'cursor-1',
+      \'col': 'cursor'}
+  let l:nr = popup_create(l:to_show, l:opts)
   let g:ECY_windows_are_showing['signature_help'] = l:nr
 
   let l:activeSignature = 0
@@ -102,5 +113,5 @@ fun! s:Vim(results) abort
 "}}}
 endf
 
-call signature_help#Init()
-call signature_help#Show({"activeParameter":0,"activeSignature":0,"signatures":[{"label":"sdf(int ab, char c) -> void","parameters":[{"label":"int ab"},{"label":"char c"}]}]})
+" call signature_help#Init()
+" call signature_help#Show({"activeParameter":0,"activeSignature":0,"signatures":[{"label":"sdf(int *ab, char c) -> void","parameters":[{"label":"int *ab"},{"label":"char c"}]}]})

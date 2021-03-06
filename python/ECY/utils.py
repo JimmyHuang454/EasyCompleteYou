@@ -34,15 +34,18 @@ def IsNeedToUpdate(context, regex):
     current_line = params['buffer_position']['line']
     current_line_content = params['buffer_position']['line_content']
     temp = bytes(current_line_content, encoding='utf-8')
-    prev_key = str(temp[:current_colum], encoding='utf-8')
+    prev_string = str(temp[:current_colum], encoding='utf-8')
 
-    current_colum, filter_words, last_key = MatchFilterKeys(prev_key, regex)
+    current_colum, filter_words, last_key = MatchFilterKeys(prev_string, regex)
     cache = {
         'current_line': current_line,
         'current_colum': current_colum,
         'last_key': last_key,
-        'line_counts': len(params['buffer_content'])
+        'prev_string': prev_string,
+        'prev_string_last_key': prev_string[len(prev_string) - 1]
     }
+    if 'buffer_content' in params:
+        cache['line_counts'] = len(params['buffer_content'])
     return cache
 
 

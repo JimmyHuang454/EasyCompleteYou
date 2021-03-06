@@ -25,8 +25,9 @@ class LSPRequest(object):
         self.Method = method_name
         self.ID = ids
         self.response_queue = None
+        self.callback = None
 
-    def GetResponse(self, timeout=None):
+    def GetResponse(self, timeout=None, callback=None):
         if type(timeout) is int and timeout != -1 and timeout != 0:
             try:
                 self.response_queue = queue.Queue(timeout)
@@ -35,7 +36,17 @@ class LSPRequest(object):
                 raise e
         else:
             self.response_queue = queue.Queue()
+        if callback is not None:
+            self.callback = callback
+            threading.Thread(target=self._callback_thread).start()
+            return self
         return self.response_queue.get()
+
+    def _callback_thread(self):
+        try:
+            self.callback(self.response_queue.get())
+        except Exception as e:
+            logger.exception(e)
 
     def ResponseArrive(self, response):
         if self.response_queue is None:

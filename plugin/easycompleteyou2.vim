@@ -98,6 +98,8 @@ nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call ECY#completion#Init()
+call ECY#completion#Init()
+call ECY#signature_help#Init()
 call ECY#preview_windows#Init()
 call ECY#switch_engine#Init()
 call ECY#diagnostics#Init()

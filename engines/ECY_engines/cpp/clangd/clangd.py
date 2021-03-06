@@ -162,6 +162,11 @@ class Operate(object):
         uri = self._lsp.PathToUri(uri)
         self._lsp.documentSymbos(uri)
 
+    def _signature_help(self, res):
+        res = res['result']
+        if len(res) != 0:
+            rpc.DoCall('ECY#signature_help#Show', [res])
+
     def OnCompletion(self, context):
         self._did_open_or_change(context)
         context['trigger_key'] = self.trigger_key
@@ -173,12 +178,15 @@ class Operate(object):
 
         current_cache = utils.IsNeedToUpdate(context, r'[\w+]')
 
-        if current_cache['last_key'] in ['(', ',']:
+        if current_cache['prev_string_last_key'] in ['(', ',']:
             current_start_postion = {
                 'line': start_position['line'],
                 'character': start_position['colum']
             }
-            self._lsp.signatureHelp(uri, current_start_postion)
+            res = self._lsp.signatureHelp(uri,
+                                          current_start_postion).GetResponse(
+                                              timeout=2,
+                                              callback=self._signature_help)
 
         current_start_postion = {
             'line': start_position['line'],
