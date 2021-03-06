@@ -321,33 +321,7 @@ class Operate(object):
         logger.debug(context)
         return context
 
-    def _get_buffer_version(self, uri):
-        if uri not in self._did_open_list:
-            return 1
-        return self._did_open_list[uri]['buffer_id']
-
-    def _code_action_analysis(self, results):
-        change_list = []
-        command_list = []
-        for item in results:
-            if 'diagnostics' in item:
-                for item2 in item['edit']:
-                    if 'changes' in item2:
-                        for change in item2['changes']:
-                            path = self._lsp.UriToPath(change)
-                            change_list.append({
-                                'file_path': path,
-                                'edit': item2['changes'][change]
-                            })
-                    if 'command' in item2:
-                        # TODO
-                        pass
-            else:
-                # TODO
-                pass
-        return {'change_list': change_list, 'command_list': command_list}
-
-    def _get_AST(self, context):
+    def _get_AST(self, context): # only in clangd
         uri = context['params']['buffer_path']
         uri = self._lsp.PathToUri(uri)
 

@@ -63,6 +63,7 @@ class LSP(conec.Operate):
             todo = json.loads(todo['data'])
             if 'id' not in todo:
                 # a notification send from server
+                todo['ECY_type'] = 'notification'
                 self._add_queue(todo['method'], todo)
             elif todo['id'] in self._waitting_response and 'method' not in todo:
                 # a response
@@ -70,10 +71,12 @@ class LSP(conec.Operate):
                 if ids not in self._waitting_response:
                     self.Debug("a response that can Not recognize")
                     continue
+                todo['ECY_type'] = 'response'
                 self._waitting_response[ids].ResponseArrive(todo)
                 del self._waitting_response[ids]
             else:
                 # a request that send from the server
+                todo['ECY_type'] = 'request'
                 self._add_queue(todo['method'], todo)
 
     def GetServerStatus_(self):
@@ -100,7 +103,7 @@ class LSP(conec.Operate):
 
     def _add_queue(self, method_name, _todo):
         if method_name is None:
-            return None
+            return
 
         if method_name in self._queue_dict:
             obj_ = self._queue_dict[method_name]
