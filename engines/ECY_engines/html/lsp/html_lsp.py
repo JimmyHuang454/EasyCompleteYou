@@ -9,7 +9,7 @@ class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'html_lsp'
+        self.engine_name = 'ECY_engines.html.lsp.html_lsp'
         self.regex = r'[\-\w+]'
         self._did_open_list = {}
         self.results_list = []
@@ -30,8 +30,8 @@ class Operate(object):
         temp = self._lsp.PathToUri(
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
-        temp = self._lsp.initialize(rootUri=self.workspace_cache[0])
-        self._lsp.GetResponse(temp['Method'], timeout_=5)
+        self._lsp.initialize(rootUri=self.workspace_cache[0]).GetResponse(
+            timeout=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
         self._lsp.initialized()
@@ -39,8 +39,8 @@ class Operate(object):
     def _handle_log_msg(self):
         while 1:
             try:
-                response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout_=-1)
+                response = self._lsp.GetRequestOrNotification(
+                    'window/logMessage', timeout_=-1)
                 logger.debug(response)
             except:
                 pass
@@ -96,21 +96,6 @@ class Operate(object):
 
 # }}}
 
-    def _waitting_for_response(self, method_, version_id):
-        # {{{
-        while 1:
-            try:
-                # GetTodo() will only wait for 5s,
-                # after that will raise an erro
-                return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
-                if return_data['id'] == version_id:
-                    break
-            except:  # noqa
-                return None
-        return return_data
-        # }}}
-
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
         temp = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
@@ -129,10 +114,10 @@ class Operate(object):
     def OnCompletion(self, context):
         self._did_open_or_change(context)
         context['trigger_key'] = self.trigger_key
+        context['regex'] = self.regex
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
-        context['regex'] = self.regex
 
         start_position = params['buffer_position']
 
@@ -151,8 +136,8 @@ class Operate(object):
 
         self.results_list = []
 
-        temp = self._lsp.completion(uri, current_start_postion)
-        return_data = self._waitting_for_response(temp['Method'], temp['ID'])
+        return_data = self._lsp.completion(
+            uri, current_start_postion).GetResponse(timeout=5)
 
         if return_data is None:
             context['show_list'] = []
@@ -222,27 +207,14 @@ class Operate(object):
         except:
             open_style = 'v'
 
-        if params[
-                'cmd_name'] == 'switch_source_and_header':  # only supports by clangd
-            params = {'uri': uri}
-            temp = self._lsp._build_send(params,
-                                         'textDocument/switchSourceHeader')
-            temp = self._lsp.GetResponse(temp['Method'], timeout_=5)
-            if temp['result'] is not None:
-                path = self._lsp.UriToPath(temp['result'])
-                rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
-            else:
-                rpc.DoCall('ECY#utils#echo',
-                           ["Can not find it's header/source. Try it latter."])
-        else:
-            self._lsp.executeCommand(params['cmd_name'],
-                                     arguments=params['param_list'])
+        self._lsp.executeCommand(params['cmd_name'],
+                                 arguments=params['param_list'])
 
     def _get_diagnosis(self):
         while True:
             try:
-                temp = self._lsp.GetResponse('textDocument/publishDiagnostics',
-                                             timeout_=-1)
+                temp = self._lsp.GetRequestOrNotification(
+                    'textDocument/publishDiagnostics', timeout_=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 # rpc.do
@@ -257,11 +229,11 @@ class Operate(object):
 
         if self._diagnosis_cache == []:
             return
-        returns = self._lsp.codeAction(uri,
-                                       start_position,
-                                       end_position,
-                                       diagnostic=self._diagnosis_cache)
-        returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
+        returns = self._lsp.codeAction(
+            uri,
+            start_position,
+            end_position,
+            diagnostic=self._diagnosis_cache).GetResponse(timeout=5)
         context['result'] = returns
         return context
 
