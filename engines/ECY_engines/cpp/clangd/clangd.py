@@ -114,7 +114,7 @@ class Operate(object):
                 response = self._lsp.GetRequestOrNotification(
                     'window/logMessage', timeout_=-1)
                 msg = response['params']['message']
-                if msg.find('compile_commands') != -1:
+                if msg.find('compile_commands') != -1: # clangd 12+
                     self._show_msg(msg.split('\n'))
                 logger.debug(response)
             except:
