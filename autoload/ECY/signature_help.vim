@@ -2,9 +2,10 @@
 fun! signature_help#Init() abort
 "{{{
   let g:ECY_windows_are_showing['signature_help'] = -1
+  let g:ECY_signature_help_activeParameter = ''
+  let g:ECY_signature_help_activeSignature = ''
   augroup ECY_signature_help
     autocmd!
-    autocmd TextChangedI  * call ECY#completion#Close()
     autocmd InsertLeave   * call s:OnInsertLeave()
   augroup END
 "}}}
@@ -13,6 +14,25 @@ endf
 fun! s:OnInsertLeave() abort
 "{{{
   call signature_help#Close()
+"}}}
+endf
+
+fun! s:Translate(origin) abort
+"{{{
+  let l:translated = ''
+  let i = 0
+  while i < len(a:origin)
+    let item = a:origin[i]
+    if item == '*'
+      let l:translated .= "\\*"
+    elseif item == '+'
+      let l:translated .= "\\+"
+    else
+      let l:translated .= item
+    endif
+    let i += 1
+  endw
+  return l:translated
 "}}}
 endf
 
@@ -63,10 +83,7 @@ fun! s:Vim(results) abort
   let l:nr = popup_atcursor(l:to_show, l:opts)
   let g:ECY_windows_are_showing['signature_help'] = l:nr
 
-  syn match ECY_signature_help_activeParameter  display ' '
-  syn match ECY_signature_help_activeSignature  display ' '
   let l:activeSignature = 0
-
   if has_key(a:results, 'activeSignature')
     let l:activeSignature = a:results['activeSignature']
   endif
@@ -78,7 +95,7 @@ fun! s:Vim(results) abort
   if has_key(a:results, 'activeParameter') && len(l:signatures) != 0
     let l:parameters = l:signatures['parameters']
     let l:activeParameter = a:results['activeParameter']
-    let g:ECY_signature_help_activeSignature = l:parameters[l:activeParameter]['label']
+    let g:ECY_signature_help_activeSignature = s:Translate(l:parameters[l:activeParameter]['label'])
   endif
 
   call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_signature_help')
