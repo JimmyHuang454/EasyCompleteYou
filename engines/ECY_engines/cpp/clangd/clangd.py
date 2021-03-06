@@ -35,6 +35,7 @@ class Operate(object):
                 has_ECY_windows_clangd_pip = False
             starting_cmd = ECY_clangd.exe_path
 
+        logger.debug(starting_cmd)
         self._lsp = language_server_protocol.LSP()
         starting_cmd += ' --limit-results=500'
         self._lsp.StartJob(starting_cmd)

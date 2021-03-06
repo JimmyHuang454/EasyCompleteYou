@@ -108,9 +108,10 @@ class LSP(conec.Operate):
         if method_name in self._queue_dict:
             obj_ = self._queue_dict[method_name]
             obj_.put(_todo)
+            self.Debug(_todo)
             return self._queue_dict[method_name]
 
-        self.Debug('abandom')
+        self.Debug('Abandomed ' + method_name)
 
     def ChangeUsingServerID(self, id_nr):
         if id_nr > self.server_count:
