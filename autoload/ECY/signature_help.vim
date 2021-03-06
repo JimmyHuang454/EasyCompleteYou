@@ -4,10 +4,16 @@ fun! ECY#signature_help#Init() abort
   let g:ECY_windows_are_showing['signature_help'] = -1
   let g:ECY_signature_help_activeParameter = ''
   let g:ECY_signature_help_activeSignature = ''
-  augroup ECY_signature_help
-    autocmd!
-    autocmd InsertLeave   * call s:OnInsertLeave()
-  augroup END
+
+  let g:ECY_enable_signature_help
+        \= get(g:,'ECY_enable_signature_help', v:true)
+
+  if g:ECY_enable_signature_help
+    augroup ECY_signature_help
+      autocmd!
+      autocmd InsertLeave   * call s:OnInsertLeave()
+    augroup END
+  endif
 "}}}
 endf
 
@@ -46,6 +52,10 @@ endf
 
 fun! ECY#signature_help#Show(results) abort
 "{{{
+  if !g:ECY_enable_signature_help
+    return
+  endif
+
   if g:has_floating_windows_support == 'vim'
     call s:Vim(a:results)
   elseif g:has_floating_windows_support == 'neovim'
