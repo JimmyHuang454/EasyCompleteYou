@@ -114,7 +114,7 @@ class Operate(object):
                 response = self._lsp.GetRequestOrNotification(
                     'window/logMessage', timeout_=-1)
                 msg = response['params']['message']
-                if msg.find('compile_commands') != -1: # clangd 12+
+                if msg.find('compile_commands') != -1:  # clangd 12+
                     self._show_msg(msg.split('\n'))
                 logger.debug(response)
             except:
@@ -322,7 +322,7 @@ class Operate(object):
         logger.debug(context)
         return context
 
-    def _get_AST(self, context): # only in clangd
+    def _get_AST(self, context):  # only in clangd
         uri = context['params']['buffer_path']
         uri = self._lsp.PathToUri(uri)
 
@@ -414,3 +414,15 @@ class Operate(object):
             }
             results_list.append(temp)
         return results_list
+
+    def GotoDefinition(self, context):
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        self._lsp.definition(position, uri).GetResponse(timeout=5)

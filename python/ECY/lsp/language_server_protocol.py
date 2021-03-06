@@ -28,7 +28,11 @@ class LSPRequest(object):
 
     def GetResponse(self, timeout=None):
         if type(timeout) is int and timeout != -1 and timeout != 0:
-            self.response_queue = queue.Queue(timeout)
+            try:
+                self.response_queue = queue.Queue(timeout)
+            except Exception as e:
+                self.response_queue = None
+                raise e
         else:
             self.response_queue = queue.Queue()
         return self.response_queue.get()
