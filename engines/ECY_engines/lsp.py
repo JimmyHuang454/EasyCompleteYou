@@ -428,6 +428,26 @@ class Operate(object):
             res = []
         rpc.DoCall('ECY#goto#Do', [res])
 
+    def GotoTypeDefinition(self, context):
+        if 'typeDefinitionProvider' not in self.capabilities:
+            self._show_msg('GotoTypeDefinition are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.typeDefinition(position,
+                                       uri).GetResponse(timeout=self.timeout)
+        res = res['result']
+        if res is None:
+            res = []
+        rpc.DoCall('ECY#goto#Do', [res])
+
     def GotoImplementation(self, context):
         if 'implementationProvider' not in self.capabilities:
             self._show_msg('GotoImplementation are not supported.')

@@ -131,6 +131,20 @@ fun! ECY2_main#GotoDeclaration() abort
 "}}}
 endf
 
+fun! ECY2_main#GotoTypeDefinition() abort
+"{{{
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'GotoTypeDefinition', 'params': l:params})
+"}}}
+endf
+
 fun! ECY2_main#Hover() abort
 "{{{
   let l:params = {
