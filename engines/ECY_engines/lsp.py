@@ -96,7 +96,7 @@ class Operate(object):
                 pass
 
     def _show_msg(self, msg):
-        rpc.DoCall('ECY#utils#echo', ['[ECY_clangd] %s' % (msg)])
+        rpc.DoCall('ECY#utils#echo', ['[%s] %s' % (self.engine_name, msg)])
 
     def _handle_log_msg(self):
         while 1:
@@ -161,7 +161,7 @@ class Operate(object):
         if 'completionProvider' not in self.capabilities or 'resolveProvider' not in self.capabilities[
                 'completionProvider'] or self.capabilities[
                     'completionProvider']['resolveProvider'] is False:
-            logger.debug('server not supports.')
+            logger.debug('server are not supported.')
             return
         ECY_item_index = context['params']['ECY_item_index']
         if (len(self.results_list) - 1) > ECY_item_index:
@@ -176,7 +176,7 @@ class Operate(object):
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
-            logger.debug('server not supports.')
+            self._show_msg('OnCompletion are not supported.')
             return
 
         if 'triggerCharacters' in self.capabilities['completionProvider']:
@@ -410,6 +410,7 @@ class Operate(object):
 
     def GotoDefinition(self, context):
         if 'definitionProvider' not in self.capabilities:
+            self._show_msg('GotoDefinition are not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -420,8 +421,64 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.definition(position, uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.definition(position,
+                                   uri).GetResponse(timeout=self.timeout)
         res = res['result']
         if res is None:
             res = []
         rpc.DoCall('ECY#goto#Do', [res])
+
+    def GotoImplementation(self, context):
+        if 'implementationProvider' not in self.capabilities:
+            self._show_msg('GotoImplementation are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.implementation(position,
+                                       uri).GetResponse(timeout=self.timeout)
+        res = res['result']
+        if res is None:
+            res = []
+        rpc.DoCall('ECY#goto#Do', [res])
+
+    def GotoDeclaration(self, context):
+        if 'declarationProvider' not in self.capabilities:
+            self._show_msg('GotoDeclaration are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.declaration(position,
+                                    uri).GetResponse(timeout=self.timeout)
+        res = res['result']
+        if res is None:
+            res = []
+        rpc.DoCall('ECY#goto#Do', [res])
+
+    def OnHover(self, context):
+        if 'hoverProvider' not in self.capabilities:
+            self._show_msg('Hover are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.hover(position, uri).GetResponse(timeout=self.timeout)

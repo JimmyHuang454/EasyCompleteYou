@@ -561,7 +561,7 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/completion')
 
-    def hover(self, uri, position):
+    def hover(self, position, uri):
         params = {'textDocument': {'uri': uri}, 'position': position}
         return self._build_send(params, 'textDocument/hover')
 
