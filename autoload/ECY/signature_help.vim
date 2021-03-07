@@ -84,6 +84,11 @@ endf
 fun! s:Vim(results) abort
 "{{{
   call ECY#signature_help#Close()
+
+  if len(a:results['signatures']) == 0
+    return
+  endif
+
   let l:to_show = []
   let i = 0
   for item in a:results['signatures']
