@@ -14,6 +14,7 @@ class Operate(object):
                  refresh_regex=r'[\w+]',
                  rootUri=None,
                  rootPath=None,
+                 languageId='',
                  workspaceFolders=None,
                  initializationOptions=None):
 
@@ -26,6 +27,7 @@ class Operate(object):
         self.rootPath = rootPath
         self.workspaceFolders = workspaceFolders
         self.initializationOptions = initializationOptions
+        self.languageId = languageId
 
         self._did_open_list = {}
         self.results_list = []
@@ -47,7 +49,7 @@ class Operate(object):
             initializationOptions=self.initializationOptions).GetResponse(
                 timeout=5)
 
-        self.capabilities = res['result']
+        self.capabilities = res['result']['capabilities']
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
@@ -116,7 +118,10 @@ class Operate(object):
         logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri, 'c', text, version=version)
+            return_id = self._lsp.didopen(uri,
+                                          self.languageId,
+                                          text,
+                                          version=version)
             self._did_open_list[uri] = {'buffer_id': version}
         else:
             return_id = self._lsp.didchange(uri, text, version=version)
@@ -155,9 +160,10 @@ class Operate(object):
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
-            return  # server not supports.
+            logger.debug('server not supports.')
+            return
 
-        if 'triggerCharacter' in self.capabilities['completionProvider']:
+        if 'triggerCharacters' in self.capabilities['completionProvider']:
             self.trigger_key = self.capabilities['completionProvider'][
                 'triggerCharacters']
         else:
@@ -219,7 +225,7 @@ class Operate(object):
             uri, current_start_postion).GetResponse(timeout=5)
 
         return_data = return_data['result']
-        if return_data is not None:
+        if return_data is None:
             return context
 
         if type(return_data) is dict:

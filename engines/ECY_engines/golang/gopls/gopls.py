@@ -1,140 +1,18 @@
-import threading
-from ECY import utils
-from loguru import logger
-from ECY.lsp import language_server_protocol
-from ECY import rpc
+from ECY_engines import lsp
 
 
 class Operate(object):
     """
     """
     def __init__(self):
-        self.engine_name = 'gopls'
-        self._did_open_list = {}
-        self.results_list = []
-        self.is_InComplete = False
-        self.trigger_key = ['.', '\"']
-        self.commands = []
-        self._start_server()
-
-    def _start_server(self):
-        self._lsp = language_server_protocol.LSP()
-        starting_cmd = 'gopls'
-        self._lsp.StartJob(starting_cmd)
-        temp = self._lsp.initialize()
-        temp = self._lsp.GetResponse(temp['Method'],
-                                     timeout=5)  # failed to load if timeout
-
-        self.commands = temp['result']['capabilities'][
-            'executeCommandProvider']['commands']
-
-        threading.Thread(target=self._handle_show_msg, daemon=True).start()
-        threading.Thread(target=self._handle_log_msg, daemon=True).start()
-        self._lsp.initialized()
-
-    def _handle_show_msg(self):
-        while 1:
-            try:
-                response = self._lsp.GetResponse('window/showMessage',
-                                                 timeout=-1)
-                rpc.DoCall('ECY#utils#echo', [response])
-            except:
-                pass
-
-    def _handle_log_msg(self):
-        while 1:
-            try:
-                response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout=-1)
-                logger.debug(response)
-            except:
-                pass
-
-    def _did_open_or_change(self, context):
-        # {{{
-        uri = context['params']['buffer_path']
-        text = context['params']['buffer_content']
-        text = "\n".join(text)
-        uri = self._lsp.PathToUri(uri)
-        version = context['params']['buffer_id']
-        logger.debug(version)
-        # LSP requires the edit-version
-        if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri, 'golang', text, version=version)
-            self._did_open_list[uri] = {}
-        else:
-            return_id = self._lsp.didchange(uri, text, version=version)
-
-
-# }}}
-
-    def _waitting_for_response(self, method_, version_id):
-        # {{{
-        while 1:
-            try:
-                # GetTodo() will only wait for 5s,
-                # after that will raise an erro
-                return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout=5)
-                if return_data['id'] == version_id:
-                    break
-            except:  # noqa
-                return None
-        return return_data
-        # }}}
-
-    # def OnBufferEnter(self, context):
-    #     self._did_open_or_change(context)
-
-    def _is_need_to_update(self, context, regex):
-        params = context['params']
-        current_colum = params['buffer_position']['colum']
-        current_line = params['buffer_position']['line']
-        current_line_content = params['buffer_position']['line_content']
-        temp = bytes(current_line_content, encoding='utf-8')
-        prev_key = str(temp[:current_colum], encoding='utf-8')
-
-        current_colum, filter_words, last_key = utils.MatchFilterKeys(
-            prev_key, regex)
-        cache = {
-            'current_line': current_line,
-            'current_colum': current_colum,
-            'line_counts': len(params['buffer_content'])
-        }
-        return cache
+        self.lsp = lsp.Operate('ECY_engines.golang.gopls.gopls', 'gopls')
 
     def OnCompletion(self, context):
-        # if rpc.GetVaribal('&filetype') != 'cpp':
-        #     return
-        self._did_open_or_change(context)
-        context['trigger_key'] = self.trigger_key
-        params = context['params']
-        uri = params['buffer_path']
-        uri = self._lsp.PathToUri(uri)
-
-        start_position = params['buffer_position']
-
-        current_cache = self._is_need_to_update(context, r'[\w+]')
-
-        current_start_postion = {
-            'line': start_position['line'],
-            'character': current_cache['current_colum']
-        }
-
-        self.results_list = []
-
-        temp = self._lsp.completion(uri, current_start_postion)
-        return_data = self._waitting_for_response(temp['Method'], temp['ID'])
-
-        if return_data is None:
-            return
-
-        if return_data['result'] is None:
-            return
-
-        self.is_InComplete = return_data['result']['isIncomplete']
-
-        for item in return_data['result']['items']:
+        context = self.lsp.OnCompletion(context)
+        if context is None:
+            return   # server not supports.
+        show_list = []
+        for item in context['show_list']:
             results_format = {
                 'abbr': '',
                 'word': '',
@@ -144,30 +22,11 @@ class Operate(object):
                 'user_data': ''
             }
 
-            results_format['kind'] = self._lsp.GetKindNameByNumber(
+            item_name = item['label']
+            results_format['kind'] = self.lsp._lsp.GetKindNameByNumber(
                 item['kind'])
-
-            item_name = item['filterText']
-
-            if results_format['kind'] == 'File':
-                name_len = len(item_name)
-                if item_name[name_len - 1] in ['>', '"'] and name_len >= 2:
-                    item_name = item_name[:name_len - 1]
-
             results_format['abbr'] = item_name
             results_format['word'] = item_name
-
-            self.results_list.append(results_format)
-        context['show_list'] = self.results_list
+            show_list.append(results_format)
+        context['show_list'] = show_list
         return context
-
-    def DoCmd(self, context):
-        params = context['params']
-        if params['cmd_name'] not in self.commands:
-            return
-        self._lsp.executeCommand(params['cmd_name'],
-                                 arguments=params['param_list'])
-
-    def GetCodeLens(self, context):
-        params = context['params']
-        self._lsp.codeLens(self._lsp.PathToUri(params['buffer_path']))
