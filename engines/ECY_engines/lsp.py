@@ -502,3 +502,23 @@ class Operate(object):
         }
 
         res = self._lsp.hover(position, uri).GetResponse(timeout=self.timeout)
+
+    def FindReferences(self, context):
+        if 'referencesProvider' not in self.capabilities:
+            self._show_msg('FindReferences are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.references(position,
+                                   uri).GetResponse(timeout=self.timeout)
+        res = res['result']
+        if res is None:
+            res = []
+        rpc.DoCall('ECY#goto#Do', [res])
