@@ -502,6 +502,7 @@ class Operate(object):
         }
 
         res = self._lsp.hover(position, uri).GetResponse(timeout=self.timeout)
+        # TODO
 
     def FindReferences(self, context):
         if 'referencesProvider' not in self.capabilities:
@@ -522,3 +523,19 @@ class Operate(object):
         if res is None:
             res = []
         rpc.DoCall('ECY#goto#Do', [res])
+
+    def GetCodeLens(self, context):
+        if 'codeLensProvider' not in self.capabilities:
+            self._show_msg('GetCodeLens are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.codeLens(uri).GetResponse(timeout=self.timeout)
+        # TODO
