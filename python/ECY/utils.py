@@ -41,9 +41,14 @@ def IsNeedToUpdate(context, regex):
         'current_line': current_line,
         'current_colum': current_colum,
         'last_key': last_key,
-        'prev_string': prev_string,
-        'prev_string_last_key': prev_string[len(prev_string) - 1]
+        'prev_string': prev_string
     }
+
+    if prev_string == '':
+        cache['prev_string_last_key'] = ' '
+    else:
+        cache['prev_string_last_key'] = prev_string[len(prev_string) - 1]
+
     if 'buffer_content' in params:
         cache['line_counts'] = len(params['buffer_content'])
     return cache

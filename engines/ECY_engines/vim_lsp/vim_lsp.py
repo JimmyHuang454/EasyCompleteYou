@@ -55,6 +55,7 @@ class Operate(object):
 
         return_data = params['response']
 
+        logger.debug(return_data)
         if return_data is None:
             return
 
@@ -82,5 +83,4 @@ class Operate(object):
 
             self.results_list.append(results_format)
         context['show_list'] = self.results_list
-        logger.debug(self.results_list)
         return context

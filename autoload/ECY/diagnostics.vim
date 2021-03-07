@@ -489,7 +489,7 @@ function! ECY#diagnostics#PlaceSign(msg) abort
 
   let l:engine_name = a:msg['engine_name']
   if !g:ECY_enable_diagnostics || l:engine_name == '' || type(a:msg) != 4 || 
-        \!has_key(a:msg, 'res_list') || type(a:msg['res_list']) != 3
+        \!has_key(a:msg, 'res_list') || type(a:msg['res_list']) != v:t_list
     return
   endif
 

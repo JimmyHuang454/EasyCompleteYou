@@ -216,6 +216,13 @@ fun! s:InitUsableEngine()
         \'path': 'pip', 
         \'file_type':['html', 'xhtml', 'vue']
         \})
+
+  call ECYAddEngine({
+        \'engine_name': 'ECY_engines.html.lsp.vls', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['vue']
+        \})
   "}}}
 endf
 

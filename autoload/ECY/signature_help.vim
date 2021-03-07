@@ -122,6 +122,3 @@ fun! s:Vim(results) abort
   call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_signature_help')
 "}}}
 endf
-
-" call signature_help#Init()
-" call signature_help#Show({"activeParameter":0,"activeSignature":0,"signatures":[{"label":"sdf(int *ab, char c) -> void","parameters":[{"label":"int *ab"},{"label":"char c"}]}]})

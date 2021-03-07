@@ -7,6 +7,7 @@ import threading
 import time
 
 from ECY import utils
+from ECY import rpc
 from loguru import logger
 
 try:
@@ -36,9 +37,6 @@ except:
 
 class Operate():
     def __init__(self):
-        if not has_pyflake:
-            raise
-
         # a jedi bug:
         # check https://github.com/davidhalter/jedi-vim/issues/870
         # revert to 0.9 of jedi can fix this
@@ -47,8 +45,7 @@ class Operate():
         # show only a few of items, mabye, because the cache's system position
         # don't match with jedi
         # revert to 0.9 of jedi can also fix this
-        self._name = 'jedi'
-        self._deamon_queue = None
+        self.engine_name = 'ECY_engines.python.jedi.jedi'
         self._jedi_cache = {
             'src': '',
             'current_line': 0,
@@ -61,6 +58,15 @@ class Operate():
             'force_version': None
         }
         self.trigger_key = ['.', '>', ':', '*']
+
+        if has_pyflake:
+            self._diagnosis_queue = queue.LifoQueue()
+            threading.Thread(target=self._handle_diagnosis).start()
+
+    def _diagnosis(self, context):
+        if not has_pyflake:
+            return
+        self._diagnosis_queue.put(context)
 
     def _GetJediScript(self, context):
         try:
@@ -365,8 +371,11 @@ class Operate():
         return_['Results'] = lists
         return return_
 
-    def OnBufferEnter(self, version):
-        return
+    def OnBufferEnter(self, context):
+        self._diagnosis(context)
+
+    def OnTextChanged(self, context):
+        self._diagnosis(context)
 
     def OnDocumentHelp(self, version):
         try:
@@ -472,36 +481,30 @@ class Operate():
             results.append(temp)
         return results
 
-    def OnBufferTextChanged(self, version):
-        self._diagnosis(version)
-
-    def _diagnosis(self, version):
-        if has_pyflake and self._deamon_queue is not None:
-            self._diagnosis_queue.put(version)
-        return None
-
-    def _output_diagnosis(self):
+    def _handle_diagnosis(self):
         reporter = PyflakesDiagnosticReport('')
         self.document_id = -1
         while 1:
             try:
-                version = self._diagnosis_queue.get()
-                if version['DocumentVersionID'] <= self.document_id:
+                context = self._diagnosis_queue.get()
+                params = context['params']
+                if params['buffer_id'] <= self.document_id:
                     continue
-                self.document_id = version['DocumentVersionID']
-                return_ = {'ID': version['VersionID']}
-                return_['Event'] = 'diagnosis'
-                return_['EngineName'] = self._name
-                return_['DocumentID'] = self.document_id
-                reporter.SetContent(version['AllTextList'])
-                pyflakes_api.check(version['AllTextList'],
-                                   version['FilePath'],
+                self.document_id = params['buffer_id']
+                text_string = '\n'.join(params['buffer_content'])
+                reporter.SetContent(text_string)
+                pyflakes_api.check(text_string,
+                                   params['buffer_path'],
                                    reporter=reporter)
-                return_['Lists'] = reporter.GetDiagnosis()
-                self._deamon_queue.put(return_)
+                res = reporter.GetDiagnosis()
+                rpc.DoCall('ECY#diagnostics#PlaceSign', [{
+                    'engine_name': self.engine_name,
+                    'res_list': res
+                }])
                 time.sleep(1)
-            except:
-                pass
+            except Exception as e:
+                logger.exception(e)
+                break
 
 
 class PyflakesDiagnosticReport(object):
@@ -560,7 +563,7 @@ class PyflakesDiagnosticReport(object):
             'type': 'diagnosis',
             'file_path': file_path,
             'kind': kind,
-            'diagnosis': diagnosis,
+            'diagnostics': diagnosis,
             'position': position
         }
         self.results_list.append(temp)
@@ -617,7 +620,7 @@ class PyflakesDiagnosticReport(object):
             'type': 'diagnosis',
             'file_path': file_path,
             'kind': kind,
-            'diagnosis': diagnosis,
+            'diagnostics': diagnosis,
             'position': position
         }
         self.results_list.append(temp)
@@ -677,7 +680,7 @@ class PyflakesDiagnosticReport(object):
             'type': 'diagnosis',
             'file_path': file_path,
             'kind': kind,
-            'diagnosis': diagnosis,
+            'diagnostics': diagnosis,
             'position': position
         }
         self.results_list.append(temp)

@@ -330,8 +330,10 @@ class LSP(conec.Operate):
     def initialize(self,
                    processId=None,
                    rootUri=None,
+                   rootPath=None,
                    initializationOptions=None,
                    trace='off',
+                   clientInfo=None,
                    workspaceFolders=None,
                    capabilities=None):
 
@@ -343,12 +345,18 @@ class LSP(conec.Operate):
             capabilities = self.BuildCapabilities()
         if processId is None:
             processId = os.getpid()
+
+        if clientInfo is None:
+            clientInfo = {'name': 'ECY', 'version': 1}
+
         params = {
             'processId': processId,
             'rootUri': rootUri,
             'initializationOptions': initializationOptions,
             'workspaceFolders': workspaceFolders,
             'capabilities': capabilities,
+            'rootPath': rootPath,
+            'clientInfo': clientInfo,
             'trace': trace
         }
         return self._build_send(params, 'initialize')

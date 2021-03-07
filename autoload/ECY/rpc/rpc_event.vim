@@ -115,6 +115,7 @@ fun! s:OnTextChanged()
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
+                \'change_mode': mode(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 
