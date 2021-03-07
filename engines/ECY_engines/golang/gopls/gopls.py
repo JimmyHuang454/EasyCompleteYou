@@ -1,16 +1,16 @@
 from ECY_engines import lsp
 
 
-class Operate(object):
+class Operate(lsp.Operate):
     """
     """
     def __init__(self):
-        self.lsp = lsp.Operate('ECY_engines.golang.gopls.gopls', 'gopls')
+        lsp.Operate.__init__(self, 'ECY_engines.golang.gopls.gopls', 'gopls')
 
     def OnCompletion(self, context):
-        context = self.lsp.OnCompletion(context)
+        context = super().OnCompletion(context)
         if context is None:
-            return   # server not supports.
+            return  # server not supports.
         show_list = []
         for item in context['show_list']:
             results_format = {
@@ -23,7 +23,7 @@ class Operate(object):
             }
 
             item_name = item['label']
-            results_format['kind'] = self.lsp._lsp.GetKindNameByNumber(
+            results_format['kind'] = self._lsp.GetKindNameByNumber(
                 item['kind'])
             results_format['abbr'] = item_name
             results_format['word'] = item_name
