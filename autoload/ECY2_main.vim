@@ -55,12 +55,18 @@ endf
 
 fun! ECY2_main#Rename() abort
 "{{{
+  
+  let l:new_name = input('new name: ')
+  if l:new_name == ''
+    call ECY#utils#echo('Quited rename.')
+    return
+  endif
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
-                \'new_name': 'xddd', 
+                \'new_name': l:new_name, 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 

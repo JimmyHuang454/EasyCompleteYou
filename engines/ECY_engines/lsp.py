@@ -144,7 +144,11 @@ class Operate(object):
         self._did_open_or_change(context)
 
     def OnWorkSpaceSymbol(self, context):
-        self._lsp.workspaceSymbos()  # not works in clangd
+        res = self._lsp.workspaceSymbos().GetResponse(
+            timeout=self.timeout)  # not works in clangd
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
 
     def OnDocumentSymbol(self, context):
         params = context['params']
@@ -172,7 +176,9 @@ class Operate(object):
 
     def _on_item_seleted_cb(self, res):
         # TODO
-        pass
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
@@ -237,18 +243,22 @@ class Operate(object):
 
         self.results_list = []
         self.completion_position_cache = current_start_postion
-        return_data = self._lsp.completion(
+        res = self._lsp.completion(
             uri, current_start_postion).GetResponse(timeout=self.timeout)
 
-        return_data = return_data['result']
-        if return_data is None:
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
             return context
 
-        if type(return_data) is dict:
-            self.completion_isInCompleted = return_data['isIncomplete']
-            self.results_list = return_data['items']
+        if type(res) is dict:
+            self.completion_isInCompleted = res['isIncomplete']
+            self.results_list = res['items']
         else:
-            self.results_list = return_data
+            self.results_list = res
             self.completion_isInCompleted = False
 
         context['show_list'] = self.results_list  # update
@@ -423,6 +433,10 @@ class Operate(object):
 
         res = self._lsp.definition(position,
                                    uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             res = []
@@ -443,6 +457,10 @@ class Operate(object):
 
         res = self._lsp.typeDefinition(position,
                                        uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             res = []
@@ -463,6 +481,10 @@ class Operate(object):
 
         res = self._lsp.implementation(position,
                                        uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             res = []
@@ -483,6 +505,11 @@ class Operate(object):
 
         res = self._lsp.declaration(position,
                                     uri).GetResponse(timeout=self.timeout)
+
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             res = []
@@ -502,6 +529,9 @@ class Operate(object):
         }
 
         res = self._lsp.hover(position, uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
         # TODO
 
     def FindReferences(self, context):
@@ -519,6 +549,10 @@ class Operate(object):
 
         res = self._lsp.references(position,
                                    uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             res = []
@@ -538,6 +572,9 @@ class Operate(object):
         }
 
         res = self._lsp.codeLens(uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
         # TODO
 
     def Rename(self, context):
@@ -560,6 +597,10 @@ class Operate(object):
 
         res = self._lsp.rename(uri, self.languageId, text, version, position,
                                new_name).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
         if res is None:
             self._show_msg("Failded to rename")
