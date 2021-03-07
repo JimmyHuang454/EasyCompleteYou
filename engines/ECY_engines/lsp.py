@@ -120,13 +120,10 @@ class Operate(object):
         logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
-            return_id = self._lsp.didopen(uri,
-                                          self.languageId,
-                                          text,
-                                          version=version)
+            self._lsp.didopen(uri, self.languageId, text, version=version)
             self._did_open_list[uri] = {'buffer_id': version}
         else:
-            return_id = self._lsp.didchange(uri, text, version=version)
+            self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
 
 
@@ -159,6 +156,23 @@ class Operate(object):
         res = res['result']
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
+
+    def OnItemSeleted(self, context):
+        if 'completionProvider' not in self.capabilities or 'resolveProvider' not in self.capabilities[
+                'completionProvider'] or self.capabilities[
+                    'completionProvider']['resolveProvider'] is False:
+            logger.debug('server not supports.')
+            return
+        ECY_item_index = context['params']['ECY_item_index']
+        if (len(self.results_list) - 1) > ECY_item_index:
+            return
+        self._lsp.completionItem_resolve(
+            self.results_list[ECY_item_index]).GetResponse(
+                timeout=self.timeout, callback=self._on_item_seleted_cb)
+        # TODO
+
+    def _on_item_seleted_cb(self, res):
+        pass
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
@@ -327,7 +341,7 @@ class Operate(object):
         }
 
         params = {'textDocument': textDocument, 'range': ranges}
-        temp = self._lsp._build_send(
+        self._lsp._build_send(
             params, 'textDocument/ast').GetResponse(timeout=self.timeout)
 
     def _diagnosis_analysis(self, params):

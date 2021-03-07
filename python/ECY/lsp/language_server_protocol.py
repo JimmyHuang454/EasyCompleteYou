@@ -61,7 +61,8 @@ class LSP(conec.Operate):
         self.server_id = -1
         self._queue_dict = {}
         self._waitting_response = {}
-        self.workDoneToken_id = 0
+        self.workDoneToken_id = None
+        self.workDoneToken = None
         self.id_lock = threading.Lock()
         super().__init__()
         threading.Thread(target=self._classify_response, daemon=True).start()
@@ -447,8 +448,7 @@ class LSP(conec.Operate):
                                 isNotification=True)
 
     def completionItem_resolve(self, completion_item):
-        params = {'CompletionItem': completion_item}
-        return self._build_send(params, 'completionItem/resolve')
+        return self._build_send(completion_item, 'completionItem/resolve')
 
     def _get_progress_token(self):
         if self.workDoneToken_id is None:
@@ -457,7 +457,7 @@ class LSP(conec.Operate):
         return self.workDoneToken_id
 
     def _get_workdone_token(self):
-        if workDoneToken is None:
+        if self.workDoneToken is None:
             self.workDoneToken_id = 0
         self.workDoneToken_id += 1
         return self.workDoneToken_id

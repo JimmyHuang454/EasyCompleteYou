@@ -400,6 +400,23 @@ function! ECY#completion#SelectItems(next_or_prev, send_key) abort
     endif
     call ECY#preview_windows#Open()
   endif
+
+  " event callback
+  try
+    let l:selecting = g:ECY_current_popup_windows_info['selecting_item']
+    if l:selecting != 0
+      let l:selecting -= 1
+      let l:ECY_item_index = g:ECY_current_popup_windows_info['items_info'][l:selecting]['ECY_item_index']
+      let l:params = {
+                    \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                    \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                    \'ECY_item_index': l:ECY_item_index, 
+                    \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                    \}
+      call ECY#rpc#rpc_event#call({'event_name': 'OnItemSeleted', 'params': l:params})
+    endif
+  catch 
+  endtry
   return ''
 "}}}
 endfunction

@@ -53,6 +53,14 @@ class Operate():
             'colum': current_colum
         }
 
+        #############
+        #  for complete reslove  #
+        #############
+        i = 0
+        for item in context['show_list']:
+            item['ECY_item_index'] = i
+            i += 1
+
         context['show_list'] = self.fuzzy_match.FilterItems(
             context['filter_key'],
             context['show_list'],
