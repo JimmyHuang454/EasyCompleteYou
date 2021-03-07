@@ -35,6 +35,7 @@ class Operate(object):
         self._diagnosis_cache = []
         self.completion_position_cache = {}
         self.completion_isInCompleted = True
+        self.timeout = 5
 
         self._lsp = language_server_protocol.LSP()
         self._start_server()
@@ -47,7 +48,7 @@ class Operate(object):
             rootPath=self.rootPath,
             workspaceFolders=self.workspaceFolders,
             initializationOptions=self.initializationOptions).GetResponse(
-                timeout=5)
+                timeout=self.timeout)
 
         self.capabilities = res['result']['capabilities']
 
@@ -70,7 +71,8 @@ class Operate(object):
                         applied = False
                     else:
                         applied = True
-                except:
+                except Exception as e:
+                    logger.exception(e)
                     applied = False
 
                 logger.debug(response)
@@ -205,7 +207,7 @@ class Operate(object):
                 'character': start_position['colum']
             }
             self._lsp.signatureHelp(uri, current_start_postion).GetResponse(
-                timeout=2, callback=self._signature_help)
+                timeout=self.timeout, callback=self._signature_help)
 
         current_start_postion = {
             'line': start_position['line'],
@@ -222,7 +224,7 @@ class Operate(object):
         self.results_list = []
         self.completion_position_cache = current_start_postion
         return_data = self._lsp.completion(
-            uri, current_start_postion).GetResponse(timeout=5)
+            uri, current_start_postion).GetResponse(timeout=self.timeout)
 
         return_data = return_data['result']
         if return_data is None:
@@ -251,8 +253,8 @@ class Operate(object):
         if cmd_name == 'switch_source_and_header':  # only supports by clangd
             params = {'uri': uri}
             result = self._lsp._build_send(
-                params,
-                'textDocument/switchSourceHeader').GetResponse(timeout=5)
+                params, 'textDocument/switchSourceHeader').GetResponse(
+                    timeout=self.timeout)
             if result['result'] is not None:
                 path = self._lsp.UriToPath(result['result'])
                 rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
@@ -293,7 +295,7 @@ class Operate(object):
             uri,
             start_position,
             end_position,
-            diagnostic=self._diagnosis_cache).GetResponse(timeout=5)
+            diagnostic=self._diagnosis_cache).GetResponse(timeout=self.timeout)
 
         context['result'] = returns['result']
         logger.debug(context)
@@ -325,8 +327,8 @@ class Operate(object):
         }
 
         params = {'textDocument': textDocument, 'range': ranges}
-        temp = self._lsp._build_send(params,
-                                     'textDocument/ast').GetResponse(timeout=5)
+        temp = self._lsp._build_send(
+            params, 'textDocument/ast').GetResponse(timeout=self.timeout)
 
     def _diagnosis_analysis(self, params):
         results_list = []
@@ -393,6 +395,8 @@ class Operate(object):
         return results_list
 
     def GotoDefinition(self, context):
+        if 'definitionProvider' not in self.capabilities:
+            return
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
@@ -402,4 +406,4 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        self._lsp.definition(position, uri).GetResponse(timeout=5)
+        self._lsp.definition(position, uri).GetResponse(timeout=self.timeout)
