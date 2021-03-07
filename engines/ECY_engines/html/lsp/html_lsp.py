@@ -40,7 +40,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'window/logMessage', timeout_=-1)
+                    'window/logMessage', timeout=-1)
                 logger.debug(response)
             except:
                 pass
@@ -214,7 +214,7 @@ class Operate(object):
         while True:
             try:
                 temp = self._lsp.GetRequestOrNotification(
-                    'textDocument/publishDiagnostics', timeout_=-1)
+                    'textDocument/publishDiagnostics', timeout=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 # rpc.do

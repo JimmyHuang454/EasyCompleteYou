@@ -32,7 +32,7 @@ class LSPRequest(object):
             try:
                 self.response_queue = queue.Queue(timeout)
             except Exception as e:
-                self.response_queue = None
+                self.response_queue = None # importance
                 raise e
         else:
             self.response_queue = queue.Queue()
@@ -97,19 +97,19 @@ class LSP(conec.Operate):
     def GetServerStatus_(self):
         return self.GetServerStatus(self.server_id)
 
-    def GetRequestOrNotification(self, _method_name, timeout_=5):
+    def GetRequestOrNotification(self, _method_name, timeout=5):
         if _method_name not in self._queue_dict:
             # new
             self._queue_dict[_method_name] = queue.Queue(
                 maxsize=self.queue_maxsize)
         queue_obj = None
         try:
-            if timeout_ == -1 or timeout_ == None:
+            if timeout == -1 or timeout == None:
                 # never timeout
                 queue_obj = self._queue_dict[_method_name].get()
             else:
                 queue_obj = self._queue_dict[_method_name].get(
-                    timeout=timeout_)
+                    timeout=timeout)
         except:
             del self._queue_dict[_method_name]
         if queue_obj is None:

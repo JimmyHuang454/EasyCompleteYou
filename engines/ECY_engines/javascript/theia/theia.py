@@ -28,7 +28,7 @@ class Operate(object):
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
         temp = self._lsp.initialize(rootUri=self.workspace_cache[0])
-        self._lsp.GetResponse(temp['Method'], timeout_=5)
+        self._lsp.GetResponse(temp['Method'], timeout=5)
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
         self._lsp.initialized()
@@ -37,7 +37,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout_=-1)
+                                                 timeout=-1)
                 logger.debug(response)
             except:
                 pass
@@ -68,7 +68,7 @@ class Operate(object):
                 # GetTodo() will only wait for 5s,
                 # after that will raise an erro
                 return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
+                return_data = self._lsp.GetResponse(method_, timeout=5)
                 if return_data['id'] == version_id:
                     break
             except:  # noqa
@@ -152,7 +152,7 @@ class Operate(object):
             params = {'uri': uri}
             temp = self._lsp._build_send(params,
                                          'textDocument/switchSourceHeader')
-            temp = self._lsp.GetResponse(temp['Method'], timeout_=5)
+            temp = self._lsp.GetResponse(temp['Method'], timeout=5)
             if temp['result'] is not None:
                 path = self._lsp.UriToPath(temp['result'])
                 rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
@@ -167,7 +167,7 @@ class Operate(object):
         while True:
             try:
                 temp = self._lsp.GetResponse('textDocument/publishDiagnostics',
-                                             timeout_=-1)
+                                             timeout=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 # rpc.do
@@ -186,7 +186,7 @@ class Operate(object):
                                        start_position,
                                        end_position,
                                        diagnostic=self._diagnosis_cache)
-        returns = self._lsp.GetResponse(returns['Method'], timeout_=5)
+        returns = self._lsp.GetResponse(returns['Method'], timeout=5)
         context['result'] = returns
         return context
 

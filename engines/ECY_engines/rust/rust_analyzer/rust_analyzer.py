@@ -23,7 +23,7 @@ class Operate(object):
         temp = self._lsp.initialize(rootUri=self._lsp.PathToUri(
             "C:/Users/qwer/Desktop/vimrc/myproject/test/rust/hello_world"))
         self._lsp.GetResponse(temp['Method'],
-                              timeout_=5)  # failed to load if timeout
+                              timeout=5)  # failed to load if timeout
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         self._lsp.initialized()
 
@@ -31,7 +31,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout_=-1)
+                                                 timeout=-1)
                 logger.debug(response)
             except:
                 pass
@@ -61,7 +61,7 @@ class Operate(object):
                 # GetTodo() will only wait for 5s,
                 # after that will raise an erro
                 return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
+                return_data = self._lsp.GetResponse(method_, timeout=5)
                 if return_data['id'] == version_id:
                     break
             except:  # noqa

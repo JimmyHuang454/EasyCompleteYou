@@ -73,7 +73,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'workspace/applyEdit', timeout_=-1)
+                    'workspace/applyEdit', timeout=-1)
 
                 try:
                     applied = rpc.DoCall('ECY#code_action#ApplyEdit',
@@ -95,7 +95,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'textDocument/clangd.fileStatus', timeout_=-1)
+                    'textDocument/clangd.fileStatus', timeout=-1)
                 res_path = response['params']['uri']
                 res_path = self._lsp.UriToPath(res_path)
                 current_buffer_path = rpc.DoCall(
@@ -112,7 +112,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'window/logMessage', timeout_=-1)
+                    'window/logMessage', timeout=-1)
                 msg = response['params']['message']
                 if msg.find('compile_commands') != -1:  # clangd 12+
                     self._show_msg(msg.split('\n'))
@@ -303,7 +303,7 @@ class Operate(object):
         while True:
             try:
                 temp = self._lsp.GetRequestOrNotification(
-                    'textDocument/publishDiagnostics', timeout_=-1)
+                    'textDocument/publishDiagnostics', timeout=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 rpc.DoCall('ECY#diagnostics#PlaceSign', [{

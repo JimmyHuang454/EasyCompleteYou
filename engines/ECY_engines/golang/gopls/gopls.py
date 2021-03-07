@@ -23,7 +23,7 @@ class Operate(object):
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
         temp = self._lsp.GetResponse(temp['Method'],
-                                     timeout_=5)  # failed to load if timeout
+                                     timeout=5)  # failed to load if timeout
 
         self.commands = temp['result']['capabilities'][
             'executeCommandProvider']['commands']
@@ -36,7 +36,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetResponse('window/showMessage',
-                                                 timeout_=-1)
+                                                 timeout=-1)
                 rpc.DoCall('ECY#utils#echo', [response])
             except:
                 pass
@@ -45,7 +45,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetResponse('window/logMessage',
-                                                 timeout_=-1)
+                                                 timeout=-1)
                 logger.debug(response)
             except:
                 pass
@@ -75,7 +75,7 @@ class Operate(object):
                 # GetTodo() will only wait for 5s,
                 # after that will raise an erro
                 return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
+                return_data = self._lsp.GetResponse(method_, timeout=5)
                 if return_data['id'] == version_id:
                     break
             except:  # noqa

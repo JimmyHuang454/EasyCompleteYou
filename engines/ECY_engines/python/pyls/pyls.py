@@ -28,7 +28,7 @@ class Operate(object):
         self._lsp.StartJob(starting_cmd)
         temp = self._lsp.initialize()
         self._lsp.GetResponse(temp['Method'],
-                              timeout_=5)  # failed to load if timeout
+                              timeout=5)  # failed to load if timeout
         self.completion_cache = []
 
     def _did_open_or_change(self, context):
@@ -51,7 +51,7 @@ class Operate(object):
                 # GetTodo() will only wait for 5s,
                 # after that will raise an erro
                 return_data = None
-                return_data = self._lsp.GetResponse(method_, timeout_=5)
+                return_data = self._lsp.GetResponse(method_, timeout=5)
                 if return_data['id'] == version_id:
                     break
             except:  # noqa

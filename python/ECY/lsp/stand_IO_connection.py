@@ -152,11 +152,11 @@ class Operate:
     def PutTodo(self, todo):
         self._queue.put(todo)
 
-    def GetTodo(self, timeout_=None):
-        if timeout_ is None:
+    def GetTodo(self, timeout=None):
+        if timeout is None:
             return self._queue.get()
         else:
-            return self._queue.get(timeout=timeout_)
+            return self._queue.get(timeout=timeout)
 
     def GetServerStatus(self, server_id):
         if server_id not in self.server_info:
