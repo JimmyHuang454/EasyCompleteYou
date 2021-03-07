@@ -560,4 +560,8 @@ class Operate(object):
 
         res = self._lsp.rename(uri, self.languageId, text, version, position,
                                new_name).GetResponse(timeout=self.timeout)
-        # TODO
+        res = res['result']
+        if res is None:
+            self._show_msg("Failded to rename")
+            return
+        rpc.DoCall('ECY#code_action#ApplyEdit', [res])
