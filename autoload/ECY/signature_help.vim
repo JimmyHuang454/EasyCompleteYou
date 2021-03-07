@@ -31,6 +31,8 @@ fun! s:Translate(origin) abort
     let item = a:origin[i]
     if item == '*'
       let l:translated .= "\\*"
+    elseif item == '.'
+      let l:translated .= "\\."
     elseif item == '+'
       let l:translated .= "\\+"
     elseif item == '{'
@@ -83,8 +85,10 @@ fun! s:Vim(results) abort
 "{{{
   call ECY#signature_help#Close()
   let l:to_show = []
+  let i = 0
   for item in a:results['signatures']
-    call add(l:to_show, item['label'])
+    call add(l:to_show, printf("%s. %s", string(i), item['label']))
+    let i += 1
   endfor
 
   let l:opts = {
@@ -110,7 +114,7 @@ fun! s:Vim(results) abort
   endif
 
   let l:signatures = a:results['signatures'][l:activeSignature]
-  let g:ECY_signature_help_activeParameter = l:signatures['label']
+  let g:ECY_signature_help_activeParameter = s:Translate(string(l:activeSignature) . '.')
 
   let g:ECY_signature_help_activeSignature = ''
   if has_key(a:results, 'activeParameter') && len(l:signatures) != 0
