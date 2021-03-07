@@ -55,7 +55,7 @@ fun! ECY#code_action#Do(context)
 
   redraw!
   echo s:show
-  let l:int = str2nr(input('Index:'))
+  let l:int = str2nr(input('Index: '))
   if l:int > len(s:results) || l:int == 0
     call ECY#utils#echo('Quited')
     return

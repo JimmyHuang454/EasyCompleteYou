@@ -169,9 +169,9 @@ class Operate(object):
         self._lsp.completionItem_resolve(
             self.results_list[ECY_item_index]).GetResponse(
                 timeout=self.timeout, callback=self._on_item_seleted_cb)
-        # TODO
 
     def _on_item_seleted_cb(self, res):
+        # TODO
         pass
 
     def OnCompletion(self, context):
@@ -420,4 +420,8 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        self._lsp.definition(position, uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.definition(position, uri).GetResponse(timeout=self.timeout)
+        res = res['result']
+        if res is None:
+            res = []
+        rpc.DoCall('ECY#goto#Do', [res])
