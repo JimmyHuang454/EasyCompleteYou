@@ -539,3 +539,25 @@ class Operate(object):
 
         res = self._lsp.codeLens(uri).GetResponse(timeout=self.timeout)
         # TODO
+
+    def Rename(self, context):
+        if 'renameProvider' not in self.capabilities:
+            self._show_msg('Rename are not supported.')
+            return
+        params = context['params']
+        text = params['buffer_content']
+        text = "\n".join(text)
+        version = params['buffer_id']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        new_name = params['new_name']
+
+        res = self._lsp.rename(uri, self.languageId, text, version, position,
+                               new_name).GetResponse(timeout=self.timeout)
+        # TODO

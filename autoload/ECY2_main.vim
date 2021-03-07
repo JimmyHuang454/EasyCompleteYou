@@ -60,6 +60,7 @@ fun! ECY2_main#Rename() abort
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
+                \'new_name': 'xddd', 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
