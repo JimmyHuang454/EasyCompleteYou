@@ -347,7 +347,7 @@ class LSP(conec.Operate):
             processId = os.getpid()
 
         if clientInfo is None:
-            clientInfo = {'name': 'ECY', 'version': 1}
+            clientInfo = {'name': 'ECY', 'version': "1"}
 
         params = {
             'processId': processId,

@@ -43,13 +43,11 @@ class Operate(object):
             rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
         self.workspace_cache.append(temp)
 
-        # The compile command will be approximately clang $FILE $fallbackFlags in this case.
-        self._lsp.initialize(rootUri=self.workspace_cache[0]).GetResponse(
-            timeout=5)
+        self._lsp.initialize().GetResponse(timeout=5)
 
-        threading.Thread(target=self._handle_log_msg, daemon=True).start()
-        threading.Thread(target=self._get_diagnosis, daemon=True).start()
-        threading.Thread(target=self._handle_edit, daemon=True).start()
+        # threading.Thread(target=self._handle_log_msg, daemon=True).start()
+        # threading.Thread(target=self._get_diagnosis, daemon=True).start()
+        # threading.Thread(target=self._handle_edit, daemon=True).start()
         self._lsp.initialized()
 
     def _handle_edit(self):
@@ -220,8 +218,8 @@ class Operate(object):
     def _get_diagnosis(self):
         while True:
             try:
-                temp = self._lsp.GetRequestOrNotification('textDocument/publishDiagnostics',
-                                             timeout=-1)
+                temp = self._lsp.GetRequestOrNotification(
+                    'textDocument/publishDiagnostics', timeout=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 rpc.DoCall('ECY#diagnostics#PlaceSign', [{
@@ -238,10 +236,11 @@ class Operate(object):
         start_position = ranges['start']
         end_position = ranges['end']
 
-        returns = self._lsp.codeAction(uri,
-                                       start_position,
-                                       end_position,
-                                       diagnostic=self._diagnosis_cache).GetResponse(timeout=5)
+        returns = self._lsp.codeAction(
+            uri,
+            start_position,
+            end_position,
+            diagnostic=self._diagnosis_cache).GetResponse(timeout=5)
         context['result'] = returns
         logger.debug(context)
         return context
@@ -298,7 +297,8 @@ class Operate(object):
         }
 
         params = {'textDocument': textDocument, 'range': ranges}
-        temp = self._lsp._build_send(params, 'textDocument/ast').GetResponse(timeout=5)
+        temp = self._lsp._build_send(params,
+                                     'textDocument/ast').GetResponse(timeout=5)
 
     def _diagnosis_analysis(self, params):
         results_list = []
