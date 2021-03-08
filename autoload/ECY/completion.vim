@@ -474,6 +474,7 @@ fun! ECY#completion#Init()
           \ ' pumvisible() ? "\<C-n>" : "\' . g:ECY_select_items[0] .'"'
     exe 'inoremap <expr>' . g:ECY_select_items[1] .
           \ ' pumvisible() ? "\<C-p>" : "\' . g:ECY_select_items[1] .'"'
+    echo 'sdfsdfdsfsdfsdf------------------'
   else
     exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
     exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
