@@ -3,9 +3,14 @@ from ECY_engines import lsp
 
 class Operate(lsp.Operate):
     def __init__(self):
+        try:
+            import ECY_clangd
+            starting_cmd = ECY_clangd.exe_path
+        except:
+            starting_cmd = 'clangd'
         lsp.Operate.__init__(self,
                              'ECY_engines.cpp.clangd.clangd',
-                             'clangd',
+                             starting_cmd,
                              languageId='cpp')
 
     def OnCompletion(self, context):
