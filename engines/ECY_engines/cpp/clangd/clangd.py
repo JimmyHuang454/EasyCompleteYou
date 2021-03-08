@@ -3,7 +3,10 @@ from ECY_engines import lsp
 
 class Operate(lsp.Operate):
     def __init__(self):
-        lsp.Operate.__init__(self, 'ECY_engines.cpp.clangd.clangd', 'clangd')
+        lsp.Operate.__init__(self,
+                             'ECY_engines.cpp.clangd.clangd',
+                             'clangd',
+                             languageId='cpp')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

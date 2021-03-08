@@ -5,7 +5,10 @@ class Operate(lsp.Operate):
     """
     """
     def __init__(self):
-        lsp.Operate.__init__(self, 'ECY_engines.golang.gopls.gopls', 'gopls')
+        lsp.Operate.__init__(self,
+                             'ECY_engines.golang.gopls.gopls',
+                             'gopls',
+                             languageId='golang')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

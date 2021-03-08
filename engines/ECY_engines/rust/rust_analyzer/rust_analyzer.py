@@ -7,7 +7,8 @@ class Operate(lsp.Operate):
     def __init__(self):
         lsp.Operate.__init__(self,
                              'ECY_engines.rust.rust_analyzer.rust_analyzer',
-                             'rust_analyzer')
+                             'rust_analyzer',
+                             languageId='rust')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
