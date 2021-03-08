@@ -173,8 +173,11 @@ class Operate(object):
                     'completionProvider']['resolveProvider'] is False:
             logger.debug('OnItemSeleted are not supported.')
             return
+
         ECY_item_index = context['params']['ECY_item_index']
-        if (len(self.results_list) - 1) > ECY_item_index:
+
+        if (len(self.results_list) - 1) < ECY_item_index:
+            logger.debug('OnItemSeleted wrong')
             return
 
         self.current_seleted_item = self.results_list[ECY_item_index]
