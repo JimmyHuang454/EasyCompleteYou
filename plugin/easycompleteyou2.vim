@@ -69,6 +69,9 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                 init vars                                  "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ECY_use_floating_windows_to_be_popup_windows = 
+      \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
+
 if g:is_vim && exists('*nvim_win_set_config') " neovim
   " TODO:
   let g:has_floating_windows_support = 'neovim'
@@ -80,7 +83,7 @@ else
   let g:has_floating_windows_support = 'has_no'
   let g:ECY_use_floating_windows_to_be_popup_windows = v:false
 endif
-" let g:ECY_use_floating_windows_to_be_popup_windows = v:false
+let g:ECY_use_floating_windows_to_be_popup_windows = v:false
 
 " must put these outside a function
 let g:ECY_base_dir = expand( '<sfile>:p:h:h' )

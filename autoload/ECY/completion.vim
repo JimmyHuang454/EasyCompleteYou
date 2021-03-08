@@ -446,9 +446,6 @@ endfunction
 
 fun! ECY#completion#Init()
 "{{{
-  let g:ECY_use_floating_windows_to_be_popup_windows = 
-        \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
-
   let g:ECY_expand_snippets_key
         \= get(g:,'ECY_expand_snippets_key','<CR>')
 
