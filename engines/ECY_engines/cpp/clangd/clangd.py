@@ -1,4 +1,5 @@
 from ECY_engines import lsp
+from loguru import logger
 
 
 class Operate(lsp.Operate):
@@ -6,8 +7,9 @@ class Operate(lsp.Operate):
         try:
             import ECY_clangd
             starting_cmd = ECY_clangd.exe_path
-        except:
+        except Exception as e:
             starting_cmd = 'clangd'
+            logger.exception(e)
         lsp.Operate.__init__(self,
                              'ECY_engines.cpp.clangd.clangd',
                              starting_cmd,
