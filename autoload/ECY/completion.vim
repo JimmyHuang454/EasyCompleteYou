@@ -447,10 +447,10 @@ endfunction
 fun! ECY#completion#Init()
 "{{{
   let g:ECY_expand_snippets_key
-        \= get(g:,'ECY_expand_snippets_key','<CR>')
+        \= get(g:,'ECY_expand_snippets_key','<cr>')
 
   let g:ECY_select_items
-        \= get(g:, 'ECY_select_items',['<TAB>','<S-TAB>'])
+        \= get(g:, 'ECY_select_items',['<tab>','<s-tab>'])
 
   let g:ECY_triggering_length
         \= get(g:,'ECY_triggering_length',1)
@@ -476,13 +476,13 @@ fun! ECY#completion#Init()
     exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
           \g:ECY_select_items[1], g:ECY_select_items[1])    
 
-    echo printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
+    echo printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
   else
-    exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
-    exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
+    exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
+    exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
   endif
 
-  exe 'inoremap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+  exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
 
   exe 'let g:ECY_expand_snippets_key = "\'.g:ECY_expand_snippets_key.'"'
 
