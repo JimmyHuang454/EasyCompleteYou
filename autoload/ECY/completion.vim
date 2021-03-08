@@ -221,12 +221,7 @@ fun! ECY#completion#Open(context)
     return
   endif
 
-  " if len(a:context['show_list']) == 0
-  "   if GetBufferEngineName() != g:ECY_default_engine
-  "     call ECY#switch_engine#UseSpecifyEngineOnce(g:ECY_default_engine)
-  "   endif
-  "   return
-  " endif
+  call s:MapSelecting()
 
   if g:has_floating_windows_support == 'vim' 
         \&& g:ECY_use_floating_windows_to_be_popup_windows
@@ -444,6 +439,25 @@ function! s:RecoverIndent() abort
 "}}}
 endfunction
 
+function! s:MapSelecting() abort
+"{{{
+  if g:ECY_use_floating_windows_to_be_popup_windows == v:false
+    
+    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+          \g:ECY_select_items[0], g:ECY_select_items[0])    
+    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+          \g:ECY_select_items[1], g:ECY_select_items[1])    
+
+    echo printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
+  else
+    exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
+    exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
+  endif
+
+  exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+"}}}
+endfunction
+
 fun! ECY#completion#Init()
 "{{{
   let g:ECY_expand_snippets_key
@@ -469,20 +483,7 @@ fun! ECY#completion#Init()
     autocmd InsertLeave   * call ECY#completion#Close()
   augroup END
 
-  if g:ECY_use_floating_windows_to_be_popup_windows == v:false
-    
-    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
-          \g:ECY_select_items[0], g:ECY_select_items[0])    
-    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
-          \g:ECY_select_items[1], g:ECY_select_items[1])    
-
-    echo printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
-  else
-    exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
-    exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
-  endif
-
-  exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+  call s:MapSelecting()
 
   exe 'let g:ECY_expand_snippets_key = "\'.g:ECY_expand_snippets_key.'"'
 
