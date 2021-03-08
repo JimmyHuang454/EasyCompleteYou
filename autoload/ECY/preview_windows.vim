@@ -26,6 +26,7 @@ endfunction
 
 function! ECY#preview_windows#Show(msg) abort
 "{{{ won't be triggered when there are no floating windows features.
+  call ECY#preview_windows#Close()
   if g:has_floating_windows_support == 'vim'
     let l:highlight = ECY#utils#GetCurrentBufferFileType()
     let s:preview_windows_nr = s:PreviewWindows_vim(a:msg, l:highlight)
@@ -34,6 +35,7 @@ function! ECY#preview_windows#Show(msg) abort
     " let s:preview_windows_nr = s:PreviewWindows_neovim(a:msg, a:using_highlight)
   endif
 "}}}
+endfunction
 
 function! ECY#preview_windows#Open() abort
 "{{{ won't be triggered when there are no floating windows features.
@@ -92,29 +94,24 @@ endfunction
 function s:PreviewWindows_vim(msg, using_highlight) abort
 "{{{ return a floating_win_nr
 
-  " TODO
-  " if a:msg['kind'] == '[Snippet]' && g:ECY_enable_preview_snippet
-  "   call GetPreviewSnippet(a:msg['word'], ECY#utils#GetCurrentBufferFileType())
-  " endif
+  let l:to_show_list = []
 
-"{{{ this two keys will be contained in the formmat whether it's None or not.
   let l:item_info = a:msg['info']
   if type(l:item_info) == v:t_string
     let l:item_info = split(l:item_info, "\n")
   endif
-  " info is a list and can be split by python.
-  let l:item_menu = a:msg['menu']
-  " menu should be one line.
-"}}}
-"
-  if l:item_menu != ''
-    let l:to_show_list = split(l:item_menu, "\n")
-    call add(l:to_show_list, s:cut_line)
-  else
-    let l:to_show_list = []
+  if l:item_info != []
+    call extend(l:to_show_list, l:item_info)
   endif
 
-  call extend(l:to_show_list, l:item_info)
+  let l:item_menu = a:msg['menu']
+  if type(l:item_menu) == v:t_string
+    let l:item_menu = split(l:item_menu, "\n")
+    call add(l:to_show_list, s:cut_line)
+  endif
+  if l:item_menu != []
+    call extend(l:to_show_list, l:item_menu)
+  endif
 
   if len(l:to_show_list) == 0
     return -1

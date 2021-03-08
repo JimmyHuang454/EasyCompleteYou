@@ -183,6 +183,9 @@ class Operate(object):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
+
+        # {"jsonrpc":"2.0","result":{"data":"class","documentation":{"kind":"plaintext","value":"ThuThesis is a LaTeX thesis template package for Tsinghua University in order to make it easy to write theses for either bachelor's, master's, or doctor's degree."},"kind":1,"label":"thuthesis","preselect":false,"sortText":"00","textEdit":{"newText":"thuthesis","range":{"end":{"character":39,"line":4},"start":{"character":30,"line":4}}}},"id":7}
+
         results_format = {
             'abbr': '',
             'word': '',
