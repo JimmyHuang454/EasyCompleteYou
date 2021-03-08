@@ -36,9 +36,9 @@ class Operate(object):
         self.languageId = languageId
 
         self._did_open_list = {}
+        self._diagnosis_cache = []
         self.results_list = []
         self.workspace_cache = []
-        self._diagnosis_cache = []
         self.completion_position_cache = {}
         self.completion_isInCompleted = True
         self.timeout = 5
@@ -170,7 +170,7 @@ class Operate(object):
         if 'completionProvider' not in self.capabilities or 'resolveProvider' not in self.capabilities[
                 'completionProvider'] or self.capabilities[
                     'completionProvider']['resolveProvider'] is False:
-            logger.debug('server are not supported.')
+            logger.debug('OnItemSeleted are not supported.')
             return
         ECY_item_index = context['params']['ECY_item_index']
         if (len(self.results_list) - 1) > ECY_item_index:
@@ -180,10 +180,37 @@ class Operate(object):
                 timeout=self.timeout, callback=self._on_item_seleted_cb)
 
     def _on_item_seleted_cb(self, res):
-        # TODO
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
+        results_format = {
+            'abbr': '',
+            'word': '',
+            'kind': '',
+            'menu': '',
+            'info': '',
+            'user_data': ''
+        }
+
+        document = []
+        if 'document' in res:
+            if type(res['documentation']) is str:
+                temp = res['documentation'].split('\n')
+            elif type(res['documentation']) is dict:
+                temp = res['documentation']['value'].split('\n')
+            document.extend(temp)
+
+        detail = []
+        if 'detail' in res:
+            if type(res['detail']) is str:
+                detail = res['detail'].split('\n')
+            elif type(res['detail']) is list:
+                detail = res['detail']
+
+        results_format['menu'] = detail
+        results_format['info'] = document
+
+        rpc.DoCall('ECY#preview_windows#Show', [results_format])
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
@@ -279,25 +306,7 @@ class Operate(object):
             open_style = 'v'
 
         cmd_name = params['cmd_name']
-        if cmd_name == 'switch_source_and_header':  # only supports by clangd
-            params = {'uri': uri}
-            result = self._lsp._build_send(
-                params, 'textDocument/switchSourceHeader').GetResponse(
-                    timeout=self.timeout)
-            if result['result'] is not None:
-                path = self._lsp.UriToPath(result['result'])
-                rpc.DoCall('MoveToBuffer', [0, 0, path, open_style])
-            else:
-                rpc.DoCall('ECY#utils#echo',
-                           ["Can not find it's header/source. Try it latter."])
-        elif cmd_name == 'get_ast':
-            self._get_AST(context)
-        elif cmd_name == 'change_setting':
-            # TODO
-            self._lsp.didChangeConfiguration(
-                {'compilationDatabaseChanges': cmd_params['compile_commands']})
-        else:
-            self._lsp.executeCommand(cmd_name, arguments=cmd_params)
+        self._lsp.executeCommand(cmd_name, arguments=cmd_params)
 
     def _get_diagnosis(self):
         while True:
@@ -329,35 +338,6 @@ class Operate(object):
         context['result'] = returns['result']
         logger.debug(context)
         return context
-
-    def _get_AST(self, context):  # only in clangd
-        uri = context['params']['buffer_path']
-        uri = self._lsp.PathToUri(uri)
-
-        text = context['params']['buffer_content']
-        text = "\n".join(text)
-
-        textDocument = {
-            'uri': uri,
-            'languageId': 'c',
-            'text': text,
-            'version': 0
-        }
-
-        ranges = {
-            'start': {
-                'line': 0,
-                'character': 0
-            },
-            'end': {
-                'line': 0,
-                'character': 0
-            }
-        }
-
-        params = {'textDocument': textDocument, 'range': ranges}
-        self._lsp._build_send(
-            params, 'textDocument/ast').GetResponse(timeout=self.timeout)
 
     def _diagnosis_analysis(self, params):
         results_list = []

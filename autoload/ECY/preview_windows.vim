@@ -24,6 +24,17 @@ function! ECY#preview_windows#Init() abort
 "}}}
 endfunction
 
+function! ECY#preview_windows#Show(msg) abort
+"{{{ won't be triggered when there are no floating windows features.
+  if g:has_floating_windows_support == 'vim'
+    let l:highlight = ECY#utils#GetCurrentBufferFileType()
+    let s:preview_windows_nr = s:PreviewWindows_vim(a:msg, l:highlight)
+  else
+    "TODO
+    " let s:preview_windows_nr = s:PreviewWindows_neovim(a:msg, a:using_highlight)
+  endif
+"}}}
+
 function! ECY#preview_windows#Open() abort
 "{{{ won't be triggered when there are no floating windows features.
   if g:has_floating_windows_support == 'vim'
@@ -36,7 +47,8 @@ function! ECY#preview_windows#Open() abort
       let s:preview_windows_nr = s:PreviewWindows_vim(l:item_info, l:highlight)
     endif
   else
-    let s:preview_windows_nr = s:PreviewWindows_neovim(a:msg, a:using_highlight)
+    "TODO
+    " let s:preview_windows_nr = s:PreviewWindows_neovim(a:msg, a:using_highlight)
   endif
 "}}}
 endfunction

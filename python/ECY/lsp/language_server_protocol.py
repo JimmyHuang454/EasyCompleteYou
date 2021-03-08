@@ -39,7 +39,7 @@ class LSPRequest(object):
         if callback is not None:
             self.callback = callback
             threading.Thread(target=self._callback_thread).start()
-            return self
+            return self # are not blocked
         return self.response_queue.get()
 
     def _callback_thread(self):
