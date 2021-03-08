@@ -168,9 +168,10 @@ class Operate(object):
             rpc.DoCall('ECY#signature_help#Show', [res])
 
     def OnItemSeleted(self, context):
-        if 'completionProvider' not in self.capabilities or 'resolveProvider' not in self.capabilities[
-                'completionProvider'] or self.capabilities[
-                    'completionProvider']['resolveProvider'] is False:
+        if 'completionProvider' not in self.capabilities or \
+                'resolveProvider' not in self.capabilities['completionProvider'] \
+                or self.capabilities['completionProvider']['resolveProvider'] is False:
+
             logger.debug('OnItemSeleted are not supported.')
             return
 

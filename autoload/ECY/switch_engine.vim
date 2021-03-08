@@ -169,6 +169,13 @@ fun! s:InitUsableEngine()
         \})
 
   call ECYAddEngine({
+        \'engine_name': 'ECY_engines.python.pyls.pyls', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['python']
+        \})
+
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.golang.gopls.gopls', 
         \'ability': [], 
         \'path': 'pip', 
