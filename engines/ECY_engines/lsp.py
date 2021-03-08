@@ -240,6 +240,7 @@ class Operate(object):
         else:
             self.trigger_key = []
         context['trigger_key'] = self.trigger_key
+        context['regex'] = self.refresh_regex
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
