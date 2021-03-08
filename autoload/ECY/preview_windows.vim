@@ -26,6 +26,9 @@ endfunction
 
 function! ECY#preview_windows#Show(msg) abort
 "{{{ won't be triggered when there are no floating windows features.
+  if !ECY#completion#IsMenuOpen()
+    return
+  endif
   call ECY#preview_windows#Close()
   if g:has_floating_windows_support == 'vim'
     let l:highlight = ECY#utils#GetCurrentBufferFileType()
@@ -96,21 +99,21 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
 
   let l:to_show_list = []
 
+  let l:item_menu = a:msg['menu']
+  if type(l:item_menu) == v:t_string
+    let l:item_menu = split(l:item_menu, "\n")
+  endif
+  if l:item_menu != []
+    call extend(l:to_show_list, l:item_menu)
+  endif
+
   let l:item_info = a:msg['info']
   if type(l:item_info) == v:t_string
     let l:item_info = split(l:item_info, "\n")
   endif
   if l:item_info != []
-    call extend(l:to_show_list, l:item_info)
-  endif
-
-  let l:item_menu = a:msg['menu']
-  if type(l:item_menu) == v:t_string
-    let l:item_menu = split(l:item_menu, "\n")
     call add(l:to_show_list, s:cut_line)
-  endif
-  if l:item_menu != []
-    call extend(l:to_show_list, l:item_menu)
+    call extend(l:to_show_list, l:item_info)
   endif
 
   if len(l:to_show_list) == 0

@@ -191,10 +191,10 @@ class Operate(object):
             return
 
         if res['callback_additional_data'] != self.current_seleted_item:
+            logger.debug('Outdate item resolve.')
             return
 
-        # {"jsonrpc":"2.0","result":{"data":"class","documentation":{"kind":"plaintext","value":"ThuThesis is a LaTeX thesis template package for Tsinghua University in order to make it easy to write theses for either bachelor's, master's, or doctor's degree."},"kind":1,"label":"thuthesis","preselect":false,"sortText":"00","textEdit":{"newText":"thuthesis","range":{"end":{"character":39,"line":4},"start":{"character":30,"line":4}}}},"id":7}
-
+        res = res['result']
         results_format = {
             'abbr': '',
             'word': '',
@@ -205,7 +205,7 @@ class Operate(object):
         }
 
         document = []
-        if 'document' in res:
+        if 'documentation' in res:
             if type(res['documentation']) is str:
                 temp = res['documentation'].split('\n')
             elif type(res['documentation']) is dict:
@@ -221,6 +221,7 @@ class Operate(object):
 
         results_format['menu'] = detail
         results_format['info'] = document
+        logger.debug(results_format)
 
         rpc.DoCall('ECY#preview_windows#Show', [results_format])
 

@@ -8,7 +8,8 @@ class Operate(lsp.Operate):
         lsp.Operate.__init__(self,
                              'ECY_engines.tex.texlab.texlab',
                              'texlab',
-                             refresh_regex=r'[\w+\:]')
+                             refresh_regex=r'[\w+\:]',
+                             languageId='tex')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
