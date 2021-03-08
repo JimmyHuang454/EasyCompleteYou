@@ -225,6 +225,13 @@ fun! s:InitUsableEngine()
         \})
 
   call ECYAddEngine({
+        \'engine_name': 'ECY_engines.viml.vim_ts.vim', 
+        \'ability': [], 
+        \'path': 'pip', 
+        \'file_type':['vim']
+        \})
+
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.html.lsp.vls', 
         \'ability': [], 
         \'path': 'pip', 

@@ -1,12 +1,40 @@
 from ECY_engines import lsp
+from ECY import rpc
 
 
 class Operate(lsp.Operate):
     def __init__(self):
+
+        initializationOptions = {
+            "isNeovim": not rpc.GetVaribal('g:is_vim'),
+            "iskeyword": "@,48-57,_,192-255,-#",
+            "vimruntime": "",
+            "runtimepath": "",
+            "diagnostic": {
+                "enable": True
+            },
+            "indexes": {
+                "runtimepath":
+                True,
+                "gap":
+                100,
+                "count":
+                3,
+                "projectRootPatterns":
+                ["strange-root-pattern", ".git", "autoload", "plugin"]
+            },
+            "suggest": {
+                "fromVimruntime": True,
+                "fromRuntimepath": False
+            }
+        }
+
         lsp.Operate.__init__(self,
                              'ECY_engines.html.lsp.html_lsp',
-                             'html-languageserver --stdio',
-                             languageId='html')
+                             'vim-language-server --stdio',
+                             languageId='viml',
+                             refresh_regex=r'[\w+\:\#\&]',
+                             initializationOptions=initializationOptions)
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
