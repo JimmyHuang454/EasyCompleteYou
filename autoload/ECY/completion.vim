@@ -470,11 +470,13 @@ fun! ECY#completion#Init()
   augroup END
 
   if g:ECY_use_floating_windows_to_be_popup_windows == v:false
-    exe 'inoremap <expr>' . g:ECY_select_items[0] .
-          \ ' pumvisible() ? "\<C-n>" : "\' . g:ECY_select_items[0] .'"'
-    exe 'inoremap <expr>' . g:ECY_select_items[1] .
-          \ ' pumvisible() ? "\<C-p>" : "\' . g:ECY_select_items[1] .'"'
-    echo 'sdfsdfdsfsdfsdf------------------'
+    
+    exe printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+          \g:ECY_select_items[0], g:ECY_select_items[0])    
+    exe printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+          \g:ECY_select_items[1], g:ECY_select_items[1])    
+
+    echo printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
   else
     exe 'inoremap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
     exe 'inoremap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
