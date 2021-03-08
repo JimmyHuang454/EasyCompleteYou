@@ -26,25 +26,32 @@ class LSPRequest(object):
         self.ID = ids
         self.response_queue = None
         self.callback = None
+        self.callback_additional_data = {}
 
-    def GetResponse(self, timeout=None, callback=None):
+    def GetResponse(self,
+                    timeout=None,
+                    callback=None,
+                    callback_additional_data={}):
         if type(timeout) is int and timeout != -1 and timeout != 0:
             try:
                 self.response_queue = queue.Queue(timeout)
             except Exception as e:
-                self.response_queue = None # importance
+                self.response_queue = None  # importance
                 raise e
         else:
             self.response_queue = queue.Queue()
         if callback is not None:
             self.callback = callback
+            self.callback_additional_data = callback_additional_data
             threading.Thread(target=self._callback_thread).start()
-            return self # are not blocked
+            return self  # are not blocked
         return self.response_queue.get()
 
     def _callback_thread(self):
         try:
-            self.callback(self.response_queue.get())
+            res = self.response_queue.get()
+            res['callback_additional_data'] = self.callback_additional_data
+            self.callback(res)
         except Exception as e:
             logger.exception(e)
 
@@ -109,8 +116,7 @@ class LSP(conec.Operate):
                 # never timeout
                 queue_obj = self._queue_dict[_method_name].get()
             else:
-                queue_obj = self._queue_dict[_method_name].get(
-                    timeout=timeout)
+                queue_obj = self._queue_dict[_method_name].get(timeout=timeout)
         except:
             del self._queue_dict[_method_name]
         if queue_obj is None:
