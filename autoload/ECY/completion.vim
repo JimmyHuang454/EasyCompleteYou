@@ -471,9 +471,9 @@ fun! ECY#completion#Init()
 
   if g:ECY_use_floating_windows_to_be_popup_windows == v:false
     
-    exe printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
           \g:ECY_select_items[0], g:ECY_select_items[0])    
-    exe printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
           \g:ECY_select_items[1], g:ECY_select_items[1])    
 
     echo printf('inoremap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
