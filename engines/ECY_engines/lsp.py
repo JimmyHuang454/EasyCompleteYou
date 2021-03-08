@@ -18,11 +18,17 @@ class Operate(object):
                  workspaceFolders=None,
                  initializationOptions=None):
 
+        self._lsp = language_server_protocol.LSP()
+
         self.engine_name = name
         self.server_cmd = server_cmd
         self.refresh_regex = refresh_regex
 
         # init opts
+        if rootUri is None:
+            rootUri = self._lsp.PathToUri(
+                rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
+
         self.rootUri = rootUri
         self.rootPath = rootPath
         self.workspaceFolders = workspaceFolders
@@ -37,7 +43,6 @@ class Operate(object):
         self.completion_isInCompleted = True
         self.timeout = 5
 
-        self._lsp = language_server_protocol.LSP()
         self._start_server()
 
     def _start_server(self):
