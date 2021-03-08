@@ -53,6 +53,19 @@ elseif !exists( '*json_decode' )
   finish
 endif
 
+if executable('python3')
+  let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python3')
+elseif executable('python')
+  let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
+elseif !exists('g:ECY_is_debug')
+  echohl WarningMsg |
+        \ echomsg "ECY unavailable: Unkonw Python3 executable path".
+        \ "You can set 'g:ECY_is_debug' to determine it." |
+        \ echohl None
+  call s:restore_cpo()
+  finish
+endif
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                 init vars                                  "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -76,9 +89,6 @@ let g:ECY_buffer_version = {}
 let g:ECY_windows_are_showing = {}
 
 let g:ECY_python_script_folder_path = g:ECY_base_dir . '/python'
-
-let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python')
-let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
