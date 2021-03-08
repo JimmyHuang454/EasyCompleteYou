@@ -447,8 +447,6 @@ function! s:MapSelecting() abort
           \g:ECY_select_items[0], g:ECY_select_items[0])    
     exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
           \g:ECY_select_items[1], g:ECY_select_items[1])    
-
-    echo printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', g:ECY_select_items[0], g:ECY_select_items[0])
   else
     exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
     exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'

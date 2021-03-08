@@ -18,6 +18,7 @@ class Operate(object):
                  workspaceFolders=None,
                  initializationOptions=None):
 
+        logger.debug(server_cmd)
         self._lsp = language_server_protocol.LSP()
 
         self.engine_name = name
