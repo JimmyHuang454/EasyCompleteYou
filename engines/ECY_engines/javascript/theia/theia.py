@@ -3,10 +3,10 @@ from ECY_engines import lsp
 
 class Operate(lsp.Operate):
     def __init__(self):
-        starting_cmd = 'ECY_engines.javascript.theia.theia'
+        starting_cmd = 'typescript-language-server'
         starting_cmd += ' --stdio'
         lsp.Operate.__init__(self,
-                             'ECY_engines.python.pyls.pyls',
+                             'ECY_engines.javascript.theia.theia',
                              starting_cmd,
                              languageId='python')
 

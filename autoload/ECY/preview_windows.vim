@@ -112,7 +112,9 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
     let l:item_info = split(l:item_info, "\n")
   endif
   if l:item_info != []
-    call add(l:to_show_list, s:cut_line)
+    if l:item_menu != [] 
+      call add(l:to_show_list, s:cut_line)
+    endif
     call extend(l:to_show_list, l:item_info)
   endif
 

@@ -1,6 +1,5 @@
 from loguru import logger
 from ECY import rpc
-import time
 
 
 class Operate(object):
@@ -10,8 +9,11 @@ class Operate(object):
         self.engine_name = 'ultisnipts'
         self.snippet_cache = {}
 
-    def OnBufferEnter(self, context):
-        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
+    def _update_snippets(self, context):
+        if 'file_type' in context:
+            file_type = context['file_type']
+        else:
+            file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
 
         if file_type in self.snippet_cache:
             return
@@ -41,11 +43,14 @@ class Operate(object):
             results_list.append(results_format)
 
         self.snippet_cache[file_type] = results_list
-        logger.debug(self.snippet_cache)
-        return None
+
+    def OnBufferEnter(self, context):
+        self._update_snippets(context)
 
     def OnCompletion(self, context):
         file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
+        context['file_type'] = context
+        self._update_snippets(context)
         if file_type not in self.snippet_cache:
             return
         context['show_list'] = self.snippet_cache[file_type]
