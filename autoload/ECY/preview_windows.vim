@@ -26,7 +26,7 @@ endfunction
 
 function! ECY#preview_windows#Show(msg) abort
 "{{{ won't be triggered when there are no floating windows features.
-  if !ECY#completion#IsMenuOpen()
+  if !ECY#completion#IsMenuOpen() || g:ECY_use_floating_windows_to_be_popup_windows == v:false
     return
   endif
   call ECY#preview_windows#Close()
@@ -60,14 +60,16 @@ endfunction
 
 function! ECY#preview_windows#Close() abort
 "{{{
-  if g:has_floating_windows_support == 'vim'
-    if s:preview_windows_nr != -1
-      call popup_close(s:preview_windows_nr)
-      let s:preview_windows_nr = -1
+  if g:ECY_use_floating_windows_to_be_popup_windows == v:true
+    if g:has_floating_windows_support == 'vim'
+      if s:preview_windows_nr != -1
+        call popup_close(s:preview_windows_nr)
+        let s:preview_windows_nr = -1
+      endif
+    elseif g:has_floating_windows_support == 'neovim'
+      " TODO
     endif
-  elseif g:has_floating_windows_support == 'neovim'
-    " TODO
-  elseif g:has_floating_windows_support == 'has_no'
+  else
 "{{{ old school
     if !g:ycm_autoclose_preview_window_after_completion
       return

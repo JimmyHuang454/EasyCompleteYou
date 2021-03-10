@@ -16,10 +16,10 @@ class Operate():
         if self.is_get_opts_done:
             return
         self.is_get_opts_done = True
-        if rpc.GetVaribal('g:has_floating_windows_support') == 'has_no':
-            self.is_indent = False
-        else:
+        if rpc.GetVaribal('g:ECY_use_floating_windows_to_be_popup_windows'):
             self.is_indent = True
+        else:
+            self.is_indent = False
 
     def OnCompletion(self, context):
         if 'show_list' not in context:

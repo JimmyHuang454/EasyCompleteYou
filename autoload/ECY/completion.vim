@@ -257,17 +257,19 @@ endfunction
 
 function! ECY#completion#IsMenuOpen() abort
 "{{{
-  if g:has_floating_windows_support == 'vim'
-    if g:ECY_use_floating_windows_to_be_popup_windows == v:false
-      return pumvisible()
+  if g:ECY_use_floating_windows_to_be_popup_windows == v:true
+    if g:has_floating_windows_support == 'vim'
+      if g:ECY_use_floating_windows_to_be_popup_windows == v:false
+        return pumvisible()
+      endif
+      if s:popup_windows_nr != -1
+        return v:true
+      endif
+      return v:false
+    elseif g:has_floating_windows_support == 'neovim'
+      "TODO
     endif
-    if s:popup_windows_nr != -1
-      return v:true
-    endif
-    return v:false
-  elseif g:has_floating_windows_support == 'neovim'
-    "TODO
-  elseif g:has_floating_windows_support == 'has_no'
+  else
     return pumvisible()
   endif
 "}}}
@@ -396,9 +398,21 @@ function! ECY#completion#SelectItems(next_or_prev, send_key) abort
     call ECY#preview_windows#Open()
   endif
 
+  call s:ItemSelectedCallback()
+  return ''
+"}}}
+endfunction
+
+function! s:ItemSelectedCallback() abort
+"{{{
   " event callback
   try
-    let l:selecting = g:ECY_current_popup_windows_info['selecting_item']
+    if g:ECY_use_floating_windows_to_be_popup_windows == v:true
+      let l:selecting = g:ECY_current_popup_windows_info['selecting_item']
+    else
+      let l:selecting = str2nr(v:completed_item['user_data'])
+      let l:selecting += 1
+    endif
     if l:selecting != 0
       let l:selecting -= 1
       let l:ECY_item_index = g:ECY_current_popup_windows_info['items_info'][l:selecting]['ECY_item_index']
@@ -412,7 +426,6 @@ function! ECY#completion#SelectItems(next_or_prev, send_key) abort
     endif
   catch 
   endtry
-  return ''
 "}}}
 endfunction
 
@@ -479,6 +492,9 @@ fun! ECY#completion#Init()
     autocmd!
     autocmd TextChangedI  * call ECY#completion#Close()
     autocmd InsertLeave   * call ECY#completion#Close()
+    " if g:ECY_use_floating_windows_to_be_popup_windows == v:false
+    "   autocmd CompleteDone   * call s:ItemSelectedCallback()
+    " endif
   augroup END
 
   call s:MapSelecting()
