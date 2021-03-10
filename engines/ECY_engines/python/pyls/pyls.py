@@ -29,6 +29,10 @@ class Operate(lsp.Operate):
 
             item_name = item['label']
 
+            if 'insertText' in item:
+                item_name = item['insertText']
+            else:
+                pass
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 
@@ -41,15 +45,6 @@ class Operate(lsp.Operate):
                     results_format['menu'] = item['detail']
 
             document = []
-            if 'label' in item:
-                temp = item['label']
-                if temp[0] == ' ':
-                    temp = temp[1:]
-                if results_format['kind'] == 'Function':
-                    temp = detail[0] + ' ' + temp
-                document.append(temp)
-                document.append('')
-
             if 'documentation' in item:
                 if type(item['documentation']) is str:
                     temp = item['documentation'].split('\n')
