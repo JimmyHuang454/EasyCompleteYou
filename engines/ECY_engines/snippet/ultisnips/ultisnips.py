@@ -1,4 +1,3 @@
-from loguru import logger
 from ECY import rpc
 
 
@@ -49,7 +48,7 @@ class Operate(object):
 
     def OnCompletion(self, context):
         file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
-        context['file_type'] = context
+        context['file_type'] = file_type
         self._update_snippets(context)
         if file_type not in self.snippet_cache:
             return
