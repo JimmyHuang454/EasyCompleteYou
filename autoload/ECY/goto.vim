@@ -34,17 +34,18 @@ fun! ECY#goto#Do(res) abort
     endif
 
     let l:seleted = a:res[l:int]
-    if has_key(l:seleted, 'uri')
-      call ECY#utils#echo(printf("Goto %s", UriToPath(l:seleted['uri'])))
+    if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range')
+      return
     endif
     let l:path = UriToPath(l:seleted['uri'])
     let l:start = l:seleted['range']['start']
-    call ECY#utils#MoveToBuffer(l:start['line'], l:start['character'], l:path, 'h')
+    call ECY#goto#MoveToBuffer(l:start['line'] + 1, l:start['character'], l:path, 'h')
+    call ECY#utils#echo(printf("Goto %s", UriToPath(l:seleted['uri'])))
   endif
 "}}}
 endf
 
-function! ECY#utility#MoveToBuffer(line, colum, file_path, windows_to_show) abort
+function! ECY#goto#MoveToBuffer(line, colum, file_path, windows_to_show) abort
 "{{{ move cursor to windows, in normal mode
 " a:colum is 0-based
 " a:line is 1-based
