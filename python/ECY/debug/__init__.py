@@ -1,5 +1,5 @@
 try:
-    from oguru import logger as ll
+    from loguru import logger as ll
     logger = ll
     has_loguru = True
 except:
