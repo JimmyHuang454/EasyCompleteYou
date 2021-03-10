@@ -1,6 +1,6 @@
 import threading
 from ECY import utils
-from loguru import logger
+from ECY.debug import logger
 from ECY.lsp import language_server_protocol
 from ECY import rpc
 

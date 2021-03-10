@@ -1,6 +1,6 @@
 from ECY import rpc
 from ECY.engines import buffer_engine
-from loguru import logger
+from ECY.debug import logger
 
 
 class Operate():

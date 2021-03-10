@@ -1,14 +1,11 @@
 try:
     from pygments import lex
     from pygments import lexers
-    from pygments import token
-    from pygments import formatter
     has_pygment = True
-except Exception as e:
+except:
     has_pygment = False
 
-from loguru import logger
-from ECY import rpc
+from ECY.debug import logger
 
 
 class Operate(object):

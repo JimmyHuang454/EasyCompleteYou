@@ -1,4 +1,4 @@
-from loguru import logger
+from ECY.debug import logger
 import queue
 import sys
 import importlib

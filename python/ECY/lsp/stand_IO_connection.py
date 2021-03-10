@@ -7,7 +7,7 @@ import shlex
 import queue
 import threading
 import re
-from loguru import logger
+from ECY.debug import logger
 
 
 class ThreadOfJob(object):

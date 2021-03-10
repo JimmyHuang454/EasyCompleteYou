@@ -1,5 +1,5 @@
 from ECY_engines import lsp
-from loguru import logger
+from ECY.debug import logger
 
 
 class Operate(lsp.Operate):

@@ -8,7 +8,7 @@ import time
 
 from ECY import utils
 from ECY import rpc
-from loguru import logger
+from ECY.debug import logger
 
 try:
     import jedi

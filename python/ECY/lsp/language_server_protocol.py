@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 from urllib.request import pathname2url
 from urllib.parse import urlparse
 from urllib.request import url2pathname
-from loguru import logger
+from ECY.debug import logger
 
 # local lib
 from ECY.lsp import stand_IO_connection as conec

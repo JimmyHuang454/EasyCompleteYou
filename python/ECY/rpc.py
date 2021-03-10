@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from loguru import logger
+from ECY.debug import logger
 import json
 import threading
 import io

@@ -1,4 +1,4 @@
-from loguru import logger
+from ECY.debug import logger
 from ECY import utils
 from ECY import rpc
 from ECY.engines import fuzzy_match
