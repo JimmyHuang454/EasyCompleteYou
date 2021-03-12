@@ -232,7 +232,7 @@ class Operate(object):
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
-            self._show_msg('OnCompletion are not supported.')
+            # self._show_msg('OnCompletion are not supported.')
             return
 
         if 'triggerCharacters' in self.capabilities['completionProvider']:

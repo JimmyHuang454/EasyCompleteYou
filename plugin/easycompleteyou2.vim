@@ -77,7 +77,9 @@ if g:is_vim && exists('*nvim_win_set_config') " neovim
   let g:has_floating_windows_support = 'neovim'
   let g:has_floating_windows_support = 'has_no' 
 
-elseif has('textprop') && has('popupwin')
+elseif exists('*popup_create') && 
+      \exists('*win_execute') && 
+      \exists('*popup_atcursor') && exists('*popup_close')
   let g:has_floating_windows_support = 'vim'
 else
   let g:has_floating_windows_support = 'has_no'
