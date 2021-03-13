@@ -1,4 +1,11 @@
 fun! ECY#engine_config#Init() abort
+  try
+    call s:Load()
+  catch 
+  endtry
+endf
+
+fun! s:Load() abort
 "{{{
   let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
   let g:ECY_engine_default_config_path = g:ECY_engine_config_dir . '/default_config.json'
@@ -24,6 +31,7 @@ fun! ECY#engine_config#Init() abort
   endfor
 "}}}
 endf
+
 
 fun! ECY#engine_config#GetEngineConfig(engine_name, opts) abort
 "{{{

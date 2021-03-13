@@ -10,8 +10,8 @@ class Operate(lsp.Operate):
             import ECY_clangd
             starting_cmd = ECY_clangd.exe_path
         except Exception as e:
+            starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
             logger.exception(e)
-        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
         lsp.Operate.__init__(self, engine_name, starting_cmd, languageId='cpp')
 
     def OnCompletion(self, context):

@@ -22,5 +22,12 @@
       "type": "list",
       "des": ["included path while parsing."]
     }
+  },
+  "ECY_engines.python.pyls.pyls": {
+    "cmd": {
+      "default_value": "pyls",
+      "type": "string",
+      "des": ["cmd to start pyls."]
+    }
   }
 }
