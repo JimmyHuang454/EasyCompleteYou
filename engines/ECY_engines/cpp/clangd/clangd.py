@@ -1,19 +1,18 @@
 from ECY_engines import lsp
 from ECY.debug import logger
+from ECY import utils
 
 
 class Operate(lsp.Operate):
     def __init__(self):
+        engine_name = 'ECY_engines.cpp.clangd.clangd'
         try:
             import ECY_clangd
             starting_cmd = ECY_clangd.exe_path
         except Exception as e:
-            starting_cmd = 'clangd'
             logger.exception(e)
-        lsp.Operate.__init__(self,
-                             'ECY_engines.cpp.clangd.clangd',
-                             starting_cmd,
-                             languageId='cpp')
+        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
+        lsp.Operate.__init__(self, engine_name, starting_cmd, languageId='cpp')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

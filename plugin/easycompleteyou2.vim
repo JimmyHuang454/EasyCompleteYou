@@ -112,6 +112,7 @@ nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call ECY#engine_config#Init()
 call ECY#completion#Init()
 call lsp#Init()
 call ECY#signature_help#Init()

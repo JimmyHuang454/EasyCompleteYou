@@ -58,3 +58,9 @@ def GetDefaultValue(var_name, default_value):
     if rpc.DoCall('exists', [var_name]):
         default_value = rpc.GetVaribal(var_name)
     return default_value
+
+
+def GetEngineConfig(engine_name, opt_name):
+    viml_engine_config = rpc.DoCall('ECY#engine_config#GetEngineConfig',
+                                    [engine_name, opt_name])
+    return viml_engine_config

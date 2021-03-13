@@ -1,0 +1,26 @@
+{
+  "ECY_engines.cpp.clangd.clangd": {
+    "cmd": {
+      "default_value": "clangd",
+      "type": "string",
+      "des": ["cmd to start clangd."]
+    },
+    "compileFallback": {
+      "default_value": [],
+      "type": "list",
+      "des": ["flag to be added while analysing."]
+    }
+  },
+  "ECY_engines.python.pyright.pyright": {
+    "cmd": {
+      "default_value": "pyright-langserver --stdio",
+      "type": "string",
+      "des": ["cmd to start pyright."]
+    },
+    "include_path": {
+      "default_value": [],
+      "type": "list",
+      "des": ["included path while parsing."]
+    }
+  }
+}
