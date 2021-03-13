@@ -31,8 +31,10 @@ class Operate(object):
                 rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
 
         self.rootUri = rootUri
-        if rootPath is None and self.rootUri is not None:
-            self.rootPath = self._lsp.UriToPath(self.rootUri)
+        # Doesn't work with pyright
+        # if rootPath is None and self.rootUri is not None:
+        #     self.rootPath = self._lsp.UriToPath(self.rootUri)
+        self.rootPath = rootPath
         self.workspaceFolders = workspaceFolders
         self.initializationOptions = initializationOptions
         self.languageId = languageId
@@ -62,6 +64,7 @@ class Operate(object):
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
+        threading.Thread(target=self._get_registerCapability, daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
 
         self._lsp.initialized()
@@ -326,6 +329,16 @@ class Operate(object):
 
         cmd_name = params['cmd_name']
         self._lsp.executeCommand(cmd_name, arguments=cmd_params)
+
+    def _get_registerCapability(self):
+        while True:
+            try:
+                temp = self._lsp.GetRequestOrNotification(
+                    'client/registerCapability', timeout=-1)
+                params = temp['params']
+                self._lsp._build_response(None, temp['id'])
+            except Exception as e:
+                logger.exception(e)
 
     def _get_diagnosis(self):
         while True:

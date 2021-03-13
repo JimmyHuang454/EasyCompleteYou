@@ -180,9 +180,7 @@ class LSP(conec.Operate):
             context['error'] = error
         context = json.dumps(context)
         context_lenght = len(context)
-        debug = "--->" + context
-        if self._debug:
-            print(debug)
+        self.Debug("--->" + context)
         message = ("Content-Length: {}\r\n\r\n"
                    "{}".format(context_lenght, context))
         self.SendData(self.server_id, message.encode(encoding="utf-8"))
