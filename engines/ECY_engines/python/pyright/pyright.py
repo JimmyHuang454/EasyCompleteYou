@@ -1,40 +1,12 @@
 from ECY_engines import lsp
-from ECY import rpc
 
 
 class Operate(lsp.Operate):
     def __init__(self):
-
-        initializationOptions = {
-            "isNeovim": not rpc.GetVaribal('g:is_vim'),
-            "iskeyword": "@,48-57,_,192-255,-#",
-            "vimruntime": rpc.GetVaribal('$VIMRUNTIME'),
-            "runtimepath": rpc.GetVaribal('&rtp'),
-            "diagnostic": {
-                "enable": True
-            },
-            "indexes": {
-                "runtimepath":
-                True,
-                "gap":
-                100,
-                "count":
-                3,
-                "projectRootPatterns":
-                ["strange-root-pattern", ".git", "autoload", "plugin"]
-            },
-            "suggest": {
-                "fromVimruntime": True,
-                "fromRuntimepath": False
-            }
-        }
-
         lsp.Operate.__init__(self,
-                             'ECY_engines.viml.vim_ts.vim',
-                             'vim-language-server --stdio',
-                             languageId='viml',
-                             refresh_regex=r'[\w+\:\#\&]',
-                             initializationOptions=initializationOptions)
+                             'ECY_engines.python.pyright.pyright',
+                             'pyright-langserver --stdio',
+                             languageId='python')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
@@ -57,6 +29,10 @@ class Operate(lsp.Operate):
 
             item_name = item['label']
 
+            if 'insertText' in item:
+                item_name = item['insertText']
+            else:
+                pass
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 
@@ -69,15 +45,6 @@ class Operate(lsp.Operate):
                     results_format['menu'] = item['detail']
 
             document = []
-            if 'label' in item:
-                temp = item['label']
-                if temp[0] == ' ':
-                    temp = temp[1:]
-                if results_format['kind'] == 'Function':
-                    temp = detail[0] + ' ' + temp
-                document.append(temp)
-                document.append('')
-
             if 'documentation' in item:
                 if type(item['documentation']) is str:
                     temp = item['documentation'].split('\n')

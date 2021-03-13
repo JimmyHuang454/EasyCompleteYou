@@ -142,85 +142,76 @@ fun! s:InitUsableEngine()
   "{{{
   call ECYAddEngine({
         \'engine_name': 'ECY.engines.default_engine', 
-        \'ability': [], 
         \'file_type':['all']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.cpp.clangd.clangd', 
-        \'ability': [], 
         \'file_type':['c', 'cpp', 'cuda']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.tex.texlab.texlab', 
-        \'ability': [], 
         \'file_type':['latex', 'tex']
         \})
 
   call ECYAddEngine({
+        \'engine_name': 'ECY_engines.python.pyright.pyright', 
+        \'file_type':['python']
+        \})
+
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.python.jedi.jedi', 
-        \'ability': [], 
         \'file_type':['python']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.python.pyls.pyls', 
-        \'ability': [], 
         \'file_type':['python']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.golang.gopls.gopls', 
-        \'ability': [], 
         \'file_type':['go']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.vim_lsp.vim_lsp', 
-        \'ability': [], 
         \'file_type':['all']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.rust.rust_analyzer.rust_analyzer', 
-        \'ability': [], 
         \'file_type':['rust']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.snippet.ultisnips.ultisnips', 
-        \'ability': [], 
         \'file_type':['all']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.pygment.pygment', 
-        \'ability': [], 
         \'file_type':['all']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.javascript.theia.theia', 
-        \'ability': [], 
         \'file_type':['javascript']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.html.lsp.html_lsp', 
-        \'ability': [], 
         \'file_type':['html', 'xhtml', 'vue']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.viml.vim_ts.vim', 
-        \'ability': [], 
         \'file_type':['vim']
         \})
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.html.lsp.vls', 
-        \'ability': [], 
         \'file_type':['vue']
         \})
   "}}}

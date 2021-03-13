@@ -58,3 +58,4 @@ def GetDefaultValue(var_name, default_value):
     if rpc.DoCall('exists', [var_name]):
         default_value = rpc.GetVaribal(var_name)
     return default_value
+
