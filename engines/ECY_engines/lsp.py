@@ -64,7 +64,8 @@ class Operate(object):
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
-        threading.Thread(target=self._get_registerCapability, daemon=True).start()
+        threading.Thread(target=self._get_registerCapability,
+                         daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
 
         self._lsp.initialized()
@@ -552,7 +553,30 @@ class Operate(object):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
-        # TODO
+
+        content = self._format_markupContent(res['result'])
+        if content == []:
+            self._show_msg('Nothing to show')
+            return
+        rpc.DoCall('ECY#hover#Open', [content])
+
+    def _format_markupContent(self, res):
+        to_show = []
+        content = []
+        if res is None or 'contents' not in res:
+            return content
+        content = res['contents']
+        if type(content) is str:
+            value = content
+        else:
+            if 'kind' in content:
+                to_show.append(content['kind'])
+            elif 'language' in content:
+                to_show.append(content['language'])
+            value = content['value']
+        if value != "":
+            to_show.extend(value.split("\n"))
+        return to_show
 
     def FindReferences(self, context):
         if 'referencesProvider' not in self.capabilities:

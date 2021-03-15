@@ -197,7 +197,7 @@ fun! s:InitUsableEngine()
 
   call ECYAddEngine({
         \'engine_name': 'ECY_engines.javascript.theia.theia', 
-        \'file_type':['javascript']
+        \'file_type':['javascript', 'typescript']
         \})
 
   call ECYAddEngine({

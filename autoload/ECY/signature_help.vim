@@ -103,10 +103,11 @@ fun! s:Vim(results) abort
       \ 'maxheight': g:ECY_preview_windows_size[1][1],
       \ 'border': [],
       \ 'close': 'click',
+      \ 'borderchars': ['-', '|', '-', '|', '┌', '┐', '┘', '└'],
       \ 'scrollbar': 1,
       \ 'firstline': 1,
-      \ 'padding': [0,1,0,1],
-      \ 'zindex': 2000,
+      \ 'padding': [0,0,0,0],
+      \ 'zindex': 1000,
       \'pos':'botleft',
       \'line':'cursor-1',
       \'col': 'cursor'}

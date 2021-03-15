@@ -44,6 +44,7 @@ fun! ECY#utils#echo(msg)
           \ 'title': l:temp,
           \ 'moved': 'WORD',
           \ 'border': [],
+          \ 'borderchars': ['-', '|', '-', '|', '┌', '┐', '┘', '└']
           \}
     if s:show_msg_windows_nr == -1
       let s:show_msg_windows_text_list = []

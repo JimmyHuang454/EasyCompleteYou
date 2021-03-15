@@ -37,7 +37,7 @@ fun! s:DoCompletion_vim(context)
   let l:offset_of_cursor = len(l:fliter_words)
   let l:col  = 'cursor-' . l:offset_of_cursor
   let l:opts = {'pos': 'topleft',
-        \'zindex':1000,
+        \'zindex':2000,
         \'line':'cursor+1',
         \'col': l:col}
   let l:to_show = []

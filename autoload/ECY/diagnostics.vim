@@ -271,6 +271,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
         \ 'maxheight': g:ECY_preview_windows_size[1][1],
         \ 'border': [],
         \ 'close': 'click',
+        \ 'borderchars': ['-', '|', '-', '|', '┌', '┐', '┘', '└'],
         \ 'callback': 'g:Diagnosis_vim_cb',
         \ 'scrollbar': 1,
         \ 'firstline': 1,
