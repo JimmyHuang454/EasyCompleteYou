@@ -92,6 +92,9 @@ endf
 "{{{event functions
 fun! ECY#rpc#rpc_event#OnBufferEnter()
 "{{{
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
@@ -111,6 +114,10 @@ endf
 
 fun! s:OnTextChanged()
 "{{{ normal and insert mode
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
+
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
@@ -138,6 +145,10 @@ endf
 
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
+  
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
@@ -151,6 +162,9 @@ endf
 
 fun! ECY#rpc#rpc_event#OnInsertLeave()
 "{{{
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
   let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
