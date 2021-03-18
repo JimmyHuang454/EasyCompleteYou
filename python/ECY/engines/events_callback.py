@@ -16,10 +16,6 @@ class Operate():
         if self.is_get_opts_done:
             return
         self.is_get_opts_done = True
-        if rpc.GetVaribal('g:ECY_use_floating_windows_to_be_popup_windows'):
-            self.is_indent = True
-        else:
-            self.is_indent = False
 
     def OnCompletion(self, context):
         if 'show_list' not in context:
@@ -48,6 +44,7 @@ class Operate():
             context['prev_key'], regex)
 
         context['filter_key'] = filter_words
+        context['filter_key_len'] = len(filter_words)
         context['start_position'] = {
             'line': params['buffer_position']['line'],
             'colum': current_colum

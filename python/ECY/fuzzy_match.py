@@ -74,14 +74,14 @@ class FuzzyMatch(object):
                 if j > max_len_2_show:
                     break
                 lists.append(item)
-                length = len(item['abbr'])
+                length = len(bytes(item['abbr']))
                 if length > name_std_len:
                     name_std_len = length
                 j += 1
             # make an interval with space
             name_std_len += 2
             for item in lists:
-                space_to_be_added = name_std_len - len(item['abbr'])
+                space_to_be_added = name_std_len - len(bytes(item['abbr']))
                 i = 0
                 while i < space_to_be_added:
                     item['abbr'] += ' '

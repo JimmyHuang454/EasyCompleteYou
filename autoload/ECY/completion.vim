@@ -31,11 +31,16 @@ fun! s:DoCompletion_vim(context)
   let l:items_info = a:context['show_list']
 
   if len(l:items_info) == 0
+    " sdf而且 sdf而且而 而且
     return
   endif
 
-  let l:offset_of_cursor = len(l:fliter_words)
-  let l:col  = 'cursor-' . l:offset_of_cursor
+  let l:col = len(a:context['prev_key']) - len(l:fliter_words)
+  let s:show_item_position = a:context['start_position']
+  let s:show_item_position['colum'] = l:col
+
+  let l:col = strwidth(l:fliter_words)
+  let l:col  = 'cursor-' . l:col
   let l:opts = {'pos': 'topleft',
         \'zindex':2000,
         \'line':'cursor+1',
@@ -63,8 +68,6 @@ fun! s:DoCompletion_vim(context)
     let j += 1
   endw
   let s:popup_windows_nr = popup_create(l:to_show, l:opts)
-  let s:show_item_position = a:context['start_position']
-  let s:show_item_position['colum'] = len(a:context['prev_key']) - len(a:context['filter_key'])
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,
         \'start_position': s:show_item_position,
@@ -454,18 +457,21 @@ endfunction
 
 function! s:MapSelecting() abort
 "{{{
-  if g:ECY_use_floating_windows_to_be_popup_windows == v:false
-    
-    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
-          \g:ECY_select_items[0], g:ECY_select_items[0])    
-    exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
-          \g:ECY_select_items[1], g:ECY_select_items[1])    
-  else
-    exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
-    exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
-  endif
+  try
+    if g:ECY_use_floating_windows_to_be_popup_windows == v:false
+      
+      exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+            \g:ECY_select_items[0], g:ECY_select_items[0])    
+      exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
+            \g:ECY_select_items[1], g:ECY_select_items[1])    
+    else
+      exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
+      exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
+    endif
 
-  exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+    exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+  catch 
+  endtry
 "}}}
 endfunction
 
