@@ -3,7 +3,7 @@ from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
 from ECY import rpc
-
+# c:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou2\engines\ECY_engines\lsp.py
 
 class Operate(object):
     """
@@ -403,7 +403,12 @@ class Operate(object):
                     }
                 }
             }
-            diagnosis = item['message']
+            diagnosis = []
+            if type(item['message']) is str:
+                diagnosis = item['message'].split('\n')
+            elif type(item['message']) is list:
+                diagnosis = item['message']
+
             if 'severity' in item:
                 if item['severity'] == 1:
                     kind = 1

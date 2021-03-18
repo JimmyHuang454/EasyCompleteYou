@@ -434,22 +434,6 @@ function! s:PartlyPlaceSign_timer_cb(starts, ends, engine_name) abort
           \a:engine_name,
           \l:file_path)
   endfor
-  " let l:file_path = ECY#utils#GetCurrentBufferPath()
-  " call ECY#diagnostics#CleanAllSignHighlight()
-  " call s:UnplaceAllSignByEngineName(a:engine_name)
-  " for item in g:ECY_diagnostics_items_with_engine_name[a:engine_name]
-  "   if item['file_path'] == l:file_path
-  "     let l:line = item['position']['line']
-  "     if a:starts <= l:line && a:ends >= l:line
-  "       call s:PlaceSignAndHighlight(item['position'], 
-  "             \item['diagnostics'],
-  "             \item['items'], item['kind'],
-  "             \item['file_path'],
-  "             \a:engine_name,
-  "             \l:file_path)
-  "     endif
-  "   endif
-  " endfor
 "}}}
 endfunction
 

@@ -644,7 +644,10 @@ class LSP(conec.Operate):
     def UriToPath(self, uri):
         if self._current_system() == 'Windows':
             # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
-            return url2pathname(urlparse(uri).path).strip('\\')
+            file_path = url2pathname(urlparse(uri).path).strip('\\')
+            if file_path[0].islower():
+                file_path = file_path[0].upper() + file_path[1:]
+            return file_path
         else:
             return url2pathname(urlparse(uri).path)
 
