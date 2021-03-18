@@ -315,7 +315,13 @@ class LSP(conec.Operate):
                 "prepareSupport": True
             },
             "publishDiagnostics": {
-                "relatedInformation": True
+                "relatedInformation": True,
+                "versionSupport": True,
+                "tagSupport": {
+                    "valueSet": [1, 2]
+                },
+                "codeDescriptionSupport": True,
+                "dataSupport": True
             },
             "foldingRange": {
                 "dynamicRegistration": False,
@@ -636,7 +642,11 @@ class LSP(conec.Operate):
         return urljoin('file:', pathname2url(file_path))
 
     def UriToPath(self, uri):
-        return url2pathname(urlparse(uri).path)
+        if self._current_system() == 'Windows':
+            # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
+            return url2pathname(urlparse(uri).path).strip('\\')
+        else:
+            return url2pathname(urlparse(uri).path)
 
     def GetDiagnosticSeverity(self, kindNr):
         # {{{

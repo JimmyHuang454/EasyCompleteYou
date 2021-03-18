@@ -348,6 +348,7 @@ class Operate(object):
                     'textDocument/publishDiagnostics', timeout=-1)
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
+                logger.debug(lists)
                 rpc.DoCall('ECY#diagnostics#PlaceSign', [{
                     'engine_name': self.engine_name,
                     'res_list': lists
@@ -379,6 +380,7 @@ class Operate(object):
         results_list = []
         file_path = self._lsp.UriToPath(params['uri'])
         if file_path == '':
+            logger.debug("empty file_path")
             return results_list
         for item in params['diagnostics']:
             ranges = item['range']
@@ -402,11 +404,15 @@ class Operate(object):
                 }
             }
             diagnosis = item['message']
-            if item['severity'] == 1:
-                kind = 1
+            if 'severity' in item:
+                if item['severity'] == 1:
+                    kind = 1
+                else:
+                    kind = 2
             else:
-                kind = 2
-            kind_name = self._lsp.GetDiagnosticSeverity(item['severity'])
+                kind = 1
+
+            kind_name = self._lsp.GetDiagnosticSeverity(kind)
             temp = [{
                 'name': '1',
                 'content': {

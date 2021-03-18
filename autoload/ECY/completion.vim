@@ -31,7 +31,6 @@ fun! s:DoCompletion_vim(context)
   let l:items_info = a:context['show_list']
 
   if len(l:items_info) == 0
-    " sdf而且 sdf而且而 而且
     return
   endif
 
