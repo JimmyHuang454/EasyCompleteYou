@@ -1,0 +1,25 @@
+name: ECY CI in Windows
+on: [push, pull_request]
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    strategy:
+      matrix:
+        neovim: [false, true]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout myself
+        uses: actions/checkout@v2
+        with:
+          repository: JimmyHuang454/EasyCompleteYou
+          path: ECY
+      - name: Install Vim or Neovim
+        uses: rhysd/action-setup-vim@v1
+        id: vim
+        with:
+          neovim: false
+      # covimerage seems not maintained for Windows. Skip taking code coverage on Windows
+      - name: Install Python
+        uses: actions/setup-python@v1
