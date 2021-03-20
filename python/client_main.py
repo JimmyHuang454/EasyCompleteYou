@@ -21,6 +21,7 @@ parser.add_argument('--log_dir', help='the file of log to output')
 g_args = parser.parse_args()
 
 if g_args.ci:
+    print('quited with --ci')
     quit()
 
 #######################################################################
