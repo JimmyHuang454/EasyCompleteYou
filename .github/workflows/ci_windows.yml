@@ -38,13 +38,10 @@ jobs:
       #  print info  #
       #############
       - name: Print info
-        run: cd ./ECY/
+        run: |
+          cd ./ECY/
+          ls
 
-  vint:
-    name: Run vint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - run: pip install vim-vint
-      # - run: vint --warning --verbose --enable-neovim ./autoload ./plugin
+      - name: Run vint
+        run: pip install vim-vint
+        # - run: vint --warning --verbose --enable-neovim ./autoload ./plugin
