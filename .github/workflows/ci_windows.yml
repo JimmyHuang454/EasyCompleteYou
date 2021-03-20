@@ -42,6 +42,8 @@ jobs:
           cd ./ECY/
           ls
 
-      - name: Run vint
+      - name: Install vint
         run: pip install vim-vint
-        # - run: vint --warning --verbose --enable-neovim ./autoload ./plugin
+
+      - name: Run vint
+        run: vint --warning --verbose --enable-neovim ./autoload ./plugin
