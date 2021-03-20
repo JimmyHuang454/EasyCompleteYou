@@ -16,8 +16,12 @@ sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
 parser = argparse.ArgumentParser(
     description='EasyCompleteYou, Easily complete you.')
 parser.add_argument('--debug_log', action='store_true', help='debug with log')
+parser.add_argument('--ci', action='store_true', help='for CI')
 parser.add_argument('--log_dir', help='the file of log to output')
 g_args = parser.parse_args()
+
+if g_args.ci:
+    quit()
 
 #######################################################################
 #                                Debug                                #
