@@ -42,8 +42,11 @@ jobs:
           cd ./ECY/
           ls
 
-      - name: Install vint
-        run: pip install vim-vint
+      # - name: Install vint
+      #   run: pip install vim-vint
 
-      - name: Run vint
-        run: vint --warning --verbose --enable-neovim ./ECY/autoload ./ECY/plugin
+      # - name: Run vint
+      #   run: vint --warning --verbose --enable-neovim ./ECY/autoload ./ECY/plugin
+
+      - name: run ECY with --ci
+        run: python ./ECY/python/client_main.py --ci
