@@ -46,4 +46,4 @@ jobs:
         run: pip install vim-vint
 
       - name: Run vint
-        run: vint --warning --verbose --enable-neovim ./autoload ./plugin
+        run: vint --warning --verbose --enable-neovim ./ECY/autoload ./ECY/plugin
