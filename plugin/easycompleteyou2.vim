@@ -105,6 +105,18 @@ endif
 let g:ECY_file_type_blacklist
       \= get(g:,'ECY_file_type_blacklist', ['log'])
 
+let g:ECY_preview_windows_size = 
+      \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
+
+if g:has_floating_windows_support == 'vim'
+  let i = g:ECY_preview_windows_size[0][1]
+  let g:ECY_cut_line = ''
+  while i != 0
+    let g:ECY_cut_line .= '-'
+    let i -= 1
+  endw
+endif
+
 
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>

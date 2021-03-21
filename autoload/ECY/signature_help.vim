@@ -122,11 +122,20 @@ fun! s:Vim(results) abort
   let l:signatures = a:results['signatures'][l:activeSignature]
   let g:ECY_signature_help_activeParameter = s:Translate(string(l:activeSignature) . '.')
 
+
   let g:ECY_signature_help_activeSignature = ''
   if has_key(a:results, 'activeParameter') && len(l:signatures) != 0
     let l:parameters = l:signatures['parameters']
     let l:activeParameter = a:results['activeParameter']
-    let g:ECY_signature_help_activeSignature = s:Translate(l:parameters[l:activeParameter]['label'])
+    let l:activeParameter = l:parameters[l:activeParameter]
+
+    let g:ECY_signature_help_activeSignature = s:Translate(['label'])
+
+    if has_key(l:activeParameter, 'documentation')
+      call add(l:to_show, g:ECY_cut_line)
+      call extend(l:to_show, l:activeParameter['documentation'])
+    endif
+
   endif
 
   call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_signature_help')

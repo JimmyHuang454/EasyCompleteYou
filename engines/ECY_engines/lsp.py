@@ -183,7 +183,22 @@ class Operate(object):
         self._lsp.documentSymbos(uri)
 
     def _signature_help(self, res):
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
         res = res['result']
+        if res is None:
+            return
+
+        if 'signatures' in res:
+            for item in res['signatures']:
+                if 'parameters' not in item:
+                    continue
+                for item2 in item['parameters']:
+                    if 'documentation' in item2:
+                        item2['documentation'] = self._format_markupContent(
+                            item2)
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
 
@@ -230,6 +245,7 @@ class Operate(object):
 
         document = []
         if 'documentation' in res:
+            temp = []
             if type(res['documentation']) is str:
                 temp = res['documentation'].split('\n')
             elif type(res['documentation']) is dict:
@@ -573,10 +589,11 @@ class Operate(object):
         rpc.DoCall('ECY#hover#Open', [content])
 
     def _format_markupContent(self, res):
-        to_show = []
         content = []
         if res is None or 'contents' not in res:
             return content
+
+        to_show = []
         content = res['contents']
         if type(content) is str:
             value = content

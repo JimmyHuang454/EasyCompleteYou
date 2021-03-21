@@ -2,20 +2,7 @@
 function! ECY#preview_windows#Init() abort
 "{{{ 
   let s:preview_windows_nr = -1
-  " let g:ECY_enable_preview_snippet = get(g:,'ECY_enable_preview_snippet', v:true)
 
-  let g:ECY_preview_windows_size = 
-        \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
-
-  let i = g:ECY_preview_windows_size[0][1]
-  let s:cut_line = ''
-  while i != 0
-    let s:cut_line .= '-'
-    let i -= 1
-  endw
-  " TODO:
-  " g:ECY_PreviewWindows_style = 'append'
-  " g:ECY_PreviewWindows_style = 'preview_windows'
   let g:ECY_PreviewWindows_style = 
         \get(g:,'ECY_PreviewWindows_style','append')
 
@@ -115,7 +102,7 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
   endif
   if l:item_info != []
     if l:item_menu != [] 
-      call add(l:to_show_list, s:cut_line)
+      call add(l:to_show_list, g:ECY_cut_line)
     endif
     call extend(l:to_show_list, l:item_info)
   endif
