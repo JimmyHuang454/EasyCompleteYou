@@ -50,6 +50,7 @@ class Operate(lsp.Operate):
 
             document = []
             if 'documentation' in item:
+                temp = []
                 if type(item['documentation']) is str:
                     temp = item['documentation'].split('\n')
                 elif type(item['documentation']) is dict:

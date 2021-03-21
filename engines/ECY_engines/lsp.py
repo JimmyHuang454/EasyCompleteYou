@@ -5,6 +5,7 @@ from ECY.lsp import language_server_protocol
 from ECY import rpc
 # c:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou2\engines\ECY_engines\lsp.py
 
+
 class Operate(object):
     """
     """
@@ -67,6 +68,20 @@ class Operate(object):
         threading.Thread(target=self._get_registerCapability,
                          daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
+
+        self.signature_help_triggerCharacters = []
+        if 'signatureHelpProvider' in self.capabilities:
+            if 'triggerCharacters' in self.capabilities[
+                    'signatureHelpProvider']:
+                self.signature_help_triggerCharacters.extend(
+                    self.capabilities['signatureHelpProvider']
+                    ['triggerCharacters'])
+
+            if 'retriggerCharacters' in self.capabilities[
+                    'signatureHelpProvider']:
+                self.signature_help_triggerCharacters.extend(
+                    self.capabilities['signatureHelpProvider']
+                    ['retriggerCharacters'])
 
         self._lsp.initialized()
 
@@ -246,20 +261,6 @@ class Operate(object):
             self.trigger_key = []
         context['trigger_key'] = self.trigger_key
         context['regex'] = self.refresh_regex
-
-        self.signature_help_triggerCharacters = []
-        if 'signatureHelpProvider' in self.capabilities:
-            if 'triggerCharacters' in self.capabilities[
-                    'signatureHelpProvider']:
-                self.signature_help_triggerCharacters.extend(
-                    self.capabilities['signatureHelpProvider']
-                    ['triggerCharacters'])
-
-            if 'retriggerCharacters' in self.capabilities[
-                    'signatureHelpProvider']:
-                self.signature_help_triggerCharacters.extend(
-                    self.capabilities['signatureHelpProvider']
-                    ['retriggerCharacters'])
 
         self._did_open_or_change(context)  # update buffer to server
 
