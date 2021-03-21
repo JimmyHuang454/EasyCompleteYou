@@ -1,5 +1,6 @@
 import re
 from ECY import rpc
+import sys
 
 
 def MatchFilterKeys(line_text, regex):
@@ -64,3 +65,13 @@ def GetEngineConfig(engine_name, opt_name):
     viml_engine_config = rpc.DoCall('ECY#engine_config#GetEngineConfig',
                                     [engine_name, opt_name])
     return viml_engine_config
+
+
+def GetCurrentOS():
+    temp = sys.platform
+    if temp == 'win32':
+        return 'Windows'
+    if temp == 'cygwin':
+        return 'Cygwin'
+    if temp == 'darwin':
+        return 'Mac'

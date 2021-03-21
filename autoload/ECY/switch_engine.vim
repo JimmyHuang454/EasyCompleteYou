@@ -146,6 +146,11 @@ fun! s:InitUsableEngine()
         \})
 
   call ECYAddEngine({
+        \'engine_name': 'ECY_engines.all.path', 
+        \'file_type':['all']
+        \})
+
+  call ECYAddEngine({
         \'engine_name': 'ECY_engines.cpp.clangd.clangd', 
         \'file_type':['c', 'cpp', 'cuda']
         \})
