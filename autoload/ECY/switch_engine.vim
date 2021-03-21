@@ -101,6 +101,25 @@ fun! s:InsertLeave()
 "}}}
 endf
 
+fun! ECY#switch_engine#MapEngine(opts)
+"{{{
+  let l:cmd = printf(
+        \'inoremap <expr> %s ECY#switch_engine#UseSpecifyEngineOnce("%s")',
+        \a:opts['mapping'],
+        \a:opts['engine'])
+
+  if has_key(a:opts, 'input')
+    let l:cmd = printf(
+          \'inoremap <expr> %s ECY#switch_engine#UseSpecifyEngineOnce("%s", "%s")',
+          \a:opts['mapping'],
+          \a:opts['engine'],
+          \a:opts['input'])
+  endif
+
+  exe l:cmd
+"}}}
+endf
+
 fun! ECY#switch_engine#Init()
   "{{{
 
@@ -112,8 +131,17 @@ fun! ECY#switch_engine#Init()
   let g:ECY_use_snippet
         \= get(g:,'ECY_use_snippet',"<C-b>")
 
-  exe 'inoremap <expr>' . g:ECY_use_snippet . 
-          \" ECY#switch_engine#UseSpecifyEngineOnce('ECY_engines.snippet.ultisnips.ultisnips')"
+  let g:ECY_use_path
+        \= get(g:,'ECY_use_path',"/")
+
+  call ECY#switch_engine#MapEngine({
+        \'engine': 'ECY_engines.snippet.ultisnips.ultisnips', 
+        \'mapping': g:ECY_use_snippet})
+
+  call ECY#switch_engine#MapEngine({
+        \'engine': 'ECY_engines.all.path', 
+        \'input': '/', 
+        \'mapping': g:ECY_use_path})
 
   exe 'nmap ' . g:ECY_show_switching_source_popup .
         \ ' :call ECY#switch_engine#Do()<CR>'
@@ -273,19 +301,27 @@ fun! ECY#switch_engine#GetBufferEngineName()
   "}}}
 endf
 
-function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name) abort
+function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
   let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
   try
     if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == a:engine_name 
-      return ''
+      if a:0 == 0
+        return ''
+      else
+        return a:1
+      endif
     endif
   catch 
   endtry
   let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
   call ECY#rpc#rpc_event#OnBufferEnter()
-  return ''
+  if a:0 == 0
+    return ''
+  else
+    return a:1
+  endif
   "}}}
 endfunction
