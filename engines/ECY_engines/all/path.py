@@ -57,7 +57,7 @@ class Operate(object):
 
         context['params']['buffer_position']['colum'] = temp
 
-        try_dir = current_position_cache['prev_string']
+        try_dir = current_position_cache['filter_words']
         self.results_list = []
         logger.debug(try_dir)
 

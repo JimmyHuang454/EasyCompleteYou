@@ -42,7 +42,8 @@ def IsNeedToUpdate(context, regex):
         'current_line': current_line,
         'current_colum': current_colum,
         'last_key': last_key,
-        'prev_string': prev_string
+        'prev_string': prev_string,
+        'filter_words': filter_words
     }
 
     if prev_string == '':

@@ -310,7 +310,8 @@ class Operate(object):
         #  completion  #
         #############
         context['show_list'] = self.results_list
-        if not self.completion_isInCompleted and self.completion_position_cache == current_start_postion:
+        if not self.completion_isInCompleted and \
+                self.completion_position_cache == current_start_postion:
             return context
 
         self.results_list = []
