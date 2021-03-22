@@ -136,4 +136,5 @@ class Operate(object):
             self.results_list.append(results_format)
 
         context['show_list'] = self.results_list
+
         return context
