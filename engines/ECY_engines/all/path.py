@@ -2,6 +2,7 @@ from ECY import rpc
 from ECY import utils
 from ECY.debug import logger
 import os
+import re
 
 
 class Operate(object):
@@ -14,17 +15,53 @@ class Operate(object):
         self.trigger_key = ['\\', '/']
         self._update_root()
 
-    def _update_root(self):
+    def _update_root(self, context=None):
         self.root_path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        if context is None:
+            return
+        try:
+            self.exists_regex = []
+            buffer_path = context['params']['buffer_path']
+            while True:
+                temp = os.path.dirname(buffer_path)
+                if buffer_path == temp:
+                    break
+                buffer_path = temp
+                temp = buffer_path + '/.gitignore'
+                if os.path.exists(temp):
+                    with open(temp, encoding="utf8") as f:
+                        for item in f.read().split('\n'):
+                            if item == '':
+                                continue
+                            self.exists_regex.append(item)
+                    break
+            logger.debug(self.exists_regex)
+        except:
+            pass
+
+    def _apply_ignore(self, item):
+        for regexs in self.exists_regex:
+            try:
+                if re.match(regexs, item) is not None:
+                    return True
+            except:
+                return False
+        return False
 
     def try_listdir(self, try_path):
         try:
-            return os.listdir(try_path)
-        except:
+            res = []
+            for item in os.listdir(try_path):
+                if self._apply_ignore(item):
+                    continue
+                res.append(item)
+            return res
+        except Exception as e:
+            logger.exception(e)
             return []
 
     def OnBufferEnter(self, context):
-        self._update_root()
+        self._update_root(context)
 
     def OnCompletion(self, context):
         params = context['params']
