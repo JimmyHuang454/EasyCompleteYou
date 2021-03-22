@@ -123,8 +123,16 @@ class Operate(object):
 
             results_format['abbr'] = item_name
             results_format['word'] = item_name
-            results_format['info'] = try_dir + item
-
+            path = try_dir + item
+            if os.path.isdir(path):
+                results_format['kind'] = '[Dir]'
+            elif os.path.isfile(path):
+                results_format['kind'] = '[File]'
+            elif os.path.isabs(path):
+                results_format['kind'] = '[Abs]'
+            elif os.path.islink(path):
+                results_format['kind'] = '[Link]'
+            results_format['info'] = path
             self.results_list.append(results_format)
 
         context['show_list'] = self.results_list
