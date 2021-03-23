@@ -71,17 +71,14 @@ class Operate(object):
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
-            if 'triggerCharacters' in self.capabilities[
-                    'signatureHelpProvider']:
+            temp = self.capabilities['signatureHelpProvider']
+            if 'triggerCharacters' in temp:
                 self.signature_help_triggerCharacters.extend(
-                    self.capabilities['signatureHelpProvider']
-                    ['triggerCharacters'])
+                    temp['triggerCharacters'])
 
-            if 'retriggerCharacters' in self.capabilities[
-                    'signatureHelpProvider']:
+            if 'retriggerCharacters' in temp:
                 self.signature_help_triggerCharacters.extend(
-                    self.capabilities['signatureHelpProvider']
-                    ['retriggerCharacters'])
+                    temp['retriggerCharacters'])
 
         self._lsp.initialized()
 
@@ -589,23 +586,35 @@ class Operate(object):
             return
         rpc.DoCall('ECY#hover#Open', [content])
 
-    def _format_markupContent(self, res):
+    def _format_markupContent(self, content):
         content = []
-        if res is None or 'contents' not in res:
+        if content is None:
             return content
 
-        to_show = []
-        content = res['contents']
+        document = []
+        kind = ""
         if type(content) is str:
-            value = content
-        else:
-            if 'kind' in content:
-                to_show.append(content['kind'])
-            elif 'language' in content:
-                to_show.append(content['language'])
-            value = content['value']
-        if value != "":
-            to_show.extend(value.split("\n"))
+            document = content
+        elif type(content) is dict:
+            if 'kind' in content: # MarkupContent
+                kind += content['kind']
+            if 'languageId' in content:
+                kind += content['languageId']
+            if 'value' in content:
+                document.append(content['value'])
+        elif type(content) is list:
+            for item in content:
+                if type(item) is str:
+                    document.append(item)
+                elif type(item) is dict:
+                    if 'languageId' in item:
+                        kind += item['languageId']
+                    if 'value' in item:
+                        document.append(item['value'])
+        to_show = []
+        if kind != "":
+            to_show = [kind]
+        to_show.extend(document)
         return to_show
 
     def FindReferences(self, context):
