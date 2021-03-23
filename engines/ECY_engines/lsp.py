@@ -465,6 +465,19 @@ class Operate(object):
             results_list.append(temp)
         return results_list
 
+    def _goto_response(self, res):
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
+            res = []
+        if len(res) == 0:
+            self._show_msg("No position to go.")
+            return
+        rpc.DoCall('ECY#goto#Do', [res])
+
     def GotoDefinition(self, context):
         if 'definitionProvider' not in self.capabilities:
             self._show_msg('GotoDefinition are not supported.')
@@ -480,14 +493,7 @@ class Operate(object):
 
         res = self._lsp.definition(position,
                                    uri).GetResponse(timeout=self.timeout)
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-
-        res = res['result']
-        if res is None:
-            res = []
-        rpc.DoCall('ECY#goto#Do', [res])
+        self._goto_response(res)
 
     def GotoTypeDefinition(self, context):
         if 'typeDefinitionProvider' not in self.capabilities:
@@ -504,14 +510,7 @@ class Operate(object):
 
         res = self._lsp.typeDefinition(position,
                                        uri).GetResponse(timeout=self.timeout)
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-
-        res = res['result']
-        if res is None:
-            res = []
-        rpc.DoCall('ECY#goto#Do', [res])
+        self._goto_response(res)
 
     def GotoImplementation(self, context):
         if 'implementationProvider' not in self.capabilities:
@@ -528,14 +527,7 @@ class Operate(object):
 
         res = self._lsp.implementation(position,
                                        uri).GetResponse(timeout=self.timeout)
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-
-        res = res['result']
-        if res is None:
-            res = []
-        rpc.DoCall('ECY#goto#Do', [res])
+        self._goto_response(res)
 
     def GotoDeclaration(self, context):
         if 'declarationProvider' not in self.capabilities:
@@ -553,14 +545,7 @@ class Operate(object):
         res = self._lsp.declaration(position,
                                     uri).GetResponse(timeout=self.timeout)
 
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-
-        res = res['result']
-        if res is None:
-            res = []
-        rpc.DoCall('ECY#goto#Do', [res])
+        self._goto_response(res)
 
     def OnHover(self, context):
         if 'hoverProvider' not in self.capabilities:
@@ -598,7 +583,7 @@ class Operate(object):
         if type(content) is str:
             document = content.split('\n')
         elif type(content) is dict:
-            if 'kind' in content: # MarkupContent
+            if 'kind' in content:  # MarkupContent
                 kind += content['kind']
             if 'language' in content:
                 kind += content['language']
@@ -635,14 +620,7 @@ class Operate(object):
 
         res = self._lsp.references(position,
                                    uri).GetResponse(timeout=self.timeout)
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-
-        res = res['result']
-        if res is None:
-            res = []
-        rpc.DoCall('ECY#goto#Do', [res])
+        self._goto_response(res)
 
     def GetCodeLens(self, context):
         if 'codeLensProvider' not in self.capabilities:
