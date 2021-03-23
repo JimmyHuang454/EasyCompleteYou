@@ -600,19 +600,19 @@ class Operate(object):
         elif type(content) is dict:
             if 'kind' in content: # MarkupContent
                 kind += content['kind']
-            if 'languageId' in content:
-                kind += content['languageId']
+            if 'language' in content:
+                kind += content['language']
             if 'value' in content:
                 document.extend(content['value'].split('\n'))
         elif type(content) is list:
             for item in content:
                 if type(item) is str:
-                    document.append(item)
+                    document.extend(item.split('\n'))
                 elif type(item) is dict:
-                    if 'languageId' in item:
-                        kind += item['languageId']
+                    if 'language' in item:
+                        kind += item['language']
                     if 'value' in item:
-                        document.append(item['value'].split('\n'))
+                        document.extend(item['value'].split('\n'))
         logger.debug(document)
         to_show = []
         if kind != "":
