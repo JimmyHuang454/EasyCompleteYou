@@ -580,28 +580,30 @@ class Operate(object):
             self._show_msg(res['error']['message'])
             return
 
-        content = self._format_markupContent(res['result'])
+        res = res['result']
+        content = []
+        if 'contents' in res:
+            content = self._format_markupContent(res['contents'])
         if content == []:
             self._show_msg('Nothing to show')
             return
         rpc.DoCall('ECY#hover#Open', [content])
 
     def _format_markupContent(self, content):
-        content = []
         if content is None:
-            return content
+            return []
 
         document = []
         kind = ""
         if type(content) is str:
-            document = content
+            document = content.split('\n')
         elif type(content) is dict:
             if 'kind' in content: # MarkupContent
                 kind += content['kind']
             if 'languageId' in content:
                 kind += content['languageId']
             if 'value' in content:
-                document.append(content['value'])
+                document.extend(content['value'].split('\n'))
         elif type(content) is list:
             for item in content:
                 if type(item) is str:
@@ -610,7 +612,8 @@ class Operate(object):
                     if 'languageId' in item:
                         kind += item['languageId']
                     if 'value' in item:
-                        document.append(item['value'])
+                        document.append(item['value'].split('\n'))
+        logger.debug(document)
         to_show = []
         if kind != "":
             to_show = [kind]
