@@ -24,6 +24,7 @@ fun! ECY#rpc#rpc_event#call(params)
     call Function(l:event_name)
   endfor
 
+  let l:params['event_name'] = l:event_name
   let l:send_msg = {'event_name': l:event_name, 'params': l:params}
   call ECY#rpc#rpc_main#RPCEventsAll(l:send_msg)
 

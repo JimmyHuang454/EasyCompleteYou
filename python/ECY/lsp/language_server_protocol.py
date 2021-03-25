@@ -638,6 +638,10 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}, 'position': position}
         return self._build_send(params, 'textDocument/definition')
 
+    def prepareCallHierarchy(self, position, uri):
+        params = {'textDocument': {'uri': uri}, 'position': position}
+        return self._build_send(params, 'textDocument/prepareCallHierarchy')
+
     def PathToUri(self, file_path):
         return urljoin('file:', pathname2url(file_path))
 

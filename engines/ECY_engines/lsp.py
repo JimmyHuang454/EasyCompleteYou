@@ -639,6 +639,24 @@ class Operate(object):
             return
         # TODO
 
+    def PrepareCallHierarchy(self, context):
+        params = context['params']
+        if 'callHierarchyProvider' not in self.capabilities:
+            self._show_msg('%s are not supported.' % (params['event_name']))
+            return
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+        res = self._lsp.prepareCallHierarchy(
+            position, uri).GetResponse(timeout=self.timeout)
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
     def Rename(self, context):
         if 'renameProvider' not in self.capabilities:
             self._show_msg('Rename are not supported.')

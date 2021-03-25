@@ -110,6 +110,20 @@ fun! ECY2_main#GotoDefinition() abort
 "}}}
 endf
 
+fun! ECY2_main#PrepareCallHierarchy() abort
+"{{{
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'PrepareCallHierarchy', 'params': l:params})
+"}}}
+endf
+
 fun! ECY2_main#GotoImplementation() abort
 "{{{
   let l:params = {
