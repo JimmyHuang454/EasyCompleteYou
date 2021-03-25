@@ -12,6 +12,7 @@ class Operate(lsp.Operate):
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
+
         if context is None:
             return  # server not supports.
         show_list = []
@@ -30,6 +31,18 @@ class Operate(lsp.Operate):
                 item['kind'])
             results_format['abbr'] = item_name
             results_format['word'] = item_name
+
+            if 'detail' in item:
+                results_format['menu'] = item['detail']
+            if 'documentation' in item:
+                results_format['info'] = self._format_markupContent(
+                    item['documentation'])
+            if 'insertTextFormat' in item:
+                if item['insertTextFormat'] == 2 and 'textEdit' in item:
+                    textEdit = item['textEdit']
+                    results_format['snippet'] = textEdit['newText']
+                    results_format['kind'] += '~'
+
             show_list.append(results_format)
         context['show_list'] = show_list
         return context

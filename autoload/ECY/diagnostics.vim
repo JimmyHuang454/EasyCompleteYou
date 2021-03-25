@@ -30,7 +30,7 @@ function ECY#diagnostics#Init() abort
 
   " can not use sign_define()
   silent! execute 'sign define ECY_diagnostics_erro text=>> texthl=' . g:ECY_erro_sign_highlight
-  silent! execute 'sign define ECY_diagnostics_warn text=!! texthl=' . g:ECY_warn_sign_highlight
+  silent! execute 'sign define ECY_diagnostics_warn text=>> texthl=' . g:ECY_warn_sign_highlight
 
   " call sign_define("ECY_diagnostics_erro", {
   "   \ "text" : ">>",

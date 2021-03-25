@@ -150,6 +150,7 @@ class Operate(object):
             self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
 
+
 # }}}
 
     def OnBufferEnter(self, context):
@@ -387,9 +388,6 @@ class Operate(object):
         context['result'] = returns['result']
         logger.debug(context)
         return context
-
-
-# 2021-03-13 11:20:36.003 | INFO     | ECY.lsp.language_server_protocol:Debug:80 - <---{"jsonrpc":"2.0","method":"textDocument/publishDiagnostics","params":{"uri":"file:///c%3A/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines/ECY_engines/python/pyright/pyright.py","diagnostics":[{"range":{"start":{"line":0,"character":5},"end":{"line":0,"character":16}},"message":"Import \"ECY_engines\" could not be resolved","severity":1,"code":"reportMissingImports","source":"Pyright","codeDescription":{"href":"https://github.com/microsoft/pyright/blob/master/docs/configuration.md"}},{"range":{"start":{"line":53,"character":16},"end":{"line":53,"character":30}},"message":"\"documentextend\" is not defined","severity":1,"code":"reportUndefinedVariable","source":"Pyright","codeDescription":{"href":"https://github.com/microsoft/pyright/blob/master/docs/configuration.md"}},{"range":{"start":{"line":53,"character":31},"end":{"line":53,"character":35}},"message":"\"temp\" is possibly unbound","severity":1,"code":"reportUnboundVariable","source":"Pyright","codeDescription":{"href":"https://github.com/microsoft/pyright/blob/master/docs/configuration.md"}}]}}
 
     def _diagnosis_analysis(self, params):
         results_list = []
