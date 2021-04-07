@@ -8,8 +8,8 @@ import re
 class Operate(object):
     def __init__(self):
         self.workspace_symbol = ['.', '~']
-        self.refresh_regex = r'[\.\~\@\$\/\\\w+]'
-        self.refresh_regex2 = r'[\.\w+]'
+        self.refresh_regex = r'[\.\~\-\@\$\/\\\w+]'
+        self.refresh_regex2 = r'[\.\-\w+]'
         self.current_position_cache = {}
         self.results_list = []
         self.trigger_key = ['\\', '/']

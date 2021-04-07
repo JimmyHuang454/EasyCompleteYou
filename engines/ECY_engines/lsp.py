@@ -567,6 +567,7 @@ class Operate(object):
         content = []
         if 'contents' in res:
             content = self._format_markupContent(res['contents'])
+
         if content == []:
             self._show_msg('Nothing to show')
             return
@@ -601,6 +602,8 @@ class Operate(object):
         if kind != "":
             to_show = [kind]
         to_show.extend(document)
+        if to_show == [""]:
+            return []
         return to_show
 
     def FindReferences(self, context):
@@ -627,12 +630,6 @@ class Operate(object):
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
-        start_position = params['buffer_position']
-        position = {
-            'line': start_position['line'],
-            'character': start_position['colum']
-        }
-
         res = self._lsp.codeLens(uri).GetResponse(timeout=self.timeout)
         if 'error' in res:
             self._show_msg(res['error']['message'])

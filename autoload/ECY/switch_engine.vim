@@ -89,13 +89,11 @@ fun! s:InsertLeave()
   if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
     return
   endif
-  if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == 'nothing'
-    return
-  endif
+
   let g:ECY_file_type_info2[l:file_type]['filetype_using'] = 
         \g:ECY_file_type_info2[l:file_type]['last_engine_name']
 
-  let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = 'nothing'
+  unlet g:ECY_file_type_info2[l:file_type]['last_engine_name']
   doautocmd <nomodeline> BufEnter
   doautocmd <nomodeline> InsertLeave
 "}}}
@@ -305,19 +303,13 @@ function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
   let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
-  try
-    if g:ECY_file_type_info2[l:file_type]['last_engine_name'] == a:engine_name 
-      if a:0 == 0
-        return ''
-      else
-        return a:1
-      endif
+  if g:ECY_file_type_info2[l:file_type]['filetype_using'] != a:engine_name
+    if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
+      let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
     endif
-  catch 
-  endtry
-  let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
-  let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
-  call ECY#rpc#rpc_event#OnBufferEnter()
+    let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
+    call ECY#rpc#rpc_event#OnBufferEnter()
+  endif
   if a:0 == 0
     return ''
   else
