@@ -7,7 +7,7 @@ import re
 
 class Operate(object):
     def __init__(self):
-        self.workspace_symbol = ['.', '~']
+        self.workspace_symbol = ['@', '~']
         self.refresh_regex = r'[\.\~\-\@\$\/\\\w+]'
         self.refresh_regex2 = r'[\.\-\w+]'
         self.current_position_cache = {}
@@ -63,8 +63,29 @@ class Operate(object):
     def OnBufferEnter(self, context):
         self._update_root(context)
 
+    def _handle_dot(self, try_path, root):
+        temp = try_path
+        root = root.replace('\\', '/')
+
+        if temp[:2] == './':
+            return root + '/' + temp[2:]
+        up_counts = 0
+        try:
+            while True:
+                if temp[:3] != '../':
+                    break
+                temp = temp[3:]
+                up_counts += 1
+                root = os.path.dirname(root)
+        except:
+            pass
+        if up_counts != 0:
+            return root + '/' + temp
+        return try_path
+
     def OnCompletion(self, context):
         params = context['params']
+        path = params['buffer_path']
         start_position = params['buffer_position']
         context['show_list'] = self.results_list
         context['trigger_key'] = self.trigger_key
@@ -101,11 +122,13 @@ class Operate(object):
         if len(try_dir) == 0:
             return
 
-        if try_dir[0] in self.workspace_symbol:
-            try_dir = self.root_path + try_dir[1:]
-
         if utils.GetCurrentOS() == 'Windows':
             try_dir = try_dir.replace('\\', '/')
+
+        if try_dir[0] in self.workspace_symbol:
+            try_dir = self.root_path + try_dir[1:]
+        elif try_dir[0] == '.':
+            try_dir = self._handle_dot(try_dir, self.root_path)
 
         logger.debug(try_dir)
         dir_list = self.try_listdir(try_dir)
