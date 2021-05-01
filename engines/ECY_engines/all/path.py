@@ -85,7 +85,7 @@ class Operate(object):
 
     def OnCompletion(self, context):
         params = context['params']
-        path = params['buffer_path']
+        buffer_path = params['buffer_path']
         start_position = params['buffer_position']
         context['show_list'] = self.results_list
         context['trigger_key'] = self.trigger_key
@@ -128,7 +128,7 @@ class Operate(object):
         if try_dir[0] in self.workspace_symbol:
             try_dir = self.root_path + try_dir[1:]
         elif try_dir[0] == '.':
-            try_dir = self._handle_dot(try_dir, self.root_path)
+            try_dir = self._handle_dot(try_dir, buffer_path)
 
         logger.debug(try_dir)
         dir_list = self.try_listdir(try_dir)
