@@ -57,6 +57,15 @@ class Mannager(object):
                 if event_name == 'OnCheckEngine':
                     self.CheckEngine(context)
                     continue
+                elif event_name == 'ReStart':
+                    try:
+                        module_obj = importlib.import_module(engine_name)
+                        temp = module_obj.Operate()
+                        del engine_info['engine_obj']
+                        engine_info['engine_obj'] = temp
+                    except:
+                        pass
+                    continue
                 pre_context = self.CallFunction(self.events_pre, event_name,
                                                 engine_name, before_context)
                 if pre_context is False:  # filter this event

@@ -17,6 +17,7 @@ class Operate(object):
 
     def _update_root(self, context=None):
         self.root_path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        self.root_path = self.root_path.replace('\\', '/')
         if context is None:
             return
         try:
@@ -65,7 +66,6 @@ class Operate(object):
 
     def _handle_dot(self, try_path, root):
         temp = try_path
-        root = root.replace('\\', '/')
 
         if temp[:2] == './':
             return root + '/' + temp[2:]

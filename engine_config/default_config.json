@@ -25,9 +25,41 @@
   },
   "ECY_engines.python.pyls.pyls": {
     "cmd": {
-      "default_value": "pyls",
+      "default_value": "jedi-language-server",
       "type": "string",
       "des": ["cmd to start pyls."]
+    },
+    "initializationOptions": {
+      "default_value": {
+        "codeAction": {
+          "nameExtractVariable": "jls_extract_var",
+          "nameExtractFunction": "jls_extract_def"
+        },
+        "completion": {
+          "disableSnippets": false,
+          "resolveEagerly": false
+        },
+        "diagnostics": {
+          "enable": true,
+          "didOpen": true,
+          "didChange": true,
+          "didSave": true
+        },
+        "jediSettings": {
+          "autoImportModules": [],
+          "caseInsensitiveCompletion": true
+        },
+        "markupKindPreferred": "markdown",
+        "workspace": {
+          "extraPaths": [],
+          "symbols": {
+            "ignoreFolders": [".nox", ".tox", ".venv", "__pycache__", "venv"],
+            "maxSymbols": 20
+          }
+        }
+      },
+      "type": "dict",
+      "des": ["init opts"]
     }
   }
 }

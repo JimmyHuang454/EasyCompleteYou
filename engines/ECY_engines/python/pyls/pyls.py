@@ -6,10 +6,12 @@ class Operate(lsp.Operate):
     def __init__(self):
         engine_name = 'ECY_engines.python.pyls.pyls'
         starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
-
+        initializationOptions = utils.GetEngineConfig(engine_name,
+                                                      'initializationOptions')
         lsp.Operate.__init__(self,
                              engine_name,
                              starting_cmd,
+                             initializationOptions=initializationOptions,
                              languageId='python')
 
     def OnCompletion(self, context):

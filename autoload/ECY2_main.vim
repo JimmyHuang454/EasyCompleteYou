@@ -39,6 +39,13 @@ fun! ECY2_main#CheckAllEngine() abort
 "}}}
 endf
 
+fun! ECY2_main#ReStart() abort
+"{{{
+  call ECY#rpc#rpc_event#call({'event_name': 'ReStart', 'params': {}})
+  doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
+"}}}
+endf
+
 fun! ECY2_main#GetCodeLens() abort
 "{{{
   let l:params = {

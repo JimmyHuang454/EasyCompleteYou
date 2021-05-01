@@ -229,7 +229,7 @@ class LSP(conec.Operate):
                 "completionItem": {
                     "snippetSupport": True,
                     "commitCharactersSupport": False,
-                    "documentationFormat": [],
+                    "documentationFormat": ['plaintext', 'markdown'],
                     "deprecatedSupport": True,
                     "preselectSupport": False
                 },
