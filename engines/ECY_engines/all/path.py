@@ -65,10 +65,11 @@ class Operate(object):
         self._update_root(context)
 
     def _handle_dot(self, try_path, root):
+        root = os.path.dirname(root)
         temp = try_path
 
         if temp[:2] == './':
-            return root + '/' + temp[2:]
+            return root + '/'
         up_counts = 0
         try:
             while True:
