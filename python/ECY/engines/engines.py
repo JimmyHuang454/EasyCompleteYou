@@ -8,6 +8,10 @@ from ECY.engines import events_callback
 from ECY.engines import events_pre
 
 
+def Echo(msg):
+    rpc.DoCall('ECY#utils#echo', [msg])
+
+
 class Mannager(object):
     """docstring for Mannager"""
     def __init__(self):
@@ -64,7 +68,9 @@ class Mannager(object):
                         del engine_info['engine_obj']
                         engine_info['engine_obj'] = temp
                     except:
-                        pass
+                        Echo('Failed to reload %s' % (engine_name))
+                        continue
+                    Echo('Reload %s OK.' % (engine_name))
                     continue
                 pre_context = self.CallFunction(self.events_pre, event_name,
                                                 engine_name, before_context)
@@ -80,10 +86,9 @@ class Mannager(object):
                 engine_info['res_queue'].put(callback_context)
             except Exception as e:
                 logger.exception(e)
-                rpc.DoCall('ECY#utils#echo', [
+                Echo(
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
-                    % (engine_name)
-                ])
+                    % (engine_name))
 
     def InstallEngine(self, engine_pack_name):
         engine_info = {}
@@ -96,10 +101,6 @@ class Mannager(object):
             engine_info['engine_obj'] = module_obj.Operate()
         except Exception as e:
             logger.exception(e)
-            # rpc.DoCall('rpc_main#echo', [
-            #     'Failed to install [%s], check log info for more.' %
-            #     (engine_pack_name)
-            # ])
             return False
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()

@@ -244,22 +244,33 @@ function! s:ShowDiagnosis_vim(index_list) abort
     let l:colum = string(item['position']['range']['start']['colum'])
     let l:index = string(s:current_diagnostics['index'] + 1)
     let l:lists_len = string(len(g:ECY_diagnostics_items_all))
-    let l:nr = "(" . l:index . '/' . l:lists_len . ')'
+    let l:nr = printf('(%s/%s)', l:index, l:lists_len)
     if item['kind'] == 1
       let l:style = 'ECY_diagnostics_erro'
     else
       let l:style = 'ECY_diagnostics_warn'
     endif
-    call add(l:text, l:style . ' [' .l:line . ', ' . l:colum . '] ' . l:nr)
+    call add(l:text, printf('%s [%s, %s] %s', l:style, l:line, l:colum, l:nr))
     let l:temp = item['diagnostics']
     if type(l:temp) == 1
       " strings
       call add(l:text, '(' . l:temp . ')')
     elseif type(l:temp) == 3
       " lists
-      let l:temp[0] = '(' . l:temp[0]
-      let l:temp[len(l:temp) - 1] .= ')'
-      call extend(l:text, l:temp)
+      if len(l:temp) == 1
+        call add(l:text, '('.l:temp[0].')')
+      else
+        let i = 0
+        for item in l:temp
+          if i == 0
+            call add(l:text, '('.item)
+          else
+            call add(l:text, item)
+          endif
+          let i += 1
+        endfor
+        call add(l:text, l:temp[i - 1].')')
+      endif
     endif
   endfor
   if g:ECY_PreviewWindows_style == 'append'
