@@ -1,0 +1,48 @@
+{
+  "engines_list": [{
+    "file_type": ["all"],
+    "engine_name": "ECY.engines.default_engine"
+  }, {
+    "file_type": ["all"],
+    "engine_name": "ECY_engines.all.path"
+  }, {
+    "file_type": ["c", "cpp", "cuda"],
+    "engine_name": "ECY_engines.cpp.clangd.clangd"
+  }, {
+    "file_type": ["latex", "tex"],
+    "engine_name": "ECY_engines.tex.texlab.texlab"
+  }, {
+    "file_type": ["python"],
+    "engine_name": "ECY_engines.python.pyright.pyright"
+  }, {
+    "file_type": ["python"],
+    "engine_name": "ECY_engines.python.pyls.pyls"
+  }, {
+    "file_type": ["go"],
+    "engine_name": "ECY_engines.golang.gopls.gopls"
+  }, {
+    "file_type": ["all"],
+    "engine_name": "ECY_engines.vim_lsp.vim_lsp"
+  }, {
+    "file_type": ["rust"],
+    "engine_name": "ECY_engines.rust.rust_analyzer.rust_analyzer"
+  }, {
+    "file_type": ["all"],
+    "engine_name": "ECY_engines.snippet.ultisnips.ultisnips"
+  }, {
+    "file_type": ["all"],
+    "engine_name": "ECY_engines.pygment.pygment"
+  }, {
+    "file_type": ["javascript", "typescript"],
+    "engine_name": "ECY_engines.javascript.theia.theia"
+  }, {
+    "file_type": ["html", "xhtml", "vue"],
+    "engine_name": "ECY_engines.html.lsp.html_lsp"
+  }, {
+    "file_type": ["vim"],
+    "engine_name": "ECY_engines.viml.vim_ts.vim"
+  }, {
+    "file_type": ["vue"],
+    "engine_name": "ECY_engines.html.lsp.vls"
+  }]
+}
