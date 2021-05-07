@@ -79,7 +79,8 @@ class Operate():
             temp = jedi.Script(line_text, line_nr, current_colum, path)
             # environment=self._get_environment(context['ForceVersion']))
             return temp
-        except:
+        except Exception as e:
+            logger.exception(e)
             return []
 
     def _get_auto_env(self):
@@ -273,11 +274,7 @@ class Operate():
                     'current_colum'] or self._jedi_cache[
                         'line_counts'] != content_len:
             # sometimes, jedi will fail, so we try.
-            try:
-                src = self._GetJediScript(context).completions()
-            except:
-                src = []
-
+            src = self._GetJediScript(context).completions()
             if len(src) == 0:
                 context['show_list'] = []
                 return context

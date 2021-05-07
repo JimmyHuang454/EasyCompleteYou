@@ -250,7 +250,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
     else
       let l:style = 'ECY_diagnostics_warn'
     endif
-    call add(l:text, printf('%s [%s, %s] %s', l:style, l:line, l:colum, l:nr))
+    call add(l:text, printf('%s [L-%s, C-%s] %s', l:style, l:line, l:colum, l:nr))
     let l:temp = item['diagnostics']
     if type(l:temp) == 1
       " strings

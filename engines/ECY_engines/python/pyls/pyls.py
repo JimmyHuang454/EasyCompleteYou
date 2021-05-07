@@ -33,14 +33,20 @@ class Operate(lsp.Operate):
             results_format['kind'] = self._lsp.GetKindNameByNumber(
                 item['kind'])
 
-            item_name = item['label']
+            item_name = item['filterText']
 
-            if 'insertText' in item:
-                item_name = item['insertText']
-            else:
-                pass
             results_format['abbr'] = item_name
             results_format['word'] = item_name
+
+            try:
+                if item['insertTextFormat'] == 2:
+                    temp = item['insertText']
+                    if '$' in temp or '(' in temp or '{' in temp:
+                        temp = temp.replace('{\\}', '\{\}')
+                        results_format['snippet'] = temp
+                        results_format['kind'] += '~'
+            except:
+                pass
 
             detail = []
             if 'detail' in item:
@@ -51,8 +57,16 @@ class Operate(lsp.Operate):
                     results_format['menu'] = item['detail']
 
             document = []
+            if 'label' in item:
+                temp = item['label']
+                if temp[0] == ' ':
+                    temp = temp[1:]
+                if results_format['kind'] == 'Function':
+                    temp = detail[0] + ' ' + temp
+                document.append(temp)
+                document.append('')
+
             if 'documentation' in item:
-                temp = []
                 if type(item['documentation']) is str:
                     temp = item['documentation'].split('\n')
                 elif type(item['documentation']) is dict:
