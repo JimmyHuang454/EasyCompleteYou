@@ -43,6 +43,7 @@
     "engine_name": "ECY_engines.viml.vim_ts.vim"
   }, {
     "file_type": ["vue"],
+    "disabled": false,
     "engine_name": "ECY_engines.html.lsp.vls"
   }]
 }

@@ -180,6 +180,11 @@ fun! ECYAddEngine(info)
   if !exists('g:ECY_all_buildin_engine')
     let g:ECY_all_buildin_engine = []
   endif
+  if has_key(a:info, 'disabled')
+    if a:info['disabled']
+      return
+    endif
+  endif
   call add(g:ECY_all_buildin_engine, a:info)
   "}}}
 endf
