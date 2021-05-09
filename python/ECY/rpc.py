@@ -81,7 +81,7 @@ def FallBack():
             while i < (lens - 1):
                 if content_split[i] == '':
                     continue
-                context = json.loads(content_split[i], encoding='utf-8')
+                context = json.loads(content_split[i])
                 if context['type'] == 'event':
                     g_event_handle_thread.put(context)
                 elif context['type'] == 'fallback':
