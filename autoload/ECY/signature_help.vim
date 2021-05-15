@@ -114,6 +114,10 @@ fun! s:Vim(results) abort
   let l:nr = popup_create(l:to_show, l:opts)
   let g:ECY_windows_are_showing['signature_help'] = l:nr
 
+  if len(a:results['signatures']) == 0
+    return
+  endif
+
   let l:activeSignature = 0
   if has_key(a:results, 'activeSignature')
     let l:activeSignature = a:results['activeSignature']
@@ -122,20 +126,20 @@ fun! s:Vim(results) abort
   let l:signatures = a:results['signatures'][l:activeSignature]
   let g:ECY_signature_help_activeParameter = s:Translate(string(l:activeSignature) . '.')
 
-
   let g:ECY_signature_help_activeSignature = ''
-  if has_key(a:results, 'activeParameter') && len(l:signatures) != 0
+  if has_key(a:results, 'activeParameter')
     let l:parameters = l:signatures['parameters']
     let l:activeParameter = a:results['activeParameter']
-    let l:activeParameter = l:parameters[l:activeParameter]
+    try
+      let l:activeParameter = l:parameters[l:activeParameter]
+      let g:ECY_signature_help_activeSignature = s:Translate(l:activeParameter['label'])
 
-    let g:ECY_signature_help_activeSignature = s:Translate(['label'])
-
-    if has_key(l:activeParameter, 'documentation')
-      call add(l:to_show, g:ECY_cut_line)
-      call extend(l:to_show, l:activeParameter['documentation'])
-    endif
-
+      if has_key(l:activeParameter, 'documentation')
+        call add(l:to_show, g:ECY_cut_line)
+        call extend(l:to_show, l:activeParameter['documentation'])
+      endif
+    catch
+    endtry
   endif
 
   call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_signature_help')
