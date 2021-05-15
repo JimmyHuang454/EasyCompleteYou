@@ -114,10 +114,6 @@ fun! s:Vim(results) abort
   let l:nr = popup_create(l:to_show, l:opts)
   let g:ECY_windows_are_showing['signature_help'] = l:nr
 
-  if len(a:results['signatures']) == 0
-    return
-  endif
-
   let l:activeSignature = 0
   if has_key(a:results, 'activeSignature')
     let l:activeSignature = a:results['activeSignature']

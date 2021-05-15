@@ -3,7 +3,6 @@ from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
 from ECY import rpc
-# c:\Users\qwer\Desktop\vimrc\myproject\ECY\RPC\EasyCompleteYou2\engines\ECY_engines\lsp.py
 
 
 class Operate(object):
@@ -189,14 +188,38 @@ class Operate(object):
         if res is None:
             return
 
-        if 'signatures' in res:
-            for item in res['signatures']:
-                if 'parameters' not in item:
-                    continue
-                for item2 in item['parameters']:
-                    if 'documentation' in item2:
-                        item2['documentation'] = self._format_markupContent(
-                            item2)
+        if len(res['signatures']) == 0:
+            return
+
+        i = 0
+        content = []
+        for item in res['signatures']:
+            content.append("%s. %s" % (i, item['label']))
+
+        hilight_str = []
+        if 'activeSignature' in res and res['activeSignature'] is not None:
+            hilight_str.append("%s\." % (res['activeSignature']))
+            activeSignature = res['activeSignature']
+        else:
+            activeSignature = {}
+
+        if 'activeParameter' in res and res['activeParameter'] is not None:
+            try:
+                activeParameter = res['parameters'][res['activeParameter']]
+                hilight_str.append("%s" % (activeParameter))
+            except:
+                activeParameter = {}
+        else:
+            activeParameter = {}
+
+        if 'documentation' in activeParameter:
+            content.extend(
+                self._format_markupContent(activeParameter['documentation']))
+
+        if 'documentation' in activeSignature:
+            content.extend(
+                self._format_markupContent(activeSignature['documentation']))
+
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
 
@@ -243,12 +266,7 @@ class Operate(object):
 
         document = []
         if 'documentation' in res:
-            temp = []
-            if type(res['documentation']) is str:
-                temp = res['documentation'].split('\n')
-            elif type(res['documentation']) is dict:
-                temp = res['documentation']['value'].split('\n')
-            document.extend(temp)
+            document.extend(self._format_markupContent(res['documentation']))
 
         detail = []
         if 'detail' in res:
@@ -574,6 +592,7 @@ class Operate(object):
         rpc.DoCall('ECY#hover#Open', [content])
 
     def _format_markupContent(self, content):
+        # content = res['documentation']
         if content is None:
             return []
 
@@ -597,7 +616,6 @@ class Operate(object):
                         kind += item['language']
                     if 'value' in item:
                         document.extend(item['value'].split('\n'))
-        logger.debug(document)
         to_show = []
         if kind != "":
             to_show = [kind]
