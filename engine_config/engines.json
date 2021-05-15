@@ -45,5 +45,9 @@
     "file_type": ["vue"],
     "disabled": false,
     "engine_name": "ECY_engines.html.lsp.vls"
+  }, {
+    "file_type": ["all"],
+    "disabled": false,
+    "engine_name": "ECY_engines.all.spell"
   }]
 }

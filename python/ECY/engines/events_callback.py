@@ -58,11 +58,15 @@ class Operate():
             item['ECY_item_index'] = i
             i += 1
 
-        context['show_list'] = self.fuzzy_match.FilterItems(
-            context['filter_key'],
-            context['show_list'],
-            isindent=self.is_indent,
-            isreturn_match_point=self.is_indent)
+        if 'is_filter' not in context:
+            context['is_filter'] = True
+
+        if context['is_filter']:
+            context['show_list'] = self.fuzzy_match.FilterItems(
+                context['filter_key'],
+                context['show_list'],
+                isindent=self.is_indent,
+                isreturn_match_point=self.is_indent)
 
         if 'must_show' not in context:
             if 'trigger_key' in context:

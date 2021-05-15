@@ -1,6 +1,8 @@
 import re
 from ECY import rpc
 import sys
+import subprocess
+import importlib
 
 
 def MatchFilterKeys(line_text, regex):
@@ -60,6 +62,19 @@ def GetDefaultValue(var_name, default_value):
     if rpc.DoCall('exists', [var_name]):
         default_value = rpc.GetVaribal(var_name)
     return default_value
+
+
+def InstallPackage(package_name):
+    try:
+        package_obj = importlib.import_module(package_name)
+    except:
+        subprocess.Popen('python3 -m pip install %s' % (package_name),
+                         shell=True).wait()
+        try:
+            package_obj = importlib.import_module(package_name)
+        except:
+            return
+    return package_obj
 
 
 def GetEngineConfig(engine_name, opt_name):
