@@ -245,7 +245,7 @@ class LSP(conec.Operate):
             "signatrueHelp": {
                 "dynamicRegistration": False,
                 "signatrueInformation": {
-                    "documentationFormat": [],
+                    "documentationFormat": ['plaintext'],
                     "parameterInformation": {
                         "labelOffsetSupport": True
                     }

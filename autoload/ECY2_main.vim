@@ -63,9 +63,8 @@ endf
 fun! ECY2_main#Rename() abort
 "{{{
   
-  let l:new_name = input('new name: ')
+  let l:new_name = ECY#utils#Input('New name: ')
   if l:new_name == ''
-    call ECY#utils#echo('Quited rename.')
     return
   endif
   let l:params = {

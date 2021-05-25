@@ -87,6 +87,16 @@ fun! ECY#utils#GetCurrentBufferFileType()
 "}}}
 endf
 
+fun! ECY#utils#Input(hint)
+"{{{
+  let l:new_name = input(a:hint)
+  if l:new_name == ''
+    call ECY#utils#echo('Quited input.')
+  endif
+  return l:new_name
+"}}}
+endf
+
 fun! ECY#utils#show(msg, style, title)
 "{{{
   if type(a:msg) != v:t_string

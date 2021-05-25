@@ -42,6 +42,8 @@ class Operate(object):
         self._did_open_list = {}
         self._diagnosis_cache = []
         self.results_list = []
+        self.rename_info = {}
+        self.rename_id = 0
         self.workspace_cache = []
         self.completion_position_cache = {}
         self.completion_isInCompleted = True
@@ -188,37 +190,37 @@ class Operate(object):
         if res is None:
             return
 
-        if len(res['signatures']) == 0:
-            return
+        # if len(res['signatures']) == 0:
+        #     return
 
-        i = 0
-        content = []
-        for item in res['signatures']:
-            content.append("%s. %s" % (i, item['label']))
+        # i = 0
+        # content = []
+        # for item in res['signatures']:
+        #     content.append("%s. %s" % (i, item['label']))
 
-        hilight_str = []
-        if 'activeSignature' in res and res['activeSignature'] is not None:
-            hilight_str.append("%s\." % (res['activeSignature']))
-            activeSignature = res['activeSignature']
-        else:
-            activeSignature = {}
+        # hilight_str = []
+        # if 'activeSignature' in res and res['activeSignature'] is not None:
+        #     hilight_str.append("%s\." % (res['activeSignature']))
+        #     activeSignature = res['activeSignature']
+        # else:
+        #     activeSignature = {}
 
-        if 'activeParameter' in res and res['activeParameter'] is not None:
-            try:
-                activeParameter = res['parameters'][res['activeParameter']]
-                hilight_str.append("%s" % (activeParameter))
-            except:
-                activeParameter = {}
-        else:
-            activeParameter = {}
+        # if 'activeParameter' in res and res['activeParameter'] is not None:
+        #     try:
+        #         activeParameter = res['parameters'][res['activeParameter']]
+        #         hilight_str.append("%s" % (activeParameter))
+        #     except:
+        #         activeParameter = {}
+        # else:
+        #     activeParameter = {}
 
-        if 'documentation' in activeParameter:
-            content.extend(
-                self._format_markupContent(activeParameter['documentation']))
+        # if 'documentation' in activeParameter:
+        #     content.extend(
+        #         self._format_markupContent(activeParameter['documentation']))
 
-        if 'documentation' in activeSignature:
-            content.extend(
-                self._format_markupContent(activeSignature['documentation']))
+        # if 'documentation' in activeSignature:
+        #     content.extend(
+        #         self._format_markupContent(activeSignature['documentation']))
 
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
@@ -672,9 +674,23 @@ class Operate(object):
             self._show_msg(res['error']['message'])
             return
 
+    def _rename_callabck(self, context):
+        if 'rename_id' not in context or context[
+                'rename_id'] not in self.rename_info:
+            return
+        rename_info = self.rename_info[context['rename_id']]
+        if 'is_quit' in context and context['is_quit']:
+            pass  # return
+        else:
+            rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])
+        del self.rename_info[context['rename_id']]
+
     def Rename(self, context):
         if 'renameProvider' not in self.capabilities:
-            self._show_msg('Rename are not supported.')
+            self._show_msg('Rename is not supported.')
+            return
+        if 'is_callback' in context and context['is_callback']:
+            self._rename_callabck(context)
             return
         params = context['params']
         text = params['buffer_content']
@@ -698,6 +714,10 @@ class Operate(object):
 
         res = res['result']
         if res is None:
-            self._show_msg("Failded to rename")
+            self._show_msg("Failded to get rename info from language server.")
             return
-        rpc.DoCall('ECY#code_action#ApplyEdit', [res])
+        self.rename_id += 1
+        rename_info = {'rename_id': self.rename_id, 'res': res}
+        self.rename_info[self.rename_id] = rename_info
+        del self.rename_info[self.rename_id]  # for now
+        rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])
