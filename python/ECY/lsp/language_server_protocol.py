@@ -12,6 +12,9 @@ from urllib.parse import urlparse
 from urllib.request import url2pathname
 from ECY.debug import logger
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
+
 # local lib
 from ECY.lsp import stand_IO_connection as conec
 
@@ -187,156 +190,10 @@ class LSP(conec.Operate):
         return True
 
     def BuildCapabilities(self):
-        # {{{
-        WorkspaceClientCapabilities = {
-            "applyEdit": True,
-            "workspaceEdit": {
-                "documentChanges": True,
-                "resourceOperations": ["create", "rename", "delete"],
-                "failureHandling": "abort"
-            },
-            "didChangeConfiguration": {
-                "dynamicRegistration": False
-            },
-            "didChangeWatchedFiles": {
-                "dynamicRegistration": False
-            },
-            "symbol": {
-                "dynamicRegistration": False,
-                "symbolKind": {
-                    "valueSet": [
-                        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                        17, 18, 19, 20, 21, 22, 23, 24, 25, 26
-                    ]
-                }
-            },
-            "executeCommand": {
-                "dynamicRegistration": False
-            },
-            "workspaceFolders": True,
-            "configuration": False
-        }
-
-        TextDocumentClientCapabilities = {
-            "synchronization": {
-                "dynamicRegistration": False,
-                "willSave": True,
-                "willSaveWaitUntil": True,
-                "didSave": True
-            },
-            "completion": {
-                "dynamicRegistration": False,
-                "completionItem": {
-                    "snippetSupport": True,
-                    "commitCharactersSupport": False,
-                    "documentationFormat": ['plaintext', 'markdown'],
-                    "deprecatedSupport": True,
-                    "preselectSupport": False
-                },
-                "completionItemKind": {
-                    "valueSet": []
-                },
-                "contextSupport": False
-            },
-            "hover": {
-                "dynamicRegistration": False,
-                "contentFormat": []
-            },
-            "signatrueHelp": {
-                "dynamicRegistration": False,
-                "signatrueInformation": {
-                    "documentationFormat": ['plaintext'],
-                    "parameterInformation": {
-                        "labelOffsetSupport": True
-                    }
-                }
-            },
-            "references": {
-                "dynamicRegistration": False
-            },
-            "documentHighlight": {
-                "dynamicRegistration": False
-            },
-            "documentSymbol": {
-                "dynamicRegistration": False,
-                "symbolKind": {
-                    "valueSet": []
-                },
-                "hierarchicalDocumentSymbolSupport": True
-            },
-            "formatting": {
-                "dynamicRegistration": False
-            },
-            "rangeFormatting": {
-                "dynamicRegistration": False
-            },
-            "onTypeFormatting": {
-                "dynamicRegistration": False
-            },
-            "declaration": {
-                "dynamicRegistration": False,
-                "linkSupport": True
-            },
-            "definition": {
-                "dynamicRegistration": False,
-                "linkSupport": True
-            },
-            "typeDefinition": {
-                "dynamicRegistration": False,
-                "linkSupport": True
-            },
-            "implementation": {
-                "dynamicRegistration": False,
-                "linkSupport": True
-            },
-            "codeAction": {
-                "dynamicRegistration": False,
-                "codeActionLiteralSupport": {
-                    "codeActionKind": {
-                        "valueSet": [
-                            'quickfix', 'refactor', 'refactor.extract',
-                            'refactor.inline', 'refactor.rewrite', 'source',
-                            'source.organizeImports'
-                        ]
-                    }
-                }
-            },
-            "codeLens": {
-                "dynamicRegistration": False
-            },
-            "documentLink": {
-                "dynamicRegistration": False
-            },
-            "colorProvider": {
-                "dynamicRegistration": False
-            },
-            "rename": {
-                "dynamicRegistration": False,
-                "prepareSupport": True
-            },
-            "publishDiagnostics": {
-                "relatedInformation": True,
-                "versionSupport": True,
-                "tagSupport": {
-                    "valueSet": [1, 2]
-                },
-                "codeDescriptionSupport": True,
-                "dataSupport": True
-            },
-            "foldingRange": {
-                "dynamicRegistration": False,
-                "rangeLimit": 100,
-                "lineFoldingOnly": True
-            }
-        }
-
-        Capabilities = {
-            'workspace': WorkspaceClientCapabilities,
-            'textDocument': TextDocumentClientCapabilities,
-            'experimental': None
-        }
-        return Capabilities
-# }}}
+        with open(BASE_DIR + '/capability.json', encoding='utf-8') as f:
+            content = f.read()
+        content = json.loads(content)
+        return content
 
     def initialize(self,
                    processId=None,
@@ -588,11 +445,9 @@ class LSP(conec.Operate):
                    ProgressToken=None):
 
         if workDoneToken is None:
-            self.workDoneToken_id += 1
-            workDoneToken = self.workDoneToken_id
+            workDoneToken = self._get_workdone_token()
         if ProgressToken is None:
-            self.workDoneToken_id += 1
-            ProgressToken = self.workDoneToken_id
+            ProgressToken = self._get_progress_token()
 
         params = {
             'workDoneToken': workDoneToken,

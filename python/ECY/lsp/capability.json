@@ -1,0 +1,136 @@
+{
+  "workspace": {
+    "applyEdit": true,
+    "workspaceEdit": {
+      "documentChanges": true,
+      "resourceOperations": ["create", "rename", "delete"],
+      "failureHandling": "abort"
+    },
+    "didChangeConfiguration": {
+      "dynamicRegistration": false
+    },
+    "didChangeWatchedFiles": {
+      "dynamicRegistration": false
+    },
+    "symbol": {
+      "dynamicRegistration": false,
+      "symbolKind": {
+        "valueSet": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+      }
+    },
+    "executeCommand": {
+      "dynamicRegistration": false
+    },
+    "workspaceFolders": true,
+    "configuration": false
+  },
+  "textDocument": {
+    "synchronization": {
+      "dynamicRegistration": false,
+      "willSave": true,
+      "willSaveWaitUntil": true,
+      "didSave": true
+    },
+    "completion": {
+      "dynamicRegistration": false,
+      "completionItem": {
+        "snippetSupport": true,
+        "commitCharactersSupport": false,
+        "documentationFormat": ["plaintext", "markdown"],
+        "deprecatedSupport": true,
+        "preselectSupport": false
+      },
+      "completionItemKind": {
+        "valueSet": []
+      },
+      "contextSupport": false
+    },
+    "hover": {
+      "dynamicRegistration": false,
+      "contentFormat": []
+    },
+    "signatrueHelp": {
+      "dynamicRegistration": false,
+      "signatrueInformation": {
+        "documentationFormat": ["plaintext"],
+        "parameterInformation": {
+          "labelOffsetSupport": true
+        }
+      }
+    },
+    "references": {
+      "dynamicRegistration": false
+    },
+    "documentHighlight": {
+      "dynamicRegistration": false
+    },
+    "documentSymbol": {
+      "dynamicRegistration": false,
+      "symbolKind": {
+        "valueSet": []
+      },
+      "hierarchicalDocumentSymbolSupport": true
+    },
+    "formatting": {
+      "dynamicRegistration": false
+    },
+    "rangeFormatting": {
+      "dynamicRegistration": false
+    },
+    "onTypeFormatting": {
+      "dynamicRegistration": false
+    },
+    "declaration": {
+      "dynamicRegistration": false,
+      "linkSupport": true
+    },
+    "definition": {
+      "dynamicRegistration": false,
+      "linkSupport": true
+    },
+    "typeDefinition": {
+      "dynamicRegistration": false,
+      "linkSupport": true
+    },
+    "implementation": {
+      "dynamicRegistration": false,
+      "linkSupport": true
+    },
+    "codeAction": {
+      "dynamicRegistration": false,
+      "codeActionLiteralSupport": {
+        "codeActionKind": {
+          "valueSet": ["quickfix", "refactor", "refactor.extract", "refactor.inline", "refactor.rewrite", "source", "source.organizeImports"]
+        }
+      }
+    },
+    "codeLens": {
+      "dynamicRegistration": false
+    },
+    "documentLink": {
+      "dynamicRegistration": false
+    },
+    "colorProvider": {
+      "dynamicRegistration": false
+    },
+    "rename": {
+      "dynamicRegistration": false,
+      "prepareSupport": true
+    },
+    "publishDiagnostics": {
+      "relatedInformation": true,
+      "versionSupport": true,
+      "tagSupport": {
+        "valueSet": [1, 2]
+      },
+      "codeDescriptionSupport": true,
+      "dataSupport": true
+    },
+    "foldingRange": {
+      "dynamicRegistration": false,
+      "rangeLimit": 100,
+      "lineFoldingOnly": true
+    }
+  },
+  "experimental": null
+}
