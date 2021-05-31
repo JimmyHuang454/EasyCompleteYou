@@ -123,7 +123,7 @@ class LSP(conec.Operate):
         except:
             del self._queue_dict[_method_name]
         if queue_obj is None:
-            raise 'queue time out.'
+            raise ValueError('queue time out.')
         return queue_obj
 
     def _add_queue(self, method_name, _todo):
@@ -139,7 +139,7 @@ class LSP(conec.Operate):
 
     def ChangeUsingServerID(self, id_nr):
         if id_nr > self.server_count:
-            raise 'have no such a server process.'
+            raise ValueError('have no such a server process.')
         self._using_server_id = id_nr
 
     def GetUsingServerID(self):
@@ -152,7 +152,8 @@ class LSP(conec.Operate):
            or notification.
         """
         if self.server_id <= 0:
-            raise 'E002: you have to send a initialize request first.'
+            raise ValueError(
+                'E002: you have to send a initialize request first.')
         send = {'jsonrpc': '2.0', 'method': method, 'params': params}
 
         self.id_lock.acquire()
@@ -367,7 +368,7 @@ class LSP(conec.Operate):
             workDoneToken = self._get_workdone_token()
 
         if new_name == '':
-            raise "new_name can not be None"
+            raise ValueError("new_name can not be None")
 
         textDocument = {
             'uri': uri,
@@ -470,7 +471,7 @@ class LSP(conec.Operate):
         params = {'workDoneToken': workDoneToken, 'command': command}
 
         if type(arguments) is not list:
-            raise "type of arguments must be list."
+            raise ValueError("type of arguments must be list.")
 
         if arguments != []:
             params['arguments'] = arguments
@@ -720,3 +721,4 @@ class LSP(conec.Operate):
             return 'Cygwin'
         if temp == 'darwin':
             return 'Mac'
+        return 'Linux'
