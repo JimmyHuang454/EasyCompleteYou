@@ -468,6 +468,35 @@ class LSP(conec.Operate):
         self.workDoneToken_id += 1
         return self.workDoneToken_id
 
+    def prepareRename(self,
+                      uri,
+                      languageId,
+                      text,
+                      version,
+                      position,
+                      new_name,
+                      workDoneToken=None):
+
+        if workDoneToken is None:
+            workDoneToken = self._get_workdone_token()
+
+        if new_name == '':
+            raise ValueError("new_name can not be None")
+
+        textDocument = {
+            'uri': uri,
+            'languageId': languageId,
+            'text': text,
+            'version': version
+        }
+        params = {
+            'textDocument': textDocument,
+            'position': position,
+            'workDoneToken': workDoneToken,
+            'newName': new_name
+        }
+        return self._build_send(params, 'textDocument/rename')
+
     def rename(self,
                uri,
                languageId,
@@ -497,6 +526,27 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/rename')
 
+    def formatting(self,
+                   uri,
+                   tabSize,
+                   insertSpaces,
+                   trimTrailingWhitespace=True,
+                   insertFinalNewline=True,
+                   trimFinalNewlines=True,
+                   workDoneToken=None,
+                   ProgressToken=None):
+        if workDoneToken is None:
+            workDoneToken = self._get_workdone_token()
+        if ProgressToken is None:
+            ProgressToken = self._get_progress_token()
+
+        params = {
+            'workDoneToken': workDoneToken,
+            'partialResultToken': ProgressToken,
+            'textDocument': self.TextDocumentIdentifier(uri)
+        }
+        return self._build_send(params, 'textDocument/formatting')
+
     def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
         if workDoneToken is None:
             workDoneToken = self._get_workdone_token()
@@ -511,6 +561,23 @@ class LSP(conec.Operate):
             }
         }
         return self._build_send(params, 'textDocument/codeLens')
+
+    def Position(self, line, colum):
+        return {'line': line, 'character': colum}
+
+    def Range(self, start_position, end_position):
+        return {'start': start_position, 'end': end_position}
+
+    def TextDocumentIdentifier(self, path, path_type='uri'):
+        if path_type != 'uri':
+            uri = self.PathToUri(path)
+        return {'uri': uri}
+
+    def TextDocumentPositionParams(self, uri, line, colum):
+        return {
+            'textDocument': self.TextDocumentIdentifier(uri),
+            'position': self.Position(line, colum)
+        }
 
     def codeAction(self,
                    uri,
@@ -527,12 +594,10 @@ class LSP(conec.Operate):
             self.workDoneToken_id += 1
             ProgressToken = self.workDoneToken_id
 
-        ranges = {'start': start_position, 'end': end_position}
-
         params = {
             'workDoneToken': workDoneToken,
             'partialResultToken': ProgressToken,
-            'range': ranges,
+            'range': self.Range(start_position, end_position),
             'context': {
                 'diagnostics': diagnostic
             },
