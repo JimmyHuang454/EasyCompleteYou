@@ -106,7 +106,9 @@ endf
 
 function! ECY#completion#ExpandSnippet() abort
 "{{{ this function will not tirgger when there are no UltiSnips plugin.
+  
   if ECY#completion#IsMenuOpen() 
+    call ECY#completion#Close()
     " we can see that we require every item of completion must contain full
     " infos which is a dict with all key.
     if g:has_floating_windows_support == 'vim' && 
