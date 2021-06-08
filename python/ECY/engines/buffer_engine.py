@@ -33,7 +33,7 @@ class Operate(object):
             }
             results_format['abbr'] = item
             results_format['word'] = item
-            results_format['kind'] = '[B]'
+            results_format['kind'] = '[ID]'
             self.res_list.append(results_format)
 
     def OnBufferEnter(self, context):
