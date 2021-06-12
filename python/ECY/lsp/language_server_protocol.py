@@ -426,6 +426,14 @@ class LSP(conec.Operate):
     def Range(self, start_position, end_position):
         return {'start': start_position, 'end': end_position}
 
+    def OptionalVersionedTextDocumentIdentifier(self,
+                                                path,
+                                                path_type='uri',
+                                                ids=None):
+        temp = self.TextDocumentIdentifier(path, path_type=path_type)
+        temp['version'] = ids
+        return temp
+
     def TextDocumentIdentifier(self, path, path_type='uri'):
         if path_type != 'uri':
             uri = self.PathToUri(path)
