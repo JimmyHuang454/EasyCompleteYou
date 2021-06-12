@@ -426,6 +426,16 @@ class LSP(conec.Operate):
     def Range(self, start_position, end_position):
         return {'start': start_position, 'end': end_position}
 
+    def TextDocumentEdit(self,
+                         text_edit_list,
+                         path,
+                         path_type='uri',
+                         ids=None):
+        temp = self.OptionalVersionedTextDocumentIdentifier(
+            path, path_type=path_type, ids=ids)
+        temp['edits'] = text_edit_list
+        return temp
+
     def OptionalVersionedTextDocumentIdentifier(self,
                                                 path,
                                                 path_type='uri',

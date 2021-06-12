@@ -1,4 +1,60 @@
 import copy
+import os
+import shutil
+
+
+def Delete(context):
+    path = context['uri']
+    ignoreIfNotExists = False
+    recursive = True
+    if 'options' in context:
+        if 'ignoreIfNotExists' in context['options']:
+            ignoreIfNotExists = context['options']['ignoreIfNotExists']
+        elif 'recursive' in context['options']:
+            recursive = context['options']['recursive']
+
+    if os.path.exists(path):
+        if ignoreIfNotExists:
+            return
+        raise ValueError('the file try to delete is not exists')
+
+    is_dir = os.path.isdir(path)
+
+    if is_dir and not recursive:
+        raise ValueError(
+            'cannot delelte a dir, please set options.recursive = true')
+
+    if is_dir:
+        shutil.rmtree(path)
+    else:
+        os.remove(path)
+
+
+def Rename(context):
+    old_path = context['oldUri']
+    new_path = context['newUri']
+    ignoreIfNotExists = False
+    overwrite = False
+    if 'options' in context:
+        if 'ignoreIfNotExists' in context['options']:
+            ignoreIfNotExists = context['options']['ignoreIfNotExists']
+        elif 'overwrite' in context['options']:
+            overwrite = context['options']['overwrite']
+
+    if not os.path.exists(old_path):
+        if ignoreIfNotExists:
+            return
+        raise ValueError('the file try to operate is not exists')
+
+    if os.path.exists(new_path):
+        if not overwrite:
+            raise ValueError('new name tring to rename is already exists.')
+
+    os.rename(old_path, new_path)
+
+
+def Create(context):
+    pass
 
 
 def Apply(workspace_edit, original_text):
@@ -31,7 +87,18 @@ def Apply(workspace_edit, original_text):
                     original_text.insert(i, item)
                     i += 1
                 inserted_line_count += len(original_text) - old_line
-        return original_text
+    if 'documentChanges' in text_edit:
+        for item in text_edit['documentChanges']:
+            if 'kind' in item:  # file operation
+                if item['kind'] == 'create':  # new a file
+                    Create(item)
+                elif item['kind'] == 'rename':
+                    Rename(item)
+                elif item['kind'] == 'delete':
+                    Delete(item)
+            else:  # TextDocumentEdit
+                pass
+    return original_text
 
 
 original_text = ['line 0', 'line 1', 'line 2']
