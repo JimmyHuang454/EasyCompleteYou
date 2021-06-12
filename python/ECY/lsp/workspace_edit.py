@@ -70,9 +70,9 @@ def Create(context, is_check=False):
 
 def TextEdit2(text_edit_list, file_context):
     added_line = file_context['added_line']
-    original_text = file_context['original_text']
+    text = file_context['text']
     for text_edit in text_edit_list:
-        original_text_len = len(original_text)
+        original_text_len = len(text)
         start_line = text_edit['range']['start']['line']
         start_colum = text_edit['range']['start']['character']
         end_line = text_edit['range']['end']['line']
@@ -81,22 +81,23 @@ def TextEdit2(text_edit_list, file_context):
         end_line += added_line
         if start_line >= original_text_len or end_line >= original_text_len:
             raise ValueError('out of range')
-        old_line = len(original_text)
-        replace_text = original_text[start_line][:start_colum] + text_edit[
-            'newText'] + original_text[end_line][end_colum:]
+        old_line = len(text)
+        replace_text = text[start_line][:start_colum] + text_edit[
+            'newText'] + text[end_line][end_colum:]
         replace_text = replace_text.split('\n')
         effect_line_wide = (end_line - start_line) + 1
         if effect_line_wide == 1:
-            original_text.pop(start_line)
+            text.pop(start_line)
         else:
             for item in range(effect_line_wide):
-                original_text.pop(start_line)
+                text.pop(start_line)
         i = start_line
         for item in replace_text:
-            original_text.insert(i, item)
+            text.insert(i, item)
             i += 1
-        added_line += len(original_text) - old_line
-    return {'added_line': added_line, 'original_text': original_text}
+        added_line += len(text) - old_line
+    file_context = {'added_line': added_line, 'text': text}
+    return file_context
 
 
 def ReadFileContent(file_uri):
@@ -170,11 +171,11 @@ def Apply(workspace_edit):
         if file_uri not in file_edit_info:
             file_edit_info[file_uri] = {
                 'added_line': 0,
-                'original_text': ReadFileContent(file_uri)
+                'text': ReadFileContent(file_uri)
             }
-        TextEdit2(
-            item['edit_list'],
-            file_edit_info[file_uri])  # make sure file_edit_info has changed
+        # make sure file_edit_info has changed
+        file_edit_info[file_uri] = TextEdit2(item['edit_list'],
+                                             file_edit_info[file_uri])
     return file_edit_info
 
 
@@ -211,7 +212,7 @@ workspace_edit_test = {
 }
 print(Check(workspace_edit_test))
 res = Apply(workspace_edit_test)
-res = res[test_uir]['original_text']
+res = res[test_uir]['text']
 assert res == ['test1', 'line 0', 'test2', 'line 1', 'line 2', '']
 
 #############
@@ -236,7 +237,7 @@ workspace_edit_test = {
 }
 
 res = Apply(workspace_edit_test)
-res = res[test_uir]['original_text']
+res = res[test_uir]['text']
 assert res == ['testline 0', 'line 1', 'line 2', '']
 
 #############
@@ -261,5 +262,5 @@ workspace_edit_test = {
 }
 
 res = Apply(workspace_edit_test)
-res = res[test_uir]['original_text']
+res = res[test_uir]['text']
 assert res == ['test', '']
