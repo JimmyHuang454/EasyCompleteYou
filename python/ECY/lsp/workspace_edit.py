@@ -151,17 +151,13 @@ def Apply(workspace_edit):
                 elif item['kind'] == 'delete':
                     Delete(item)
             else:  # TextDocumentEdit
-                file_change_list.append({
-                    'uri': item['uri'],
-                    'edit_list': item['edits']
-                })
-
-    if 'changes' in workspace_edit:
+                file_change_list.append(item)
+    elif 'changes' in workspace_edit:
         for file_uri in workspace_edit['changes']:
             file_change_list.append({
                 'uri':
                 file_uri,
-                'edit_list':
+                'edits':
                 workspace_edit['changes'][file_uri]
             })
 
@@ -174,7 +170,7 @@ def Apply(workspace_edit):
                 'text': ReadFileContent(file_uri)
             }
         # make sure file_edit_info has changed
-        file_edit_info[file_uri] = TextEdit2(item['edit_list'],
+        file_edit_info[file_uri] = TextEdit2(item['edits'],
                                              file_edit_info[file_uri])
     return file_edit_info
 

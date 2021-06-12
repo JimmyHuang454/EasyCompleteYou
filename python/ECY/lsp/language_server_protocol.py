@@ -426,16 +426,6 @@ class LSP(conec.Operate):
     def Range(self, start_position, end_position):
         return {'start': start_position, 'end': end_position}
 
-    def TextDocumentEdit(self,
-                         text_edit_list,
-                         path,
-                         path_type='uri',
-                         ids=None):
-        temp = self.OptionalVersionedTextDocumentIdentifier(
-            path, path_type=path_type, ids=ids)
-        temp['edits'] = text_edit_list
-        return temp
-
     def OptionalVersionedTextDocumentIdentifier(self,
                                                 path,
                                                 path_type='uri',
@@ -497,7 +487,7 @@ class LSP(conec.Operate):
         return self._build_send(params, 'workspace/executeCommand')
 
     def completion(self, uri, position, triggerKind=1, triggerCharacter=None):
-        TextDocumentIdentifier = {'uri': uri}
+        TextDocumentIdentifier = self.TextDocumentIdentifier(uri)
 
         CompletionContext = {'triggerKind': triggerKind}
         if triggerCharacter is not None:
