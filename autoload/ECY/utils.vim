@@ -351,6 +351,80 @@ function! ECY#utils#GetCurrentLineRange() abort
 "}}}
 endfunction
 
+function! ECY#utils#IsFileOpenedInVim(file_path) abort
+"{{{
+  let l:buffer_nr = bufnr(a:file_path)
+  if l:buffer_nr < 0 " not in vim
+    return v:false
+  endif
+  return l:buffer_nr
+"}}}
+endfunction
+
+function! ECY#utils#ChangeBuffer(buffer_path, context) abort
+"{{{
+  " if has_key(a:context, 'version')
+  "   try
+  "     if GetBufferIDByPath() != a:context['version']
+  "       " abort
+  "       return 
+  "     endif
+  "   catch 
+  "     return
+  "   endtry
+  " endif
+
+  " let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
+
+  let l:buffer_nr = ECY#utils#IsFileOpenedInVim(a:buffer_path)
+  if !l:buffer_nr " not in vim
+    return
+  endif
+
+  for item in a:context['replace_line_list']
+    call s:Replace(l:buffer_nr, item['start_line'], item['end_line'], item['replace_list'])
+  endfor
+"}}}
+endfunction
+
+function! ECY#utils#ApplyTextEdit(context) abort
+  for item in keys(a:context)
+    call ECY#utils#ChangeBuffer(item, a:context[item])
+  endfor
+endfunction
+
+function! s:Replace(buffer_nr, start_line, end_line, replace_list) abort
+"{{{
+  call s:Delete(a:buffer_nr, a:start_line, a:end_line)
+  call appendbufline(a:buffer_nr, a:start_line, a:replace_list) " 1-based
+"}}}
+endfunction
+
+function! s:Delete(bufnr, start_line, end_line) abort
+"{{{ 0-based
+  let l:start_line = a:start_line + 1
+  let l:end_line = a:end_line + 1
+  if exists('*deletebufline')
+    call deletebufline(a:bufnr, l:start_line, l:end_line)
+  else
+      let l:foldenable = &foldenable
+      setlocal nofoldenable
+      execute printf('%s,%sdelete _', l:start_line, l:end_line)
+      let &foldenable = l:foldenable
+  endif
+"}}}
+endfunction
+
+function! s:Switch(path) abort
+"{{{
+  if bufnr(a:path) >= 0
+    execute printf('keepalt keepjumps %sbuffer!', bufnr(a:path))
+  else
+    execute printf('keepalt keepjumps edit! %s', fnameescape(a:path))
+  endif
+"}}}
+endfunction
+
 function! ECY#utils#StartLeaderfSelecting(content, callback_name) abort
 "{{{
   try

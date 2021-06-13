@@ -22,7 +22,7 @@ from ECY.lsp import stand_IO_connection as conec
 class LSPRequest(object):
     """
     """
-    def __init__(self, method_name, ids):
+    def __init__(self, method_name, ids, timeout=None):
         """
         """
         self.Method = method_name
@@ -30,18 +30,23 @@ class LSPRequest(object):
         self.response_queue = None
         self.callback = None
         self.callback_additional_data = {}
+        self.default_timeout = timeout
 
     def GetResponse(self,
                     timeout=None,
                     callback=None,
                     callback_additional_data={}):
+        """ if user want to run with no timeout so set timeout to -1 or 0
+        """
+        if timeout is None and self.default_timeout is not None:
+            timeout = self.default_timeout
         if type(timeout) is int and timeout != -1 and timeout != 0:
             try:
                 self.response_queue = queue.Queue(timeout)
             except Exception as e:
                 self.response_queue = None  # importance
                 raise e
-        else:
+        else:  # without timeout that is means keep runing forever.
             self.response_queue = queue.Queue()
         if callback is not None:
             self.callback = callback
@@ -66,7 +71,7 @@ class LSPRequest(object):
 
 
 class LSP(conec.Operate):
-    def __init__(self):
+    def __init__(self, timeout=None):
         self._id = 0
         self.server_id = -1
         self._queue_dict = {}
@@ -78,6 +83,7 @@ class LSP(conec.Operate):
         threading.Thread(target=self._classify_response, daemon=True).start()
         self.queue_maxsize = 20
         self._using_server_id = None
+        self.default_timeout = timeout
 
     def Debug(self, msg):
         logger.info(msg)
@@ -108,14 +114,14 @@ class LSP(conec.Operate):
     def GetServerStatus_(self):
         return self.GetServerStatus(self.server_id)
 
-    def GetRequestOrNotification(self, _method_name, timeout=5):
+    def GetRequestOrNotification(self, _method_name, timeout=None):
         if _method_name not in self._queue_dict:
             # new
             self._queue_dict[_method_name] = queue.Queue(
                 maxsize=self.queue_maxsize)
         queue_obj = None
         try:
-            if timeout == -1 or timeout == None:
+            if timeout == -1 or timeout == None or timeout == 0:
                 # never timeout
                 queue_obj = self._queue_dict[_method_name].get()
             else:
@@ -161,7 +167,7 @@ class LSP(conec.Operate):
         if not isNotification:
             # id_text       = "ECY_"+str(self._id)
             send['id'] = self._id
-        context = LSPRequest(method, self._id)
+        context = LSPRequest(method, self._id, timeout=self.default_timeout)
         self._waitting_response[self._id] = context
         self.id_lock.release()
 
@@ -398,10 +404,19 @@ class LSP(conec.Operate):
         if ProgressToken is None:
             ProgressToken = self._get_progress_token()
 
+        opts = {
+            'tabSize': tabSize,
+            'insertSpaces': insertSpaces,
+            'insertFinalNewline': insertFinalNewline,
+            'trimFinalNewlines': trimFinalNewlines,
+            'trimTrailingWhitespace': trimTrailingWhitespace
+        }
+
         params = {
             'workDoneToken': workDoneToken,
             'partialResultToken': ProgressToken,
-            'textDocument': self.TextDocumentIdentifier(uri)
+            'textDocument': self.TextDocumentIdentifier(uri),
+            'options': opts
         }
         return self._build_send(params, 'textDocument/formatting')
 

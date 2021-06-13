@@ -80,6 +80,20 @@ fun! ECY2_main#Rename() abort
 "}}}
 endf
 
+fun! ECY2_main#Format() abort
+"{{{
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'Format', 'params': l:params})
+"}}}
+endf
+
 fun! ECY2_main#GetWorkSpaceSymbol() abort
 "{{{
   let l:params = {}

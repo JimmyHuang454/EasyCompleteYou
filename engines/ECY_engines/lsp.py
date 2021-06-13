@@ -2,6 +2,7 @@ import threading
 from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
+from ECY.lsp import workspace_edit
 from ECY import rpc
 
 
@@ -19,7 +20,7 @@ class Operate(object):
                  initializationOptions=None):
 
         logger.debug(server_cmd)
-        self._lsp = language_server_protocol.LSP()
+        self._lsp = language_server_protocol.LSP(timeout=5)
 
         self.engine_name = name
         self.server_cmd = server_cmd
@@ -47,7 +48,6 @@ class Operate(object):
         self.workspace_cache = []
         self.completion_position_cache = {}
         self.completion_isInCompleted = True
-        self.timeout = 5
         self.current_seleted_item = {}
 
         self._start_server()
@@ -59,8 +59,7 @@ class Operate(object):
             rootUri=self.rootUri,
             rootPath=self.rootPath,
             workspaceFolders=self.workspaceFolders,
-            initializationOptions=self.initializationOptions).GetResponse(
-                timeout=self.timeout)
+            initializationOptions=self.initializationOptions).GetResponse()
 
         self.capabilities = res['result']['capabilities']
 
@@ -87,7 +86,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'workspace/applyEdit', timeout=-1)
+                    'workspace/applyEdit')
 
                 try:
                     applied = rpc.DoCall('ECY#code_action#ApplyEdit',
@@ -110,7 +109,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'textDocument/clangd.fileStatus', timeout=-1)
+                    'textDocument/clangd.fileStatus')
                 res_path = response['params']['uri']
                 res_path = self._lsp.UriToPath(res_path)
                 current_buffer_path = rpc.DoCall(
@@ -127,7 +126,7 @@ class Operate(object):
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
-                    'window/logMessage', timeout=-1)
+                    'window/logMessage')
                 msg = response['params']['message']
                 if msg.find('compile_commands') != -1:  # clangd 12+
                     self._show_msg(msg.split('\n'))
@@ -169,8 +168,7 @@ class Operate(object):
         self._did_open_or_change(context)
 
     def OnWorkSpaceSymbol(self, context):
-        res = self._lsp.workspaceSymbos().GetResponse(
-            timeout=self.timeout)  # not works in clangd
+        res = self._lsp.workspaceSymbos().GetResponse()  # not works in clangd
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -180,6 +178,24 @@ class Operate(object):
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
         self._lsp.documentSymbos(uri)
+
+    def Format(self, context):
+        if 'documentFormattingProvider' not in self.capabilities:
+            self._show_msg('Format are not supported.')
+            return
+        params = context['params']
+        uri = self._lsp.PathToUri(params['buffer_path'])
+        res = self._lsp.formatting(uri, 2, True).GetResponse()
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
+            self._show_msg('nothing to format.')
+            return
+        res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
+        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
     def _signature_help(self, res):
         if 'error' in res:
@@ -243,7 +259,6 @@ class Operate(object):
 
         self._lsp.completionItem_resolve(
             self.current_seleted_item).GetResponse(
-                timeout=self.timeout,
                 callback=self._on_item_seleted_cb,
                 callback_additional_data=self.current_seleted_item)
 
@@ -317,7 +332,7 @@ class Operate(object):
                 'character': start_position['colum']
             }
             self._lsp.signatureHelp(uri, current_start_postion).GetResponse(
-                timeout=self.timeout, callback=self._signature_help)
+                callback=self._signature_help)
 
         current_start_postion = {
             'line': start_position['line'],
@@ -334,8 +349,7 @@ class Operate(object):
 
         self.results_list = []
         self.completion_position_cache = current_start_postion
-        res = self._lsp.completion(
-            uri, current_start_postion).GetResponse(timeout=self.timeout)
+        res = self._lsp.completion(uri, current_start_postion).GetResponse()
 
         if 'error' in res:
             self._show_msg(res['error']['message'])
@@ -371,7 +385,7 @@ class Operate(object):
         while True:
             try:
                 temp = self._lsp.GetRequestOrNotification(
-                    'client/registerCapability', timeout=-1)
+                    'client/registerCapability')
                 params = temp['params']
                 self._lsp._build_response(None, temp['id'])
             except Exception as e:
@@ -381,7 +395,7 @@ class Operate(object):
         while True:
             try:
                 temp = self._lsp.GetRequestOrNotification(
-                    'textDocument/publishDiagnostics', timeout=-1)
+                    'textDocument/publishDiagnostics')
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
                 logger.debug(lists)
@@ -403,7 +417,7 @@ class Operate(object):
             uri,
             start_position,
             end_position,
-            diagnostic=self._diagnosis_cache).GetResponse(timeout=self.timeout)
+            diagnostic=self._diagnosis_cache).GetResponse()
 
         context['result'] = returns['result']
         logger.debug(context)
@@ -509,8 +523,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.definition(position,
-                                   uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.definition(position, uri).GetResponse()
         self._goto_response(res)
 
     def GotoTypeDefinition(self, context):
@@ -526,8 +539,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.typeDefinition(position,
-                                       uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.typeDefinition(position, uri).GetResponse()
         self._goto_response(res)
 
     def GotoImplementation(self, context):
@@ -543,8 +555,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.implementation(position,
-                                       uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.implementation(position, uri).GetResponse()
         self._goto_response(res)
 
     def GotoDeclaration(self, context):
@@ -560,8 +571,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.declaration(position,
-                                    uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.declaration(position, uri).GetResponse()
 
         self._goto_response(res)
 
@@ -578,7 +588,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.hover(position, uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.hover(position, uri).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -639,8 +649,7 @@ class Operate(object):
             'character': start_position['colum']
         }
 
-        res = self._lsp.references(position,
-                                   uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.references(position, uri).GetResponse()
         self._goto_response(res)
 
     def GetCodeLens(self, context):
@@ -650,7 +659,7 @@ class Operate(object):
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
-        res = self._lsp.codeLens(uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.codeLens(uri).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -668,8 +677,7 @@ class Operate(object):
             'line': start_position['line'],
             'character': start_position['colum']
         }
-        res = self._lsp.prepareCallHierarchy(
-            position, uri).GetResponse(timeout=self.timeout)
+        res = self._lsp.prepareCallHierarchy(position, uri).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -707,7 +715,7 @@ class Operate(object):
         new_name = params['new_name']
 
         res = self._lsp.rename(uri, self.languageId, text, version, position,
-                               new_name).GetResponse(timeout=self.timeout)
+                               new_name).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return

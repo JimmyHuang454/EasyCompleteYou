@@ -1,6 +1,9 @@
 import copy
 import os
 import shutil
+from ECY.lsp import language_server_protocol
+
+my_lsp = language_server_protocol.LSP(timeout=1)
 
 
 def Delete(context, is_check=False):
@@ -88,12 +91,9 @@ def Create(context, is_check=False):
 
 def TextEdit(text_edit_list, file_context):
     added_line = file_context['added_line']
+    replace_line_list = []
     text = file_context['text']
-    j = 0
     for text_edit in text_edit_list:
-        # if j >= 5:
-        #     continue
-        # j += 1
         original_text_len = len(text)
         start_line = text_edit['range']['start']['line']
         start_colum = text_edit['range']['start']['character']
@@ -125,7 +125,22 @@ def TextEdit(text_edit_list, file_context):
         for item in replace_text:
             text.insert(i, item)
             i += 1
-        added_line += len(text) - old_line_len
+
+        this_added_line = len(text) - old_line_len
+        temp = []
+        for item in range(effect_line_wide + this_added_line):
+            i = start_line + item
+            temp.append(text[i])
+        temp = {
+            'start_line': start_line,
+            'end_line': end_line,
+            'replace_list': temp
+        }
+        replace_line_list.append(temp)
+        print(start_line, end_line, effect_line_wide, this_added_line,
+              range(effect_line_wide + this_added_line), temp)
+
+        added_line += this_added_line
 
         # update colum
         end_line = text_edit['range']['end']['line']
@@ -135,17 +150,19 @@ def TextEdit(text_edit_list, file_context):
             if end_line not in file_context['added_colum']:
                 file_context['added_colum'][end_line] = 0
             file_context['added_colum'][end_line] += added_colum
+
     file_context = {
         'added_line': added_line,
         'text': text,
+        'replace_line_list': replace_line_list,
         'added_colum': file_context['added_colum']
     }
     return file_context
 
 
-def ReadFileContent(file_uri):
+def ReadFileContent(path):
     # open a file; if it's not exists or have no right to operate them raise a error
-    with open(file_uri, 'r+', encoding='utf-8') as f:
+    with open(path, 'r+', encoding='utf-8') as f:
         content = f.read()
         f.close()
     split_content = content.split('\n')
@@ -209,9 +226,12 @@ def Apply(workspace_edit):
     file_edit_info = {}
     for item in file_change_list:
         file_uri = item['textDocument']['uri']
+        file_uri = my_lsp.UriToPath(file_uri)
+        item['textDocument']['uri'] = file_uri
         if file_uri not in file_edit_info:
             file_edit_info[file_uri] = {
                 'added_line': 0,
+                'textDocument': item['textDocument'],
                 'text': ReadFileContent(file_uri),
                 'added_colum': {}
             }
@@ -222,4 +242,8 @@ def Apply(workspace_edit):
 
 
 def WorkspaceEdit(workspace_edit):
-    pass
+    res = Apply(workspace_edit)
+    for item in res:
+        if 'text' in item:
+            del item['text']
+    return res
