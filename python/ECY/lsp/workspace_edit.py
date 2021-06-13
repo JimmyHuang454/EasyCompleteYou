@@ -65,23 +65,53 @@ def Rename(context, is_check=False):
 
 
 def Create(context, is_check=False):
-    pass
+    path = context['uri']
+    ignoreIfNotExists = False
+    overwrite = False
+    if 'options' in context:
+        if 'ignoreIfNotExists' in context['options']:
+            ignoreIfNotExists = context['options']['ignoreIfNotExists']
+        elif 'overwrite' in context['options']:
+            overwrite = context['options']['overwrite']
+
+    if os.path.exists(path):
+        if overwrite is False:
+            if not ignoreIfNotExists:
+                raise ValueError('the file try to create is exists')
+
+    if is_check:
+        return
+
+    with open(uri, 'w+') as f:  # overwrite if it is exist, new if it is not.
+        f.close()
 
 
-def TextEdit2(text_edit_list, file_context):
+def TextEdit(text_edit_list, file_context):
     added_line = file_context['added_line']
     text = file_context['text']
+    j = 0
     for text_edit in text_edit_list:
+        # if j >= 5:
+        #     continue
+        # j += 1
         original_text_len = len(text)
         start_line = text_edit['range']['start']['line']
         start_colum = text_edit['range']['start']['character']
         end_line = text_edit['range']['end']['line']
         end_colum = text_edit['range']['end']['character']
+
+        if start_line in file_context['added_colum']:
+            added_colum = file_context['added_colum'][start_line]
+            start_colum += added_colum
+            if start_line == end_line:
+                end_colum += added_colum
         start_line += added_line
         end_line += added_line
+
         if start_line >= original_text_len or end_line >= original_text_len:
             raise ValueError('out of range')
-        old_line = len(text)
+        old_line_len = len(text)
+        old_colum_len = len(text[end_line])
         replace_text = text[start_line][:start_colum] + text_edit[
             'newText'] + text[end_line][end_colum:]
         replace_text = replace_text.split('\n')
@@ -95,8 +125,21 @@ def TextEdit2(text_edit_list, file_context):
         for item in replace_text:
             text.insert(i, item)
             i += 1
-        added_line += len(text) - old_line
-    file_context = {'added_line': added_line, 'text': text}
+        added_line += len(text) - old_line_len
+
+        # update colum
+        end_line = text_edit['range']['end']['line']
+        new_colum_len = len(text[end_line + added_line])
+        added_colum = new_colum_len - old_colum_len
+        if added_colum != 0:
+            if end_line not in file_context['added_colum']:
+                file_context['added_colum'][end_line] = 0
+            file_context['added_colum'][end_line] += added_colum
+    file_context = {
+        'added_line': added_line,
+        'text': text,
+        'added_colum': file_context['added_colum']
+    }
     return file_context
 
 
@@ -133,7 +176,7 @@ def Check(workspace_edit):
                     'kind': 'change',
                     'uri': [item['uri']]
                 })
-    if 'changes' in workspace_edit:
+    elif 'changes' in workspace_edit:
         for file_uri in workspace_edit['changes']:
             file_will_be_operate.append({'kind': 'change', 'uri': [file_uri]})
     return file_will_be_operate
@@ -142,7 +185,7 @@ def Check(workspace_edit):
 def Apply(workspace_edit):
     file_change_list = []
     if 'documentChanges' in workspace_edit:
-        for item in text_edit['documentChanges']:
+        for item in workspace_edit['documentChanges']:
             if 'kind' in item:  # file operation
                 if item['kind'] == 'create':  # new a file
                     Create(item)
@@ -155,108 +198,28 @@ def Apply(workspace_edit):
     elif 'changes' in workspace_edit:
         for file_uri in workspace_edit['changes']:
             file_change_list.append({
-                'uri':
-                file_uri,
+                'textDocument': {
+                    'uri': file_uri,
+                    'version': None
+                },
                 'edits':
                 workspace_edit['changes'][file_uri]
             })
 
     file_edit_info = {}
     for item in file_change_list:
-        file_uri = item['uri']
+        file_uri = item['textDocument']['uri']
         if file_uri not in file_edit_info:
             file_edit_info[file_uri] = {
                 'added_line': 0,
-                'text': ReadFileContent(file_uri)
+                'text': ReadFileContent(file_uri),
+                'added_colum': {}
             }
         # make sure file_edit_info has changed
-        file_edit_info[file_uri] = TextEdit2(item['edits'],
-                                             file_edit_info[file_uri])
+        file_edit_info[file_uri] = TextEdit(item['edits'],
+                                            file_edit_info[file_uri])
     return file_edit_info
 
 
-test_uir = "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/python/ECY/lsp/test.txt"
-
-workspace_edit_test = {
-    "changes": {
-        test_uir: [{
-            "newText": "test1\n",
-            "range": {
-                "end": {
-                    "character": 0,
-                    "line": 0
-                },
-                "start": {
-                    "character": 0,
-                    "line": 0
-                }
-            }
-        }, {
-            "newText": "test2\n",
-            "range": {
-                "end": {
-                    "character": 0,
-                    "line": 1
-                },
-                "start": {
-                    "character": 0,
-                    "line": 1
-                }
-            }
-        }]
-    }
-}
-print(Check(workspace_edit_test))
-res = Apply(workspace_edit_test)
-res = res[test_uir]['text']
-assert res == ['test1', 'line 0', 'test2', 'line 1', 'line 2', '']
-
-#############
-#  test2  #
-#############
-workspace_edit_test = {
-    "changes": {
-        test_uir: [{
-            "newText": "test",
-            "range": {
-                "end": {
-                    "character": 0,
-                    "line": 0
-                },
-                "start": {
-                    "character": 0,
-                    "line": 0
-                }
-            }
-        }]
-    }
-}
-
-res = Apply(workspace_edit_test)
-res = res[test_uir]['text']
-assert res == ['testline 0', 'line 1', 'line 2', '']
-
-#############
-#  test3  #
-#############
-workspace_edit_test = {
-    "changes": {
-        test_uir: [{
-            "newText": "test",
-            "range": {
-                "end": {
-                    "character": 6,
-                    "line": 2
-                },
-                "start": {
-                    "character": 0,
-                    "line": 0
-                }
-            }
-        }]
-    }
-}
-
-res = Apply(workspace_edit_test)
-res = res[test_uir]['text']
-assert res == ['test', '']
+def WorkspaceEdit(workspace_edit):
+    pass

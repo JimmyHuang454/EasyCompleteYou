@@ -434,9 +434,9 @@ class LSP(conec.Operate):
         temp['version'] = ids
         return temp
 
-    def TextDocumentIdentifier(self, path, path_type='uri'):
+    def TextDocumentIdentifier(self, uri, path_type='uri'):
         if path_type != 'uri':
-            uri = self.PathToUri(path)
+            uri = self.PathToUri(uri)
         return {'uri': uri}
 
     def TextDocumentPositionParams(self, uri, line, colum):
