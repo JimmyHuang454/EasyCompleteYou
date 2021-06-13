@@ -494,6 +494,13 @@ function! ECY#diagnostics#PlaceSign(msg) abort
 "}}}
 endfunction
 
+function! ECY#diagnostics#ClearByEngineName(engine_name) abort
+"{{{
+  let g:ECY_diagnostics_items_with_engine_name[a:engine_name] = []
+  call s:UpdateSignLists(a:engine_name)
+"}}}
+endfunction
+
 function! s:UpdateSignLists(engine_name) abort
 "{{{
   if !has_key(g:ECY_diagnostics_items_with_engine_name, a:engine_name)
@@ -551,7 +558,7 @@ function! ECY#diagnostics#Toggle() abort
 "{{{
   let g:ECY_enable_diagnostics = (!g:ECY_enable_diagnostics)
   if g:ECY_enable_diagnostics
-    let l:status = 'Alive'
+    let l:status = 'Active'
     call s:StartUpdateTimer()
   else
     let l:status = 'Disabled'

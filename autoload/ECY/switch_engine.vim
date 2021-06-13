@@ -66,10 +66,18 @@ function! s:ChooseSource(next_or_pre) abort
   "}}}
 endfunction
 
+function! s:ChooseSource_cb() abort
+"{{{
+  doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
+  call ECY#diagnostics#ClearByEngineName(s:last_engine)
+"}}}
+endfunction
+
 fun! ECY#switch_engine#Do()
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
   call s:InitDefaultEngine(l:file_type)
+  let s:last_engine = ECY#switch_engine#GetBufferEngineName()
 
   if g:has_floating_windows_support == 'has_no'
     call s:ChooseSource_Echoing()
@@ -79,7 +87,7 @@ fun! ECY#switch_engine#Do()
   else
     call s:ChooseSource_neovim()
   endif
-  doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
+  call s:ChooseSource_cb()
   "}}}
 endf
 
