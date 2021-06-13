@@ -35,6 +35,10 @@ endf
 
 fun! ECY#engine_config#GetEngineConfig(engine_name, opts) abort
 "{{{
+  if !has_key(g:ECY_engine_config, a:engine_name) || 
+        \!has_key(g:ECY_engine_config[a:engine_name], a:opts)
+    return 'nothing'
+  endif
   let l:temp = g:ECY_engine_config[a:engine_name][a:opts]
   if type(l:temp) == v:t_string && len(l:temp) != 0 && l:temp[0] == '&'
     let g:ECY_config_var = l:temp[0]

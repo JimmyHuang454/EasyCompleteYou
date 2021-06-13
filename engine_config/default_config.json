@@ -1,4 +1,22 @@
 {
+  "GLOBAL_SETTING": {
+    "lsp_formatting": {
+      "default_value": {
+        "tabSize": 2,
+        "insertSpaces": true,
+        "trimTrailingWhitespace": true,
+        "trimFinalNewlines": true,
+        "insertFinalNewline": true
+      },
+      "type": "dict",
+      "des": ["lsp_formatting opts"]
+    },
+    "lsp_timeout": {
+      "default_value": 5,
+      "type": "",
+      "des": ["timeout after request."]
+    }
+  },
   "ECY_engines.cpp.clangd.clangd": {
     "cmd": {
       "default_value": "clangd",

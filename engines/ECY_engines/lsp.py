@@ -52,6 +52,7 @@ class Operate(object):
         self.code_action_cache = None
 
         self._start_server()
+        self._get_format_config()
 
     def _start_server(self):
         self._lsp.StartJob(self.server_cmd)
@@ -82,6 +83,13 @@ class Operate(object):
                     temp['retriggerCharacters'])
 
         self._lsp.initialized()
+
+    def _get_format_config(self):
+        self.engine_format_setting = utils.GetEngineConfig(
+            self.engine_name, 'lsp_formatting')
+        if self.engine_format_setting == 'nothing':
+            self.engine_format_setting = utils.GetEngineConfig(
+                'GLOBAL_SETTING', 'lsp_formatting')
 
     def _handle_edit(self):
         while 1:
@@ -184,7 +192,16 @@ class Operate(object):
             return
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
-        res = self._lsp.formatting(uri, 2, True).GetResponse()
+        res = self._lsp.formatting(
+            uri,
+            self.engine_format_setting['tabSize'],
+            insertSpaces=self.engine_format_setting['insertSpaces'],
+            trimFinalNewlines=self.engine_format_setting['trimFinalNewlines'],
+            insertFinalNewline=self.
+            engine_format_setting['insertFinalNewline'],
+            trimTrailingWhitespace=self.
+            engine_format_setting['trimTrailingWhitespace'],
+        ).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -746,4 +763,3 @@ class Operate(object):
         del self.rename_info[self.rename_id]  # for now
         res = workspace_edit.WorkspaceEdit(res)
         rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
-        # rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])
