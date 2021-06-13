@@ -371,12 +371,6 @@ class Operate(object):
     def DoCmd(self, context):
         params = context['params']
         cmd_params = params['cmd_params']
-        uri = self._lsp.PathToUri(params['buffer_path'])
-        try:
-            open_style = params['open_style']
-        except:
-            open_style = 'v'
-
         cmd_name = params['cmd_name']
         self._lsp.executeCommand(cmd_name, arguments=cmd_params)
 
