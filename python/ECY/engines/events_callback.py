@@ -85,15 +85,3 @@ class Operate():
                 isreturn_match_point=self.is_indent)
 
         rpc.DoCall('ECY#completion#Open', [context])
-
-    def DoCodeAction(self, context):
-        if 'result' not in context:
-            logger.debug('missing params. "result"')
-            return
-        results = context['result']
-        if len(results) == 0:
-            rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
-            return
-        for item in results:
-            pass
-        rpc.DoCall('ECY#code_action#Do', [context])

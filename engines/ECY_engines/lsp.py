@@ -49,6 +49,7 @@ class Operate(object):
         self.completion_position_cache = {}
         self.completion_isInCompleted = True
         self.current_seleted_item = {}
+        self.code_action_cache = None
 
         self._start_server()
 
@@ -89,12 +90,10 @@ class Operate(object):
                     'workspace/applyEdit')
 
                 try:
-                    applied = rpc.DoCall('ECY#code_action#ApplyEdit',
-                                         [response['params']['edit']])
-                    if applied != 0:
-                        applied = False
-                    else:
-                        applied = True
+                    res = workspace_edit.WorkspaceEdit(
+                        response['params']['edit'])
+                    rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+                    applied = True
                 except Exception as e:
                     logger.exception(e)
                     applied = False
@@ -406,6 +405,21 @@ class Operate(object):
             except Exception as e:
                 logger.exception(e)
 
+    def CodeActionCallback(self, context):
+        if self.code_action_cache is None:
+            return
+
+        params = context['params']
+        context = params['context']
+        if context != self.code_action_cache:
+            return
+        seleted_item = context[params['seleted_item']]
+        if 'edit' in seleted_item:
+            temp = workspace_edit.WorkspaceEdit(seleted_item['edit'])
+            rpc.DoCall('ECY#utils#ApplyTextEdit', [temp])
+        if 'command' in seleted_item:
+            pass
+
     def DoCodeAction(self, context):
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
@@ -413,14 +427,22 @@ class Operate(object):
         start_position = ranges['start']
         end_position = ranges['end']
 
-        returns = self._lsp.codeAction(
+        res = self._lsp.codeAction(
             uri,
             start_position,
             end_position,
             diagnostic=self._diagnosis_cache).GetResponse()
 
-        context['result'] = returns['result']
-        logger.debug(context)
+        res = res['result']
+        context['result'] = res
+        self.code_action_cache = res
+
+        if len(res) == 0 or res is None:
+            rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
+            return
+
+        rpc.DoCall('ECY#code_action#Do', [context])
+
         return context
 
     def _diagnosis_analysis(self, params):
@@ -728,4 +750,6 @@ class Operate(object):
         rename_info = {'rename_id': self.rename_id, 'res': res}
         self.rename_info[self.rename_id] = rename_info
         del self.rename_info[self.rename_id]  # for now
-        rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])
+        res = workspace_edit.WorkspaceEdit(res)
+        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+        # rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])

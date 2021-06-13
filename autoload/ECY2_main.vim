@@ -52,7 +52,6 @@ fun! ECY2_main#GetCodeLens() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -86,7 +85,6 @@ fun! ECY2_main#Format() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -108,7 +106,6 @@ fun! ECY2_main#GetDocumentSymbol() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -122,7 +119,6 @@ fun! ECY2_main#GotoDefinition() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -136,7 +132,6 @@ fun! ECY2_main#PrepareCallHierarchy() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -150,7 +145,6 @@ fun! ECY2_main#GotoImplementation() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -164,7 +158,6 @@ fun! ECY2_main#GotoDeclaration() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -178,7 +171,6 @@ fun! ECY2_main#GotoTypeDefinition() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -192,7 +184,6 @@ fun! ECY2_main#Hover() abort
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
@@ -214,7 +205,6 @@ fun! ECY2_main#DoCodeAction(params) abort
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_range': l:buffer_range, 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 

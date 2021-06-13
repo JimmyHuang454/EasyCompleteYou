@@ -61,7 +61,11 @@ fun! ECY#code_action#Do(context)
     return
   endif
   let l:int -= 1
-  call s:Do(s:results[l:int])
+
+  let l:params = {'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange(),
+        \'seleted_item': l:int, 'context': a:context['result']}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
   return 0
   "}}}
 endf
