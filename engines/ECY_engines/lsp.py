@@ -186,6 +186,31 @@ class Operate(object):
         uri = self._lsp.PathToUri(uri)
         self._lsp.documentSymbos(uri)
 
+    def OnTypeFormatting(self, context):
+        if 'documentOnTypeFormattingProvider' not in self.capabilities:
+            self._show_msg('OnTypeFormatting are not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        res = self._lsp.onTypeFormatting(
+            uri,
+            start_position['line'],
+            start_position['colum'],
+            '\n',
+            self.engine_format_setting['tabSize'],
+            insertSpaces=self.engine_format_setting['insertSpaces'],
+            trimFinalNewlines=self.engine_format_setting['trimFinalNewlines'],
+            insertFinalNewline=self.
+            engine_format_setting['insertFinalNewline'],
+            trimTrailingWhitespace=self.
+            engine_format_setting['trimTrailingWhitespace'],
+        ).GetResponse()
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
     def Format(self, context):
         if 'documentFormattingProvider' not in self.capabilities:
             self._show_msg('Format are not supported.')
@@ -444,13 +469,17 @@ class Operate(object):
             end_position,
             diagnostic=self._diagnosis_cache).GetResponse()
 
-        res = res['result']
-        context['result'] = res
-        self.code_action_cache = res
-
         if len(res) == 0 or res is None:
             rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
+            self.code_action_cache = None
             return
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            self.code_action_cache = None
+            return
+
+        res = res['result']
+        context['result'] = res
 
         rpc.DoCall('ECY#code_action#Do', [context])
 

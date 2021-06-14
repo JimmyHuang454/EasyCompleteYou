@@ -2,6 +2,7 @@ import copy
 import os
 import shutil
 from ECY.lsp import language_server_protocol
+from ECY import rpc
 
 my_lsp = language_server_protocol.LSP(timeout=1)
 
@@ -162,11 +163,13 @@ def TextEdit(text_edit_list, file_context):
 
 def ReadFileContent(path):
     # open a file; if it's not exists or have no right to operate them raise a error
-    with open(path, 'r+', encoding='utf-8') as f:
-        content = f.read()
-        f.close()
-    split_content = content.split('\n')
-    return split_content
+    res = rpc.DoCall('ECY#utils#IsFileOpenedInVim', [path, 'return_list'])
+    if res is False:
+        with open(path, 'r+', encoding='utf-8') as f:
+            content = f.read()
+            f.close()
+        res = content.split('\n')
+    return res
 
 
 def Check(workspace_edit):

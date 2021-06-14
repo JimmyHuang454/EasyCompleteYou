@@ -351,13 +351,17 @@ function! ECY#utils#GetCurrentLineRange() abort
 "}}}
 endfunction
 
-function! ECY#utils#IsFileOpenedInVim(file_path) abort
+function! ECY#utils#IsFileOpenedInVim(file_path, ...) abort
 "{{{
   let l:buffer_nr = bufnr(a:file_path)
   if l:buffer_nr < 0 " not in vim
     return v:false
   endif
-  return l:buffer_nr
+  if a:0 == 0
+    return l:buffer_nr
+  else
+    return getbufline(l:buffer_nr, 1, "$")
+  endif
 "}}}
 endfunction
 

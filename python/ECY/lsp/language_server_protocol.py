@@ -390,6 +390,23 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/rename')
 
+    def FormattingOptions(self,
+                          tabSize,
+                          insertSpaces,
+                          trimTrailingWhitespace=True,
+                          insertFinalNewline=True,
+                          trimFinalNewlines=True,
+                          workDoneToken=None,
+                          ProgressToken=None):
+        opts = {
+            'tabSize': tabSize,
+            'insertSpaces': insertSpaces,
+            'insertFinalNewline': insertFinalNewline,
+            'trimFinalNewlines': trimFinalNewlines,
+            'trimTrailingWhitespace': trimTrailingWhitespace
+        }
+        return opts
+
     def formatting(self,
                    uri,
                    tabSize,
@@ -404,13 +421,12 @@ class LSP(conec.Operate):
         if ProgressToken is None:
             ProgressToken = self._get_progress_token()
 
-        opts = {
-            'tabSize': tabSize,
-            'insertSpaces': insertSpaces,
-            'insertFinalNewline': insertFinalNewline,
-            'trimFinalNewlines': trimFinalNewlines,
-            'trimTrailingWhitespace': trimTrailingWhitespace
-        }
+        opts = self.FormattingOptions(
+            tabSize,
+            insertSpaces,
+            trimTrailingWhitespace=trimTrailingWhitespace,
+            trimFinalNewlines=trimFinalNewlines,
+            insertFinalNewline=insertFinalNewline)
 
         params = {
             'workDoneToken': workDoneToken,
@@ -435,8 +451,33 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/codeLens')
 
-    def Position(self, line, colum):
-        return {'line': line, 'character': colum}
+    def onTypeFormatting(self,
+                         uri,
+                         line,
+                         colum,
+                         strings,
+                         tabSize,
+                         insertSpaces,
+                         path_type='uri',
+                         trimTrailingWhitespace=True,
+                         insertFinalNewline=True,
+                         trimFinalNewlines=True,
+                         workDoneToken=None,
+                         ProgressToken=None):
+        opts = self.FormattingOptions(
+            tabSize,
+            insertSpaces,
+            trimTrailingWhitespace=trimTrailingWhitespace,
+            trimFinalNewlines=trimFinalNewlines,
+            insertFinalNewline=insertFinalNewline)
+
+        params = self.TextDocumentPositionParams(uri,
+                                                 line,
+                                                 colum,
+                                                 path_type=path_type)
+        params['ch'] = strings
+        params['options'] = opts
+        return self._build_send(params, 'textDocument/onTypeFormatting')
 
     def Range(self, start_position, end_position):
         return {'start': start_position, 'end': end_position}
@@ -454,9 +495,13 @@ class LSP(conec.Operate):
             uri = self.PathToUri(uri)
         return {'uri': uri}
 
-    def TextDocumentPositionParams(self, uri, line, colum):
+    def Position(self, line, colum):
+        return {'line': line, 'character': colum}
+
+    def TextDocumentPositionParams(self, uri, line, colum, path_type='uri'):
         return {
-            'textDocument': self.TextDocumentIdentifier(uri),
+            'textDocument': self.TextDocumentIdentifier(uri,
+                                                        path_type=path_type),
             'position': self.Position(line, colum)
         }
 
