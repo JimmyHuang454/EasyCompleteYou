@@ -210,6 +210,11 @@ class Operate(object):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
+        res = res['result']
+        if res is None:
+            return
+        res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
+        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
     def Format(self, context):
         if 'documentFormattingProvider' not in self.capabilities:

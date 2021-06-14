@@ -102,8 +102,7 @@ fun! s:InsertLeave()
         \g:ECY_file_type_info2[l:file_type]['last_engine_name']
 
   unlet g:ECY_file_type_info2[l:file_type]['last_engine_name']
-  doautocmd <nomodeline> BufEnter
-  doautocmd <nomodeline> InsertLeave
+  call ECY#rpc#rpc_event#OnBufferEnter()
 "}}}
 endf
 
