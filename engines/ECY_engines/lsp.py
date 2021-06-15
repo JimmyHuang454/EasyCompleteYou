@@ -195,18 +195,8 @@ class Operate(object):
         uri = self._lsp.PathToUri(uri)
         start_position = params['buffer_position']
         res = self._lsp.onTypeFormatting(
-            uri,
-            start_position['line'],
-            start_position['colum'],
-            '\n',
-            self.engine_format_setting['tabSize'],
-            insertSpaces=self.engine_format_setting['insertSpaces'],
-            trimFinalNewlines=self.engine_format_setting['trimFinalNewlines'],
-            insertFinalNewline=self.
-            engine_format_setting['insertFinalNewline'],
-            trimTrailingWhitespace=self.
-            engine_format_setting['trimTrailingWhitespace'],
-        ).GetResponse()
+            uri, start_position['line'], start_position['colum'], '\n',
+            self.engine_format_setting).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -222,16 +212,8 @@ class Operate(object):
             return
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
-        res = self._lsp.formatting(
-            uri,
-            self.engine_format_setting['tabSize'],
-            insertSpaces=self.engine_format_setting['insertSpaces'],
-            trimFinalNewlines=self.engine_format_setting['trimFinalNewlines'],
-            insertFinalNewline=self.
-            engine_format_setting['insertFinalNewline'],
-            trimTrailingWhitespace=self.
-            engine_format_setting['trimTrailingWhitespace'],
-        ).GetResponse()
+        res = self._lsp.formatting(uri,
+                                   self.engine_format_setting).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return

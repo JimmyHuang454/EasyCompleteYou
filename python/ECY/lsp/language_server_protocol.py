@@ -390,14 +390,7 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/rename')
 
-    def FormattingOptions(self,
-                          tabSize,
-                          insertSpaces,
-                          trimTrailingWhitespace=True,
-                          insertFinalNewline=True,
-                          trimFinalNewlines=True,
-                          workDoneToken=None,
-                          ProgressToken=None):
+    def FormattingOptions(self, context):
         opts = {
             'tabSize': tabSize,
             'insertSpaces': insertSpaces,
@@ -407,30 +400,8 @@ class LSP(conec.Operate):
         }
         return opts
 
-    def formatting(self,
-                   uri,
-                   tabSize,
-                   insertSpaces,
-                   trimTrailingWhitespace=True,
-                   insertFinalNewline=True,
-                   trimFinalNewlines=True,
-                   workDoneToken=None,
-                   ProgressToken=None):
-        if workDoneToken is None:
-            workDoneToken = self._get_workdone_token()
-        if ProgressToken is None:
-            ProgressToken = self._get_progress_token()
-
-        opts = self.FormattingOptions(
-            tabSize,
-            insertSpaces,
-            trimTrailingWhitespace=trimTrailingWhitespace,
-            trimFinalNewlines=trimFinalNewlines,
-            insertFinalNewline=insertFinalNewline)
-
+    def formatting(self, uri, opts):
         params = {
-            'workDoneToken': workDoneToken,
-            'partialResultToken': ProgressToken,
             'textDocument': self.TextDocumentIdentifier(uri),
             'options': opts
         }
@@ -456,21 +427,8 @@ class LSP(conec.Operate):
                          line,
                          colum,
                          strings,
-                         tabSize,
-                         insertSpaces,
-                         path_type='uri',
-                         trimTrailingWhitespace=True,
-                         insertFinalNewline=True,
-                         trimFinalNewlines=True,
-                         workDoneToken=None,
-                         ProgressToken=None):
-        opts = self.FormattingOptions(
-            tabSize,
-            insertSpaces,
-            trimTrailingWhitespace=trimTrailingWhitespace,
-            trimFinalNewlines=trimFinalNewlines,
-            insertFinalNewline=insertFinalNewline)
-
+                         opts,
+                         path_type='uri'):
         params = self.TextDocumentPositionParams(uri,
                                                  line,
                                                  colum,
