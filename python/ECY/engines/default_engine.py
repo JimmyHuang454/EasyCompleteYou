@@ -1,4 +1,7 @@
 import re
+from xmlrpc.server import SimpleXMLRPCServer
+import threading
+import socket
 
 
 class Operate(object):
@@ -8,6 +11,24 @@ class Operate(object):
         self.engine_name = 'label'
         self.cache_dict = []
         self.cache_string = []
+        self.res = []
+        for item in range(100000):
+            self.res.append(str(item))
+        threading.Thread(target=self.StartServer, daemon=True).start()
+
+    def StartServer(self):
+        host = '127.0.0.1'  # 获取本地主机名
+        port = 2345  # 设置端口
+        server = SimpleXMLRPCServer((host, port))
+        server.register_function(self._preview, "preview")
+        server.register_function(self._get_content, "content")
+        server.serve_forever()
+
+    def _get_content(self):
+        return self.res
+
+    def _preview(self, line):
+        return line
 
     def OnBufferEnter(self, context):
         self.cache_string = []

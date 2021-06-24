@@ -23,5 +23,5 @@ try
     call s:SetUpLeaderf()
   endif
 catch 
-  call ECY#utils#echo("[ECY] You have no Leaderf.")
+  " call ECY#utils#echo("[ECY] You have no Leaderf.")
 endtry

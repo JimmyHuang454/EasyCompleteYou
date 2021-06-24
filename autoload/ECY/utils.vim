@@ -429,12 +429,17 @@ function! s:Switch(path) abort
 "}}}
 endfunction
 
-function! ECY#utils#StartLeaderfSelecting(content, callback_name) abort
+function! s:LeaderfUI(content, callback_name) abort
 "{{{
   try
     call leaderf_ECY#items_selecting#Start(a:content, a:callback_name)
   catch 
     call ECY#utility#ShowMsg("[ECY] You are missing 'Leaderf' or its version is too low. Please install/update it.", 2)
   endtry
+"}}}
+endfunction
+
+function! ECY#utils#AskUserToSelete(content_list, callback_name) abort
+"{{{
 "}}}
 endfunction

@@ -1,13 +1,13 @@
 fun! ECY#engine_config#Init() abort
+  let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
   try
     call s:Load()
-  catch 
   endtry
 endf
+let g:ECY_engine_config = {}
 
 fun! s:Load() abort
 "{{{
-  let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
   let g:ECY_engine_default_config_path = g:ECY_engine_config_dir . '/default_config.json'
 
   let g:ECY_default_value = readfile(g:ECY_engine_default_config_path)
@@ -21,35 +21,61 @@ fun! s:Load() abort
     if !has_key(g:ECY_engine_config, item)
       let g:ECY_engine_config[item] = {}
     endif
-
     for item2 in keys(g:ECY_default_value[item])
-      if !has_key(g:ECY_engine_config[item], item2)
-        let g:ECY_engine_config[item][item2] = 
-              \g:ECY_default_value[item][item2]['default_value']
+      let l:line = split(item2, '\.')
+      let l:name_len = len(l:line)
+      if l:name_len > 1
+        let l:user_config = g:ECY_engine_config[item]
+        let i = 0
+        while i < (l:name_len - 1)
+          if !has_key(l:user_config, l:line[i])
+            let l:user_config[l:line[i]] = {}
+          endif
+          let l:user_config = l:user_config[l:line[i]]
+          let i += 1
+        endw
+        let l:name = l:line[l:name_len - 1]
+      else
+        let l:user_config = g:ECY_engine_config[item]
+        let l:name = item2
       endif
+
+      if !has_key(l:user_config, l:name)
+        let l:user_config[l:name] = g:ECY_default_value[item][item2]['default_value']
+      endif
+
     endfor
   endfor
 "}}}
 endf
 
 
-fun! ECY#engine_config#GetEngineConfig(engine_name, opts) abort
+fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
 "{{{
-  if !has_key(g:ECY_engine_config, a:engine_name) || 
-        \!has_key(g:ECY_engine_config[a:engine_name], a:opts)
-    return 'nothing'
+  if !has_key(g:ECY_engine_config, a:engine_name)
+    return ''
   endif
-  let l:temp = g:ECY_engine_config[a:engine_name][a:opts]
-  if type(l:temp) == v:t_string && len(l:temp) != 0 && l:temp[0] == '&'
-    let g:ECY_config_var = l:temp[0]
-    try
-      exe printf('let g:ECY_config_var = %s' % (l:temp[1:]))
-    catch 
-    endtry
-    let g:ECY_engine_config[a:engine_name][a:opts] = g:ECY_config_var
-    return g:ECY_engine_config[a:engine_name][a:opts]
+
+  let l:line = split(a:key, '\.')
+  let l:name_len = len(l:line)
+  if l:name_len > 1
+    let l:user_config = g:ECY_engine_config[a:engine_name]
+    let i = 0
+    while i < (l:name_len - 1)
+      if !has_key(l:user_config, l:line[i])
+        return ''
+      endif
+      let l:user_config = l:user_config[l:line[i]]
+      let i += 1
+    endw
+    let l:name = l:line[l:name_len - 1]
   else
-    return l:temp
+    let l:user_config = g:ECY_engine_config[a:engine_name]
+    let l:name = a:key
   endif
+
+  return has_key(l:user_config, l:name)
 "}}}
 endf
+
+call ECY#engine_config#Init()

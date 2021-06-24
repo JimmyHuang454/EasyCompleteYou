@@ -1,15 +1,29 @@
 {
   "GLOBAL_SETTING": {
-    "lsp_formatting": {
-      "default_value": {
-        "tabSize": 2,
-        "insertSpaces": true,
-        "trimTrailingWhitespace": true,
-        "trimFinalNewlines": true,
-        "insertFinalNewline": true
-      },
-      "type": "dict",
-      "des": ["lsp_formatting opts"]
+    "lsp_formatting.tabSize": {
+      "default_value": 2,
+      "type": "int",
+      "des": ["LS init opts"]
+    },
+    "lsp_formatting.insertSpaces": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp_formatting.trimTrailingWhitespace": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp_formatting.trimFinalNewlines": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp_formatting.insertFinalNewline": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
     },
     "lsp_timeout": {
       "default_value": 5,
@@ -23,10 +37,15 @@
       "type": "string",
       "des": ["cmd to start clangd."]
     },
-    "compileFallback": {
+    "initializationOptions.fallbackFlags": {
       "default_value": [],
       "type": "list",
-      "des": ["flag to be added while analysing."]
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.compilationDatabasePath": {
+      "default_value": null,
+      "type": "string",
+      "des": ["LS init opts"]
     }
   },
   "ECY_engines.python.pyright.pyright": {
@@ -47,37 +66,75 @@
       "type": "string",
       "des": ["cmd to start pyls."]
     },
-    "initializationOptions": {
-      "default_value": {
-        "codeAction": {
-          "nameExtractVariable": "jls_extract_var",
-          "nameExtractFunction": "jls_extract_def"
-        },
-        "completion": {
-          "disableSnippets": false,
-          "resolveEagerly": false
-        },
-        "diagnostics": {
-          "enable": true,
-          "didOpen": true,
-          "didChange": true,
-          "didSave": true
-        },
-        "jediSettings": {
-          "autoImportModules": [],
-          "caseInsensitiveCompletion": true
-        },
-        "markupKindPreferred": "markdown",
-        "workspace": {
-          "extraPaths": [],
-          "symbols": {
-            "ignoreFolders": [".nox", ".tox", ".venv", "__pycache__", "venv"],
-            "maxSymbols": 20
-          }
-        }
-      },
-      "type": "dict",
-      "des": ["init opts"]
+    "initializationOptions.codeAction.nameExtractVariable": {
+      "default_value": "jls_extract_var",
+      "type": "list",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.codeAction.nameExtractFunction": {
+      "default_value": "jls_extract_var",
+      "type": "string",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.diagnostics.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.diagnostics.didOpen": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.diagnostics.didChange": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.diagnostics.didSave": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.completion.disableSnippets": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.completion.resolveEagerly": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.jediSettings.autoImportModules": {
+      "default_value": [],
+      "type": "list",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.jediSettings.caseInsensitiveCompletion": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.markupKindPreferred": {
+      "default_value": "markdown",
+      "type": "string",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.workspace.extraPaths": {
+      "default_value": [],
+      "type": "list",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.workspace.symbols.ignoreFolders": {
+      "default_value": [".nox", ".tox", ".venv", "__pycache__", "venv"],
+      "type": "list",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.workspace.symbols.maxSymbols": {
+      "default_value": 20,
+      "type": "int",
+      "des": ["LS init opts"]
     }
   }
 }
