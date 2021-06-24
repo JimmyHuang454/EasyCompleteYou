@@ -2,6 +2,7 @@ fun! ECY#engine_config#Init() abort
   let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
   try
     call s:Load()
+  catch
   endtry
 endf
 let g:ECY_engine_config = {}
@@ -24,8 +25,8 @@ fun! s:Load() abort
     for item2 in keys(g:ECY_default_value[item])
       let l:line = split(item2, '\.')
       let l:name_len = len(l:line)
+      let l:user_config = g:ECY_engine_config[item]
       if l:name_len > 1
-        let l:user_config = g:ECY_engine_config[item]
         let i = 0
         while i < (l:name_len - 1)
           if !has_key(l:user_config, l:line[i])
@@ -36,7 +37,6 @@ fun! s:Load() abort
         endw
         let l:name = l:line[l:name_len - 1]
       else
-        let l:user_config = g:ECY_engine_config[item]
         let l:name = item2
       endif
 
@@ -58,8 +58,8 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
 
   let l:line = split(a:key, '\.')
   let l:name_len = len(l:line)
+  let l:user_config = g:ECY_engine_config[a:engine_name]
   if l:name_len > 1
-    let l:user_config = g:ECY_engine_config[a:engine_name]
     let i = 0
     while i < (l:name_len - 1)
       if !has_key(l:user_config, l:line[i])
@@ -70,12 +70,9 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
     endw
     let l:name = l:line[l:name_len - 1]
   else
-    let l:user_config = g:ECY_engine_config[a:engine_name]
     let l:name = a:key
   endif
 
-  return has_key(l:user_config, l:name)
+  return l:user_config[l:name]
 "}}}
 endf
-
-call ECY#engine_config#Init()
