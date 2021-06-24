@@ -73,6 +73,9 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
     let l:name = a:key
   endif
 
+  if !has_key(l:user_config, l:name)
+    return ''
+  endif
   return l:user_config[l:name]
 "}}}
 endf
