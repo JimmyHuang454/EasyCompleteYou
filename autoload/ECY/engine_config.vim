@@ -5,7 +5,6 @@ fun! ECY#engine_config#Init() abort
   catch
   endtry
 endf
-let g:ECY_engine_config = {}
 
 fun! s:Load() abort
 "{{{
