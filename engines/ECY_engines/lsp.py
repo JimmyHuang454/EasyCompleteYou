@@ -87,7 +87,7 @@ class Operate(object):
     def _get_format_config(self):
         self.engine_format_setting = utils.GetEngineConfig(
             self.engine_name, 'lsp_formatting')
-        if self.engine_format_setting == 'nothing':
+        if self.engine_format_setting == '':
             self.engine_format_setting = utils.GetEngineConfig(
                 'GLOBAL_SETTING', 'lsp_formatting')
 
