@@ -58,6 +58,11 @@ endfunction
 fun! ECY#code_action#Do(context)
 "{{{
   let s:results = a:context['result']
+  if len(s:results) == 0
+    call ECY#utils#echo('No action.')
+    return
+  endif
+
   let l:seleted_item = -1
 
   if get(g:, 'ECY_allow_preference', v:true)
