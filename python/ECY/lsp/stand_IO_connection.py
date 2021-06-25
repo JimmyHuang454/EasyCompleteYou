@@ -20,6 +20,7 @@ class ThreadOfJob(object):
         """
         self.server_id = thread_id
         self._sub_object = sub_object
+        self.is_log_stderr = False
         self.__queue = queue_
 
     def Start(self):
@@ -74,7 +75,8 @@ class ThreadOfJob(object):
                 }
             }
             temp = {'server_id': self.server_id, 'data': json.dumps(data)}
-            self.__queue.put(temp)
+            if self.is_log_stderr:
+                self.__queue.put(temp)
         logger.debug("server die")
 
     def IsServerAlive(self):

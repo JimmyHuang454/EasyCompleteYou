@@ -429,19 +429,18 @@ class Operate(object):
                 logger.exception(e)
 
     def CodeActionCallback(self, context):
-        if self.code_action_cache is None:
-            return
-
         params = context['params']
         context = params['context']
-        if context != self.code_action_cache:
+        if context != self.code_action_cache or 'result' not in context:
+            logger.debug('filtered a CodeActionCallback.')
             return
-        seleted_item = context[params['seleted_item']]
+        res = context['result']
+        seleted_item = res[params['seleted_item']]
         if 'edit' in seleted_item:
             temp = workspace_edit.WorkspaceEdit(seleted_item['edit'])
             rpc.DoCall('ECY#utils#ApplyTextEdit', [temp])
         if 'command' in seleted_item:
-            pass
+            pass  # TODO
 
     def DoCodeAction(self, context):
         params = context['params']
@@ -449,6 +448,7 @@ class Operate(object):
         ranges = params['buffer_range']
         start_position = ranges['start']
         end_position = ranges['end']
+        self.code_action_cache = None
 
         res = self._lsp.codeAction(
             uri,
@@ -458,15 +458,14 @@ class Operate(object):
 
         if len(res) == 0 or res is None:
             rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
-            self.code_action_cache = None
             return
         if 'error' in res:
             self._show_msg(res['error']['message'])
-            self.code_action_cache = None
             return
 
         res = res['result']
         context['result'] = res
+        self.code_action_cache = context
 
         rpc.DoCall('ECY#code_action#Do', [context])
 

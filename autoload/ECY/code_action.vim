@@ -38,7 +38,6 @@ function! s:AskUser(results) abort
       endif
       let l:cmd_name = l:temp['command']
       let l:cmd_args = get(l:temp, 'arguments', [])
-      " call ECY2_main#DoCmd(l:cmd_name, l:cmd_args)
     endif
     let i += 1
     let s:show .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
@@ -60,26 +59,31 @@ fun! ECY#code_action#Do(context)
 "{{{
   let s:results = a:context['result']
   let l:seleted_item = -1
-  let i = 0
-  for item in s:results
-    if !has_key(item, 'isPreferred')
-      let l:seleted_item = i
-      break
-    endif
-    let i += 1
-  endfor
+
+  if get(g:, 'ECY_allow_preference', v:true)
+    let i = 0
+    for item in s:results
+      if has_key(item, 'isPreferred') && item['isPreferred']
+        let l:seleted_item = i
+        break
+      endif
+      let i += 1
+    endfor
+  endif
 
   if l:seleted_item == -1
     let l:seleted_item = s:AskUser(s:results)
+  else
+    call ECY#utils#echo('Appled action.')
   endif
 
-  if has_key(a:context[l:seleted_item], 'command') && 
-        \has_key(a:context[l:seleted_item]['command'], 'arguments')
+  if has_key(s:results[l:seleted_item], 'command') && 
+        \has_key(s:results[l:seleted_item]['command'], 'arguments')
     
   endif
 
   let l:params = {'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange(),
-        \'seleted_item': l:seleted_item, 'context': a:context['result']}
+        \'seleted_item': l:seleted_item, 'context': a:context}
 
   call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
   "}}}
