@@ -179,12 +179,36 @@ class Operate(object):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
+        res = res['result']
+        if res is None or len(res) == 0:
+            self._show_msg('0 symbol.')
+            return
+        res = self._all_symbol(res)
+        rpc.DoCall('ECY#selete#Do', [res])
 
     def OnDocumentSymbol(self, context):
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
-        self._lsp.documentSymbos(uri)
+        res = self._lsp.documentSymbos(uri).GetResponse()
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+        res = res['result']
+        if res is None or len(res) == 0:
+            self._show_msg('0 symbol.')
+            return
+        res = self._all_symbol(res)
+        rpc.DoCall('ECY#selete#Do', [res])
+
+    def _all_symbol(self, context):
+        res = []
+        for item in context:
+            res.append(item)
+            if 'children' in item:
+                res.extend(self._all_symbol(item['children']))
+
+        return res
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
