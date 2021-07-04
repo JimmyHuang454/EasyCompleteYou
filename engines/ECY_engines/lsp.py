@@ -37,7 +37,14 @@ class Operate(object):
         #     self.rootPath = self._lsp.UriToPath(self.rootUri)
         self.rootPath = rootPath
         self.workspaceFolders = workspaceFolders
+
+        if initializationOptions is None:
+            initializationOptions = utils.GetEngineConfig(
+                self.engine_name, 'initializationOptions')
+            if initializationOptions == '':
+                initializationOptions = None
         self.initializationOptions = initializationOptions
+
         self.languageId = languageId
 
         self._did_open_list = {}

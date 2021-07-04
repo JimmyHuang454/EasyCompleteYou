@@ -93,4 +93,3 @@ fun! ECY#code_action#Do(context)
   call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
   "}}}
 endf
-

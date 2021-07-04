@@ -67,6 +67,8 @@ class LSPRequest(object):
         if self.response_queue is None:
             # user have no intention to get request's response.
             return
+
+        logger.debug("<---" + str(response))
         self.response_queue.put(response)
 
 
@@ -91,18 +93,15 @@ class LSP(conec.Operate):
     def _classify_response(self):
         while 1:
             todo = self.GetTodo()
-            self.Debug("<---" + todo['data'])
             todo = json.loads(todo['data'])
             if 'id' not in todo:
                 # a notification send from server
                 todo['ECY_type'] = 'notification'
+                self.Debug("<---" + str(todo))
                 self._add_queue(todo['method'], todo)
             elif todo['id'] in self._waitting_response and 'method' not in todo:
                 # a response
                 ids = todo['id']
-                if ids not in self._waitting_response:
-                    self.Debug("a response that can Not recognize")
-                    continue
                 todo['ECY_type'] = 'response'
                 self._waitting_response[ids].ResponseArrive(todo)
                 del self._waitting_response[ids]
@@ -173,7 +172,8 @@ class LSP(conec.Operate):
 
         send = json.dumps(send)
         context_lenght = len(send)
-        self.Debug("--->" + send)
+        if method not in ['textDocument/didOpen', 'textDocument/didChange']:
+            self.Debug("--->" + send)
         message = ("Content-Length: {}\r\n\r\n"
                    "{}".format(context_lenght, send))
         self.SendData(self.GetUsingServerID(),
