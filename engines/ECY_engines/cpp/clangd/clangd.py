@@ -12,6 +12,7 @@ class Operate(lsp.Operate):
         except Exception as e:
             starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
             logger.exception(e)
+        # starting_cmd += ' --limit-results=100'
         lsp.Operate.__init__(self, engine_name, starting_cmd, languageId='cpp')
 
     def OnCompletion(self, context):

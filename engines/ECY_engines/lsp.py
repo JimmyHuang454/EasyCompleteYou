@@ -54,7 +54,7 @@ class Operate(object):
         self.rename_id = 0
         self.workspace_cache = []
         self.completion_position_cache = {}
-        self.completion_isInCompleted = True
+        self.completion_isInCompleted = False
         self.current_seleted_item = {}
         self.code_action_cache = None
 
@@ -155,7 +155,6 @@ class Operate(object):
         text = "\n".join(text)
         uri = self._lsp.PathToUri(uri)
         version = context['params']['buffer_id']
-        logger.debug(version)
         # LSP requires the edit-version
         if uri not in self._did_open_list:
             self._lsp.didopen(uri, self.languageId, text, version=version)
@@ -384,31 +383,38 @@ class Operate(object):
         #############
         #  signatureHelp  #
         #############
+        current_start_postion = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
         if current_position_cache[
                 'prev_string_last_key'] in self.signature_help_triggerCharacters:
-            current_start_postion = {
-                'line': start_position['line'],
-                'character': start_position['colum']
-            }
             self._lsp.signatureHelp(uri, current_start_postion).GetResponse(
                 callback=self._signature_help)
 
-        current_start_postion = {
+        cache_position = {
             'line': start_position['line'],
             'character': current_position_cache['current_colum']
         }
 
-        #############
+        ################
         #  completion  #
-        #############
+        ################
         context['show_list'] = self.results_list
-        if not self.completion_isInCompleted and \
-                self.completion_position_cache == current_start_postion:
-            return context
+        if self.completion_position_cache == cache_position:
+            if self.completion_isInCompleted:
+                res = self._lsp.completion(uri,
+                                           current_start_postion,
+                                           triggerKind=3).GetResponse()
+            else:
+                return context
+        else:
+            res = self._lsp.completion(uri,
+                                       current_start_postion).GetResponse()
 
         self.results_list = []
-        self.completion_position_cache = current_start_postion
-        res = self._lsp.completion(uri, current_start_postion).GetResponse()
+        self.completion_position_cache = cache_position
 
         if 'error' in res:
             self._show_msg(res['error']['message'])

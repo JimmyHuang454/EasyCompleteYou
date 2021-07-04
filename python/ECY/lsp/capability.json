@@ -37,7 +37,7 @@
         "snippetSupport": true,
         "commitCharactersSupport": false,
         "documentationFormat": ["plaintext"],
-        "deprecatedSupport": true,
+        "deprecatedSupport": false,
         "preselectSupport": false
       },
       "completionItemKind": {
