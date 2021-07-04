@@ -17,10 +17,12 @@ class Operate(object):
                  rootPath=None,
                  languageId='',
                  workspaceFolders=None,
+                 use_completion_cache=True,
                  initializationOptions=None):
 
         logger.debug(server_cmd)
         self._lsp = language_server_protocol.LSP(timeout=5)
+        self.use_completion_cache = use_completion_cache
 
         self.engine_name = name
         self.server_cmd = server_cmd
@@ -301,6 +303,7 @@ class Operate(object):
 
     def OnInsertLeave(self, context):
         self.completion_position_cache = {}
+        self.completion_isInCompleted = False
 
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
@@ -383,9 +386,6 @@ class Operate(object):
         current_position_cache = utils.IsNeedToUpdate(context,
                                                       self.refresh_regex)
 
-        #############
-        #  signatureHelp  #
-        #############
         current_start_postion = {
             'line': start_position['line'],
             'character': start_position['colum']
@@ -404,15 +404,15 @@ class Operate(object):
         ################
         #  completion  #
         ################
-        context['show_list'] = self.results_list
-        if self.completion_position_cache == cache_position:
-            if self.completion_isInCompleted:
-                res = self._lsp.completion(uri,
-                                           current_start_postion,
-                                           triggerKind=3).GetResponse()
-            else:
-                return context
+        if self.completion_isInCompleted:
+            res = self._lsp.completion(uri,
+                                       current_start_postion,
+                                       triggerKind=3).GetResponse()
         else:
+            if self.completion_position_cache == cache_position and self.use_completion_cache:
+                logger.debug(self.completion_position_cache)  # use cache
+                context['show_list'] = self.results_list
+                return context
             res = self._lsp.completion(uri,
                                        current_start_postion).GetResponse()
 

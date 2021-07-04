@@ -13,7 +13,11 @@ class Operate(lsp.Operate):
             starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
             logger.exception(e)
         # starting_cmd += ' --limit-results=100'
-        lsp.Operate.__init__(self, engine_name, starting_cmd, languageId='cpp')
+        lsp.Operate.__init__(self,
+                             engine_name,
+                             starting_cmd,
+                             use_completion_cache=False,
+                             languageId='cpp')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
