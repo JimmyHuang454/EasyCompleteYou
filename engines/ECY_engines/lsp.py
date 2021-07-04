@@ -299,6 +299,9 @@ class Operate(object):
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
 
+    def OnInsertLeave(self, context):
+        self.completion_position_cache = {}
+
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
                 'resolveProvider' not in self.capabilities['completionProvider'] \
