@@ -171,13 +171,21 @@ class Operate(object):
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
-        # self._change_workspace_folder(context)
+        self._change_workspace_folder(context)
 
     def _change_workspace_folder(self, context):
-        temp = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
-        if temp not in self.workspace_cache and temp != '':
-            self.workspace_cache.append(temp)
-            add_workspace = {'uri': self._lsp.PathToUri(temp), 'name': temp}
+        try:
+            is_supported = self.capabilities['workspace']['workspaceFolders'][
+                'supported']
+            if not is_supported:
+                return
+        except:
+            return
+
+        path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        if path not in self.workspace_cache and path != '':
+            self.workspace_cache.append(path)
+            add_workspace = {'uri': self._lsp.PathToUri(path), 'name': path}
             self._lsp.didChangeWorkspaceFolders(add_workspace=[add_workspace])
 
     def OnTextChanged(self, context):
