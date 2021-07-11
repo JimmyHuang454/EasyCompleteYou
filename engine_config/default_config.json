@@ -48,6 +48,13 @@
       "des": ["LS init opts"]
     }
   },
+  "ECY_engines.html.lsp.vls": {
+    "cmd": {
+      "default_value": "vls",
+      "type": "string",
+      "des": ["cmd to start vls."]
+    }
+  },
   "ECY_engines.python.pyright.pyright": {
     "cmd": {
       "default_value": "pyright-langserver --stdio",

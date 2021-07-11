@@ -28,16 +28,17 @@ class Operate(object):
         self.server_cmd = server_cmd
         self.refresh_regex = refresh_regex
 
-        # init opts
-        if rootUri is None:
-            rootUri = self._lsp.PathToUri(
-                rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace'))
+        # in favour of `rootUri`.
+        if rootPath is None:
+            self.rootPath = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        else:
+            self.rootPath = rootPath
 
-        self.rootUri = rootUri
-        # Doesn't work with pyright
-        # if rootPath is None and self.rootUri is not None:
-        #     self.rootPath = self._lsp.UriToPath(self.rootUri)
-        self.rootPath = rootPath
+        if rootUri is None:
+            self.rootUri = self._lsp.PathToUri(self.rootPath)
+        else:
+            self.rootUri = rootUri
+
         self.workspaceFolders = workspaceFolders
 
         if initializationOptions is None:
