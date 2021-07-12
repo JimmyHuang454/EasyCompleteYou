@@ -86,7 +86,7 @@ def Create(context, is_check=False):
     if is_check:
         return
 
-    with open(uri, 'w+') as f:  # overwrite if it is exist, new if it is not.
+    with open(path, 'w+') as f:  # overwrite if it is exist, new if it is not.
         f.close()
 
 
@@ -138,9 +138,6 @@ def TextEdit(text_edit_list, file_context):
             'replace_list': temp
         }
         replace_line_list.append(temp)
-        print(start_line, end_line, effect_line_wide, this_added_line,
-              range(effect_line_wide + this_added_line), temp)
-
         added_line += this_added_line
 
         # update colum
@@ -232,10 +229,12 @@ def Apply(workspace_edit):
         file_uri = my_lsp.UriToPath(file_uri)
         item['textDocument']['uri'] = file_uri
         if file_uri not in file_edit_info:
+            text_list = ReadFileContent(file_uri)
             file_edit_info[file_uri] = {
                 'added_line': 0,
                 'textDocument': item['textDocument'],
-                'text': ReadFileContent(file_uri),
+                'text': text_list,
+                'undo_text': copy.copy(text_list),
                 'added_colum': {}
             }
         # make sure file_edit_info has changed

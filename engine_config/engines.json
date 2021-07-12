@@ -49,5 +49,9 @@
     "file_type": ["all"],
     "disabled": false,
     "engine_name": "ECY_engines.all.spell"
+  }, {
+    "file_type": ["all"],
+    "disabled": false,
+    "engine_name": "ECY_engines.all.efm"
   }]
 }

@@ -1,4 +1,5 @@
 import threading
+import copy
 from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
@@ -60,6 +61,7 @@ class Operate(object):
         self.completion_isInCompleted = False
         self.current_seleted_item = {}
         self.code_action_cache = None
+        self.workspace_edit_undo = None
 
         self._start_server()
         self._get_format_config()
@@ -110,7 +112,7 @@ class Operate(object):
                 try:
                     res = workspace_edit.WorkspaceEdit(
                         response['params']['edit'])
-                    rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+                    self._do_action(res)
                     applied = True
                 except Exception as e:
                     logger.exception(e)
@@ -120,6 +122,15 @@ class Operate(object):
                 self._lsp.applyEdit_response(response['id'], applied)
             except:
                 pass
+
+    def _do_action(self, res):
+        self.workspace_edit_undo = copy.copy(res)
+        for item in res:
+            if 'text' in item:
+                del item['text']
+            if 'undo_text' in item:
+                del item['undo_text']
+        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
     def _handle_file_status(self):
         # clangd 8+
@@ -245,7 +256,7 @@ class Operate(object):
         if res is None:
             return
         res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
-        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+        self._do_action(res)
 
     def Format(self, context):
         if 'documentFormattingProvider' not in self.capabilities:
@@ -264,7 +275,7 @@ class Operate(object):
             self._show_msg('nothing to format.')
             return
         res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
-        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+        self._do_action(res)
 
     def _signature_help(self, res):
         if 'error' in res:
@@ -486,8 +497,8 @@ class Operate(object):
         res = context['result']
         seleted_item = res[params['seleted_item']]
         if 'edit' in seleted_item:
-            temp = workspace_edit.WorkspaceEdit(seleted_item['edit'])
-            rpc.DoCall('ECY#utils#ApplyTextEdit', [temp])
+            res = workspace_edit.WorkspaceEdit(seleted_item['edit'])
+            self._do_action(res)
         if 'command' in seleted_item:
             pass  # TODO
 
@@ -826,4 +837,4 @@ class Operate(object):
         self.rename_info[self.rename_id] = rename_info
         del self.rename_info[self.rename_id]  # for now
         res = workspace_edit.WorkspaceEdit(res)
-        rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
+        self._do_action(res)

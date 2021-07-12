@@ -85,9 +85,10 @@ fun! ECY#code_action#Do(context)
     call ECY#utils#echo('Appled action.')
   endif
 
+  let s:undo = {}
   if has_key(s:results[l:seleted_item], 'command') && 
         \has_key(s:results[l:seleted_item]['command'], 'arguments')
-    
+    " TODO
   endif
 
   let l:params = {'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange(),
@@ -95,4 +96,20 @@ fun! ECY#code_action#Do(context)
 
   call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
   "}}}
+endf
+
+fun! ECY#code_action#Undo()
+  if !exists('g:ECY_action_undo')
+    return
+  endif
+
+  for item in keys(g:ECY_action_undo)
+    let l:buffer_nr = ECY#utils#IsFileOpenedInVim(item)
+    if !l:buffer_nr " not in vim
+      continue
+    endif
+    call ECY#utils#Replace(l:buffer_nr, 0, item['end_line'], item['replace_list'])
+  endfor
+
+
 endf

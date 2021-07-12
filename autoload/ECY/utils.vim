@@ -367,37 +367,28 @@ endfunction
 
 function! ECY#utils#ChangeBuffer(buffer_path, context) abort
 "{{{
-  " if has_key(a:context, 'version')
-  "   try
-  "     if GetBufferIDByPath() != a:context['version']
-  "       " abort
-  "       return 
-  "     endif
-  "   catch 
-  "     return
-  "   endtry
-  " endif
-
-  " let l:current_buffer_path = ECY#utils#GetCurrentBufferPath()
-
   let l:buffer_nr = ECY#utils#IsFileOpenedInVim(a:buffer_path)
   if !l:buffer_nr " not in vim
     return
   endif
 
+  let g:ECY_action_undo[a:buffer_path] = getbufline(l:buffer_nr, 1, "$")
+
   for item in a:context['replace_line_list']
-    call s:Replace(l:buffer_nr, item['start_line'], item['end_line'], item['replace_list'])
+    call ECY#utils#Replace(l:buffer_nr, item['start_line'], item['end_line'], item['replace_list'])
   endfor
 "}}}
 endfunction
 
 function! ECY#utils#ApplyTextEdit(context) abort
+  let g:ECY_action_undo = {}
+
   for item in keys(a:context)
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor
 endfunction
 
-function! s:Replace(buffer_nr, start_line, end_line, replace_list) abort
+function! ECY#utils#Replace(buffer_nr, start_line, end_line, replace_list) abort
 "{{{
   call s:Delete(a:buffer_nr, a:start_line, a:end_line)
   call appendbufline(a:buffer_nr, a:start_line, a:replace_list) " 1-based
@@ -409,7 +400,7 @@ function! s:Delete(bufnr, start_line, end_line) abort
   let l:start_line = a:start_line + 1
   let l:end_line = a:end_line + 1
   if exists('*deletebufline')
-    call deletebufline(a:bufnr, l:start_line, l:end_line)
+    call deletebufline(a:bufnr, l:start_line, l:end_line) "1-based
   else
       let l:foldenable = &foldenable
       setlocal nofoldenable

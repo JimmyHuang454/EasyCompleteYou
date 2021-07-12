@@ -55,6 +55,33 @@
       "des": ["cmd to start vls."]
     }
   },
+  "ECY_engines.all.efm": {
+    "cmd": {
+      "default_value": "efm-langserver",
+      "type": "string",
+      "des": ["cmd to start efm."]
+    },
+    "initializationOptions.documentFormatting": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.hover": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.documentSymbol": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.codeAction": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    }
+  },
   "ECY_engines.python.pyright.pyright": {
     "cmd": {
       "default_value": "pyright-langserver --stdio",
