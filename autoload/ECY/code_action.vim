@@ -48,7 +48,7 @@ function! s:AskUser(results) abort
   let l:seleted_item = str2nr(input('Index: '))
   if l:seleted_item > len(a:results) || l:seleted_item == 0
     call ECY#utils#echo('Quited')
-    return
+    return -1
   endif
   let l:seleted_item -= 1
   return l:seleted_item
@@ -78,6 +78,9 @@ fun! ECY#code_action#Do(context)
 
   if l:seleted_item == -1
     let l:seleted_item = s:AskUser(s:results)
+    if l:seleted_item == -1
+      return
+    endif
   else
     call ECY#utils#echo('Appled action.')
   endif
