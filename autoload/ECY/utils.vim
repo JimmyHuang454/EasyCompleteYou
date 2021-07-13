@@ -372,8 +372,6 @@ function! ECY#utils#ChangeBuffer(buffer_path, context) abort
     return
   endif
 
-  let g:ECY_action_undo[a:buffer_path] = getbufline(l:buffer_nr, 1, "$")
-
   for item in a:context['replace_line_list']
     call ECY#utils#Replace(l:buffer_nr, item['start_line'], item['end_line'], item['replace_list'])
   endfor
@@ -381,8 +379,6 @@ function! ECY#utils#ChangeBuffer(buffer_path, context) abort
 endfunction
 
 function! ECY#utils#ApplyTextEdit(context) abort
-  let g:ECY_action_undo = {}
-
   for item in keys(a:context)
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor

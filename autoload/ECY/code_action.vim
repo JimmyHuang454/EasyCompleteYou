@@ -99,17 +99,19 @@ fun! ECY#code_action#Do(context)
 endf
 
 fun! ECY#code_action#Undo()
-  if !exists('g:ECY_action_undo')
-    return
-  endif
+"{{{
+  call ECY#rpc#rpc_event#call({'event_name': 'UndoAction', 'params': {}})
+"}}}
+endf
 
-  for item in keys(g:ECY_action_undo)
+fun! ECY#code_action#Undo_cb(res)
+"{{{
+  for item in keys(a:res)
     let l:buffer_nr = ECY#utils#IsFileOpenedInVim(item)
     if !l:buffer_nr " not in vim
       continue
     endif
-    call ECY#utils#Replace(l:buffer_nr, 0, item['end_line'], item['replace_list'])
+    call ECY#utils#Replace(l:buffer_nr, 0, a:res[item]['new_text_len'] - 1, a:res[item]['undo_text'])
   endfor
-
-
+"}}}
 endf

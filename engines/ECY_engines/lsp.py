@@ -123,13 +123,23 @@ class Operate(object):
             except:
                 pass
 
+    def UndoAction(self, context):
+        if self.workspace_edit_undo is None:
+            return
+        rpc.DoCall('ECY#code_action#Undo_cb', [self.workspace_edit_undo])
+        self.workspace_edit_undo = None
+
     def _do_action(self, res):
-        self.workspace_edit_undo = copy.copy(res)
         for item in res:
-            if 'text' in item:
-                del item['text']
-            if 'undo_text' in item:
-                del item['undo_text']
+            if 'text' in res[item]:
+                res[item]['new_text_len'] = len(res[item]['text'])
+                del res[item]['text']
+
+        self.workspace_edit_undo = copy.deepcopy(res)
+
+        for item in res:
+            if 'undo_text' in res[item]:
+                del res[item]['undo_text']
         rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
     def _handle_file_status(self):
@@ -437,6 +447,7 @@ class Operate(object):
                                        current_start_postion).GetResponse()
 
         self.results_list = []
+        context['show_list'] = self.results_list
         self.completion_position_cache = cache_position
 
         if 'error' in res:

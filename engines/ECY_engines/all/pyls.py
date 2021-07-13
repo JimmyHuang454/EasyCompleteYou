@@ -57,14 +57,17 @@ class Operate(lsp.Operate):
                     results_format['menu'] = item['detail']
 
             document = []
-            if 'label' in item:
-                temp = item['label']
-                if temp[0] == ' ':
-                    temp = temp[1:]
-                if results_format['kind'] == 'Function':
-                    temp = detail[0] + ' ' + temp
-                document.append(temp)
+            try:
+                if 'label' in item:
+                    temp = item['label']
+                    if temp[0] == ' ':
+                        temp = temp[1:]
+                    if results_format['kind'] == 'Function':
+                        temp = detail[0] + ' ' + temp
+                    document.append(temp)
                 document.append('')
+            except:
+                pass
 
             if 'documentation' in item:
                 if type(item['documentation']) is str:

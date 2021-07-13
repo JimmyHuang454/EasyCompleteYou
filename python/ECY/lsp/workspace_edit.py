@@ -152,6 +152,7 @@ def TextEdit(text_edit_list, file_context):
     file_context = {
         'added_line': added_line,
         'text': text,
+        'undo_text': file_context['undo_text'],
         'replace_line_list': replace_line_list,
         'added_colum': file_context['added_colum']
     }
@@ -244,8 +245,4 @@ def Apply(workspace_edit):
 
 
 def WorkspaceEdit(workspace_edit):
-    res = Apply(workspace_edit)
-    for item in res:
-        if 'text' in item:
-            del item['text']
-    return res
+    return Apply(workspace_edit)
