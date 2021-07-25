@@ -40,7 +40,13 @@ class Operate(object):
         else:
             self.rootUri = rootUri
 
-        self.workspaceFolders = workspaceFolders
+        if workspaceFolders is None:
+            self.workspaceFolders = [{
+                'uri': self.rootUri,
+                'name': 'ECY_' + self.rootPath
+            }]
+        else:
+            self.workspaceFolders = workspaceFolders
 
         if initializationOptions is None:
             initializationOptions = utils.GetEngineConfig(
