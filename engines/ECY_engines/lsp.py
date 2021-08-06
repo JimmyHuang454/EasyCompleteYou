@@ -193,8 +193,7 @@ class Operate(object):
             self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
 
-
-# }}}
+        # }}}
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
@@ -410,8 +409,6 @@ class Operate(object):
             self.trigger_key = []
         context['trigger_key'] = self.trigger_key
         context['regex'] = self.refresh_regex
-
-        self._did_open_or_change(context)  # update buffer to server
 
         params = context['params']
         uri = params['buffer_path']

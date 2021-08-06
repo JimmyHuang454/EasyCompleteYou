@@ -84,7 +84,7 @@
   },
   "ECY_engines.python.pyright.pyright": {
     "cmd": {
-      "default_value": "pyright-langserver --stdio",
+      "default_value": "pylsp",
       "type": "string",
       "des": ["cmd to start pyright."]
     },

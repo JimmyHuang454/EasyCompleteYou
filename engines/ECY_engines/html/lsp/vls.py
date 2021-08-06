@@ -16,7 +16,7 @@ class Operate(lsp.Operate):
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):
-        super().OnCompletion(context)
+        super().OnBufferEnter(context)
         self.snip.OnBufferEnter(context)
 
     def OnCompletion(self, context):
@@ -35,8 +35,11 @@ class Operate(lsp.Operate):
                 'user_data': ''
             }
 
-            results_format['kind'] = self._lsp.GetKindNameByNumber(
-                item['kind'])
+            if 'kind' in item:
+                results_format['kind'] = self._lsp.GetKindNameByNumber(
+                    item['kind'])
+            else:
+                results_format['kind'] = ' '
 
             item_name = item['label']
 
