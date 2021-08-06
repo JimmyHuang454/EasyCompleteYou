@@ -379,9 +379,11 @@ function! ECY#utils#ChangeBuffer(buffer_path, context) abort
 endfunction
 
 function! ECY#utils#ApplyTextEdit(context) abort
+  let l:cursor_pos = getcurpos()
   for item in keys(a:context)
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor
+  call cursor([l:cursor_pos[1], l:cursor_pos[2]])
 endfunction
 
 function! ECY#utils#Replace(buffer_nr, start_line, end_line, replace_list) abort
