@@ -117,9 +117,35 @@ if g:has_floating_windows_support == 'vim'
   endw
 endif
 
+function! s:Goto(types) abort
+"{{{
+  if a:types == 'definitions' || a:types == 'definition'
+    call ECY2_main#GotoDefinition()
+  elseif a:types == 'declaration'
+    call ECY2_main#GotoDeclaration()
+  elseif a:types == 'implementation'
+    call ECY2_main#GotoImplementation()
+  elseif a:types == 'typeDefinition' || a:types == 'type_definition'
+    call ECY2_main#GotoTypeDefinition()
+  else
+    echo a:types
+  endif
+"}}}
+endfunction
+
 
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
+
+command! -nargs=* ECYGoto       call s:Goto(<q-args>)
+command! -nargs=0 ECYFormat     call ECY2_main#Format()
+command! -nargs=0 ECYRename     call ECY2_main#Rename()
+command! -nargs=0 ECYReStart    call ECY2_main#ReStart()
+command! -nargs=0 ECYHover      call ECY2_main#Hover()
+command! -nargs=0 ECYDocSymbol  call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYDocSymbols call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYSymbol     call ECY2_main#GetWorkSpaceSymbol()
+command! -nargs=0 ECYSymbols    call ECY2_main#GetWorkSpaceSymbol()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
