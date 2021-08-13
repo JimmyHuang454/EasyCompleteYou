@@ -218,6 +218,9 @@ class Operate(object):
         self._did_open_or_change(context)
 
     def OnWorkSpaceSymbol(self, context):
+        if 'workspaceSymbolProvider' not in self.capabilities:
+            self._show_msg('OnWorkSpaceSymbol are not supported.')
+            return
         res = self._lsp.workspaceSymbos().GetResponse()  # not works in clangd
         if 'error' in res:
             self._show_msg(res['error']['message'])
@@ -225,8 +228,7 @@ class Operate(object):
         res = res['result']
         if res is None:
             res = []
-        res = self._all_symbol(res)
-        self._on_selete(res)
+        self._on_selete(res, show_all=True)
 
     def _prepare_item(self, res, uri=None, show_all=False):
         res2 = []
@@ -234,7 +236,7 @@ class Operate(object):
             item['kind'] = self._lsp.GetSymbolsKindByNumber(item['kind'])
             item['abbr'] = item['name']
             if 'location' in item:
-                item['path'] = self._lsp.UriToPath(item['uri'])
+                item['path'] = self._lsp.UriToPath(item['location']['uri'])
             else:
                 item['path'] = self._lsp.UriToPath(uri)
             child = []
@@ -249,11 +251,14 @@ class Operate(object):
             res2.extend(child)
         return res2
 
-    def _on_selete(self, res, uri=None):
-        res = self._prepare_item(res, uri=uri)
+    def _on_selete(self, res, uri=None, show_all=False):
+        res = self._prepare_item(res, uri=uri, show_all=show_all)
         rpc.DoCall('ECY#selete#Do', [res])
 
     def OnDocumentSymbol(self, context):
+        if 'documentSymbolProvider' not in self.capabilities:
+            self._show_msg('OnDocumentSymbol are not supported.')
+            return
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
@@ -264,17 +269,7 @@ class Operate(object):
         res = res['result']
         if res is None:
             res = []
-        res = self._all_symbol(res)
         self._on_selete(res, uri=uri)
-
-    def _all_symbol(self, context):
-        res = []
-        for item in context:
-            res.append(item)
-            if 'children' in item:
-                res.extend(self._all_symbol(item['children']))
-
-        return res
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
