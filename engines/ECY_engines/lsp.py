@@ -223,11 +223,39 @@ class Operate(object):
             self._show_msg(res['error']['message'])
             return
         res = res['result']
-        if res is None or len(res) == 0:
-            self._show_msg('0 symbol.')
-            return
+        if res is None:
+            res = []
         res = self._all_symbol(res)
-        rpc.DoCall('ECY#selete#Do', [res])
+        self._on_selete(res)
+
+    def _prepare_item(self, res, uri=None, show_all=False):
+        res2 = []
+        i = 0
+        for item in res:
+            item['kind'] = self._lsp.GetSymbolsKindByNumber(item['kind'])
+            item['abbr'] = item['name']
+            if 'location' in item:
+                item['path'] = self._lsp.UriToPath(item['uri'])
+            else:
+                item['path'] = self._lsp.UriToPath(uri)
+            child = []
+            if 'children' in item and len(item['children']) != 0:
+                item['abbr'] = item['abbr'] + '/'
+                child = self._prepare_item(item['children'],
+                                           uri=uri,
+                                           show_all=show_all)
+            elif not show_all:
+                continue
+            res2.append(item)
+            res2.extend(child)
+
+        for item in res2:
+            item['index'] = i
+            i += 1
+        return res2
+
+    def _on_selete(self, res, uri=None):
+        rpc.DoCall('ECY#selete#Do', [self._prepare_item(res, uri=uri)])
 
     def OnDocumentSymbol(self, context):
         params = context['params']
@@ -238,11 +266,10 @@ class Operate(object):
             self._show_msg(res['error']['message'])
             return
         res = res['result']
-        if res is None or len(res) == 0:
-            self._show_msg('0 symbol.')
-            return
+        if res is None:
+            res = []
         res = self._all_symbol(res)
-        rpc.DoCall('ECY#selete#Do', [res])
+        self._on_selete(res, uri=uri)
 
     def _all_symbol(self, context):
         res = []

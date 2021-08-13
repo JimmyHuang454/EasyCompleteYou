@@ -379,11 +379,13 @@ function! ECY#utils#ChangeBuffer(buffer_path, context) abort
 endfunction
 
 function! ECY#utils#ApplyTextEdit(context) abort
+"{{{
   let l:cursor_pos = getcurpos()
   for item in keys(a:context)
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor
   call cursor([l:cursor_pos[1], l:cursor_pos[2]])
+"}}}
 endfunction
 
 function! ECY#utils#Replace(buffer_nr, start_line, end_line, replace_list) abort
@@ -415,16 +417,6 @@ function! s:Switch(path) abort
   else
     execute printf('keepalt keepjumps edit! %s', fnameescape(a:path))
   endif
-"}}}
-endfunction
-
-function! s:LeaderfUI(content, callback_name) abort
-"{{{
-  try
-    call leaderf_ECY#items_selecting#Start(a:content, a:callback_name)
-  catch 
-    call ECY#utility#ShowMsg("[ECY] You are missing 'Leaderf' or its version is too low. Please install/update it.", 2)
-  endtry
 "}}}
 endfunction
 
