@@ -230,7 +230,6 @@ class Operate(object):
 
     def _prepare_item(self, res, uri=None, show_all=False):
         res2 = []
-        i = 0
         for item in res:
             item['kind'] = self._lsp.GetSymbolsKindByNumber(item['kind'])
             item['abbr'] = item['name']
@@ -248,14 +247,11 @@ class Operate(object):
                 continue
             res2.append(item)
             res2.extend(child)
-
-        for item in res2:
-            item['index'] = i
-            i += 1
         return res2
 
     def _on_selete(self, res, uri=None):
-        rpc.DoCall('ECY#selete#Do', [self._prepare_item(res, uri=uri)])
+        res = self._prepare_item(res, uri=uri)
+        rpc.DoCall('ECY#selete#Do', [res])
 
     def OnDocumentSymbol(self, context):
         params = context['params']
