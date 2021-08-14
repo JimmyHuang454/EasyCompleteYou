@@ -94,6 +94,13 @@
       "des": ["included path while parsing."]
     }
   },
+  "ECY_engines.cpp.clangd.clangd": {
+    "cmd": {
+      "default_value": "gopls",
+      "type": "string",
+      "des": ["cmd to start gopls."]
+    }
+  },
   "ECY_engines.python.pyls.pyls": {
     "cmd": {
       "default_value": "jedi-language-server",
