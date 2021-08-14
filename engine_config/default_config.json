@@ -94,7 +94,7 @@
       "des": ["included path while parsing."]
     }
   },
-  "ECY_engines.cpp.clangd.clangd": {
+  "ECY_engines.golang.gopls.gopls": {
     "cmd": {
       "default_value": "gopls",
       "type": "string",
