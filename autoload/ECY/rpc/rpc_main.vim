@@ -2,17 +2,13 @@ fun! rpc_main#echo(msg)
   echo a:msg
 endf
 
-fun! rpc_main#GetBuffer(msg) " return list
-  echo a:msg
-endf
-
 fun! s:Send(msg)
-  if g:fuck == -1
+  if s:remote_id == -1
     return
   endif
   let l:json = json_encode(a:msg) . "\n"
   try
-    call ECY#rpc#ECY2_job#send(g:fuck, l:json)
+    call ECY#rpc#ECY2_job#send(s:remote_id, l:json)
   catch 
     call rpc_main#echo('ECY lost connection.')
   endtry
@@ -65,7 +61,7 @@ endf
 
 fun! ECY#rpc#rpc_main#NewClient(cmd)
 "{{{
-  let g:fuck = ECY#rpc#ECY2_job#start(a:cmd, {
+  let s:remote_id = ECY#rpc#ECY2_job#start(a:cmd, {
       \ 'on_stdout': function('rpc_main#Input')
       \ })
   call ECY#rpc#rpc_event#Init()
@@ -113,7 +109,7 @@ fun! rpc_main#Init()
   let g:rpc_params = []
   let g:rpc_result = ''
   let g:rpc_seq_id = -1
-  let g:fuck = -1
+  let s:remote_id = -1
   let s:request_list = []
   let s:is_timer_running = v:false
 "}}}
