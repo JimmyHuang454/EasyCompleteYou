@@ -13,6 +13,7 @@ from urllib.request import url2pathname
 
 from ECY.debug import logger
 from ECY.lsp import symbol_kind
+from ECY.lsp import completion_kind
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
@@ -631,58 +632,9 @@ class LSP(conec.Operate):
 # }}}
 
     def GetKindNameByNumber(self, kindNr):
-        # {{{ completion kind
-        if kindNr == 1:
-            return 'Text'
-        if kindNr == 2:
-            return 'Method'
-        if kindNr == 3:
-            return 'Function'
-        if kindNr == 4:
-            return 'Constructor'
-        if kindNr == 5:
-            return 'Field'
-        if kindNr == 6:
-            return 'Variable'
-        if kindNr == 7:
-            return 'Class'
-        if kindNr == 8:
-            return 'Interface'
-        if kindNr == 9:
-            return 'Module'
-        if kindNr == 10:
-            return 'Property'
-        if kindNr == 11:
-            return 'Unit'
-        if kindNr == 12:
-            return 'Value'
-        if kindNr == 13:
-            return 'Enum'
-        if kindNr == 14:
-            return 'Keyword'
-        if kindNr == 15:
-            return 'Snippet'
-        if kindNr == 16:
-            return 'Color'
-        if kindNr == 17:
-            return 'File'
-        if kindNr == 18:
-            return 'Reference'
-        if kindNr == 19:
-            return 'Folder'
-        if kindNr == 20:
-            return 'EnumMember'
-        if kindNr == 21:
-            return 'Constant'
-        if kindNr == 22:
-            return 'Struct'
-        if kindNr == 23:
-            return 'Event'
-        if kindNr == 24:
-            return 'Operator'
-        if kindNr == 25:
-            return 'TypeParameter'
-        return 'Unkonw'  # }}}
+        if kindNr not in completion_kind.COMPLETION_KIND:
+            return "Unkonw"
+        return completion_kind.COMPLETION_KIND[kindNr]
 
     def GetSymbolsKindByNumber(self, kindNr):
         if kindNr not in symbol_kind.SYMBOL_KIND:
