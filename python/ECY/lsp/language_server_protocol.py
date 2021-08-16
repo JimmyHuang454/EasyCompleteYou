@@ -10,7 +10,9 @@ from urllib.parse import urljoin
 from urllib.request import pathname2url
 from urllib.parse import urlparse
 from urllib.request import url2pathname
+
 from ECY.debug import logger
+from ECY.lsp import symbol_kind
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
@@ -624,6 +626,8 @@ class LSP(conec.Operate):
             return 'Info'
         if kindNr == 4:
             return 'Log'
+
+
 # }}}
 
     def GetKindNameByNumber(self, kindNr):
@@ -681,63 +685,9 @@ class LSP(conec.Operate):
         return 'Unkonw'  # }}}
 
     def GetSymbolsKindByNumber(self, kindNr):
-        # {{{
-        if kindNr == 1:
-            return "File"
-        if kindNr == 2:
-            return "Module"
-        if kindNr == 3:
-            return "NameSpace"
-        if kindNr == 4:
-            return "Package"
-        if kindNr == 5:
-            return "Class"
-        if kindNr == 6:
-            return "Method"
-        if kindNr == 7:
-            return "Property"
-        if kindNr == 8:
-            return "Field"
-        if kindNr == 9:
-            return "Constructor"
-        if kindNr == 10:
-            return "Enum"
-        if kindNr == 11:
-            return "Interface"
-        if kindNr == 12:
-            return "Function"
-        if kindNr == 13:
-            return "Variable"
-        if kindNr == 14:
-            return "Constant"
-        if kindNr == 15:
-            return "String"
-        if kindNr == 16:
-            return "Number"
-        if kindNr == 17:
-            return "Boolean"
-        if kindNr == 18:
-            return "Array"
-        if kindNr == 19:
-            return "Object"
-        if kindNr == 20:
-            return "Key"
-        if kindNr == 21:
-            return "Null"
-        if kindNr == 22:
-            return "EnumMember"
-        if kindNr == 23:
-            return "Struct"
-        if kindNr == 24:
-            return "Event"
-        if kindNr == 25:
-            return "Operator"
-        if kindNr == 26:
-            return "TypeParameter"
-        return 'Unkonw'
-
-
-# }}}
+        if kindNr not in symbol_kind.SYMBOL_KIND:
+            return "Unkonw"
+        return symbol_kind.SYMBOL_KIND[kindNr]
 
     def _current_system(self):
         temp = sys.platform
