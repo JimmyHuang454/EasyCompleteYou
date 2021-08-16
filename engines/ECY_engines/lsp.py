@@ -253,7 +253,10 @@ class Operate(object):
 
     def _on_selete(self, res, uri=None, show_all=False):
         res = self._prepare_item(res, uri=uri, show_all=show_all)
-        rpc.DoCall('ECY#selete#Do', [res])
+        if res == []:
+            self._show_msg("Response empty.")
+        else:
+            rpc.DoCall('ECY#selete#Do', [res])
 
     def OnDocumentSymbol(self, context):
         if 'documentSymbolProvider' not in self.capabilities:
