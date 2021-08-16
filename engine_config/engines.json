@@ -13,15 +13,16 @@
     "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
     "file_type": ["python"],
+    "disabled": true,
     "engine_name": "ECY_engines.python.pyright.pyright"
   }, {
     "file_type": ["python"],
-    "engine_name": "ECY_engines.python.pyls.pyls"
+    "engine_name": "ECY_engines.python.jedi_ls.jedi_ls"
   }, {
     "file_type": ["go"],
     "engine_name": "ECY_engines.golang.gopls.gopls"
   }, {
-    "file_type": ["all"],
+    "file_type": ["vim"],
     "engine_name": "ECY_engines.vim_lsp.vim_lsp"
   }, {
     "file_type": ["rust"],
@@ -31,6 +32,7 @@
     "engine_name": "ECY_engines.snippet.ultisnips.ultisnips"
   }, {
     "file_type": ["all"],
+    "disabled": true,
     "engine_name": "ECY_engines.pygment.pygment"
   }, {
     "file_type": ["javascript", "typescript"],
@@ -47,11 +49,11 @@
     "engine_name": "ECY_engines.html.lsp.vls"
   }, {
     "file_type": ["all"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.all.spell"
   }, {
     "file_type": ["all"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.all.efm"
   }]
 }

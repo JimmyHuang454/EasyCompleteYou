@@ -101,7 +101,7 @@
       "des": ["cmd to start gopls."]
     }
   },
-  "ECY_engines.python.pyls.pyls": {
+  "ECY_engines.python.jedi_ls.jedi_ls": {
     "cmd": {
       "default_value": "jedi-language-server",
       "type": "string",

@@ -236,6 +236,8 @@ fun! ECY#completion#Open(context)
   else " has no
     call s:DoCompletion_old_school(a:context)
   endif
+  let l:start = a:context['params']['time_stamp']
+  let g:abc = reltimefloat(reltime()) - l:start
 "}}}
 endf
 
