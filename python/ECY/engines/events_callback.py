@@ -11,21 +11,14 @@ class Operate():
         self.show_list_len = 15
         self.fuzzy_match = fuzzy_match.FuzzyMatch(
             max_len_2_show=self.show_list_len)
-        self.is_get_opts_done = False
         self.is_indent = True
         self.default_engine = default_engine['engine_obj']
-
-    def _get_opts(self):
-        if self.is_get_opts_done:
-            return
-        self.is_get_opts_done = True
 
     def OnCompletion(self, context):
         if 'show_list' not in context:
             logger.debug('missing params. "show_list"')
             return
 
-        self._get_opts()
         params = context['params']
         current_line = params['buffer_line']
         current_line = bytes(current_line, encoding='utf-8')
