@@ -251,6 +251,33 @@ function! s:CloseDiagnosisPopupWindows() abort
 "}}}
 endfunction
 
+function! s:FormatInfo(diagnostics) abort
+"{{{
+  let l:res = []
+  if type(a:diagnostics) == v:t_string
+    " strings
+    call add(l:res, '(' . a:diagnostics . ')')
+  elseif type(a:diagnostics) == v:t_list
+    " lists
+    if len(a:diagnostics) == 1
+      call add(l:res, '('.a:diagnostics[0].')')
+    else
+      let i = 0
+      for item in a:diagnostics
+        if i == 0
+          call add(l:res, '('.item)
+        else
+          call add(l:res, item)
+        endif
+        let i += 1
+      endfor
+      call add(l:res, a:diagnostics[i - 1].')')
+    endif
+  endif
+  return l:res
+"}}}
+endfunction
+
 function! s:ShowDiagnosis_vim(index_list) abort
 "{{{ 
   call s:CloseDiagnosisPopupWindows()
@@ -270,27 +297,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
       let l:style = 'ECY_diagnostics_warn'
     endif
     call add(l:text, printf('%s [L-%s, C-%s] %s', l:style, l:line, l:colum, l:nr))
-    let l:temp = item['diagnostics']
-    if type(l:temp) == 1
-      " strings
-      call add(l:text, '(' . l:temp . ')')
-    elseif type(l:temp) == 3
-      " lists
-      if len(l:temp) == 1
-        call add(l:text, '('.l:temp[0].')')
-      else
-        let i = 0
-        for item in l:temp
-          if i == 0
-            call add(l:text, '('.item)
-          else
-            call add(l:text, item)
-          endif
-          let i += 1
-        endfor
-        call add(l:text, l:temp[i - 1].')')
-      endif
-    endif
+    call extend(l:text, s:FormatInfo(item['diagnostics']))
   endfor
   if g:ECY_PreviewWindows_style == 'append'
     " show a popup windows aside current cursor.
@@ -320,7 +327,7 @@ function! s:ShowDiagnosis_all(index_list) abort
   let l:temp = '[ECY] '
   let i = 0
   for item in a:index_list
-    let l:temp .= string(item['diagnostics'])
+    let l:temp .= join(s:FormatInfo(item['diagnostics']), "\n")
     if i != 0
       let l:temp .= '|'
     endif
