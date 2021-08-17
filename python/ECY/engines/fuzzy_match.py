@@ -9,25 +9,31 @@ import copy
 
 class FuzzyMatch(object):
     """Return the matchest results of top xx"""
-
-    def __init__(self, result_items_count=0,
+    def __init__(self,
+                 result_items_count=0,
                  lower_unsensitive=1,
-                 fully_match=True):
+                 fully_match=True,
+                 max_len_2_show=15):
         self._result_items_count = result_items_count
         self._lower_unsensitive = lower_unsensitive
         self._fully_match = fully_match
         self._matched_point = []
+        self._max_len_2_show = max_len_2_show
 
-    def FilterItems(self, sort_text, items,
+    def FilterItems(self,
+                    sort_text,
+                    items,
                     isfully_match=True,
                     isreturn_match_point=False,
                     isindent=False,
-                    max_len_2_show=15):
+                    max_len_2_show=None):
         """items formmat:
         [{'abbr':'xxxxyy','something_else':'will not affect',...},
         ...
         {'abbr':'xxxxyy','something_else':'will not affect'}]
         """
+        if max_len_2_show is None:
+            max_len_2_show = self._max_len_2_show
         sort_text_len = len(sort_text)
         vim_items = []
         for item in items:
@@ -48,7 +54,7 @@ class FuzzyMatch(object):
                         i -= 1
                     else:
                         if temp['results'] != item:
-                            vim_items.insert(i+1, item_)
+                            vim_items.insert(i + 1, item_)
                         break
                 if len(vim_items) == 0:
                     vim_items.append(item_)
@@ -97,7 +103,10 @@ class FuzzyMatch(object):
         new[position] = replace_char
         return ''.join(new)
 
-    def CalculateGoal(self, sort_text, text, isHightLight=False,
+    def CalculateGoal(self,
+                      sort_text,
+                      text,
+                      isHightLight=False,
                       HightLightStyle=3):
         goal = 0
         k = 0

@@ -7,10 +7,13 @@ from ECY.engines import fuzzy_match
 class Operate():
     """
     """
-    def __init__(self):
-        self.fuzzy_match = fuzzy_match.FuzzyMatch()
+    def __init__(self, default_engine):
+        self.show_list_len = 15
+        self.fuzzy_match = fuzzy_match.FuzzyMatch(
+            max_len_2_show=self.show_list_len)
         self.is_get_opts_done = False
         self.is_indent = True
+        self.default_engine = default_engine['engine_obj']
 
     def _get_opts(self):
         if self.is_get_opts_done:
@@ -50,9 +53,9 @@ class Operate():
             'colum': current_colum
         }
 
-        #############
-        #  for complete reslove  #
-        #############
+        ########################
+        #  completion resolve  #
+        ########################
         i = 0
         for item in context['show_list']:
             item['ECY_item_index'] = i
@@ -62,7 +65,7 @@ class Operate():
             context['is_filter'] = True
 
         if context['is_filter']:
-            context['show_list'] = self.fuzzy_match.FilterItems(
+            res_list = self.fuzzy_match.FilterItems(
                 context['filter_key'],
                 context['show_list'],
                 isindent=self.is_indent,
@@ -77,11 +80,13 @@ class Operate():
             else:
                 context['must_show'] = False
 
-        if len(context['show_list']) == 0:
-            context['show_list'] = self.fuzzy_match.FilterItems(
+        # show_list_len = self.show_list_len - len(res_list)
+        if len(res_list) == 0:
+            res_list = self.fuzzy_match.FilterItems(
                 context['filter_key'],
                 context['buffer_show_list'],
                 isindent=self.is_indent,
                 isreturn_match_point=self.is_indent)
 
+        context['show_list'] = res_list
         rpc.DoCall('ECY#completion#Open', [context])

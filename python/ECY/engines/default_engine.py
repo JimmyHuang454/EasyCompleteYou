@@ -1,7 +1,4 @@
 import re
-from xmlrpc.server import SimpleXMLRPCServer
-import threading
-import socket
 
 
 class Operate(object):
@@ -9,34 +6,22 @@ class Operate(object):
     """
     def __init__(self):
         self.engine_name = 'label'
-        self.cache_dict = []
-        self.cache_string = []
-        self.res = []
-        for item in range(100000):
-            self.res.append(str(item))
-        threading.Thread(target=self.StartServer, daemon=True).start()
+        self.cache_dict = {}
+        self.res_list = []
 
-    def StartServer(self):
-        host = '127.0.0.1'  # 获取本地主机名
-        port = 2345  # 设置端口
-        server = SimpleXMLRPCServer((host, port))
-        server.register_function(self._preview, "preview")
-        server.register_function(self._get_content, "content")
-        server.serve_forever()
+    def _update_cache(self, context):
+        params = context['params']
+        line_text = '\n'.join(params['buffer_content'])
+        path = params['buffer_path']
+        self.cache_dict[path] = line_text
+        temp = []
+        for item in self.cache_dict:
+            temp.extend(re.findall(r'\w+', self.cache_dict[item]))
 
-    def _get_content(self):
-        return self.res
+        temp = list(set(temp))
 
-    def _preview(self, line):
-        return line
-
-    def OnBufferEnter(self, context):
-        self.cache_string = []
-        line_text = '\n'.join(context['params']['buffer_content'])
-        self.cache_string = list(set(re.findall(r'\w+', line_text)))
-        # self.cache_string.extend(items_list)
-        self.cache_dict = []
-        for item in self.cache_string:
+        self.res_list = []
+        for item in temp:
             # the results_format must at least contain the following keys.
             results_format = {
                 'abbr': '',
@@ -49,13 +34,17 @@ class Operate(object):
             results_format['abbr'] = item
             results_format['word'] = item
             results_format['kind'] = '[ID]'
-            self.cache_dict.append(results_format)
-        return None
+            self.res_list.append(results_format)
+
+    def OnBufferEnter(self, context):
+        self._update_cache(context)
+        return context
 
     def OnCompletion(self, context):
-        context['show_list'] = self.cache_dict
+        context['buffer_show_list'] = self.res_list
+        context['show_list'] = self.res_list
         return context
 
     def OnInsertLeave(self, context):
-        self.OnBufferEnter(context)
-        return None
+        self._update_cache(context)
+        return context

@@ -19,8 +19,9 @@ class Mannager(object):
         self.engine_dict = {}
         self.default_engine_name = 'ECY.engines.default_engine'
         self.InstallEngine(self.default_engine_name)
-        self.events_callback = events_callback.Operate()
-        self.events_pre = events_pre.Operate()
+        self.events_callback = events_callback.Operate(
+            self._get_default_engine())
+        self.events_pre = events_pre.Operate(self._get_default_engine())
 
     def EngineCallbackThread(self, *args):
         engine_info = args[0]
