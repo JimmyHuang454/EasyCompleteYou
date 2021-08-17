@@ -95,8 +95,6 @@ class Operate(object):
         current_position_cache = utils.IsNeedToUpdate(context,
                                                       self.refresh_regex2)
 
-        # not_filter_strings = current_position_cache['prev_string']
-
         current_start_postion = {
             'line': start_position['line'],
             'character': current_position_cache['current_colum']
@@ -123,13 +121,13 @@ class Operate(object):
         if len(try_dir) == 0:
             return
 
-        if utils.GetCurrentOS() == 'Windows':
-            try_dir = try_dir.replace('\\', '/')
-
         if try_dir[0] in self.workspace_symbol:
             try_dir = self.root_path + try_dir[1:]
         elif try_dir[0] == '.':
             try_dir = self._handle_dot(try_dir, buffer_path)
+
+        if utils.GetCurrentOS() == 'Windows':
+            try_dir = try_dir.replace('\\', '/')
 
         logger.debug(try_dir)
         dir_list = self.try_listdir(try_dir)
