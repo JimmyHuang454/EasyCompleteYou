@@ -1,11 +1,11 @@
-fun! ECY#rpc#rpc_event#call(params)
+fun! ECY#rpc#rpc_event#call(context)
 "{{{
   if !ECY2_main#IsWorkAtCurrentBuffer()
     return
   endif
 
-  let l:event_name = a:params['event_name']
-  let l:params = a:params['params']
+  let l:event_name = a:context['event_name']
+  let l:params = a:context['params']
 
   if g:popup_windows_is_selecting && l:event_name == 'OnCompletion'
     let g:popup_windows_is_selecting = v:false
@@ -26,7 +26,12 @@ fun! ECY#rpc#rpc_event#call(params)
 
   let l:params['event_name'] = l:event_name
   let l:send_msg = {'event_name': l:event_name, 'params': l:params}
-  call ECY#rpc#rpc_main#RPCEventsAll(l:send_msg)
+  if has_key(a:context, 'engine_name')
+    let l:engine_name = a:context['engine_name']
+  else
+    let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+  endif
+  call ECY#rpc#rpc_main#RPCEventsAll(l:send_msg, l:engine_name)
 
   for Function in g:event_pre[l:event_name]
     call Function(l:event_name)

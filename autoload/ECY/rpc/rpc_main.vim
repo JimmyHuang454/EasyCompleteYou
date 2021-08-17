@@ -14,10 +14,10 @@ fun! s:Send(msg)
   endtry
 endf
 
-fun! ECY#rpc#rpc_main#RPCEventsAll(msg)
+fun! ECY#rpc#rpc_main#RPCEventsAll(msg, engine_name)
 "{{{
   let g:rpc_seq_id += 1
-  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': ECY#switch_engine#GetBufferEngineName()}
+  let l:temp = {'type': 'event', 'event_name': a:msg['event_name'], 'id': g:rpc_seq_id, 'params': a:msg['params'], 'engine_name': a:engine_name}
   call s:Send(l:temp)
 "}}}
 endf

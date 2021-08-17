@@ -8,7 +8,16 @@ fun! ECY2_main#Init() abort
 "}}}
 endf
 
-fun! ECY2_main#DoCmd(cmd_name, cmd_params) abort
+fun! s:GetEngineName(input) abort
+"{{{
+  if len(a:input) == 0
+    return ECY#switch_engine#GetBufferEngineName()
+  endif
+  return a:input[0]
+"}}}
+endf
+
+fun! ECY2_main#DoCmd(cmd_name, cmd_params, engine_name) abort
 "{{{
 
   let l:params = {
@@ -21,7 +30,9 @@ fun! ECY2_main#DoCmd(cmd_name, cmd_params) abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'DoCmd', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'DoCmd', 
+        \'params': l:params,
+        \'engine_name': a:engine_name})
 "}}}
 endf
 
@@ -39,15 +50,18 @@ fun! ECY2_main#CheckAllEngine() abort
 "}}}
 endf
 
-fun! ECY2_main#ReStart() abort
+fun! ECY2_main#ReStart(...) abort
 "{{{
-  call ECY#rpc#rpc_event#call({'event_name': 'ReStart', 'params': {}})
+  let l:engine_name = s:GetEngineName(a:0)
+  call ECY#rpc#rpc_event#call({'event_name': 'ReStart', 'params': {},
+        \'engine_name': l:engine_name})
   doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
 "}}}
 endf
 
-fun! ECY2_main#GetCodeLens() abort
+fun! ECY2_main#GetCodeLens(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -55,13 +69,15 @@ fun! ECY2_main#GetCodeLens() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GetCodeLens', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GetCodeLens', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#Rename() abort
+fun! ECY2_main#Rename(...) abort
 "{{{
-  
+  let l:engine_name = s:GetEngineName(a:0)
   let l:new_name = ECY#utils#Input('New name: ')
   if l:new_name == ''
     return
@@ -75,7 +91,9 @@ fun! ECY2_main#Rename() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'Rename', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'Rename', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
@@ -92,8 +110,9 @@ fun! ECY2_main#OnTypeFormatting() abort
 "}}}
 endf
 
-fun! ECY2_main#Format() abort
+fun! ECY2_main#Format(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -101,20 +120,24 @@ fun! ECY2_main#Format() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'Format', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'Format', 'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#GetWorkSpaceSymbol() abort
+fun! ECY2_main#GetWorkSpaceSymbol(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'OnWorkSpaceSymbol', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnWorkSpaceSymbol', 
+        \'params': l:params, 'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#GetDocumentSymbol() abort
+fun! ECY2_main#GetDocumentSymbol(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -122,12 +145,15 @@ fun! ECY2_main#GetDocumentSymbol() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'OnDocumentSymbol', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnDocumentSymbol', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#GotoDefinition() abort
+fun! ECY2_main#GotoDefinition(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -135,7 +161,9 @@ fun! ECY2_main#GotoDefinition() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoDefinition', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GotoDefinition', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
@@ -152,8 +180,9 @@ fun! ECY2_main#PrepareCallHierarchy() abort
 "}}}
 endf
 
-fun! ECY2_main#GotoImplementation() abort
+fun! ECY2_main#GotoImplementation(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -161,12 +190,15 @@ fun! ECY2_main#GotoImplementation() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoImplementation', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GotoImplementation', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#GotoDeclaration() abort
+fun! ECY2_main#GotoDeclaration(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -174,12 +206,15 @@ fun! ECY2_main#GotoDeclaration() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoDeclaration', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GotoDeclaration', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#GotoTypeDefinition() abort
+fun! ECY2_main#GotoTypeDefinition(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -187,12 +222,15 @@ fun! ECY2_main#GotoTypeDefinition() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoTypeDefinition', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'GotoTypeDefinition', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
-fun! ECY2_main#Hover() abort
+fun! ECY2_main#Hover(...) abort
 "{{{
+  let l:engine_name = s:GetEngineName(a:0)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -200,7 +238,9 @@ fun! ECY2_main#Hover() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'OnHover', 'params': l:params})
+  call ECY#rpc#rpc_event#call({'event_name': 'OnHover', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
