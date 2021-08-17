@@ -160,6 +160,7 @@ fun! ECY#switch_engine#Init()
   try
     let g:ECY_config = json_decode(readfile(g:ECY_config_path)[0])
   catch 
+    call writefile(["{}"], g:ECY_config_path, 'b')
     let g:ECY_config = {}
   endtry
 
@@ -203,7 +204,7 @@ fun! s:VimLeave()
       let l:temp = g:ECY_file_type_info2[key]
       let g:ECY_config[key] = l:temp['filetype_using']
     endfor
-    call writefile([json_encode(g:ECY_config)], g:ECY_config_path, 'w')
+    call writefile([json_encode(g:ECY_config)], g:ECY_config_path, 'b')
   catch 
   endtry
   "}}}

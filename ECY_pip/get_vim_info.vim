@@ -11,6 +11,6 @@ echo g:current_dir
 let g:temp = {'$HOME': $HOME, '$VIMRUNTIME': $VIMRUNTIME, '$VIM': $VIM, '$XDG_CONFIG_HOME': $XDG_CONFIG_HOME}
 let g:temp = json_encode(g:temp)
 
-call writefile([g:temp], g:current_dir, 'w')
+call writefile([g:temp], g:current_dir, 'b')
 
 exe ":q!"
