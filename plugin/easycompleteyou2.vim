@@ -30,12 +30,12 @@ elseif &encoding !~? 'utf-\?8'
         \ echohl None
   call s:restore_cpo()
   finish
-elseif !has('python3')
-  echohl WarningMsg |
-        \ echomsg "ECY unavailable: unable to load Python3." |
-        \ echohl None
-  call s:restore_cpo()
-  finish
+" elseif !has('python3')
+"   echohl WarningMsg |
+"         \ echomsg "ECY unavailable: unable to load Python3." |
+"         \ echohl None
+"   call s:restore_cpo()
+"   finish
 elseif ( g:is_vim && (!exists('*job_start') || !has('channel')) ) || 
       \ (!g:is_vim && !has('nvim-0.2.0'))
   echohl WarningMsg |
