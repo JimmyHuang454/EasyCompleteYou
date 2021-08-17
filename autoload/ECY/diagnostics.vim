@@ -53,7 +53,7 @@ function ECY#diagnostics#Init() abort
 
 
   call s:SetUpEvent()
-  call s:SetUpPython()
+  " call s:SetUpPython()
 
   let g:ECY_key_to_show_current_line_diagnostics = get(g:,'ECY_key_to_show_current_line_diagnostics', 'H')
   let g:ECY_key_to_show_next_diagnostics = get(g:,'ECY_key_to_show_next_diagnostics', '[j')
@@ -96,6 +96,25 @@ def CalculateScreenSign(start, end):
         results.append(item)
   return results
 endpython
+"}}}
+endfunction
+
+function s:CalculateScreenSign(start, end) abort
+"{{{
+  let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+  let l:list = g:ECY_diagnostics_items_with_engine_name[l:engine_name]
+  let l:file_path = ECY#utils#GetCurrentBufferPath()
+  let l:res = []
+  for item in l:list
+    let l:line = item['position']['line']
+    if item['file_path'] != l:file_path
+      continue
+    endif
+    if a:start <= l:line && a:end >= l:line
+      call add(l:res, item)
+    endif
+  endfor
+  return l:res
 "}}}
 endfunction
 
@@ -430,11 +449,11 @@ endfunction
 
 function! s:PartlyPlaceSign_timer_cb(starts, ends, engine_name) abort
 "{{{
-  if !exists('g:ECY_diagnostics_items_with_engine_name[a:engine_name]')
+  if !has_key(g:ECY_diagnostics_items_with_engine_name, a:engine_name)
     return
   endif
   let l:file_path = ECY#utils#GetCurrentBufferPath()
-  let l:lists = py3eval('CalculateScreenSign(' . string(a:starts) . ',' . string(a:ends) . ')')
+  let l:lists = s:CalculateScreenSign(a:starts, a:ends)
   call ECY#diagnostics#CleanAllSignHighlight()
   call s:UnplaceAllSignByEngineName(a:engine_name)
   for item in l:lists
