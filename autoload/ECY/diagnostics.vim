@@ -320,7 +320,7 @@ function! s:ShowDiagnosis_all(index_list) abort
   let l:temp = '[ECY] '
   let i = 0
   for item in a:index_list
-    let l:temp .= item['diagnostics']
+    let l:temp .= string(item['diagnostics'])
     if i != 0
       let l:temp .= '|'
     endif
