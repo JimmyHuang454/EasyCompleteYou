@@ -38,7 +38,7 @@ class ECYDiagnosisExplorer(Explorer):
                 if length > items_len[name]:
                     items_len[name] = length + 2
 
-        results = []
+        res = []
         j = 0
         for item in g_items_data:
             temp = ""
@@ -58,9 +58,9 @@ class ECYDiagnosisExplorer(Explorer):
                 temp += abbr
                 k += 1
             temp += " " + str(j)
-            results.append(temp)
+            res.append(temp)
             j += 1
-        return results
+        return res
 
     def getStlCategory(self):
         # return a strings

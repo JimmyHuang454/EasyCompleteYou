@@ -529,6 +529,21 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}}
         return self._build_send(params, 'textDocument/documentSymbol')
 
+    def semanticTokens(self, ranges, uri, previousResultId='0'):
+        params = {'textDocument': self.TextDocumentIdentifier(uri)}
+        if ranges == 'all':
+            event = 'textDocument/semanticTokens/full'
+        elif ranges == 'all_delta':
+            params['previousResultId'] = previousResultId
+            event = 'textDocument/semanticTokens/full'
+        elif type(ranges) is dict:
+            params['range'] = ranges
+            event = 'textDocument/semanticTokens/range'
+        else:
+            params = {}
+            event = 'workspace/semanticTokens/refresh'
+        return self._build_send(params, event)
+
     def workspaceSymbos(self, query=""):
         # query == "" means returning all symbols.
         # few of Server supports this feature.

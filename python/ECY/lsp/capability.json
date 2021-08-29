@@ -130,6 +130,16 @@
       "dynamicRegistration": false,
       "rangeLimit": 100,
       "lineFoldingOnly": true
+    },
+    "semanticTokens": {
+      "requests": {
+        "range": true,
+        "full": true
+      },
+      "tokenTypes": [],
+      "overlappingTokenSupport": true,
+      "multilineTokenSupport": true,
+      "tokenModifiers": []
     }
   },
   "experimental": null
