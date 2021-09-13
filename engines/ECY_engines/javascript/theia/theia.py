@@ -1,14 +1,15 @@
 from ECY_engines import lsp
+from ECY import utils
 
 
 class Operate(lsp.Operate):
     def __init__(self):
-        starting_cmd = 'typescript-language-server'
-        starting_cmd += ' --stdio'
+        engine_name = 'ECY_engines.javascript.theia.theia'
+        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
         lsp.Operate.__init__(self,
-                             'ECY_engines.javascript.theia.theia',
+                             engine_name,
                              starting_cmd,
-                             languageId='python')
+                             languageId='javascript')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

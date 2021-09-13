@@ -22,7 +22,6 @@ endf
 
 fun! s:DoCompletion_vim(context)
 "{{{
-
   if s:popup_windows_nr != -1
     call ECY#completion#Close()
   endif
@@ -281,18 +280,30 @@ function! ECY#completion#IsMenuOpen() abort
 "}}}
 endfunction
 
-function! s:Complete(position, words) abort
+function! s:Complete(bufnr, start, end, content) abort
 "{{{
-   let l:current_colum = (col('.') - 1)
-   let l:complete_col = a:position['colum']
-   let l:gap = l:current_colum - l:complete_col
-   if l:gap == 0
-     return
+   let l:cursor_pos = getcurpos()
+   let l:start_line = a:start['line'] + 1
+   let l:end_line = a:end['line'] + 1
+   let l:replace_list = split(a:content, "\n")
+
+   let l:start_line_content = getbufline(a:bufnr, l:start_line, l:start_line)[0]
+   if a:start['colum'] == 0
+      let l:start_line_content = ""
+   else
+      let l:start_line_content = l:start_line_content[0: a:start['colum'] - 1]
    endif
-   let l:current_line = getline(".")
-   let l:new_line = l:current_line[: l:complete_col - 1] . a:words . l:current_line[l:complete_col + l:gap:]
-   call setline(line('.'), l:new_line)
-   return l:new_line
+
+   let l:end_line_content = getbufline(a:bufnr, l:end_line, l:end_line)[0]
+   let l:end_line_content = l:end_line_content[a:end['colum']:]
+
+   let l:replace_list[0] = l:start_line_content . l:replace_list[0]
+
+   let l:replace_list[len(l:replace_list) - 1] = l:replace_list[len(l:replace_list) - 1] . l:end_line_content
+
+   call ECY#utils#Replace(a:bufnr, l:start_line - 1, l:end_line - 1, l:replace_list)
+   call cursor([l:end_line, a:start['colum'] + len(a:content) + 1])
+   return l:replace_list
 "}}}
 endfunction
 
@@ -304,7 +315,6 @@ function! s:SelectItems_vim(next_or_pre) abort
     let l:round = -1
   endif
   let l:start_colum = g:ECY_current_popup_windows_info['start_position']['colum']
-  " call s:Complete(g:ECY_current_popup_windows_info['start_position'], 'sdf')
 
   " loop
   let l:items_info       = g:ECY_current_popup_windows_info['items_info']
@@ -316,7 +326,6 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
   let g:ECY_current_popup_windows_info['selecting_item'] = l:next_item
 
-  " call complete(l:start_colum + 1, ['sdf'])
   " return
   " complete and hightlight the new one 
   " let l:exe = "call prop_remove({'type':'item_selected','all':v:true})"
@@ -377,12 +386,20 @@ function! s:SelectItems_vim(next_or_pre) abort
     endw
   endif
 
-  " this function will trigger the insert event, and we don't want it to 
-  " be triggered while completing.
-  " IMPORTANCE: when comment this function, vim will not highlight the
-  " selected item, because we filter the key of <Tab> that is selecting
-  " mapping, then the s:isSelecting in ECY_main.vim can not be reset.
-  call complete(l:start_colum+1,[l:to_complete])
+  if has_key(l:info, 'completion_text_edit')
+    call s:Complete(bufnr(), 
+          \l:info['completion_text_edit']['start'], 
+          \l:info['completion_text_edit']['end'],
+          \l:to_complete)
+  else
+    " this function will trigger the insert event, and we don't want it to 
+    " be triggered while completing.
+    " IMPORTANCE: when comment this function, vim will not highlight the
+    " selected item, because we filter the key of <Tab> that is selecting
+    " mapping, then the s:isSelecting in ECY_main.vim can not be reset.
+    call complete(l:start_colum + 1,[l:to_complete])
+  endif
+
 
 "}}}
 endfunction

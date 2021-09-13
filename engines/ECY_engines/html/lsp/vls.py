@@ -12,7 +12,8 @@ class Operate(lsp.Operate):
                              self.engine_name,
                              starting_cmd,
                              refresh_regex=r'[\w+\-]',
-                             languageId='html')
+                             languageId='html',
+                             use_completion_cache=True)
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):
@@ -43,6 +44,9 @@ class Operate(lsp.Operate):
 
             item_name = item['label']
 
+            if item_name[0] == "@":
+                item_name = item_name[1:]
+
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 
@@ -50,5 +54,6 @@ class Operate(lsp.Operate):
 
         if len(show_list) == 0:
             return self.snip.OnCompletion(context)
+
         context['show_list'] = show_list
         return context

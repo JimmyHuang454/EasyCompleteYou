@@ -13,7 +13,11 @@ class Operate(lsp.Operate):
             starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
             logger.exception(e)
         starting_cmd += ' --limit-results=0'
-        lsp.Operate.__init__(self, engine_name, starting_cmd, languageId='cpp')
+        lsp.Operate.__init__(self,
+                             engine_name,
+                             starting_cmd,
+                             languageId='cpp',
+                             use_completion_cache=True)
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
@@ -71,6 +75,10 @@ class Operate(lsp.Operate):
                     temp = detail[0] + ' ' + temp
                 document.append(temp)
                 document.append('')
+
+            # if 'completion_text_edit' in item:
+            #     results_format['completion_text_edit'] = item[
+            #         'completion_text_edit']
 
             if 'documentation' in item:
                 if type(item['documentation']) is str:

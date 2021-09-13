@@ -35,6 +35,7 @@ class Operate(lsp.Operate):
 
             item_name = item['filterText']
 
+            item_name = item_name.replace("'", "")
             results_format['abbr'] = item_name
             results_format['word'] = item_name
 

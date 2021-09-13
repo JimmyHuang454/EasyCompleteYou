@@ -26,6 +26,10 @@
     "disabled": true,
     "engine_name": "ECY_engines.vim_lsp.vim_lsp"
   }, {
+    "file_type": ["all"],
+    "disabled": false,
+    "engine_name": "ECY_engines.all.fzf.fzf"
+  }, {
     "file_type": ["rust"],
     "engine_name": "ECY_engines.rust.rust_analyzer.rust_analyzer"
   }, {

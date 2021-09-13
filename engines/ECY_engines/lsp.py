@@ -198,6 +198,7 @@ class Operate(object):
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
         self._change_workspace_folder(context)
+        # self.semanticTokens(context)
 
     def _change_workspace_folder(self, context):
         try:
@@ -464,7 +465,13 @@ class Operate(object):
                                        triggerKind=3).GetResponse()
         else:
             if self.completion_position_cache == cache_position and self.use_completion_cache:
-                logger.debug(self.completion_position_cache)  # use cache
+                # use cache
+                for item in self.results_list:
+                    logger.debug(item)
+                    if 'textEdit' in item and 'completion_text_edit' in item:
+                        item['completion_text_edit']['end']['colum'] = item[
+                            'textEdit']['range']['end']['character'] + len(
+                                current_position_cache['filter_words'])
                 context['show_list'] = self.results_list
                 return context
             res = self._lsp.completion(uri,
@@ -489,6 +496,20 @@ class Operate(object):
             self.results_list = res
             self.completion_isInCompleted = False
 
+        for item in self.results_list:
+            if 'textEdit' in item:
+                ranges = item['textEdit']['range']
+                item['completion_text_edit'] = {
+                    'newText': item['textEdit']['newText'],
+                    'start': {
+                        'line': ranges['start']['line'],
+                        'colum': ranges['start']['character']
+                    },
+                    'end': {
+                        'line': ranges['end']['line'],
+                        'colum': ranges['end']['character']
+                    }
+                }
         context['show_list'] = self.results_list  # update
         return context
 
@@ -536,6 +557,14 @@ class Operate(object):
             self._do_action(res)
         if 'command' in seleted_item:
             pass  # TODO
+
+    def semanticTokens(self, context):
+        if 'semanticTokensProvider' not in self.capabilities:
+            return
+        params = context['params']
+        uri = self._lsp.PathToUri(params['buffer_path'])
+
+        res = self._lsp.semanticTokens('all_delta', uri).GetResponse()
 
     def DoCodeAction(self, context):
         params = context['params']

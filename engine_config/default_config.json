@@ -177,5 +177,12 @@
       "type": "int",
       "des": ["LS init opts"]
     }
+  },
+  "ECY_engines.javascript.theia.theia": {
+    "cmd": {
+      "default_value": "typescript-language-server --stdio",
+      "type": "string",
+      "des": ["cmd to start theia."]
+    }
   }
 }

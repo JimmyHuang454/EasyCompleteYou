@@ -142,7 +142,13 @@ endfunction
 
 function ECY#utils#GetCurrentBufferContent() abort " return list
 "{{{
-  return getbufline(bufnr(), 1, "$")
+  return ECY#utils#GetBufferContent(bufnr())
+"}}}
+endfunction
+
+function ECY#utils#GetBufferContent(buffer_nr) abort " return list
+"{{{
+  return getbufline(a:buffer_nr, 1, "$")
 "}}}
 endfunction
 
