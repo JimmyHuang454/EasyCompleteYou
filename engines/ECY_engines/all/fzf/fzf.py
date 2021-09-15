@@ -11,6 +11,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters.terminal256 import Terminal256Formatter
 
 from ECY_engines.all.fzf.engines import buffer_line
+from ECY_engines.all.fzf.engines import file_content_rg
 
 global g_context
 global event_id
@@ -41,7 +42,7 @@ class Operate(object):
         self.client.serve_forever()
 
     def OpenFZF(self, context):
-        self.fzf_rpc.new(self.New(buffer_line.DefaultEngine, context))
+        self.fzf_rpc.new(self.New(file_content_rg.DefaultEngine, context))
         return context
 
     def _handle_preview(self, event):
