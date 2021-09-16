@@ -12,7 +12,9 @@ class DefaultEngine(object):
         self.engine_name = 'Rg'
 
     def GetSource(self, event):
-        event['rg'] = 'a'
+        params = event['params']
+        event['rg'] = params['current_word']
+        event['cwd'] = params['cwd']
         return []
 
     def Closed(self, event):

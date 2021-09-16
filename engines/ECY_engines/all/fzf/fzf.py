@@ -45,6 +45,10 @@ class Operate(object):
         self.fzf_rpc.new(self.New(file_content_rg.DefaultEngine, context))
         return context
 
+    def CloseFZF(self, context):
+        self.fzf_rpc.close_fzf({})
+        return context
+
     def _handle_preview(self, event):
         event_id = int(event['id'])
         if event_id not in g_context:

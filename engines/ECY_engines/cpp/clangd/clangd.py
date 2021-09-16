@@ -38,7 +38,10 @@ class Operate(lsp.Operate):
             results_format['kind'] = self._lsp.GetKindNameByNumber(
                 item['kind'])
 
-            item_name = item['filterText']
+            if 'filterText' in item:
+                item_name = item['filterText']
+            else:
+                item_name = item['label']
 
             if results_format['kind'] == 'File':
                 name_len = len(item_name)
@@ -47,16 +50,6 @@ class Operate(lsp.Operate):
 
             results_format['abbr'] = item_name
             results_format['word'] = item_name
-
-            try:
-                if item['insertTextFormat'] == 2:
-                    temp = item['insertText']
-                    if '$' in temp or '(' in temp or '{' in temp:
-                        temp = temp.replace('{\\}', '\{\}')
-                        results_format['snippet'] = temp
-                        results_format['kind'] += '~'
-            except:
-                pass
 
             detail = []
             if 'detail' in item:
@@ -76,9 +69,20 @@ class Operate(lsp.Operate):
                 document.append(temp)
                 document.append('')
 
-            # if 'completion_text_edit' in item:
-            #     results_format['completion_text_edit'] = item[
-            #         'completion_text_edit']
+            insertTextFormat = 0
+            if 'insertTextFormat' in item:
+                insertTextFormat = item['insertTextFormat']
+                if insertTextFormat == 2:
+                    temp = item['insertText']
+                    if '$' in temp or '(' in temp or '{' in temp:
+                        temp = temp.replace('{\\}', '\{\}')
+                        results_format['snippet'] = temp
+                        results_format['kind'] += '~'
+
+            if 'completion_text_edit' in item:
+                results_format['completion_text_edit'] = item[
+                    'completion_text_edit']
+                results_format['word'] = item['textEdit']['newText']
 
             if 'documentation' in item:
                 if type(item['documentation']) is str:

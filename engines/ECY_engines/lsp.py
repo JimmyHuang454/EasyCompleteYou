@@ -467,7 +467,6 @@ class Operate(object):
             if self.completion_position_cache == cache_position and self.use_completion_cache:
                 # use cache
                 for item in self.results_list:
-                    logger.debug(item)
                     if 'textEdit' in item and 'completion_text_edit' in item:
                         item['completion_text_edit']['end']['colum'] = item[
                             'textEdit']['range']['end']['character'] + len(

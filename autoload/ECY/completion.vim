@@ -69,6 +69,9 @@ fun! s:DoCompletion_vim(context)
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,
         \'start_position': s:show_item_position,
+        \'is_use_text_edit': v:false,
+        \'original_position': {'line': line('.'), 
+        \'colum': col('.'), 'line_content':getline('.')},
         \'items_info': l:items_info,
         \'opts': popup_getoptions(s:popup_windows_nr)}
   " In vim, there are no API to get the floating windows' width, we calculate
@@ -280,7 +283,7 @@ function! ECY#completion#IsMenuOpen() abort
 "}}}
 endfunction
 
-function! s:Complete(bufnr, start, end, content) abort
+function! s:CompleteLine(bufnr, start, end, content) abort
 "{{{
    let l:cursor_pos = getcurpos()
    let l:start_line = a:start['line'] + 1
@@ -326,20 +329,17 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
   let g:ECY_current_popup_windows_info['selecting_item'] = l:next_item
 
-  " return
-  " complete and hightlight the new one 
-  " let l:exe = "call prop_remove({'type':'item_selected','all':v:true})"
-  " call win_execute(s:popup_windows_nr, l:exe)
   if l:next_item == 0
     let l:to_complete =  g:ECY_current_popup_windows_info['keyword_cache']
+    let l:info = {}
     " don't need to hightlight at here
   else
     let l:to_complete =  l:items_info[l:next_item - 1]['word']
 
     let l:exe = "call prop_clear(". l:next_item .")"
     call win_execute(s:popup_windows_nr, l:exe)
-    let l:info = l:items_info[l:next_item-1]
-    let l:temp = len(l:info['abbr'].l:info['kind'])
+    let l:info = l:items_info[l:next_item - 1]
+    let l:temp = len(l:info['abbr'] . l:info['kind'])
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
@@ -364,7 +364,7 @@ function! s:SelectItems_vim(next_or_pre) abort
   if l:current_item != 0
     let l:exe = "call prop_clear(". l:current_item .")"
     call win_execute(s:popup_windows_nr, l:exe)
-    let l:info = l:items_info[l:current_item-1]
+    let l:info = l:items_info[l:current_item - 1]
     let l:temp = len(l:info['abbr'].l:info['kind'])
     let l:point = l:info['match_point']
     let i = 0
@@ -386,8 +386,30 @@ function! s:SelectItems_vim(next_or_pre) abort
     endw
   endif
 
+   if g:ECY_current_popup_windows_info['is_use_text_edit']
+     call setbufline(bufnr(), line('.'), 
+         \[g:ECY_current_popup_windows_info['original_position']['line_content']])
+     call cursor([line('.'), 
+           \g:ECY_current_popup_windows_info['original_position']['colum']
+           \])
+     let g:ECY_current_popup_windows_info['is_use_text_edit'] = v:false
+  endif
+
+  if has_key(l:info, 'completion_text_edit') && l:next_item != 0
+     let l:start_colum = l:info['completion_text_edit']['start']['colum']
+     call cursor([line('.'), l:info['completion_text_edit']['end']['colum'] + 1])
+     let g:ECY_current_popup_windows_info['is_use_text_edit'] = v:true
+  endif
+
+
+  let l:start_colum += 1
+
+  call complete(l:start_colum, [l:to_complete])
+  return
+
+  return
   if has_key(l:info, 'completion_text_edit')
-    call s:Complete(bufnr(), 
+    call s:CompleteLine(bufnr(), 
           \l:info['completion_text_edit']['start'], 
           \l:info['completion_text_edit']['end'],
           \l:to_complete)
@@ -427,8 +449,7 @@ function! ECY#completion#SelectItems(next_or_prev, send_key) abort
 endfunction
 
 function! s:ItemSelectedCallback() abort
-"{{{
-  " event callback
+"{{{ event callback
   try
     if g:ECY_use_floating_windows_to_be_popup_windows == v:true
       let l:selecting = g:ECY_current_popup_windows_info['selecting_item']

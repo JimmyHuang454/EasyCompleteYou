@@ -44,11 +44,13 @@ class Operate(lsp.Operate):
 
             item_name = item['label']
 
-            if item_name[0] == "@":
-                item_name = item_name[1:]
-
             results_format['abbr'] = item_name
             results_format['word'] = item_name
+
+            if 'completion_text_edit' in item:
+                results_format['completion_text_edit'] = item[
+                    'completion_text_edit']
+                results_format['word'] = item['textEdit']['newText']
 
             show_list.append(results_format)
 
