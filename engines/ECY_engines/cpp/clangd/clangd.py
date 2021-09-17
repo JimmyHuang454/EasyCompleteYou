@@ -17,7 +17,8 @@ class Operate(lsp.Operate):
                              engine_name,
                              starting_cmd,
                              languageId='cpp',
-                             use_completion_cache=True)
+                             use_completion_cache=True,
+                             use_completion_cache_position=False)
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
@@ -79,7 +80,7 @@ class Operate(lsp.Operate):
                         results_format['snippet'] = temp
                         results_format['kind'] += '~'
 
-            if 'completion_text_edit' in item:
+            if 'completion_text_edit' in item and False:
                 results_format['completion_text_edit'] = item[
                     'completion_text_edit']
                 results_format['word'] = item['textEdit']['newText']

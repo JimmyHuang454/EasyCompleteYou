@@ -12,21 +12,30 @@ class Operate(object):
     """
     def __init__(self,
                  name,
-                 server_cmd,
+                 starting_cmd=None,
                  refresh_regex=r'[\w+]',
                  rootUri=None,
                  rootPath=None,
                  languageId='',
                  workspaceFolders=None,
                  use_completion_cache=True,
+                 use_completion_cache_position=False,
                  initializationOptions=None):
 
-        logger.debug(server_cmd)
+        self.engine_name = name
+
+        if starting_cmd is None:
+            starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
+
+        if starting_cmd is None or starting_cmd == '':
+            raise ValueError("missing cmd.")
+
+        logger.debug(starting_cmd)
         self._lsp = language_server_protocol.LSP(timeout=5)
         self.use_completion_cache = use_completion_cache
+        self.use_completion_cache_position = use_completion_cache_position
 
-        self.engine_name = name
-        self.server_cmd = server_cmd
+        self.starting_cmd = starting_cmd
         self.refresh_regex = refresh_regex
 
         # in favour of `rootUri`.
@@ -73,7 +82,7 @@ class Operate(object):
         self._get_format_config()
 
     def _start_server(self):
-        self._lsp.StartJob(self.server_cmd)
+        self._lsp.StartJob(self.starting_cmd)
 
         res = self._lsp.initialize(
             rootUri=self.rootUri,
@@ -459,6 +468,9 @@ class Operate(object):
         ################
         #  completion  #
         ################
+        if self.use_completion_cache_position:
+            current_start_postion['character'] = current_position_cache[
+                'current_colum']
         if self.completion_isInCompleted:
             res = self._lsp.completion(uri,
                                        current_start_postion,

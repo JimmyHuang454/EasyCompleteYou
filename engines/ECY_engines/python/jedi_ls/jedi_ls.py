@@ -5,14 +5,11 @@ from ECY import utils
 class Operate(lsp.Operate):
     def __init__(self):
         engine_name = 'ECY_engines.python.jedi_ls.jedi_ls'
-        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
-        initializationOptions = utils.GetEngineConfig(engine_name,
-                                                      'initializationOptions')
         lsp.Operate.__init__(self,
                              engine_name,
-                             starting_cmd,
-                             initializationOptions=initializationOptions,
-                             languageId='python')
+                             languageId='python',
+                             use_completion_cache=True,
+                             use_completion_cache_position=True)
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
