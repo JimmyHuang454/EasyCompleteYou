@@ -66,7 +66,7 @@ class Operate(object):
 
         index = int(index)
 
-        if len(obj.items) < index:
+        if len(obj.items) < index or len(obj.items) == 0:
             event['res'] = {}
         else:
             event['res'] = obj.items[index]
@@ -100,7 +100,7 @@ class Operate(object):
             return res
         except Exception as e:
             logger.exception(e)
-            return e
+            return str(e)
 
     def Call(self, event):
         g_call_queue.put(event)

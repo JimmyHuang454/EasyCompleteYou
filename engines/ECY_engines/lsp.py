@@ -547,7 +547,6 @@ class Operate(object):
                     'textDocument/publishDiagnostics')
                 self._diagnosis_cache = temp['params']['diagnostics']
                 lists = self._diagnosis_analysis(temp['params'])
-                logger.debug(lists)
                 rpc.DoCall('ECY#diagnostics#PlaceSign', [{
                     'engine_name': self.engine_name,
                     'res_list': lists
