@@ -2,6 +2,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 import xmlrpc.client
 import threading
 import queue
+import base64
 
 from ECY import rpc
 from ECY.debug import logger
@@ -12,6 +13,7 @@ from pygments.formatters.terminal256 import Terminal256Formatter
 
 from ECY_engines.all.fzf.engines import buffer_line
 from ECY_engines.all.fzf.engines import file_content_rg
+from ECY_engines.all.fzf.engines import buffer
 
 global g_context
 global event_id
@@ -30,6 +32,9 @@ class Operate(object):
                                                  '4562',
                                                  allow_none=True)
 
+    def StringToBase64(self, s):
+        return str(base64.b64encode(s.encode('utf-8')), encoding='utf-8')
+
     def Run(self):
         self.fzf_port = 4563
 
@@ -42,7 +47,7 @@ class Operate(object):
         self.client.serve_forever()
 
     def OpenFZF(self, context):
-        self.fzf_rpc.new(self.New(file_content_rg.DefaultEngine, context))
+        self.fzf_rpc.new(self.New(buffer.DefaultEngine, context))
         return context
 
     def CloseFZF(self, context):
@@ -97,6 +102,7 @@ class Operate(object):
             res = self._handler(event)
             if type(res) is not str:
                 return "not str"
+            res = self.StringToBase64(res)
             return res
         except Exception as e:
             logger.exception(e)

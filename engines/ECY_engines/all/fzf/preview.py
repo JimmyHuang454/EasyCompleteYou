@@ -1,6 +1,7 @@
 import time
 import xmlrpc.client
 import argparse
+import base64
 import sys
 import io
 
@@ -16,9 +17,21 @@ g_args = parser.parse_args()
 fzf_rpc = xmlrpc.client.ServerProxy("http://127.0.0.1:%s/" % '4563',
                                     allow_none=True)
 
-print(
-    fzf_rpc.preview({
-        'callback_name': 'Preview',
-        'id': g_args.event_id,
-        'line': g_args.line
-    }))
+
+def base64ToString(b):
+    return base64.b64decode(b).decode('utf-8')
+
+
+def stringToBase64(s):
+    return base64.b64encode(s.encode('utf-8'))
+
+
+res = fzf_rpc.preview({
+    'callback_name': 'Preview',
+    'id': g_args.event_id,
+    'line': g_args.line
+})
+
+res = base64ToString(res.encode('utf-8'))
+
+print(res)

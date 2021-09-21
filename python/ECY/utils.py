@@ -91,3 +91,26 @@ def GetCurrentOS():
         return 'Cygwin'
     if temp == 'darwin':
         return 'Mac'
+
+
+def GetAbbr(name, lists, split_key="/", is_with_split_key=True):
+    temp = name.split(split_key)
+    i = len(temp) - 1
+    name = ''
+    while True:
+        if is_with_split_key:
+            if name != '':
+                name = temp[i] + split_key + name
+            else:
+                name = temp[i] + name
+        try:
+            lists.index(name)
+        except Exception as e:
+            break
+
+        if i == 0:
+            break
+
+        i -= 1
+
+    return name

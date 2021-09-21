@@ -430,3 +430,28 @@ function! ECY#utils#AskUserToSelete(content_list, callback_name) abort
 "{{{
 "}}}
 endfunction
+
+function! s:BufferList() abort
+  return filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&filetype") != "qf"')
+endfunction
+
+function! s:GetBufferPathByID(buffer_nr) abort
+"{{{
+  let l:temp = getbufinfo(a:buffer_nr)
+  if l:temp == []
+    return ''
+  endif
+  return l:temp[0]['name']
+"}}}
+endfunction
+
+function! ECY#utils#GetBufferPath() abort
+"{{{
+  let l:res = []
+  for item in s:BufferList()
+    let l:path = s:GetBufferPathByID(item)
+    call add(l:res, l:path)
+  endfor
+  return l:res
+"}}}
+endfunction
