@@ -83,6 +83,7 @@ let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
 let g:ECY_python_script_folder_dir = g:ECY_base_dir . '/python'
 let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.py'
 let g:ECY_source_folder_dir = g:ECY_base_dir . '/engines'
+let g:ECY_debug_log_file_path = g:ECY_python_script_folder_dir . '/ECY_debug.log'
 
 if executable('python3')
   let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python3')
@@ -92,6 +93,9 @@ else
   let g:ECY_python_cmd = ''
   let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.exe'
 endif
+
+" let g:ECY_python_cmd = ''
+" let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.exe'
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb

@@ -14,6 +14,7 @@ from urllib.request import url2pathname
 from ECY.debug import logger
 from ECY.lsp import symbol_kind
 from ECY.lsp import completion_kind
+from ECY.lsp import capability
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
@@ -200,10 +201,7 @@ class LSP(conec.Operate):
         return True
 
     def BuildCapabilities(self):
-        with open(BASE_DIR + '/capability.json', encoding='utf-8') as f:
-            content = f.read()
-        content = json.loads(content)
-        return content
+        return capability.CAPABILITY
 
     def initialize(self,
                    processId=None,
