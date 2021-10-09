@@ -3,13 +3,12 @@ from ECY import utils
 
 
 class Operate(lsp.Operate):
-    def __init__(self):
-        engine_name = 'ECY_engines.javascript.theia.theia'
-        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
+    def __init__(self, engine_name):
         lsp.Operate.__init__(self,
                              engine_name,
-                             starting_cmd,
-                             languageId='typescript')
+                             languageId='python',
+                             use_completion_cache=True,
+                             use_completion_cache_position=True)
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
@@ -30,14 +29,21 @@ class Operate(lsp.Operate):
             results_format['kind'] = self._lsp.GetKindNameByNumber(
                 item['kind'])
 
-            item_name = item['label']
+            item_name = item['filterText']
 
-            if 'insertText' in item:
-                item_name = item['insertText']
-            else:
-                pass
+            item_name = item_name.replace("'", "")
             results_format['abbr'] = item_name
             results_format['word'] = item_name
+
+            try:
+                if item['insertTextFormat'] == 2:
+                    temp = item['insertText']
+                    if '$' in temp or '(' in temp or '{' in temp:
+                        temp = temp.replace('{\\}', '\{\}')
+                        results_format['snippet'] = temp
+                        results_format['kind'] += '~'
+            except:
+                pass
 
             detail = []
             if 'detail' in item:
@@ -48,6 +54,15 @@ class Operate(lsp.Operate):
                     results_format['menu'] = item['detail']
 
             document = []
+            if 'label' in item:
+                temp = item['label']
+                if temp[0] == ' ':
+                    temp = temp[1:]
+                if results_format['kind'] == 'Function':
+                    temp = detail[0] + ' ' + temp
+                document.append(temp)
+                document.append('')
+
             if 'documentation' in item:
                 if type(item['documentation']) is str:
                     temp = item['documentation'].split('\n')

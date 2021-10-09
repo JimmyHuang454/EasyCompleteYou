@@ -97,9 +97,13 @@ class Mannager(object):
             if type(engine_pack_name) is dict:
                 sys.path.append(engine_pack_name['dir'])
                 module_obj = importlib.import_module(engine_pack_name['name'])
+                engine_name = engine_pack_name['name']
             else:
+                engine_name = engine_pack_name
                 module_obj = importlib.import_module(engine_pack_name)
-            engine_info['engine_obj'] = module_obj.Operate()
+            obj = module_obj.Operate(engine_name)
+            obj.engine_name = engine_name
+            engine_info['engine_obj'] = obj
         except Exception as e:
             logger.exception(e)
             return False

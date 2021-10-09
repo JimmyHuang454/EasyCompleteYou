@@ -31,7 +31,7 @@
       "des": ["timeout after request."]
     }
   },
-  "ECY_engines.cpp.clangd.clangd": {
+  "ECY.sources.cpp.clangd.clangd": {
     "cmd": {
       "default_value": "clangd",
       "type": "string",
@@ -48,14 +48,14 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.html.lsp.vls": {
+  "ECY.sources.html.lsp.vls": {
     "cmd": {
       "default_value": "vls",
       "type": "string",
       "des": ["cmd to start vls."]
     }
   },
-  "ECY_engines.all.efm": {
+  "ECY.sources.all.efm": {
     "cmd": {
       "default_value": "efm-langserver",
       "type": "string",
@@ -82,7 +82,7 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.python.pyright.pyright": {
+  "ECY.sources.python.pyright.pyright": {
     "cmd": {
       "default_value": "pylsp",
       "type": "string",
@@ -94,14 +94,21 @@
       "des": ["included path while parsing."]
     }
   },
-  "ECY_engines.golang.gopls.gopls": {
+  "ECY.sources.golang.gopls.gopls": {
     "cmd": {
       "default_value": "gopls",
       "type": "string",
       "des": ["cmd to start gopls."]
     }
   },
-  "ECY_engines.python.jedi_ls.jedi_ls": {
+  "ECY.sources.rust.rust_analyzer.rust_analyzer": {
+    "cmd": {
+      "default_value": "rust_analyzer",
+      "type": "string",
+      "des": ["cmd to start rust_analyzer."]
+    }
+  },
+  "ECY.sources.python.jedi_ls.jedi_ls": {
     "cmd": {
       "default_value": "jedi-language-server",
       "type": "string",
@@ -178,7 +185,7 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.javascript.theia.theia": {
+  "ECY.sources.javascript.theia.theia": {
     "cmd": {
       "default_value": "typescript-language-server --stdio",
       "type": "string",

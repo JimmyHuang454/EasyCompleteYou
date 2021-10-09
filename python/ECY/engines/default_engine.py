@@ -4,7 +4,7 @@ import re
 class Operate(object):
     """
     """
-    def __init__(self):
+    def __init__(self, engine_name):
         self.engine_name = 'label'
         self.cache_dict = {}
         self.res_list = []
