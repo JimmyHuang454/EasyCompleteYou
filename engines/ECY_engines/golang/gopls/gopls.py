@@ -5,13 +5,8 @@ from ECY import utils
 class Operate(lsp.Operate):
     """
     """
-    def __init__(self):
-        engine_name = 'ECY_engines.golang.gopls.gopls'
-        starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
-        lsp.Operate.__init__(self,
-                             engine_name,
-                             starting_cmd,
-                             languageId='golang')
+    def __init__(self, engine_name):
+        lsp.Operate.__init__(self, engine_name, languageId='golang')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

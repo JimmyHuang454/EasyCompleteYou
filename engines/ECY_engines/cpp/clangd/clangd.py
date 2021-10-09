@@ -4,8 +4,7 @@ from ECY import utils
 
 
 class Operate(lsp.Operate):
-    def __init__(self):
-        engine_name = 'ECY_engines.cpp.clangd.clangd'
+    def __init__(self, engine_name):
         try:
             import ECY_clangd
             starting_cmd = ECY_clangd.exe_path

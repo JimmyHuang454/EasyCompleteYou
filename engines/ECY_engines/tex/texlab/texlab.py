@@ -4,10 +4,9 @@ from ECY_engines import lsp
 class Operate(lsp.Operate):
     """
     """
-    def __init__(self):
+    def __init__(self, engine_name):
         lsp.Operate.__init__(self,
-                             'ECY_engines.tex.texlab.texlab',
-                             'texlab',
+                             engine_name,
                              refresh_regex=r'[\w+\:]',
                              languageId='tex')
 

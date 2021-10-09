@@ -8,21 +8,24 @@ import os
 import sys
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
 
 #######################################################################
 #                                flags                                #
 #######################################################################
 parser = argparse.ArgumentParser(
     description='EasyCompleteYou, Easily complete you.')
-parser.add_argument('--debug_log', action='store_true', help='debug with log')
+parser.add_argument('--debug_log', action='store_true', help='debug with log.')
 parser.add_argument('--ci', action='store_true', help='for CI')
-parser.add_argument('--log_dir', help='the file of log to output')
+parser.add_argument('--log_dir', help='the file of log to output.')
+parser.add_argument('--sources_dir', help='Where the sources_dir is.')
 g_args = parser.parse_args()
 
 if g_args.ci:
     print('quited with --ci')
     quit()
+
+if g_args.sources_dir is not None:
+    sys.path.append(g_args.sources_dir)
 
 #######################################################################
 #                                Debug                                #
@@ -40,8 +43,11 @@ if has_loguru:
         level = "DEBUG"
         logger.add(path, level=level, encoding='utf-8')
 
-#######################################################################
-#                                main                                 #
-#######################################################################
-rpc.BlindEvent(engines.Mannager())
-rpc.Daemon()
+
+def main():
+    rpc.BlindEvent(engines.Mannager())
+    rpc.Daemon()
+
+
+if __name__ == '__main__':
+    main()

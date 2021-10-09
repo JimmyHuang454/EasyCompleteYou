@@ -38,8 +38,6 @@ class Mannager(object):
 
     def CallFunction(self, obj, method, engine_name, context):
         if not hasattr(obj, method):
-            # logger.debug('%s missing function to do %s' %
-            #              (engine_name, method))
             return None
         engine_func = getattr(obj, method)
         return engine_func(context)
@@ -130,6 +128,7 @@ class Mannager(object):
         return self.engine_dict[engine_pack_name]
 
     def _get_default_engine(self):
+        print(self.engine_dict)
         return self.engine_dict[self.default_engine_name]
 
     def DoEvent(self, context):

@@ -7,7 +7,7 @@ from ECY import rpc
 class Operate(object):
     """
     """
-    def __init__(self):
+    def __init__(self, engine_name):
         self.trigger_key = ['.', ':']
         self._lsp = language_server_protocol.LSP()
 
@@ -83,6 +83,7 @@ class Operate(object):
             self.results_list.append(results_format)
         context['show_list'] = self.results_list
         return context
+
 
 from ECY_engines import lsp
 

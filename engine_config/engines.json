@@ -4,64 +4,64 @@
     "engine_name": "ECY.engines.default_engine"
   }, {
     "file_type": ["all"],
-    "engine_name": "ECY.sources.all.path"
+    "engine_name": "ECY_engines.all.path"
   }, {
     "file_type": ["c", "cpp", "cuda"],
-    "engine_name": "ECY.sources.cpp.clangd.clangd"
+    "engine_name": "ECY_engines.cpp.clangd.clangd"
   }, {
     "file_type": ["latex", "tex"],
-    "engine_name": "ECY.sources.tex.texlab.texlab"
+    "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
     "file_type": ["python"],
     "disabled": true,
-    "engine_name": "ECY.sources.python.pyright.pyright"
+    "engine_name": "ECY_engines.python.pyright.pyright"
   }, {
     "file_type": ["python"],
-    "engine_name": "ECY.sources.python.jedi_ls.jedi_ls"
+    "engine_name": "ECY_engines.python.jedi_ls.jedi_ls"
   }, {
     "file_type": ["go"],
-    "engine_name": "ECY.sources.golang.gopls.gopls"
+    "engine_name": "ECY_engines.golang.gopls.gopls"
   }, {
     "file_type": ["rust"],
-    "engine_name": "ECY.sources.rust.rust_analyzer.rust_analyzer"
+    "engine_name": "ECY_engines.rust.rust_analyzer.rust_analyzer"
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY.sources.vim_lsp.vim_lsp"
+    "engine_name": "ECY_engines.vim_lsp.vim_lsp"
   }, {
     "file_type": ["all"],
     "disabled": false,
-    "engine_name": "ECY.sources.all.fzf.fzf"
+    "engine_name": "ECY_engines.all.fzf.fzf"
   }, {
     "file_type": ["rust"],
-    "engine_name": "ECY.sources.rust.rust_analyzer.rust_analyzer"
+    "engine_name": "ECY_engines.rust.rust_analyzer.rust_analyzer"
   }, {
     "file_type": ["all"],
-    "engine_name": "ECY.sources.snippet.ultisnips.ultisnips"
+    "engine_name": "ECY_engines.snippet.ultisnips.ultisnips"
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY.sources.pygment.pygment"
+    "engine_name": "ECY_engines.pygment.pygment"
   }, {
     "file_type": ["javascript", "typescript"],
-    "engine_name": "ECY.sources.javascript.theia.theia"
+    "engine_name": "ECY_engines.javascript.theia.theia"
   }, {
     "file_type": ["html", "xhtml", "vue"],
-    "engine_name": "ECY.sources.html.lsp.html_lsp"
+    "engine_name": "ECY_engines.html.lsp.html_lsp"
   }, {
     "file_type": ["vim"],
-    "engine_name": "ECY.sources.viml.vim_ts.vim"
+    "engine_name": "ECY_engines.viml.vim_ts.vim"
   }, {
     "file_type": ["vue"],
     "disabled": false,
-    "engine_name": "ECY.sources.html.lsp.vls"
+    "engine_name": "ECY_engines.html.lsp.vls"
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY.sources.all.spell"
+    "engine_name": "ECY_engines.all.spell"
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY.sources.all.efm"
+    "engine_name": "ECY_engines.all.efm"
   }]
 }

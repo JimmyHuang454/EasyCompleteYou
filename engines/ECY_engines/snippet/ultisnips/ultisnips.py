@@ -4,8 +4,7 @@ from ECY import rpc
 class Operate(object):
     """
     """
-    def __init__(self):
-        self.engine_name = 'ultisnipts'
+    def __init__(self, engine_name):
         self.snippet_cache = {}
 
     def _update_snippets(self, context):

@@ -3,11 +3,8 @@ from ECY_engines.snippet.ultisnips import ultisnips
 
 
 class Operate(lsp.Operate):
-    def __init__(self):
-        lsp.Operate.__init__(self,
-                             'ECY_engines.html.lsp.html_lsp',
-                             'html-languageserver --stdio',
-                             languageId='html')
+    def __init__(self, engine_name):
+        lsp.Operate.__init__(self, engine_name, languageId='html')
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):

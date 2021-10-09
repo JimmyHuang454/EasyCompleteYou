@@ -3,7 +3,7 @@ from ECY import rpc
 
 
 class Operate(lsp.Operate):
-    def __init__(self):
+    def __init__(self, engine_name):
 
         initializationOptions = {
             "isNeovim": not rpc.GetVaribal('g:is_vim'),
@@ -30,7 +30,7 @@ class Operate(lsp.Operate):
         }
 
         lsp.Operate.__init__(self,
-                             'ECY_engines.viml.vim_ts.vim',
+                             engine_name,
                              'vim-language-server --stdio',
                              languageId='viml',
                              refresh_regex=r'[\w+\:\#\&]',

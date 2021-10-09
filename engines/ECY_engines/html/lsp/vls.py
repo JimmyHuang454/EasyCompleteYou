@@ -5,15 +5,11 @@ from ECY import utils
 
 
 class Operate(lsp.Operate):
-    def __init__(self):
-        self.engine_name = 'ECY_engines.html.lsp.vls'
-        starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
+    def __init__(self, engine_name):
         lsp.Operate.__init__(self,
-                             self.engine_name,
-                             starting_cmd,
+                             engine_name,
                              refresh_regex=r'[\w+\-]',
-                             languageId='html',
-                             use_completion_cache=True)
+                             languageId='html')
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):

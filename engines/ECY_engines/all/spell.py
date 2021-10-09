@@ -6,7 +6,7 @@ g_spell_checker = utils.InstallPackage('spellchecker')
 
 
 class Operate(object):
-    def __init__(self):
+    def __init__(self, engine_name):
         if g_spell_checker is None:
             raise ValueError("Can not find package 'spellchecker'.")
         self.refresh_regex = r'[\-\w+]'

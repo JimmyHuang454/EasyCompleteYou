@@ -24,7 +24,7 @@ g_call_queue = queue.Queue()
 
 
 class Operate(object):
-    def __init__(self):
+    def __init__(self, engine_name):
         threading.Thread(target=self.Run, daemon=True).start()
         threading.Thread(target=self._Call, daemon=True).start()
 

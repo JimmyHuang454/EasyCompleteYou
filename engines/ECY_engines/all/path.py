@@ -6,7 +6,7 @@ import re
 
 
 class Operate(object):
-    def __init__(self):
+    def __init__(self, engine_name):
         self.workspace_symbol = ['@', '~']
         self.refresh_regex = r'[\.\~\-\@\$\/\\\w+]'
         self.refresh_regex2 = r'[\.\-\w+]'
