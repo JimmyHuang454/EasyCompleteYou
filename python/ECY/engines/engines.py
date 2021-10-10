@@ -1,8 +1,9 @@
-from ECY.debug import logger
 import queue
 import sys
 import importlib
 import threading
+
+from ECY.debug import logger
 from ECY import rpc
 from ECY.engines import events_callback
 from ECY.engines import events_pre

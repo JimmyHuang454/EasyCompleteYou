@@ -91,11 +91,11 @@ elseif executable('python')
   let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python')
 else
   let g:ECY_python_cmd = ''
-  let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.exe'
+  let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/cli.exe'
 endif
 
-" let g:ECY_python_cmd = ''
-" let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.exe'
+let g:ECY_python_cmd = ''
+let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/cli.exe'
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb

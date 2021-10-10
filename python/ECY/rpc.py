@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-from ECY.debug import logger
 import json
 import threading
 import io
 import sys
 import queue
+
+from ECY.debug import logger
 
 
 def Send(types, function_name='', variable_name='', params=[]):

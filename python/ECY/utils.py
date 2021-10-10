@@ -1,8 +1,9 @@
 import re
-from ECY import rpc
 import sys
 import subprocess
 import importlib
+
+from ECY import rpc
 
 
 def MatchFilterKeys(line_text, regex):

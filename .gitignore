@@ -18,8 +18,11 @@ ECY_server.log
 .netrwhist
 *~
 *.log
+*.spec
 ECY_config.txt
 deps
+dist
+build
 const.txt
 .root
 test.*

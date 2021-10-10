@@ -23,7 +23,7 @@ g_args = parser.parse_args()
 
 if g_args.ci:
     print('quited with --ci')
-    sys.exist()
+    sys.exit()
 
 if g_args.sources_dir is not None:
     sys.path.append(g_args.sources_dir)
