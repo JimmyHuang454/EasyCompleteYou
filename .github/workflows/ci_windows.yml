@@ -51,4 +51,13 @@ jobs:
         run: python ./ECY/python/client_main.py --ci
 
       - name: run ECY with --ci
-        run: ./ECY/python/${{ matrix.os }}.exe --ci
+        if: matrix.os == 'ubuntu-latest'
+        run: ./ECY/python/Linux.exe --ci
+
+      - name: run ECY with --ci
+        if: matrix.os == 'macos-latest'
+        run: ./ECY/python/Mac.exe --ci
+
+      - name: run ECY with --ci
+        if: matrix.os == 'windows-latest'
+        run: ./ECY/python/Windows.exe --ci
