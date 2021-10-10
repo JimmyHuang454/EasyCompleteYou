@@ -4,7 +4,9 @@ on: [push, pull_request]
 jobs:
   setup_env:
     name: Unit tests
-    runs-on: windows-latest
+    strategy:
+      matrix: os:[windows-latest, macos-latest, unbuntu-latest]
+    runs-on: ${{matrix.os}}
     steps:
       #############
       #  clone  #
@@ -48,4 +50,4 @@ jobs:
         run: python ./ECY/python/client_main.py --ci
 
       - name: run ECY with --ci
-        run: ./ECY/python/Windows.exe --ci
+        run: ./ECY/python/${{ matrix.os }}.exe --ci
