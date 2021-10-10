@@ -1,7 +1,8 @@
 # Easily complete you
+
 # "Keep It Simple, Stupid."
 
-## How to install
+![image](https://github.com/JimmyHuang454/ECY_exe/raw/master/ECY_img/1.gif)
 
 ### Requires
 
