@@ -50,14 +50,16 @@ jobs:
       - name: run ECY with --ci
         run: python ./ECY/python/client_main.py --ci
 
-      - name: run ECY with --ci
+      - name: run ECY on Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./ECY/python/Linux.exe --ci
+        run: |
+          sudo chmod -R 750 .
+          ./ECY/python/Linux.exe --ci
 
-      - name: run ECY with --ci
+      - name: run ECY on Mac
         if: matrix.os == 'macos-latest'
         run: ./ECY/python/Mac.exe --ci
 
-      - name: run ECY with --ci
+      - name: run ECY on Windows
         if: matrix.os == 'windows-latest'
         run: ./ECY/python/Windows.exe --ci
