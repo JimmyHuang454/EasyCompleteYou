@@ -5,8 +5,8 @@ jobs:
   setup_env:
     name: Unit tests
     strategy:
-        matrix: 
-          os:[windows-latest, macos-latest, ubuntu-latest]
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       #############
