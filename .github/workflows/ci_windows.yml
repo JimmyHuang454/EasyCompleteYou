@@ -4,12 +4,8 @@ on: [push, pull_request]
 jobs:
   setup_env:
     name: Unit tests
-    strategy:
-      matrix:
-        neovim: [false, true]
     runs-on: windows-latest
     steps:
-
       #############
       #  clone  #
       #############
@@ -50,3 +46,6 @@ jobs:
 
       - name: run ECY with --ci
         run: python ./ECY/python/client_main.py --ci
+
+      - name: run ECY with --ci
+        run: ./ECY/python/Windows.exe --ci
