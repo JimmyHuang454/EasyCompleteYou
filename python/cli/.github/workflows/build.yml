@@ -4,7 +4,10 @@ on: [push, pull_request]
 jobs:
   setup_env:
     name: windows-latest
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       #############
       #  clone  #
@@ -42,6 +45,18 @@ jobs:
       ################
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'windows-latest'
         with:
           files: ./ECY/dist/Windows.exe
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+        with:
+          files: ./ECY/dist/Linux.exe
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'macos-latest'
+        with:
+          files: ./ECY/dist/Mac.exe
