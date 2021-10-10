@@ -21,6 +21,7 @@ ECY_server.log
 *.spec
 ECY_config.txt
 deps
+ECY_img
 dist
 build
 const.txt
