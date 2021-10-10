@@ -10,6 +10,17 @@ function! s:restore_cpo()
   unlet s:save_cpo
 endfunction
 
+if !exists("g:os")
+  if has("win64") || has("win32") || has("win16")
+    let g:os = "Windows"
+  else
+    let g:os = substitute(system('uname'), '\n', '', '')
+    if g:os == 'Darwin'
+      let g:os = 'Mac'
+    endif
+  endif
+endif
+
 let g:is_vim = !has('nvim')
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -91,11 +102,11 @@ elseif executable('python')
   let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python')
 else
   let g:ECY_python_cmd = ''
-  let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/cli.exe'
+  let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 endif
 
 let g:ECY_python_cmd = ''
-let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/cli.exe'
+let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb

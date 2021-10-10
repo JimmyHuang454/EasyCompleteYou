@@ -1,3 +1,4 @@
+# We import these module here, so as to be detected by pyinstaller.
 import logging
 import argparse
 import os
