@@ -105,8 +105,8 @@ else
   let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 endif
 
-let g:ECY_python_cmd = ''
-let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
+" let g:ECY_python_cmd = ''
+" let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb

@@ -58,7 +58,7 @@ class Operate(lsp.Operate):
                 temp = item['label']
                 if temp[0] == ' ':
                     temp = temp[1:]
-                if results_format['kind'] == 'Function':
+                if results_format['kind'] == 'Function' and len(detail) != 0:
                     temp = detail[0] + ' ' + temp
                 document.append(temp)
                 document.append('')
