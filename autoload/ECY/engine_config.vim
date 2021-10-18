@@ -52,7 +52,7 @@ endf
 fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
 "{{{
   if !has_key(g:ECY_engine_config, a:engine_name)
-    return ''
+    return v:null
   endif
 
   let l:line = split(a:key, '\.')
@@ -62,7 +62,7 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
     let i = 0
     while i < (l:name_len - 1)
       if !has_key(l:user_config, l:line[i])
-        return ''
+        return v:null
       endif
       let l:user_config = l:user_config[l:line[i]]
       let i += 1
@@ -73,7 +73,7 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
   endif
 
   if !has_key(l:user_config, l:name)
-    return ''
+    return v:null
   endif
   return l:user_config[l:name]
 "}}}

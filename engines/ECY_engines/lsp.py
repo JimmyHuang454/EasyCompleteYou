@@ -114,7 +114,7 @@ class Operate(object):
     def _get_format_config(self):
         self.engine_format_setting = utils.GetEngineConfig(
             self.engine_name, 'lsp_formatting')
-        if self.engine_format_setting == '':
+        if self.engine_format_setting == None:
             self.engine_format_setting = utils.GetEngineConfig(
                 'GLOBAL_SETTING', 'lsp_formatting')
 
@@ -312,6 +312,7 @@ class Operate(object):
         uri = self._lsp.PathToUri(params['buffer_path'])
         res = self._lsp.formatting(uri,
                                    self.engine_format_setting).GetResponse()
+        logger.debug(self.engine_format_setting)
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return

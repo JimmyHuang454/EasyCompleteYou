@@ -10,6 +10,11 @@
       "type": "boolean",
       "des": ["LS init opts"]
     },
+    "lsp_formatting.newlineStyle": {
+      "default_value": "\n",
+      "type": "string",
+      "des": ["LS init opts"]
+    },
     "lsp_formatting.trimTrailingWhitespace": {
       "default_value": true,
       "type": "boolean",
@@ -21,7 +26,7 @@
       "des": ["LS init opts"]
     },
     "lsp_formatting.insertFinalNewline": {
-      "default_value": true,
+      "default_value": false,
       "type": "boolean",
       "des": ["LS init opts"]
     },

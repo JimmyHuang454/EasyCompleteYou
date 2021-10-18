@@ -4,7 +4,8 @@ CAPABILITY = {
         "workspaceEdit": {
             "documentChanges": True,
             "resourceOperations": ["create", "rename", "delete"],
-            "failureHandling": "abort"
+            "failureHandling": "abort",
+            "normalizesLineEndings": False,
         },
         "didChangeConfiguration": {
             "dynamicRegistration": False

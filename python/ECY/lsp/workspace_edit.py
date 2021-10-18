@@ -4,8 +4,12 @@ import shutil
 
 from ECY.lsp import language_server_protocol
 from ECY import rpc
+from ECY import utils
 
 my_lsp = language_server_protocol.LSP(timeout=1)
+
+# newlineStyle = utils.GetEngineConfig("GLOBAL_SETTING",
+#                                      "lsp_formatting.newlineStyle")
 
 
 def Delete(context, is_check=False):
@@ -110,12 +114,18 @@ def TextEdit(text_edit_list, file_context):
         start_line += added_line
         end_line += added_line
 
+        newText = text_edit['newText']
+        # newText = newText.replace('\r\n', '\n')
         if start_line >= original_text_len or end_line >= original_text_len:
-            raise ValueError('out of range')
+            if start_line == original_text_len or end_line == original_text_len and newText == '\n':
+                text.append('')
+                newText = ''
+            else:
+                raise ValueError('out of range')
         old_line_len = len(text)
         old_colum_len = len(text[end_line])
-        replace_text = text[start_line][:start_colum] + text_edit[
-            'newText'] + text[end_line][end_colum:]
+        replace_text = text[start_line][:start_colum] + newText + text[
+            end_line][end_colum:]
         replace_text = replace_text.split('\n')
         effect_line_wide = (end_line - start_line) + 1
         if effect_line_wide == 1:
