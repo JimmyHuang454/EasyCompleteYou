@@ -18,18 +18,28 @@ jobs:
           repository: JimmyHuang454/ECY_exe
           path: ECY
 
+      - name: Checkout jedi
+        uses: actions/checkout@v2
+        with:
+          repository: pappasam/jedi-language-server
+          path: ./ECY/jedi/
+
       ####################
       #  Install python  #
       ####################
       - name: Install Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8" # Version range or exact version of a Python version to use, using SemVer's version range syntax
 
       #########################
       #  Install pyinstaller  #
       #########################
       - name: Install pyinstaller
         run: |
+          python3 --version
           pip3 install pyinstaller
+          pip3 install pygments
 
       ###########
       #  Build  #
@@ -47,16 +57,22 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'windows-latest'
         with:
-          files: ./ECY/dist/Windows.exe
+          files: |
+            ./ECY/dist/Windows.exe
+            ./ECY/dist/jedi_Windows.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
         with:
-          files: ./ECY/dist/Linux.exe
+          files: |
+            ./ECY/dist/Linux.exe
+            ./ECY/dist/jedi_Linux.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'macos-latest'
         with:
-          files: ./ECY/dist/Mac.exe
+          files: |
+            ./ECY/dist/Mac.exe
+            ./ECY/dist/jedi_Mac.exe

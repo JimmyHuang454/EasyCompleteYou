@@ -11,7 +11,6 @@ import threading
 import json
 import subprocess
 import shlex
-import shutil
 import base64
 import shutil
 
@@ -19,11 +18,12 @@ from urllib.parse import urljoin
 from urllib.request import pathname2url
 from urllib.parse import urlparse
 from urllib.request import url2pathname
+
 from xmlrpc.server import SimpleXMLRPCServer
 import xmlrpc.client
-from pygments import highlight
-from pygments.lexers import PythonLexer
-from pygments.formatters.terminal256 import Terminal256Formatter
+
+import pygments
+import jedi_language_server
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
