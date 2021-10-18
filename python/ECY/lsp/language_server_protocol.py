@@ -63,9 +63,14 @@ class LSPRequest(object):
         try:
             res = self.response_queue.get()
             res['callback_additional_data'] = self.callback_additional_data
-            self.callback(res)
+            self.Callback(res)
         except Exception as e:
             logger.exception(e)
+            self.Callback(e)
+
+    def Callback(self, res):
+        if self.callback is not None:
+            self.callback(res)
 
     def ResponseArrive(self, response):
         if self.response_queue is None:

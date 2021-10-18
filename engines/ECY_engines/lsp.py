@@ -776,6 +776,9 @@ class Operate(object):
             return
 
         res = res['result']
+        if res is None:
+            res = {}
+
         content = []
         if 'contents' in res:
             content = self._format_markupContent(res['contents'])
