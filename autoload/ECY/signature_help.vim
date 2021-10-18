@@ -54,7 +54,7 @@ endf
 
 fun! ECY#signature_help#Show(results) abort
 "{{{
-  if !g:ECY_enable_signature_help
+  if !g:ECY_enable_signature_help || mode() != 'i'
     return
   endif
 

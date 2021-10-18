@@ -13,7 +13,9 @@ endfunction
 
 function! ECY#preview_windows#Show(msg) abort
 "{{{ won't be triggered when there are no floating windows features.
-  if !ECY#completion#IsMenuOpen() || g:ECY_use_floating_windows_to_be_popup_windows == v:false
+  if !ECY#completion#IsMenuOpen() || 
+        \g:ECY_use_floating_windows_to_be_popup_windows == v:false || 
+        \mode() != 'i'
     return
   endif
   call ECY#preview_windows#Close()
