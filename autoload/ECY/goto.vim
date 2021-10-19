@@ -41,7 +41,7 @@ fun! ECY#goto#Do(res) abort
     let l:start = l:seleted['range']['start']
     let l:style = 'h'
     call ECY#utils#OpenFileAndMove(l:start['line'] + 1, l:start['character'], l:path, l:style)
-    call ECY#utils#echo(printf("Goto %s", UriToPath(l:seleted['uri'])))
+    " call ECY#utils#echo(printf("Goto %s", UriToPath(l:seleted['uri'])))
   endif
 "}}}
 endf

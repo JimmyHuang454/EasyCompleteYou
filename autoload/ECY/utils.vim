@@ -478,6 +478,7 @@ function! ECY#utils#OpenBuffer(buffer_nr, style) abort
 "{{{
   call s:HandlerWindows(a:style)
   silent! exe 'b ' . a:buffer_nr
+  silent! redraw
 "}}}
 endfunction
 
@@ -491,6 +492,7 @@ function! ECY#utils#OpenFile(file_path, style) abort
   else
     silent! exe 'b ' . l:buffer_nr
   endif
+  silent! redraw
 "}}}
 endfunction
 
@@ -499,8 +501,9 @@ function! ECY#utils#OpenFileAndMove(line, colum, file_path, style) abort
 " a:colum is 0-based
 " a:line is 1-based
   call ECY#utils#OpenFile(a:file_path, a:style)
-  if a:line > 0 && a:colum < 0
+  if a:line > 0 && a:colum > 0
     call cursor(a:line, a:colum + 1)
+    silent! redraw
   endif
 "}}}
 endfunction
