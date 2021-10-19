@@ -10,6 +10,7 @@ fun! ECY#goto#Do(res) abort
     return
   endif
 
+
   if type(a:res) == v:t_dict
     
   else
@@ -33,8 +34,10 @@ fun! ECY#goto#Do(res) abort
       endif
     endif
 
+    let l:int -= 1
     let l:seleted = a:res[l:int]
     if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range')
+      call ECY#utils#echo('Wrong item.')
       return
     endif
     let l:path = UriToPath(l:seleted['uri'])
