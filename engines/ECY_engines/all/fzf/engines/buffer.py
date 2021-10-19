@@ -33,4 +33,7 @@ class DefaultEngine(object):
         rpc.DoCall('ECho', [str(event['res'])])
 
     def Preview(self, event):
-        return str(event)
+        res = event['res']
+        if res == {}:
+            return ''
+        return utils.Highlight(file_path=res['path'])

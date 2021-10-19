@@ -230,7 +230,7 @@ if __name__ == "__main__":
         else:
             fzf.cwd = None
 
-        preview_cmd = 'python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines/ECY_engines/all/fzf/preview.py --event_id %s --line {}' % (
+        preview_cmd = "python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines/ECY_engines/all/fzf/preview.py --event_id %s --line {..1}" % (
             event_id)
 
         res = fzf.RunFzf(context['source'], preview=preview_cmd)

@@ -29,7 +29,6 @@ class DefaultEngine(object):
         return []
 
     def Closed(self, event):
-        # print('Closed', event)
         res = event['res']
         if res != {}:
             pass

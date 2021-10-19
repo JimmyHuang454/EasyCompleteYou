@@ -5,6 +5,15 @@ import importlib
 
 from ECY import rpc
 
+try:
+    from pygments import highlight
+    from pygments.lexers import PythonLexer
+    from pygments.formatters.terminal256 import Terminal256Formatter
+    global has_pygment
+    has_pygment = True
+except:
+    has_pygment = False
+
 
 def MatchFilterKeys(line_text, regex):
     """Find matched key in line_text. Start matching at the tail
@@ -115,3 +124,16 @@ def GetAbbr(name, lists, split_key="/", is_with_split_key=True):
         i -= 1
 
     return name
+
+
+def Highlight(content=None, file_path=None, first_line=0):
+    # content wins if file_path exists.
+    global has_pygment
+    if not has_pygment:
+        return ""
+
+    if file_path is not None and content is None:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+    return highlight(content, PythonLexer(), Terminal256Formatter())

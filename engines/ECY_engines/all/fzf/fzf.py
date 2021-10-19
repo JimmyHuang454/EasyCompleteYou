@@ -47,6 +47,7 @@ class Operate(object):
         self.client.serve_forever()
 
     def OpenFZF(self, context):
+        # self.fzf_rpc.new(self.New(buffer.DefaultEngine, context))
         self.fzf_rpc.new(self.New(buffer.DefaultEngine, context))
         return context
 
@@ -102,11 +103,11 @@ class Operate(object):
             res = self._handler(event)
             if type(res) is not str:
                 return "not str"
-            res = self.StringToBase64(res)
-            return res
         except Exception as e:
             logger.exception(e)
-            return str(e)
+            res = str(e)
+        res = self.StringToBase64(res)
+        return res
 
     def Call(self, event):
         g_call_queue.put(event)

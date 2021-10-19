@@ -32,6 +32,5 @@ res = fzf_rpc.preview({
     'line': g_args.line
 })
 
-res = base64ToString(res.encode('utf-8'))
-
+res = base64ToString(bytes(res, encoding='utf-8'))
 print(res)
