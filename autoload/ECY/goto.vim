@@ -1,6 +1,7 @@
 fun! ECY#goto#Init()
 "{{{
   let g:ECY_is_unload_buffer_after_goto = get(g:,'ECY_is_unload_buffer_after_goto', v:true)
+  let g:ECY_unload_buffer = {}
 
   augroup ECY_goto
     autocmd!
@@ -11,12 +12,13 @@ endf
 
 fun! s:WindowsLeave()
 "{{{
-  if exists('b:ECY_unload_buffer_while_leave_windows')
-      call ECY#utils#DeleteBufferByID(bufnr())
+  let l:buf_id = bufnr()
+  if has_key(g:ECY_unload_buffer, l:buf_id)
     try
+      call ECY#utils#DeleteBufferByID(l:buf_id)
     catch 
-      unlet b:ECY_unload_buffer_while_leave_windows
     endtry
+    unlet g:ECY_unload_buffer[l:buf_id]
   endif
 "}}}
 endf
@@ -69,10 +71,11 @@ fun! ECY#goto#Do(res) abort
       let l:is_new = v:false
     endif
 
-    call ECY#utils#OpenFileAndMove(l:start['line'] + 1, l:start['character'], l:path, l:style)
+    let l:buffer_nr = 
+          \ECY#utils#OpenFileAndMove(l:start['line'] + 1, l:start['character'], l:path, l:style)
 
     if l:is_new && g:ECY_is_unload_buffer_after_goto
-      let b:ECY_unload_buffer_while_leave_windows = v:true
+      let g:ECY_unload_buffer[l:buffer_nr] = v:true
     endif
   endif
 "}}}
