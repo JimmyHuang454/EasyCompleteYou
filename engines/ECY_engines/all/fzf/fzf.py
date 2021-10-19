@@ -94,6 +94,15 @@ class Operate(object):
         obj = g_context[event_id]['obj']
         if not hasattr(obj, callback_name):
             return "has no " + callback_name
+        logger.debug(event)
+        if callback_name == 'Closed' and 'key' in event and 'key_bind' in g_context[
+                event_id]:
+            key = event['key']
+            key_bind = g_context[event_id]['key_bind']
+            if key in key_bind:
+                fuc = key_bind[key]
+                logger.debug(fuc)
+                fuc(event)
         fuc = getattr(obj, callback_name)
         return fuc(event)
 
@@ -120,11 +129,14 @@ class Operate(object):
             context['source'] = new_obj.GetSource(context)
             context['id'] = event_id
             context['engine_name'] = new_obj.engine_name
-            if type(context['source']) != list:
+            key_bind = new_obj.RegKeyBind()
+            if type(context['source']) != list or type(key_bind) is not dict:
                 return
+
             g_context[event_id] = {
                 'obj': new_obj,
                 'context': context,
+                'key_bind': key_bind,
                 'id': event_id
             }
             return g_context[event_id]

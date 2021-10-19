@@ -150,8 +150,11 @@ class FzfWrap:
 
         res = self.process.stdout.readlines()
 
-        if len(res) == 0 or len(res) == 2:
-            return {}  # selete nothing
+        if len(res) == 0:
+            return {}, ''  # selete nothing
+        elif len(res) == 2:
+            key = res[0].decode('utf-8').split('\n')[0]
+            return {}, key
 
         self.process.stdout.close()
         seleted_item = str(res[len(res) - 1], encoding='utf-8')
@@ -163,7 +166,8 @@ class FzfWrap:
             index += item
 
         index = int(index)
-        return self.items[index]
+        key = res[1].decode('utf-8').split('\n')[0]
+        return self.items[index], key
 
 
 global new_queue
@@ -219,6 +223,7 @@ if __name__ == "__main__":
         event = new_queue.get()
         event_id = event['id']
         context = event['context']
+        key_bind = event['key_bind']
 
         if 'rg' in context:
             fzf.is_rg = context['rg']
@@ -233,6 +238,8 @@ if __name__ == "__main__":
         preview_cmd = "python C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines/ECY_engines/all/fzf/preview.py --event_id %s --line {..1}" % (
             event_id)
 
-        res = fzf.RunFzf(context['source'], preview=preview_cmd)
-        res = {'res': res}
+        res, key = fzf.RunFzf(context['source'],
+                              preview=preview_cmd,
+                              key_bind=key_bind)
+        res = {'res': res, 'key': key}
         Call('Closed', event_id, res)

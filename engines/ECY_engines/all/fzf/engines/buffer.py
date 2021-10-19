@@ -2,8 +2,10 @@ from ECY import rpc
 from ECY import utils
 from ECY.debug import logger
 
+from ECY_engines.all.fzf import plugin_base
 
-class DefaultEngine(object):
+
+class DefaultEngine(plugin_base.Plugin):
     """
     """
     def __init__(self, event_id):
@@ -11,6 +13,15 @@ class DefaultEngine(object):
 
         self.items = []
         self.engine_name = 'Buffer'
+
+    def RegKeyBind(self):
+        return {'ctrl-t': self._open_in_new_tab, 'ctrl-n': ''}
+
+    def _open_in_new_tab(self, event):
+        res = event['res']
+        if res == {}:
+            return
+        rpc.DoCall('ClosePopupWindows2')
 
     def GetSource(self, event):
         params = event['params']
@@ -26,11 +37,7 @@ class DefaultEngine(object):
         return self.items
 
     def Closed(self, event):
-        # print('Closed', event)
-        res = event['res']
-        if res == {}:
-            return
-        rpc.DoCall('ECho', [str(event['res'])])
+        pass
 
     def Preview(self, event):
         res = event['res']
