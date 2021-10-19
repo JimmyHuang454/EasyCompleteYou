@@ -507,3 +507,18 @@ function! ECY#utils#OpenFileAndMove(line, colum, file_path, style) abort
   endif
 "}}}
 endfunction
+
+function! ECY#utils#DeleteBufferByID(buffer_nr) abort
+"{{{
+  exe printf('bd %s', a:buffer_nr)
+"}}}
+endfunction
+
+function! ECY#utils#DeleteBufferByFile(buffer_file) abort
+"{{{
+  let l:buffer_nr = bufnr(a:file_path)
+  if l:buffer_nr != -1
+    call ECY#utils#DeleteBufferByID(l:buffer_nr)
+  endif
+"}}}
+endfunction

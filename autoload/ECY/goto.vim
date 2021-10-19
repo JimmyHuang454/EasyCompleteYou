@@ -1,5 +1,24 @@
 fun! ECY#goto#Init()
+"{{{
+  let g:ECY_is_unload_buffer_after_goto = get(g:,'ECY_is_unload_buffer_after_goto', v:true)
 
+  augroup ECY_goto
+    autocmd!
+    autocmd QuitPre  * call s:WindowsLeave()
+  augroup END
+"}}}
+endf
+
+fun! s:WindowsLeave()
+"{{{
+  if exists('b:ECY_unload_buffer_while_leave_windows')
+      call ECY#utils#DeleteBufferByID(bufnr())
+    try
+    catch 
+      unlet b:ECY_unload_buffer_while_leave_windows
+    endtry
+  endif
+"}}}
 endf
 
 " {"jsonrpc":"2.0","result":[{"uri":"file:///C:/Users/qwer/Desktop/vimrc/myproject/test/go_hello_world/main.go","range":{"start":{"line":4,"character":1},"end":{"line":4,"character":6}}}],"id":306}
@@ -43,8 +62,18 @@ fun! ECY#goto#Do(res) abort
     let l:path = UriToPath(l:seleted['uri'])
     let l:start = l:seleted['range']['start']
     let l:style = 'h'
+
+    if bufnr(l:path) == -1 "file not in buffer.
+      let l:is_new = v:true
+    else
+      let l:is_new = v:false
+    endif
+
     call ECY#utils#OpenFileAndMove(l:start['line'] + 1, l:start['character'], l:path, l:style)
-    " call ECY#utils#echo(printf("Goto %s", UriToPath(l:seleted['uri'])))
+
+    if l:is_new && g:ECY_is_unload_buffer_after_goto
+      let b:ECY_unload_buffer_while_leave_windows = v:true
+    endif
   endif
 "}}}
 endf
