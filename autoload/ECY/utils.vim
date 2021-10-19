@@ -455,3 +455,52 @@ function! ECY#utils#GetBufferPath() abort
   return l:res
 "}}}
 endfunction
+
+function! s:HandlerWindows(style) abort
+"{{{
+  if a:style == 'h' " horizontally
+   silent! exe 'new'
+  endif
+
+  if a:style == 'x' " vertical
+   silent! exe 'vnew'
+  endif
+
+  if a:style == 't' " new tab
+    silent! exe 'tabnew'
+  endif
+
+  " do nothing.
+"}}}
+endfunction
+
+function! ECY#utils#OpenBuffer(buffer_nr, style) abort
+"{{{
+  call s:HandlerWindows(a:style)
+  silent! exe 'b ' . a:buffer_nr
+"}}}
+endfunction
+
+function! ECY#utils#OpenFile(file_path, style) abort
+"{{{
+  call s:HandlerWindows(a:style)
+
+  let l:buffer_nr = bufnr(a:file_path)
+  if l:buffer_nr == -1 " not in buffer
+    silent! exe 'edit ' . a:file_path
+  else
+    silent! exe 'b ' . l:buffer_nr
+  endif
+"}}}
+endfunction
+
+function! ECY#utils#OpenFileAndMove(line, colum, file_path, style) abort
+"{{{
+" a:colum is 0-based
+" a:line is 1-based
+  call ECY#utils#OpenFile(a:file_path, a:style)
+  if a:line > 0 && a:colum < 0
+    call cursor(a:line, a:colum + 1)
+  endif
+"}}}
+endfunction

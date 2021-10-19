@@ -1,4 +1,3 @@
-
 fun! ECY#selete#Do(res) abort
   if !exists('g:loaded_CtrlT')
     call ECY#utils#echo("Need 'CtrlT'")
