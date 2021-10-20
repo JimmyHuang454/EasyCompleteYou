@@ -26,7 +26,7 @@ dist
 build
 const.txt
 .root
-test.*
+# test.*
 # Auto-generated tag files
 tags
 # Persistent undo
