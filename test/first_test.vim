@@ -1,8 +1,9 @@
-let s:suite = themis#suite('Test for my plugin')
+let s:suite = themis#suite('Test for ECY')
 let s:assert = themis#helper('assert')
 
 " The function name(my_test_1) will be a test name.
 function s:suite.my_test_1()
+  echo ECY#rooter#GetCurrentBufferWorkSpace()
   call s:assert.equals(3, 1 + 2)
 endfunction
 
