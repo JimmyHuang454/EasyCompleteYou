@@ -19,6 +19,37 @@ class Operate(lsp.Operate):
                              use_completion_cache=True,
                              use_completion_cache_position=False)
 
+    def SwitchSourceHeader(self, context):
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+
+        params = {'uri': uri}
+        res = self._lsp._build_send(
+            params, 'textDocument/switchSourceHeader').GetResponse()
+
+        if 'error' in res:
+            self._goto_response(res)  #show error msg
+            return
+
+        res = res['result']
+        if res is not None:
+            self._goto_response({
+                'result': [{
+                    "uri": res,
+                    "range": {
+                        "start": {
+                            "line": 0,
+                            "character": 1
+                        },
+                        "end": {
+                            "line": 0,
+                            "character": 6
+                        }
+                    }
+                }]
+            })
+
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
         if context is None:

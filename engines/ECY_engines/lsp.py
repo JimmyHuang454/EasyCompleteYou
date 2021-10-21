@@ -269,7 +269,9 @@ class Operate(object):
         res = res['result']
 
         if res is not None:
-            rpc.DoCall('ECY#selete_range#Do', [res[0]])
+            res = res[0]
+            res['path'] = uri
+            rpc.DoCall('ECY#selete_range#Do', [res])
 
     def OnWorkSpaceSymbol(self, context):
         if 'workspaceSymbolProvider' not in self.capabilities:
@@ -740,9 +742,15 @@ class Operate(object):
         res = res['result']
         if res is None:
             res = []
+
         if len(res) == 0:
             self._show_msg("No position to go.")
             return
+
+        for item in res:
+            if 'uri' in item:
+                item['path'] = self._lsp.UriToPath(item['uri'])
+
         rpc.DoCall('ECY#goto#Do', [res])
 
     def GotoDefinition(self, context):

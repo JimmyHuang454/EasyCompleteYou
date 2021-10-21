@@ -194,6 +194,22 @@ fun! ECY2_main#SeleteRange(...) abort
 "}}}
 endf
 
+fun! ECY2_main#ClangdSwitchHeader(...) abort
+"{{{
+  let l:engine_name = s:GetEngineName(a:000)
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'SwitchSourceHeader', 
+        \'params': l:params, 
+        \'engine_name': l:engine_name})
+"}}}
+endf
+
 fun! ECY2_main#PrepareCallHierarchy() abort
 "{{{
   let l:params = {

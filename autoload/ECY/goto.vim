@@ -23,14 +23,12 @@ fun! s:WindowsLeave()
 "}}}
 endf
 
-" {"jsonrpc":"2.0","result":[{"uri":"file:///C:/Users/qwer/Desktop/vimrc/myproject/test/go_hello_world/main.go","range":{"start":{"line":4,"character":1},"end":{"line":4,"character":6}}}],"id":306}
-"
+" res == [{"path":"C:/test/go_hello_world/main.go","range":{"start":{"line":4,"character":1},"end":{"line":4,"character":6}}}]
 fun! ECY#goto#Do(res) abort
 "{{{
   if type(a:res) == v:t_list && len(a:res) == 0
     return
   endif
-
 
   if type(a:res) == v:t_dict
     
