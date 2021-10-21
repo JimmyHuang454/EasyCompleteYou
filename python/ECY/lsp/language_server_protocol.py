@@ -614,14 +614,18 @@ class LSP(conec.Operate):
         return urljoin('file:', pathname2url(file_path))
 
     def UriToPath(self, uri):
-        if self._current_system() == 'Windows':
-            # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
-            file_path = url2pathname(urlparse(uri).path).strip('\\')
-            if file_path[0].islower():
-                file_path = file_path[0].upper() + file_path[1:]
-            return file_path
-        else:
-            return url2pathname(urlparse(uri).path)
+        try:
+            if self._current_system() == 'Windows':
+                # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
+                file_path = url2pathname(urlparse(uri).path).strip('\\')
+                if file_path[0].islower():
+                    file_path = file_path[0].upper() + file_path[1:]
+                return file_path
+            else:
+                return url2pathname(urlparse(uri).path)
+        except Exception as e:
+            logger.exception(e)
+            return "file:///home/ECY/1"
 
     def GetDiagnosticSeverity(self, kindNr):
         # {{{

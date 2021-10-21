@@ -217,6 +217,7 @@ class Operate(object):
             uri = self._lsp.PathToUri(uri)
         except Exception as e:  # wrong uri while using fugitive.
             logger.exception(e)
+            return
         version = context['params']['buffer_id']
         # LSP requires the edit-version
         if uri not in self._did_open_list:

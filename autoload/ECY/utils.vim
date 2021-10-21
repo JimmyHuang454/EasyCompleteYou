@@ -524,3 +524,18 @@ function! ECY#utils#DeleteBufferByFile(buffer_file) abort
   endif
 "}}}
 endfunction
+
+function! ECY#utils#TermStart(cmd, cwd) abort
+"{{{
+  let l:options = {}
+  if a:cwd != ''
+    let l:options['cwd'] = a:cwd
+  endif
+  if g:is_vim
+    call term_start(a:cmd, l:options)
+  else
+    split new
+    call termopen(a:cmd, l:options)
+  endif
+"}}}
+endfunction

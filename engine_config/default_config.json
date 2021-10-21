@@ -31,7 +31,7 @@
       "des": ["LS init opts"]
     },
     "lsp.showMessage": {
-      "default_value": false,
+      "default_value": true,
       "type": "boolean",
       "des": ["LS opts"]
     },
