@@ -1,6 +1,10 @@
 let s:suite = themis#suite('Test for ECY')
 let s:assert = themis#helper('assert')
 
+function! Input(str)
+    put! =a:str
+endfunction
+
 " The function name(my_test_1) will be a test name.
 function s:suite.my_test_1()
   echo ECY#rooter#GetCurrentBufferWorkSpace()
@@ -11,6 +15,3 @@ function s:suite.my_test_2()
   call s:assert.equals(8, 2 * 4)
 endfunction
 
-" function s:suite.my_fail_test()
-"   call s:assert.fail('this will fail')
-" endfunction

@@ -635,20 +635,6 @@ class LSP(conec.Operate):
             return 'Hint'
         # }}}
 
-    def GetMessageType(self, kindNr):
-        # {{{
-        if kindNr == 1:
-            return 'Error'
-        if kindNr == 2:
-            return 'Warning'
-        if kindNr == 3:
-            return 'Info'
-        if kindNr == 4:
-            return 'Log'
-
-
-# }}}
-
     def GetKindNameByNumber(self, kindNr):
         if kindNr not in completion_kind.COMPLETION_KIND:
             return "Unkonw"

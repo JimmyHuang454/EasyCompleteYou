@@ -4,6 +4,7 @@ from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
 from ECY.lsp import workspace_edit
+from ECY.lsp import messsage_type
 from ECY import rpc
 
 
@@ -93,6 +94,7 @@ class Operate(object):
         self.capabilities = res['result']['capabilities']
 
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
+        threading.Thread(target=self._handle_show_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
         threading.Thread(target=self._get_registerCapability,
                          daemon=True).start()
@@ -175,6 +177,19 @@ class Operate(object):
     def _show_msg(self, msg):
         rpc.DoCall('ECY#utils#echo', ['[%s] %s' % (self.engine_name, msg)])
 
+    def _handle_show_msg(self):
+        while 1:
+            try:
+                response = self._lsp.GetRequestOrNotification(
+                    'window/showMessage')
+                res = response['params']
+                msg = res['message']
+                self._show_msg(
+                    "{ %s } %s" %
+                    (messsage_type.MESSAGE_TYPE[res['type']], msg.split('\n')))
+            except Exception as e:
+                logger.exception(e)
+
     def _handle_log_msg(self):
         while 1:
             try:
@@ -184,8 +199,8 @@ class Operate(object):
                 if msg.find('compile_commands') != -1:  # clangd 12+
                     self._show_msg(msg.split('\n'))
                 logger.debug(response)
-            except:
-                pass
+            except Exception as e:
+                logger.exception(e)
 
     def _did_open_or_change(self, context):
         # {{{
