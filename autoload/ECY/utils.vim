@@ -5,13 +5,13 @@ let s:show_msg_time = 5
 let s:show_msg_timer_id = -1
 
 function! g:ShowMsg_cb(id, key) abort
-"{{{
+  "{{{
   let s:show_msg_windows_nr = -1
-"}}}
+  "}}}
 endfunction
 
 function! g:ShowMsg_timer(timer_id)
-"{{{
+  "{{{
   if a:timer_id != s:show_msg_timer_id
     return
   endif
@@ -23,16 +23,16 @@ function! g:ShowMsg_timer(timer_id)
     endif
     return
   endif
- let l:temp = 'Message Box Closing in ' . string(s:show_msg_time) . 's '
- call popup_setoptions(s:show_msg_windows_nr, {'title': l:temp})
- let s:show_msg_timer_id = timer_start(1000, function('g:ShowMsg_timer'))
-"}}}
+  let l:temp = 'Message Box Closing in ' . string(s:show_msg_time) . 's '
+  call popup_setoptions(s:show_msg_windows_nr, {'title': l:temp})
+  let s:show_msg_timer_id = timer_start(1000, function('g:ShowMsg_timer'))
+  "}}}
 endfunction
 
 fun! ECY#utils#echo(msg)
-"{{{
+  "{{{
   if g:has_floating_windows_support == 'vim'
-"{{{
+    "{{{
     let s:show_msg_time = 10
     let l:temp = 'Message Box Closing in ' . string(s:show_msg_time) . 's '
     let l:opts = {
@@ -63,7 +63,7 @@ fun! ECY#utils#echo(msg)
       call popup_settext(s:show_msg_windows_nr, s:show_msg_windows_text_list)
     endif
     let s:show_msg_timer_id = timer_start(1000, function('g:ShowMsg_timer'))
-"}}}
+    "}}}
   elseif g:has_floating_windows_support == 'has_no' 
     if type(a:msg) == 3
       let l:temp = join(a:msg, '|')
@@ -74,30 +74,30 @@ fun! ECY#utils#echo(msg)
           \ echomsg l:temp |
           \ echohl None
   endif
-"}}}
+  "}}}
 endf
 
 fun! ECY#utils#GetCurrentBufferFileType()
-"{{{
+  "{{{
   if &filetype == ''
     return 'nothing'
   endif
   return &filetype
-"}}}
+  "}}}
 endf
 
 fun! ECY#utils#Input(hint)
-"{{{
+  "{{{
   let l:new_name = input(a:hint)
   if l:new_name == ''
     call ECY#utils#echo('Quited input.')
   endif
   return l:new_name
-"}}}
+  "}}}
 endf
 
 fun! ECY#utils#show(msg, style, title)
-"{{{
+  "{{{
   if type(a:msg) != v:t_string
     let l:msg = join(a:msg, "\n")
   else
@@ -108,51 +108,51 @@ fun! ECY#utils#show(msg, style, title)
     " let l:current_buffer_nr = bufnr()
     call setline(1, l:msg)
   endif
-"}}}
+  "}}}
 endf
 
 function! ECY#utils#GetCurrentBufferPath(...) abort
-"{{{
+  "{{{
   " let l:full_path = fnamemodify(@%, ':p')
   let l:full_path = expand('%:p')
   return l:full_path
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#GetCurrentBufferPosition() abort
-"{{{ utf-8]
+  "{{{ utf-8]
   return { 'line': line('.') - 1, 'colum': col('.') - 1}
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#GetCurrentLineAndPosition() abort
-"{{{
+  "{{{
   let l:temp = ECY#utils#GetCurrentBufferPosition()
   let l:temp['line_content'] = getline(".")
   return l:temp
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#GetCurrentLine() abort
-"{{{
+  "{{{
   return getline(".")
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#GetCurrentBufferContent() abort " return list
-"{{{
+  "{{{
   return ECY#utils#GetBufferContent(bufnr())
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#GetBufferContent(buffer_nr) abort " return list
-"{{{
+  "{{{
   return getbufline(a:buffer_nr, 1, "$")
-"}}}
+  "}}}
 endfunction
 
 function ECY#utils#DefineColor(name, colora) abort
-"{{{
+  "{{{
   if hlexists(a:name) 
     return
   endif
@@ -160,11 +160,11 @@ function ECY#utils#DefineColor(name, colora) abort
   if g:has_floating_windows_support == 'vim'
     call prop_type_add(a:name, {'highlight': a:name})
   endif
-"}}}
+  "}}}
 endfunction
 
 function! IsInList(item, list) abort
-"{{{
+  "{{{
   let i = 0
   while i < len(a:list)
     if a:item == a:list[i]
@@ -173,14 +173,14 @@ function! IsInList(item, list) abort
     let i += 1
   endw
   return v:false
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#MoveToBuffer(line, colum, file_path, windows_to_show) abort
-"{{{ move cursor to windows, in normal mode
-" a:colum is 0-based
-" a:line is 1-based
-" the a:windows_to_show hightly fit leaderf
+  "{{{ move cursor to windows, in normal mode
+  " a:colum is 0-based
+  " a:line is 1-based
+  " the a:windows_to_show hightly fit leaderf
 
   "TODO
   " if a:windows_to_show == 'preview' && g:ECY_leaderf_preview_mode != 'normal'
@@ -208,68 +208,68 @@ function! ECY#utils#MoveToBuffer(line, colum, file_path, windows_to_show) abort
     endif
   endif
   call cursor(a:line, a:colum + 1)
-"}}}
+  "}}}
 endfunction
 
 function! PathToUri(path) abort
-    return s:encode_uri(a:path, 0, 'file://')
+  return s:encode_uri(a:path, 0, 'file://')
 endfunction
 
 function! s:encode_uri(path, start_pos_encode, default_prefix) abort
-"{{{
-    let l:prefix = s:get_prefix(a:path)
-    let l:path = a:path[len(l:prefix):]
-    if len(l:prefix) == 0
-        let l:prefix = a:default_prefix
+  "{{{
+  let l:prefix = s:get_prefix(a:path)
+  let l:path = a:path[len(l:prefix):]
+  if len(l:prefix) == 0
+    let l:prefix = a:default_prefix
+  endif
+
+  let l:result = strpart(a:path, 0, a:start_pos_encode)
+
+  for l:i in range(a:start_pos_encode, len(l:path) - 1)
+    " Don't encode '/' here, `path` is expected to be a valid path.
+    if l:path[l:i] =~# '^[a-zA-Z0-9_.~/-]$'
+      let l:result .= l:path[l:i]
+    else
+      let l:result .= s:urlencode_char(l:path[l:i])
     endif
+  endfor
 
-    let l:result = strpart(a:path, 0, a:start_pos_encode)
-
-    for l:i in range(a:start_pos_encode, len(l:path) - 1)
-        " Don't encode '/' here, `path` is expected to be a valid path.
-        if l:path[l:i] =~# '^[a-zA-Z0-9_.~/-]$'
-            let l:result .= l:path[l:i]
-        else
-            let l:result .= s:urlencode_char(l:path[l:i])
-        endif
-    endfor
-
-    return l:prefix . l:result
-"}}}
+  return l:prefix . l:result
+  "}}}
 endfunction
 
 function! s:decode_uri(uri) abort
-    let l:ret = substitute(a:uri, '[?#].*', '', '')
-    return substitute(l:ret, '%\(\x\x\)', '\=printf("%c", str2nr(submatch(1), 16))', 'g')
+  let l:ret = substitute(a:uri, '[?#].*', '', '')
+  return substitute(l:ret, '%\(\x\x\)', '\=printf("%c", str2nr(submatch(1), 16))', 'g')
 endfunction
 
 if has('win32') || has('win64')
-    function! UriToPath(uri) abort
-        return substitute(s:decode_uri(a:uri[len('file:///'):]), '/', '\\', 'g')
-    endfunction
+  function! UriToPath(uri) abort
+    return substitute(s:decode_uri(a:uri[len('file:///'):]), '/', '\\', 'g')
+  endfunction
 else
-    function! UriToPath(uri) abort
-        return s:decode_uri(a:uri[len('file://'):])
-    endfunction
+  function! UriToPath(uri) abort
+    return s:decode_uri(a:uri[len('file://'):])
+  endfunction
 endif
 
 function! ECY#utils#SendKeys(keys) abort
-"{{{
+  "{{{
   call feedkeys( a:keys, 'in' )
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#GetValue(dicts, key, default_value) abort 
-"{{{
+  "{{{
   if !has_key(a:dicts, a:key)
     return a:default_value
   endif
   return a:dicts[a:key]
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#GetSelectRange() abort 
-"{{{
+  "{{{
   let l:start_pos = getpos("'<")[1 : 2]
   let l:end_pos = getpos("'>")[1 : 2]
   let l:end_pos[1] += 1 " To exclusive
@@ -277,55 +277,55 @@ function! ECY#utils#GetSelectRange() abort
   " Fix line selection.
   let l:end_line = getline(l:end_pos[0])
   if l:end_pos[1] > strlen(l:end_line)
-      let l:end_pos[1] = strlen(l:end_line) + 1
+    let l:end_pos[1] = strlen(l:end_line) + 1
   endif
 
   let l:range = {}
   let l:range['start'] = ECY#utils#VimPostionToLSPPosition('%', l:start_pos)
   let l:range['end'] = ECY#utils#VimPostionToLSPPosition('%', l:end_pos)
   return l:range
-"}}}
+  "}}}
 endfunction
 
 function! s:to_col(expr, lnum, char) abort
-    let l:lines = getbufline(a:expr, a:lnum)
-    if l:lines == []
-        if type(a:expr) != v:t_string || !filereadable(a:expr)
-            " invalid a:expr
-            return a:char + 1
-        endif
-        " a:expr is a file that is not yet loaded as a buffer
-        let l:lines = readfile(a:expr, '', a:lnum)
+  let l:lines = getbufline(a:expr, a:lnum)
+  if l:lines == []
+    if type(a:expr) != v:t_string || !filereadable(a:expr)
+      " invalid a:expr
+      return a:char + 1
     endif
-    let l:linestr = l:lines[-1]
-    return strlen(strcharpart(l:linestr, 0, a:char)) + 1
+    " a:expr is a file that is not yet loaded as a buffer
+    let l:lines = readfile(a:expr, '', a:lnum)
+  endif
+  let l:linestr = l:lines[-1]
+  return strlen(strcharpart(l:linestr, 0, a:char)) + 1
 endfunction
 
 " The inverse version of `s:to_col`.
 " Convert [lnum, col] to LSP's `Position`.
 function! s:to_char(expr, lnum, col) abort
-"{{{
-    let l:lines = getbufline(a:expr, a:lnum)
-    if l:lines == []
-        if type(a:expr) != v:t_string || !filereadable(a:expr)
-            " invalid a:expr
-            return a:col - 1
-        endif
-        " a:expr is a file that is not yet loaded as a buffer
-        let l:lines = readfile(a:expr, '', a:lnum)
+  "{{{
+  let l:lines = getbufline(a:expr, a:lnum)
+  if l:lines == []
+    if type(a:expr) != v:t_string || !filereadable(a:expr)
+      " invalid a:expr
+      return a:col - 1
     endif
-    let l:linestr = l:lines[-1]
-    return strchars(strpart(l:linestr, 0, a:col - 1))
-"}}}
+    " a:expr is a file that is not yet loaded as a buffer
+    let l:lines = readfile(a:expr, '', a:lnum)
+  endif
+  let l:linestr = l:lines[-1]
+  return strchars(strpart(l:linestr, 0, a:col - 1))
+  "}}}
 endfunction
 
 function! ECY#utils#VimPostionToLSPPosition(expr, pos) abort
-"{{{
-    return {
-         \   'line': a:pos[0] - 1,
-         \   'character': s:to_char(a:expr, a:pos[0], a:pos[1])
-         \ }
-"}}}
+  "{{{
+  return {
+        \   'line': a:pos[0] - 1,
+        \   'character': s:to_char(a:expr, a:pos[0], a:pos[1])
+        \ }
+  "}}}
 endfunction
 
 function! ECY#utils#LSPPositionToVimPostion(expr, position) abort
@@ -339,25 +339,25 @@ function! ECY#utils#LSPLineToVim(expr, position) abort
 endfunction
 
 function! ECY#utils#LSPCharacterToVim(expr, position) abort
-"{{{
+  "{{{
   let l:line = a:position['line'] + 1 " optimize function overhead by not calling lsp_line_to_vim
   let l:char = a:position['character']
   return s:to_col(a:expr, l:line, l:char)
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#GetCurrentLineRange() abort
-"{{{
+  "{{{
   let l:pos = getpos('.')[1 : 2]
   let l:range = {}
   let l:range['start'] = ECY#utils#VimPostionToLSPPosition('%', l:pos)
   let l:range['end'] = ECY#utils#VimPostionToLSPPosition('%', [l:pos[0], l:pos[1] + strlen(getline(l:pos[0])) + 1])
   return l:range
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#IsFileOpenedInVim(file_path, ...) abort
-"{{{
+  "{{{
   let l:buffer_nr = bufnr(a:file_path)
   if l:buffer_nr < 0 " not in vim
     return v:false
@@ -367,11 +367,11 @@ function! ECY#utils#IsFileOpenedInVim(file_path, ...) abort
   else
     return getbufline(l:buffer_nr, 1, "$")
   endif
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#ChangeBuffer(buffer_path, context) abort
-"{{{
+  "{{{
   let l:buffer_nr = ECY#utils#IsFileOpenedInVim(a:buffer_path)
   if !l:buffer_nr " not in vim
     return
@@ -380,54 +380,54 @@ function! ECY#utils#ChangeBuffer(buffer_path, context) abort
   for item in a:context['replace_line_list']
     call ECY#utils#Replace(l:buffer_nr, item['start_line'], item['end_line'], item['replace_list'])
   endfor
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#ApplyTextEdit(context) abort
-"{{{
+  "{{{
   let l:cursor_pos = getcurpos()
   for item in keys(a:context)
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor
   call cursor([l:cursor_pos[1], l:cursor_pos[2]])
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#Replace(buffer_nr, start_line, end_line, replace_list) abort
-"{{{
+  "{{{
   call s:Delete(a:buffer_nr, a:start_line, a:end_line)
   call appendbufline(a:buffer_nr, a:start_line, a:replace_list) " 1-based
-"}}}
+  "}}}
 endfunction
 
 function! s:Delete(bufnr, start_line, end_line) abort
-"{{{ 0-based
+  "{{{ 0-based
   let l:start_line = a:start_line + 1
   let l:end_line = a:end_line + 1
   if exists('*deletebufline')
     call deletebufline(a:bufnr, l:start_line, l:end_line) "1-based
   else
-      let l:foldenable = &foldenable
-      setlocal nofoldenable
-      execute printf('%s,%sdelete _', l:start_line, l:end_line)
-      let &foldenable = l:foldenable
+    let l:foldenable = &foldenable
+    setlocal nofoldenable
+    execute printf('%s,%sdelete _', l:start_line, l:end_line)
+    let &foldenable = l:foldenable
   endif
-"}}}
+  "}}}
 endfunction
 
 function! s:Switch(path) abort
-"{{{
+  "{{{
   if bufnr(a:path) >= 0
     execute printf('keepalt keepjumps %sbuffer!', bufnr(a:path))
   else
     execute printf('keepalt keepjumps edit! %s', fnameescape(a:path))
   endif
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#AskUserToSelete(content_list, callback_name) abort
-"{{{
-"}}}
+  "{{{
+  "}}}
 endfunction
 
 function! s:BufferList() abort
@@ -435,34 +435,34 @@ function! s:BufferList() abort
 endfunction
 
 function! s:GetBufferPathByID(buffer_nr) abort
-"{{{
+  "{{{
   let l:temp = getbufinfo(a:buffer_nr)
   if l:temp == []
     return ''
   endif
   return l:temp[0]['name']
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#GetBufferPath() abort
-"{{{
+  "{{{
   let l:res = []
   for item in s:BufferList()
     let l:path = s:GetBufferPathByID(item)
     call add(l:res, l:path)
   endfor
   return l:res
-"}}}
+  "}}}
 endfunction
 
 function! s:HandlerWindows(style) abort
-"{{{
+  "{{{
   if a:style == 'h' " horizontally
-   silent! exe 'new'
+    silent! exe 'new'
   endif
 
   if a:style == 'x' " vertical
-   silent! exe 'vnew'
+    silent! exe 'vnew'
   endif
 
   if a:style == 't' " new tab
@@ -470,19 +470,19 @@ function! s:HandlerWindows(style) abort
   endif
 
   " do nothing.
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#OpenBuffer(buffer_nr, style) abort
-"{{{
+  "{{{
   call s:HandlerWindows(a:style)
   silent! exe 'b ' . a:buffer_nr
   silent! redraw
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#OpenFile(file_path, style) abort
-"{{{
+  "{{{
   call s:HandlerWindows(a:style)
 
   let l:buffer_nr = bufnr(a:file_path)
@@ -494,39 +494,39 @@ function! ECY#utils#OpenFile(file_path, style) abort
   endif
   silent! redraw
   return l:buffer_nr
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#OpenFileAndMove(line, colum, file_path, style) abort
-"{{{
-" a:colum is 0-based
-" a:line is 1-based
+  "{{{
+  " a:colum is 0-based
+  " a:line is 1-based
   let l:buffer_nr = ECY#utils#OpenFile(a:file_path, a:style)
   if a:line > 0 && a:colum > 0
     call cursor(a:line, a:colum + 1)
     silent! redraw
   endif
   return l:buffer_nr
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#DeleteBufferByID(buffer_nr) abort
-"{{{
+  "{{{
   exe printf('bd %s', a:buffer_nr)
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#DeleteBufferByFile(buffer_file) abort
-"{{{
+  "{{{
   let l:buffer_nr = bufnr(a:file_path)
   if l:buffer_nr != -1
     call ECY#utils#DeleteBufferByID(l:buffer_nr)
   endif
-"}}}
+  "}}}
 endfunction
 
 function! ECY#utils#TermStart(cmd, cwd) abort
-"{{{
+  "{{{
   let l:options = {}
   if a:cwd != ''
     let l:options['cwd'] = a:cwd
@@ -537,5 +537,19 @@ function! ECY#utils#TermStart(cmd, cwd) abort
     split new
     call termopen(a:cmd, l:options)
   endif
-"}}}
+  "}}}
+endfunction
+
+function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
+  "{{{
+  "a:range_head = [1,1]
+  "a:range_head is 1-based.
+  if bufnr() != a:buffer_id
+    return
+  endif
+
+  call setpos("'<", [a:buffer_id, a:range_head[0], a:range_head[1], 0])
+  call setpos("'>", [a:buffer_id, a:range_tail[0], a:range_tail[1], 0])
+  normal! gv
+  "}}}
 endfunction

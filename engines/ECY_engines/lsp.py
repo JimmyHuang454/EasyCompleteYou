@@ -252,9 +252,28 @@ class Operate(object):
     def OnTextChanged(self, context):
         self._did_open_or_change(context)
 
+    def SelectionRange(self, context):
+        if 'selectionRangeProvider' not in self.capabilities:
+            self._show_msg('SelectionRange is not supported.')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        position = {
+            'line': start_position['line'],
+            'character': start_position['colum']
+        }
+
+        res = self._lsp.selectionRange(position, uri).GetResponse()
+        res = res['result']
+
+        if res is not None:
+            rpc.DoCall('ECY#selete_range#Do', [res[0]])
+
     def OnWorkSpaceSymbol(self, context):
         if 'workspaceSymbolProvider' not in self.capabilities:
-            self._show_msg('OnWorkSpaceSymbol are not supported.')
+            self._show_msg('OnWorkSpaceSymbol is not supported.')
             return
         res = self._lsp.workspaceSymbos().GetResponse()  # not works in clangd
         if 'error' in res:
@@ -295,7 +314,7 @@ class Operate(object):
 
     def OnDocumentSymbol(self, context):
         if 'documentSymbolProvider' not in self.capabilities:
-            self._show_msg('OnDocumentSymbol are not supported.')
+            self._show_msg('OnDocumentSymbol is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -311,7 +330,7 @@ class Operate(object):
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
-            self._show_msg('OnTypeFormatting are not supported.')
+            self._show_msg('OnTypeFormatting is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -331,7 +350,7 @@ class Operate(object):
 
     def Format(self, context):
         if 'documentFormattingProvider' not in self.capabilities:
-            self._show_msg('Format are not supported.')
+            self._show_msg('Format is not supported.')
             return
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
@@ -402,7 +421,7 @@ class Operate(object):
                 'resolveProvider' not in self.capabilities['completionProvider'] \
                 or self.capabilities['completionProvider']['resolveProvider'] is False:
 
-            logger.debug('OnItemSeleted are not supported.')
+            logger.debug('OnItemSeleted is not supported.')
             return
 
         ECY_item_index = context['params']['ECY_item_index']
@@ -456,7 +475,7 @@ class Operate(object):
 
     def OnCompletion(self, context):
         if 'completionProvider' not in self.capabilities:
-            # self._show_msg('OnCompletion are not supported.')
+            # self._show_msg('OnCompletion is not supported.')
             return
 
         if 'triggerCharacters' in self.capabilities['completionProvider']:
@@ -552,7 +571,7 @@ class Operate(object):
 
     def ExecuteCommand(self, context):
         if 'executeCommandProvider' not in self.capabilities:
-            self._show_msg('executeCommand are not supported.')
+            self._show_msg('executeCommand is not supported.')
             return
         params = context['params']
         cmd_name = params['cmd_name']
@@ -728,7 +747,7 @@ class Operate(object):
 
     def GotoDefinition(self, context):
         if 'definitionProvider' not in self.capabilities:
-            self._show_msg('GotoDefinition are not supported.')
+            self._show_msg('GotoDefinition is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -744,7 +763,7 @@ class Operate(object):
 
     def GotoTypeDefinition(self, context):
         if 'typeDefinitionProvider' not in self.capabilities:
-            self._show_msg('GotoTypeDefinition are not supported.')
+            self._show_msg('GotoTypeDefinition is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -760,7 +779,7 @@ class Operate(object):
 
     def GotoImplementation(self, context):
         if 'implementationProvider' not in self.capabilities:
-            self._show_msg('GotoImplementation are not supported.')
+            self._show_msg('GotoImplementation is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -776,7 +795,7 @@ class Operate(object):
 
     def GotoDeclaration(self, context):
         if 'declarationProvider' not in self.capabilities:
-            self._show_msg('GotoDeclaration are not supported.')
+            self._show_msg('GotoDeclaration is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -793,7 +812,7 @@ class Operate(object):
 
     def OnHover(self, context):
         if 'hoverProvider' not in self.capabilities:
-            self._show_msg('Hover are not supported.')
+            self._show_msg('Hover is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -857,7 +876,7 @@ class Operate(object):
 
     def FindReferences(self, context):
         if 'referencesProvider' not in self.capabilities:
-            self._show_msg('FindReferences are not supported.')
+            self._show_msg('FindReferences is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -873,7 +892,7 @@ class Operate(object):
 
     def GetCodeLens(self, context):
         if 'codeLensProvider' not in self.capabilities:
-            self._show_msg('GetCodeLens are not supported.')
+            self._show_msg('GetCodeLens is not supported.')
             return
         params = context['params']
         uri = params['buffer_path']
@@ -887,7 +906,7 @@ class Operate(object):
     def PrepareCallHierarchy(self, context):
         params = context['params']
         if 'callHierarchyProvider' not in self.capabilities:
-            self._show_msg('%s are not supported.' % (params['event_name']))
+            self._show_msg('%s is not supported.' % (params['event_name']))
             return
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
