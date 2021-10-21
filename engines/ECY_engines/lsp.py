@@ -137,8 +137,8 @@ class Operate(object):
 
                 logger.debug(response)
                 self._lsp.applyEdit_response(response['id'], applied)
-            except:
-                pass
+            except Exception as e:
+                logger.exception(e)
 
     def UndoAction(self, context):
         if self.workspace_edit_undo is None:
@@ -542,10 +542,18 @@ class Operate(object):
         context['show_list'] = self.results_list  # update
         return context
 
-    def DoCmd(self, context):
+    def ExecuteCommand(self, context):
+        if 'executeCommandProvider' not in self.capabilities:
+            self._show_msg('executeCommandProvider are not supported.')
+            return
         params = context['params']
-        cmd_params = params['cmd_params']
         cmd_name = params['cmd_name']
+        cmd_list = self.capabilities['executeCommandProvider']['commands']
+
+        if cmd_name not in cmd_list:
+            self._show_msg("'%s' not found.\n %s" % (cmd_name, str(cmd_list)))
+            return
+        cmd_params = params['cmd_params']
         self._lsp.executeCommand(cmd_name, arguments=cmd_params)
 
     def _get_registerCapability(self):

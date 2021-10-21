@@ -23,7 +23,7 @@ fun! s:GetEngineName(input) abort
 "}}}
 endf
 
-fun! ECY2_main#DoCmd(cmd_name, cmd_params, engine_name) abort
+fun! ECY2_main#ExecuteCommand(engine_name, cmd_name, cmd_params) abort
 "{{{
 
   let l:params = {
@@ -36,7 +36,7 @@ fun! ECY2_main#DoCmd(cmd_name, cmd_params, engine_name) abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'DoCmd', 
+  call ECY#rpc#rpc_event#call({'event_name': 'ExecuteCommand', 
         \'params': l:params,
         \'engine_name': a:engine_name})
 "}}}
