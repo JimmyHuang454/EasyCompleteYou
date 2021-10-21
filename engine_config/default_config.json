@@ -30,6 +30,11 @@
       "type": "boolean",
       "des": ["LS init opts"]
     },
+    "lsp.showMessage": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS opts"]
+    },
     "lsp_timeout": {
       "default_value": 5,
       "type": "",

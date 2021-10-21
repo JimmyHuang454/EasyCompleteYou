@@ -178,6 +178,8 @@ class Operate(object):
         rpc.DoCall('ECY#utils#echo', ['[%s] %s' % (self.engine_name, msg)])
 
     def _handle_show_msg(self):
+        if not utils.GetEngineConfig('GLOBAL_SETTING', 'lsp.showMessage'):
+            return
         while 1:
             try:
                 response = self._lsp.GetRequestOrNotification(
