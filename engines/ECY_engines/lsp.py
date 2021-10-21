@@ -175,7 +175,11 @@ class Operate(object):
                 pass
 
     def _show_msg(self, msg):
-        rpc.DoCall('ECY#utils#echo', ['[%s] %s' % (self.engine_name, msg)])
+        if type(msg) is str:
+            msg = msg.split('\n')
+        res = ['[%s]' % self.engine_name]
+        res.extend(msg)
+        rpc.DoCall('ECY#utils#echo', [res])
 
     def _handle_show_msg(self):
         if not utils.GetEngineConfig('GLOBAL_SETTING', 'lsp.showMessage'):
@@ -209,7 +213,10 @@ class Operate(object):
         uri = context['params']['buffer_path']
         text = context['params']['buffer_content']
         text = "\n".join(text)
-        uri = self._lsp.PathToUri(uri)
+        try:
+            uri = self._lsp.PathToUri(uri)
+        except Exception as e:  # wrong uri while using fugitive.
+            logger.exception(e)
         version = context['params']['buffer_id']
         # LSP requires the edit-version
         if uri not in self._did_open_list:
@@ -544,7 +551,7 @@ class Operate(object):
 
     def ExecuteCommand(self, context):
         if 'executeCommandProvider' not in self.capabilities:
-            self._show_msg('executeCommandProvider are not supported.')
+            self._show_msg('executeCommand are not supported.')
             return
         params = context['params']
         cmd_name = params['cmd_name']

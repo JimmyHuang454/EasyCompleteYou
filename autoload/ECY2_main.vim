@@ -26,6 +26,11 @@ endf
 fun! ECY2_main#ExecuteCommand(engine_name, cmd_name, cmd_params) abort
 "{{{
 
+  if type(a:cmd_params) != v:t_list
+    call ECY#utils#echo("params should be a list.")
+    return
+  endif
+
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 

@@ -51,8 +51,7 @@ fun! ECY#utils#echo(msg)
     else
       call add(s:show_msg_windows_text_list, '--------------------')
     endif
-    if type(a:msg) == 3
-      " == list
+    if type(a:msg) == v:t_list
       call extend(s:show_msg_windows_text_list, a:msg)
     else
       call add(s:show_msg_windows_text_list, a:msg)
