@@ -13,7 +13,6 @@ import subprocess
 import shlex
 import base64
 import shutil
-import pip
 
 from urllib.parse import urljoin
 from urllib.request import pathname2url

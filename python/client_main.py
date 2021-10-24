@@ -3,7 +3,6 @@ import logging
 import argparse
 import os
 import sys
-import pip
 
 from ECY import rpc
 import ECY.engines.engines as engines
@@ -52,8 +51,11 @@ if g_args.debug_log:
 
 
 def main():
-    rpc.BlindEvent(engines.Mannager())
-    rpc.Daemon()
+    if g_args.install is not None:
+        Install(g_args.install)
+    else:
+        rpc.BlindEvent(engines.Mannager())
+        rpc.Daemon()
 
 
 def Install(package, location=None):
@@ -72,7 +74,4 @@ def Install(package, location=None):
 
 
 if __name__ == '__main__':
-    if g_args.install is not None:
-        Install(g_args.install)
-    else:
-        main()
+    main()

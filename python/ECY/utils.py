@@ -101,6 +101,7 @@ def GetCurrentOS():
         return 'Cygwin'
     if temp == 'darwin':
         return 'Mac'
+    return "Linux"
 
 
 def GetAbbr(name, lists, split_key="/", is_with_split_key=True):
