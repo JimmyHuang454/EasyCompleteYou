@@ -3,6 +3,7 @@ import logging
 import argparse
 import os
 import sys
+import pip
 
 from ECY import rpc
 import ECY.engines.engines as engines
@@ -19,6 +20,7 @@ parser.add_argument('--debug_log', action='store_true', help='debug with log.')
 parser.add_argument('--ci', action='store_true', help='for CI')
 parser.add_argument('--log_path', help='the file of log to output.')
 parser.add_argument('--sources_dir', help='Where the sources_dir is.')
+parser.add_argument('--install', help='install + engine_name')
 g_args = parser.parse_args()
 
 if g_args.ci:
@@ -54,5 +56,23 @@ def main():
     rpc.Daemon()
 
 
+def Install(package, location=None):
+    cmd = ['install']
+    cmd.append('-t')
+    if location is None:
+        cmd.append(BASE_DIR)
+    else:
+        cmd.append(location)
+    cmd.append(package)
+
+    if hasattr(pip, 'main'):
+        pip.main(cmd)
+    else:
+        pip._internal.main(cmd)
+
+
 if __name__ == '__main__':
-    main()
+    if g_args.install is not None:
+        Install(g_args.install)
+    else:
+        main()
