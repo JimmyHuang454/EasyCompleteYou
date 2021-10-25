@@ -36,8 +36,7 @@ def GetCurrentOS():
 def NewArchieve(installer_name: str) -> str:
     res = BASE_DIR + '/ECY_arch/' + installer_name
     if not os.path.isdir(res):
-        pass
-        # os.mkdir(res)
+        os.mkdir(res)
     return res
 
 

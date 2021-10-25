@@ -103,10 +103,13 @@ elseif executable('python')
 else
   let g:ECY_python_cmd = ''
   let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
+  if !filereadable(g:ECY_client_main_path)
+    " execute ""
+  endif
 endif
 
-" let g:ECY_python_cmd = ''
-" let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
+let g:ECY_python_cmd = ''
+let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
@@ -167,6 +170,7 @@ call ECY#engine_config#Init()
 call ECY#completion#Init()
 call ECY#signature_help#Init()
 call ECY#goto#Init()
+call ECY#selete_range#Init()
 call ECY#preview_windows#Init()
 call ECY#switch_engine#Init()
 call ECY#diagnostics#Init()

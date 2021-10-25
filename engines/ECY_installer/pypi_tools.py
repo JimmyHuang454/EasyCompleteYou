@@ -18,12 +18,13 @@ def GetDIST() -> str:
     return res
 
 
-DISTRIBUTION: str = ''
-
-
-def GetLastestVersion(pack_name: str) -> list:
-    pypi_json = 'https://%s/pypi/%s/json' % (DISTRIBUTION, pack_name)
+def GetLastestVersion(pack_name: str, dist: str) -> list:
+    pypi_json = 'https://%s/pypi/%s/json' % (dist, pack_name)
     res = requests.get(pypi_json).text
+    if res.find('Not Found') != -1:
+        print(pypi_json)
+        print(res)
+        raise ValueError("package '%s' not found." % pack_name)
     res = json.loads(res)
     version = res['info']['version']
     release = res['releases'][version]
@@ -44,12 +45,13 @@ def DownloadFile(url: str, output_path: str) -> None:
                 # and set chunk_size parameter to None.
                 #if chunk:
                 f.write(chunk)
+            f.close()
 
 
-def GetUrl(info: dict) -> str:
+def GetUrl(info: dict, dist: str) -> str:
     url: str = info['url']
     item = url.split('packages')
-    return "https://%s/packages%s" % (DISTRIBUTION, item[1])
+    return "https://%s/packages%s" % (dist, item[1])
 
 
 def Unpack(zip_path: str, output_dir: str) -> None:
@@ -64,10 +66,11 @@ def Unpack(zip_path: str, output_dir: str) -> None:
         tar.close()
 
 
-def Pypi(pack_name: str, save_dir: str) -> str:
-    DISTRIBUTION: str = GetDIST()
-    last_version = GetLastestVersion(PACK_NAME)
-    last_version_url = GetUrl(last_version)
+def Install(pack_name: str, save_dir: str) -> str:
+    # pack_name = pack_name.replace('_', '-')
+    dist: str = GetDIST()
+    last_version = GetLastestVersion(pack_name, dist)
+    last_version_url = GetUrl(last_version, dist)
     local_path = '%s/%s' % (save_dir, last_version['filename'])
     DownloadFile(last_version_url, local_path)
     Unpack(local_path, save_dir)
