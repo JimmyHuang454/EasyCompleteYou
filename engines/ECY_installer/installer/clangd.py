@@ -8,6 +8,9 @@ class Install(base.Install):
     def __init__(self):
         self.name = ''
 
+    def CleanWindows(self, context):
+        pass
+
     def Windows(self, context):
         save_dir = context['save_dir']
         installed_dir = ''

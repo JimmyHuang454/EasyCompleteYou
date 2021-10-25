@@ -7,14 +7,17 @@ class Install(object):
     def __init__(self):
         self.name: str = ''
 
+    def CleanWindows(self, contextd: dict) -> dict:
+        return {}
+
     def Windows(self, context: dict) -> dict:
-        pass
+        return {}
 
     def Linux(self, context: dict) -> dict:
-        pass
+        return {}
 
     def Mac(self, context: dict) -> dict:
-        pass
+        return {}
 
     def Readme(self, context: dict) -> str:
         return ""

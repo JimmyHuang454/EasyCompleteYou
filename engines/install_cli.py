@@ -15,6 +15,7 @@ usable_installer = {'clangd': clangd.Install()}
 
 parser = argparse.ArgumentParser(description='EasyCompleteYou, Installer.')
 parser.add_argument('--get_installed_info', action='store_true', help='')
+parser.add_argument('--clean', action='store_true', help='Clean engines.')
 
 for item in usable_installer:
     obj = usable_installer[item]
@@ -56,7 +57,10 @@ else:
     for item in usable_installer:
         obj = usable_installer[item]
         if getattr(g_args, item) and hasattr(obj, current_os):
-            fuc = getattr(obj, current_os)
+            if g_args.clean:
+                fuc = getattr(obj, "Clean" + current_os)
+            else:
+                fuc = getattr(obj, current_os)
             fuc({'save_dir': NewArchieve(item)})
             i.append(item)
 
