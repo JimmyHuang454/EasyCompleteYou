@@ -43,12 +43,13 @@ def NewArchieve(installer_name: str) -> str:
 
 if g_args.get_installed_info:
     res = {
-        'clangd': {
+        'clangd': [{
             'cmd': '',
             'installed_dir': '',
             'version': '10.0',
+            'des': [],
             'installer_time': ''
-        }
+        }]
     }
     print(json.dumps(res))
 else:
@@ -64,4 +65,7 @@ else:
             fuc({'save_dir': NewArchieve(item)})
             i.append(item)
 
-    print("Finished. Installed %s." % i)
+    if g_args.clean:
+        print("Finished. Uninstalled %s." % i)
+    else:
+        print("Finished. Installed %s." % i)

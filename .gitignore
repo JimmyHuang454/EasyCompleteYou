@@ -24,6 +24,7 @@ deps
 ECY_img
 dist
 build
+ECY_arch
 const.txt
 .root
 # test.*
