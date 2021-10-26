@@ -57,11 +57,12 @@ else:
     i = []
     for item in usable_installer:
         obj = usable_installer[item]
-        if getattr(g_args, item) and hasattr(obj, current_os):
-            if g_args.clean:
-                fuc = getattr(obj, "Clean" + current_os)
-            else:
-                fuc = getattr(obj, current_os)
+        if g_args.clean:
+            fuc = "Clean" + current_os
+        else:
+            fuc = current_os
+        if getattr(g_args, item) and hasattr(obj, fuc):
+            fuc = getattr(obj, fuc)
             fuc({'save_dir': NewArchieve(item)})
             i.append(item)
 
