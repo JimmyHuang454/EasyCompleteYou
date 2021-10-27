@@ -83,6 +83,7 @@ class LSPRequest(object):
 
 class LSP(conec.Operate):
     def __init__(self, timeout=None):
+        self.encoding = 'utf-8'
         self._id = 0
         self.server_id = -1
         self._queue_dict = {}
@@ -186,7 +187,7 @@ class LSP(conec.Operate):
         message = ("Content-Length: {}\r\n\r\n"
                    "{}".format(context_lenght, send))
         self.SendData(self.GetUsingServerID(),
-                      message.encode(encoding="utf-8"))
+                      message.encode(encoding=self.encoding))
         return context
 
     def _build_response(self, results, ids, error=None):
@@ -202,7 +203,7 @@ class LSP(conec.Operate):
         self.Debug("--->" + context)
         message = ("Content-Length: {}\r\n\r\n"
                    "{}".format(context_lenght, context))
-        self.SendData(self.server_id, message.encode(encoding="utf-8"))
+        self.SendData(self.server_id, message.encode(encoding=self.encoding))
         return True
 
     def BuildCapabilities(self):
