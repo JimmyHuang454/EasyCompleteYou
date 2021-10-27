@@ -108,8 +108,8 @@ else
   endif
 endif
 
-let g:ECY_python_cmd = ''
-let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
+" let g:ECY_python_cmd = ''
+" let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
@@ -153,15 +153,26 @@ endfunction
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 
-command! -nargs=* ECYGoto       call s:Goto(<q-args>)
-command! -nargs=0 ECYFormat     call ECY2_main#Format()
-command! -nargs=0 ECYRename     call ECY2_main#Rename()
-command! -nargs=0 ECYReStart    call ECY2_main#ReStart()
-command! -nargs=0 ECYHover      call ECY2_main#Hover()
-command! -nargs=0 ECYDocSymbol  call ECY2_main#GetDocumentSymbol()
-command! -nargs=0 ECYDocSymbols call ECY2_main#GetDocumentSymbol()
-command! -nargs=0 ECYSymbol     call ECY2_main#GetWorkSpaceSymbol()
-command! -nargs=0 ECYSymbols    call ECY2_main#GetWorkSpaceSymbol()
+nmap vae :ECYSeleteRange<CR>
+nmap var :ECYSeleteRangeParent<CR>
+nmap vat :ECYSeleteRangeChild<CR>
+
+vmap ae <ESC>:ECYSeleteRangeParent<CR>
+vmap ar <ESC>:ECYSeleteRangeParent<CR>
+vmap at <ESC>:ECYSeleteRangeChild<CR>
+
+command! -nargs=* ECYGoto              call s:Goto(<q-args>)
+command! -nargs=0 ECYFormat            call ECY2_main#Format()
+command! -nargs=0 ECYRename            call ECY2_main#Rename()
+command! -nargs=0 ECYReStart           call ECY2_main#ReStart()
+command! -nargs=0 ECYHover             call ECY2_main#Hover()
+command! -nargs=0 ECYDocSymbol         call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYDocSymbols        call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYSymbol            call ECY2_main#GetWorkSpaceSymbol()
+command! -nargs=0 ECYSymbols           call ECY2_main#GetWorkSpaceSymbol()
+command! -nargs=0 ECYSeleteRange       call ECY2_main#SeleteRange()
+command! -nargs=0 ECYSeleteRangeParent call ECY#selete_range#Parent()
+command! -nargs=0 ECYSeleteRangeChild  call ECY#selete_range#Child()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "

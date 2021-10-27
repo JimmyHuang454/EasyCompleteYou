@@ -9,8 +9,6 @@ from ECY import rpc
 
 
 class Operate(object):
-    """
-    """
     def __init__(self,
                  name,
                  starting_cmd=None,

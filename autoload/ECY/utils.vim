@@ -390,6 +390,7 @@ function! ECY#utils#ApplyTextEdit(context) abort
     call ECY#utils#ChangeBuffer(item, a:context[item])
   endfor
   call cursor([l:cursor_pos[1], l:cursor_pos[2]])
+  call ECY#utils#echo("formatted.")
   "}}}
 endfunction
 
