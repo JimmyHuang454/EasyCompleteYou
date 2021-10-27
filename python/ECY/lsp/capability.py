@@ -148,6 +148,7 @@ CAPABILITY = {
                 "full": True
             },
             "tokenTypes": [],
+            "formats": ['relative'],
             "overlappingTokenSupport": True,
             "multilineTokenSupport": True,
             "tokenModifiers": []
