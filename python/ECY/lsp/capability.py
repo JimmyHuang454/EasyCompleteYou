@@ -42,6 +42,7 @@ CAPABILITY = {
                 "commitCharactersSupport": False,
                 "documentationFormat": ["plaintext"],
                 "deprecatedSupport": False,
+                "insertReplaceSupport": False,
                 "preselectSupport": False
             },
             "completionItemKind": {
@@ -156,4 +157,3 @@ CAPABILITY = {
     },
     "experimental": None
 }
-
