@@ -12,14 +12,10 @@ from urllib.parse import urlparse
 from urllib.request import url2pathname
 
 from ECY.debug import logger
+from ECY import utils
 from ECY.lsp import symbol_kind
 from ECY.lsp import completion_kind
 from ECY.lsp import capability
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(BASE_DIR) + '/engines')
-
-# local lib
 from ECY.lsp import stand_IO_connection as conec
 
 
@@ -44,20 +40,20 @@ class LSPRequest(object):
         """
         if timeout is None and self.default_timeout is not None:
             timeout = self.default_timeout
-        if type(timeout) is int and timeout != -1 and timeout != 0:
-            try:
-                self.response_queue = queue.Queue(timeout)
-            except Exception as e:
-                self.response_queue = None  # importance
-                raise e
-        else:  # without timeout that is means keep runing forever.
-            self.response_queue = queue.Queue()
+        self.response_queue = queue.Queue()
+
         if callback is not None:
             self.callback = callback
             self.callback_additional_data = callback_additional_data
             threading.Thread(target=self._callback_thread).start()
-            return self  # are not blocked
-        return self.response_queue.get()
+            return self  # is not blocked
+
+        # block here.
+        if timeout is None:
+            # without timeout that is means keep runing forever.
+            return self.response_queue.get()
+        else:
+            return self.response_queue.get(timeout=timeout)
 
     def _callback_thread(self):
         try:
@@ -620,7 +616,7 @@ class LSP(conec.Operate):
 
     def UriToPath(self, uri):
         try:
-            if self._current_system() == 'Windows':
+            if utils.GetCurrentOS() == 'Windows':
                 # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
                 file_path = url2pathname(urlparse(uri).path).strip('\\')
                 if file_path[0].islower():
@@ -653,13 +649,3 @@ class LSP(conec.Operate):
         if kindNr not in symbol_kind.SYMBOL_KIND:
             return "Unkonw"
         return symbol_kind.SYMBOL_KIND[kindNr]
-
-    def _current_system(self):
-        temp = sys.platform
-        if temp == 'win32':
-            return 'Windows'
-        if temp == 'cygwin':
-            return 'Cygwin'
-        if temp == 'darwin':
-            return 'Mac'
-        return 'Linux'
