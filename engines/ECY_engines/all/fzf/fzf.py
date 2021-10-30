@@ -82,6 +82,7 @@ class Operate(object):
 
         obj = g_context[event_id]['obj']
         if not hasattr(obj, 'items'):
+            logger.error("engine should has items attribution.")
             return ""
 
         index = ''
@@ -114,7 +115,6 @@ class Operate(object):
         obj = g_context[event_id]['obj']
         if not hasattr(obj, callback_name):
             return "has no " + callback_name
-        logger.debug(event)
         if callback_name == 'Closed' and 'key' in event and 'key_bind' in g_context[
                 event_id]:
             key = event['key']

@@ -47,9 +47,6 @@ class Operate(plugin_base.Plugin):
             self.items.append({'abbr': name, 'path': item})
         return self.items
 
-    def Closed(self, event):
-        pass
-
     def Preview(self, event):
         res = event['res']
         if res == {}:

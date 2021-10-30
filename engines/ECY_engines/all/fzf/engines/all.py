@@ -9,7 +9,7 @@ class Operate(plugin_base.Plugin):
     def __init__(self, event_id):
         self.event_id = event_id
 
-        self.item = [{
+        self.items = [{
             'abbr': 'Buffers',
             'des': 'Pick buffer.'
         }, {
@@ -32,10 +32,13 @@ class Operate(plugin_base.Plugin):
         rpc.DoCall('Run', [res['abbr']])
 
     def GetSource(self, event):
-        return self.item
+        return self.items
 
     def Preview(self, event):
         res = event['res']
         if res == {}:
             return ''
-        return self.item[res['abbr']]['des']
+        for temp in self.items:
+            if temp['abbr'] == res['abbr']:
+                return temp['des']
+        return ''
