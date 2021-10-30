@@ -13,7 +13,7 @@ except:
     has_pygment = False
 
 
-class DefaultEngine(object):
+class Operate(object):
     """
     """
     def __init__(self, event_id):

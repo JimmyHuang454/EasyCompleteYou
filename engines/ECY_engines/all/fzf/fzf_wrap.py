@@ -11,6 +11,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 class FzfWrap:
     """
     """
+
     def __init__(self, executable='fzf'):
         sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -243,3 +244,4 @@ if __name__ == "__main__":
                               key_bind=key_bind)
         res = {'res': res, 'key': key}
         Call('Closed', event_id, res)
+

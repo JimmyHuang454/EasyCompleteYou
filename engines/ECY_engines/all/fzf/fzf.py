@@ -13,6 +13,7 @@ from pygments.formatters.terminal256 import Terminal256Formatter
 
 from ECY_engines.all.fzf.engines import buffer_line
 from ECY_engines.all.fzf.engines import file_content_rg
+from ECY_engines.all.fzf.engines import all
 from ECY_engines.all.fzf.engines import buffer
 
 global g_context
@@ -27,6 +28,13 @@ class Operate(object):
     def __init__(self, engine_name):
         threading.Thread(target=self.Run, daemon=True).start()
         threading.Thread(target=self._Call, daemon=True).start()
+
+        self.loaded_engiens = {
+            'Buffers': buffer,
+            'Rg': file_content_rg,
+            'All': all,
+            'Lines': buffer_line
+        }
 
         self.fzf_rpc = xmlrpc.client.ServerProxy("http://127.0.0.1:%s/" %
                                                  '4562',
@@ -46,9 +54,21 @@ class Operate(object):
         self.client.register_function(self.Preview, "preview")
         self.client.serve_forever()
 
+    def _show_msg(self, msg):
+        if type(msg) is str:
+            msg = msg.split('\n')
+        res = ['[ECY_FZF]']
+        res.extend(msg)
+        rpc.DoCall('ECY#utils#echo', [res])
+
     def OpenFZF(self, context):
-        # self.fzf_rpc.new(self.New(buffer.DefaultEngine, context))
-        self.fzf_rpc.new(self.New(buffer.DefaultEngine, context))
+        engine = context['params']['engines']
+        if engine not in self.loaded_engiens:
+            self._show_msg("Wrong engine_name '%s'" % engine)
+            return
+        self.fzf_rpc.new(self.New(self.loaded_engiens[engine].Operate,
+                                  context))
+        rpc.DoCall('OpenPopupWindows')
         return context
 
     def CloseFZF(self, context):
