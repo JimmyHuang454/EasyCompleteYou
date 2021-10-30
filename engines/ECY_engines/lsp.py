@@ -94,8 +94,8 @@ class Operate(object):
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._handle_show_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
-        threading.Thread(target=self._get_registerCapability,
-                         daemon=True).start()
+        # threading.Thread(target=self._get_registerCapability,
+        #                  daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
 
         self.signature_help_triggerCharacters = []
@@ -356,7 +356,6 @@ class Operate(object):
         uri = self._lsp.PathToUri(params['buffer_path'])
         res = self._lsp.formatting(uri,
                                    self.engine_format_setting).GetResponse()
-        logger.debug(self.engine_format_setting)
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return

@@ -74,7 +74,7 @@ class Mannager(object):
                     continue
                 pre_context = self.CallFunction(self.events_pre, event_name,
                                                 engine_name, before_context)
-                if pre_context is False:  # filter this event
+                if pre_context is False:  # filter pre event
                     continue
                 if pre_context is None:  # has no pre event
                     pre_context = context
