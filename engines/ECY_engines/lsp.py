@@ -366,6 +366,7 @@ class Operate(object):
             return
         res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
         self._do_action(res)
+        self._show_msg('Formatted.')
 
     def _signature_help(self, res):
         if 'error' in res:
