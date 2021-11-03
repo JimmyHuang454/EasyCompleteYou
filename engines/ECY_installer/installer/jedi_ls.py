@@ -1,13 +1,6 @@
 from ECY_installer import pypi_tools
 from ECY_installer import base
 
-try:
-    import pip
-    has_pip = True
-except Exception as e:
-    has_pip = False
-
-
 class Install(base.Install):
     """
     """

@@ -21,7 +21,7 @@
       "des": ["LS init opts"]
     },
     "lsp_formatting.trimFinalNewlines": {
-      "default_value": true,
+      "default_value": false,
       "type": "boolean",
       "des": ["LS init opts"]
     },
@@ -74,7 +74,7 @@
   },
   "ECY_engines.all.efm": {
     "cmd": {
-      "default_value": "efm-langserver",
+      "default_value": "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/engines/ECY_arch/pygls1.py",
       "type": "string",
       "des": ["cmd to start efm."]
     },
@@ -101,7 +101,7 @@
   },
   "ECY_engines.python.pyright.pyright": {
     "cmd": {
-      "default_value": "pylsp",
+      "default_value": "pyright-langserver --stdio",
       "type": "string",
       "des": ["cmd to start pyright."]
     },
@@ -113,7 +113,7 @@
   },
   "ECY_engines.golang.gopls.gopls": {
     "cmd": {
-      "default_value": "gopls",
+      "default_value": "C:/Users/qwer/Desktop/gopls_Windows.exe",
       "type": "string",
       "des": ["cmd to start gopls."]
     }
@@ -127,7 +127,7 @@
   },
   "ECY_engines.python.jedi_ls.jedi_ls": {
     "cmd": {
-      "default_value": "jedi-language-server",
+      "default_value": "C:/Users/qwer/Desktop/jedi_Windows.exe",
       "type": "string",
       "des": ["cmd to start pyls."]
     },
@@ -204,9 +204,16 @@
   },
   "ECY_engines.javascript.theia.theia": {
     "cmd": {
-      "default_value": "typescript-language-server --stdio",
+      "default_value": "C:/Users/qwer/Desktop/ts_Windows.exe --stdio",
       "type": "string",
       "des": ["cmd to start theia."]
+    }
+  },
+  "ECY_engines.viml.vim_ts.vim": {
+    "cmd": {
+      "default_value": "C:/Users/qwer/Desktop/viml_Windows.exe --stdio",
+      "type": "string",
+      "des": ["cmd to start vim LS."]
     }
   }
 }

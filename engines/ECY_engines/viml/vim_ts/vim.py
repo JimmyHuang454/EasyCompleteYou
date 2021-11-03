@@ -31,7 +31,6 @@ class Operate(lsp.Operate):
 
         lsp.Operate.__init__(self,
                              engine_name,
-                             'vim-language-server --stdio',
                              languageId='viml',
                              refresh_regex=r'[\w+\:\#\&]',
                              initializationOptions=initializationOptions)

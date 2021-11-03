@@ -30,7 +30,7 @@ class Operate(object):
             raise ValueError("missing cmd.")
 
         logger.debug(starting_cmd)
-        self._lsp = language_server_protocol.LSP(timeout=5)
+        self._lsp = language_server_protocol.LSP(timeout=10)
         self.use_completion_cache = use_completion_cache
         self.use_completion_cache_position = use_completion_cache_position
 
@@ -94,8 +94,8 @@ class Operate(object):
         threading.Thread(target=self._handle_log_msg, daemon=True).start()
         threading.Thread(target=self._handle_show_msg, daemon=True).start()
         threading.Thread(target=self._get_diagnosis, daemon=True).start()
-        # threading.Thread(target=self._get_registerCapability,
-        #                  daemon=True).start()
+        threading.Thread(target=self._get_registerCapability,
+                         daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
 
         self.signature_help_triggerCharacters = []
@@ -233,12 +233,9 @@ class Operate(object):
         # self.semanticTokens(context)
 
     def _change_workspace_folder(self, context):
-        try:
-            is_supported = self.capabilities['workspace']['workspaceFolders'][
-                'supported']
-            if not is_supported:
-                return
-        except:
+        if 'workspace' not in self.capabilities or 'workspaceFolders' not in self.capabilities[
+                'workspace'] or not self.capabilities['workspace'][
+                    'workspaceFolders']:
             return
 
         path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
@@ -586,10 +583,18 @@ class Operate(object):
     def _get_registerCapability(self):
         while True:
             try:
-                temp = self._lsp.GetRequestOrNotification(
+                jobs = self._lsp.GetRequestOrNotification(
                     'client/registerCapability')
-                params = temp['params']
-                self._lsp._build_response(None, temp['id'])
+                params = jobs['params']
+                for item in params['registrations']:
+                    logger.debug(item)
+                    method = item['method']
+                    if method == 'workspace/didChangeWorkspaceFolders':
+                        if 'workspace' not in self.capabilities:
+                            self.capabilities['workspace'] = {}
+                        self.capabilities['workspace'][
+                            'workspaceFolders'] = True
+                    self._lsp._build_response(None, item['id'])
             except Exception as e:
                 logger.exception(e)
 

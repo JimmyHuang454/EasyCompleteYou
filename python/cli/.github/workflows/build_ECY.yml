@@ -1,0 +1,47 @@
+name: ECY
+on: [push, pull_request]
+
+jobs:
+  setup_env:
+    name: ECY
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      #############
+      #  clone  #
+      #############
+      - name: Checkout myself
+        uses: actions/checkout@v2
+        with:
+          repository: JimmyHuang454/ECY_exe
+
+      ####################
+      #  Install python  #
+      ####################
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8" # Version range or exact version of a Python version to use, using SemVer's version range syntax
+
+      #########################
+      #  Install pyinstaller  #
+      #########################
+      - name: Install pyinstaller
+        run: |
+          python3 --version
+          pip3 install pyinstaller
+          pip3 install pygments
+
+      - name: Build
+        run: |
+          pyinstaller -F -n ECY_${{ runner.os }}.exe ./cli.py
+          ls
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./dist/ECY_${{ runner.os }}.exe

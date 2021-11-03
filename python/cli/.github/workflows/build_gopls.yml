@@ -1,0 +1,36 @@
+name: gopls
+on: [push, pull_request]
+
+jobs:
+  setup_env:
+    name: gopls
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      #############
+      #  clone  #
+      #############
+      - name: Checkout gopls
+        uses: actions/checkout@v2
+        with:
+          repository: golang/tools
+
+      - uses: actions/setup-go@v2
+
+      - name: build golang
+        run: |
+          go version
+          cd ./gopls
+          go install
+          go build -o ./gopls_${{ runner.os }}.exe
+          ./gopls_${{ runner.os }}.exe --help
+          ls
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./gopls/gopls_${{ runner.os }}.exe

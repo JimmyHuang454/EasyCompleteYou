@@ -10,6 +10,12 @@ class Install(object):
     def CleanWindows(self, contextd: dict) -> dict:
         return {}
 
+    def CleanLinux(self, contextd: dict) -> dict:
+        return {}
+
+    def CleanMac(self, contextd: dict) -> dict:
+        return {}
+
     def Windows(self, context: dict) -> dict:
         return {}
 

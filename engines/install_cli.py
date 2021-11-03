@@ -4,6 +4,7 @@ import json
 import argparse
 
 from ECY_installer.installer import clangd
+from ECY_installer.installer import jedi_ls
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
@@ -11,7 +12,7 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     BASE_DIR = os.path.dirname(__file__)
 
-usable_installer = {'clangd': clangd.Install()}
+usable_installer = {'clangd': clangd.Install(), 'jedi_ls': jedi_ls.Install()}
 
 parser = argparse.ArgumentParser(description='EasyCompleteYou, Installer.')
 parser.add_argument('--get_installed_info', action='store_true', help='')
