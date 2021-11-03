@@ -20,14 +20,4 @@ fun! s:T3() abort
 "}}}
 endf
 
-fun! s:End() abort
-"{{{
- close!
-"}}}
-endf
-
-call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
-      \{'fuc': function('s:T2')},
-      \{'fuc': function('s:T3')},
-      \{'fuc': function('s:End')},
-      \]})
+call test_frame#Add({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})
