@@ -633,6 +633,7 @@ class Operate(object):
         uri = self._lsp.PathToUri(params['buffer_path'])
 
         res = self._lsp.semanticTokens('all_delta', uri).GetResponse()
+        # TODO
 
     def DoCodeAction(self, context):
         params = context['params']

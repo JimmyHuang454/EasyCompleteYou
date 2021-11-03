@@ -1,0 +1,68 @@
+name: build nodejs
+on: [push, pull_request]
+
+jobs:
+  setup_env:
+    name: pyright, viml, ts, html
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout myself
+        uses: actions/checkout@v2
+        with:
+          repository: JimmyHuang454/ECY_exe
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: npm Pyright
+        run: |
+          npm install -g pkg
+          npm install pyright -prefix ./
+          cd ./node_modules/pyright
+          npm install
+          pkg package.json -o ./pyright_${{ runner.os }}.exe
+          ls
+
+      - name: npm viml
+        run: |
+          npm install vim-language-server -prefix ./
+          cd ./node_modules/vim-language-server
+          npm install
+          pkg package.json -o ./viml_${{ runner.os }}.exe
+          ls
+
+      - name: npm ts
+        run: |
+          npm install typescript-language-server -prefix ./
+          cd ./node_modules/typescript-language-server
+          npm install
+          pkg package.json -o ./ts_${{ runner.os }}.exe
+          ls
+
+      - name: Checkout coc-html
+        uses: actions/checkout@v2
+        with:
+          repository: neoclide/coc-html
+          path: html
+      - name: build html
+        run: |
+          npm install -g yarn
+          cd ./html/
+          yarn install
+          yarn run build
+          pkg ./lib/server.js -o ./html_${{ runner.os }}.exe
+          ls
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./node_modules/pyright/pyright_${{ runner.os }}.exe
+            ./node_modules/vim-language-server/viml_${{ runner.os }}.exe
+            ./node_modules/typescript-language-server/ts_${{ runner.os }}.exe
+            ./html/html_${{ runner.os }}.exe
