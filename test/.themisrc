@@ -14,5 +14,5 @@ set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 scriptencoding utf-8
-so g:repo_root . ' /test/feedkey_test.vim'
-so g:repo_root . ' /test/test_frame.vim'
+so g:repo_root . '/test/feedkey_test.vim'
+so g:repo_root . '/test/test_frame.vim'
