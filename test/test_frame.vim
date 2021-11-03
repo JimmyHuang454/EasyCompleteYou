@@ -39,5 +39,4 @@ function! AddLine(str)
 endfunction
 
 call test_frame#Init()
-" so C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/test/feedkey_test.vim
 call RunTest()
