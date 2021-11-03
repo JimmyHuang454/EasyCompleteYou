@@ -7,6 +7,8 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
+        neovim: [false, true]
+        install_python: [false, true]
     runs-on: ${{ matrix.os }}
     steps:
       #############
@@ -24,9 +26,9 @@ jobs:
           repository: thinca/vim-themis
           path: vim-themis
 
-      #############
-      #  intall vim  #
-      #############
+      #################
+      #  install vim  #
+      #################
       - name: Install Vim or Neovim
         uses: rhysd/action-setup-vim@v1
         id: vim
