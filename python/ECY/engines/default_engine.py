@@ -31,6 +31,8 @@ class Operate(object):
                 'info': '',
                 'user_data': ''
             }
+            if len(item) > 50:
+                continue
             results_format['abbr'] = item
             results_format['word'] = item
             results_format['kind'] = '[ID]'
