@@ -475,11 +475,14 @@ class Operate(object):
             # self._show_msg('OnCompletion is not supported.')
             return
 
+        self.trigger_key = []
         if 'triggerCharacters' in self.capabilities['completionProvider']:
-            self.trigger_key = self.capabilities['completionProvider'][
-                'triggerCharacters']
-        else:
-            self.trigger_key = []
+            for item in self.capabilities['completionProvider'][
+                    'triggerCharacters']:
+                if item == ' ':
+                    continue
+                self.trigger_key.append(item)
+
         context['trigger_key'] = self.trigger_key
         context['regex'] = self.refresh_regex
 
