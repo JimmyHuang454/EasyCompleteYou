@@ -461,7 +461,7 @@ function! s:HandlerWindows(style) abort
     silent! exe 'new'
   endif
 
-  if a:style == 'x' " vertical
+  if a:style == 'v' " vertical
     silent! exe 'vnew'
   endif
 

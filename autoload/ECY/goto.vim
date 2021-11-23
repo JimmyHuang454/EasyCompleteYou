@@ -23,6 +23,14 @@ fun! s:WindowsLeave()
 "}}}
 endf
 
+fun! s:AskWindowsStyle()
+"{{{
+  echo "Open Window by (v)ertical (h)orien (t)ab.\n>>"
+  let l:style = getchar()
+  return l:style
+"}}}
+endf
+
 " res == [{"path":"C:/test/go_hello_world/main.go","range":{"start":{"line":4,"character":1},"end":{"line":4,"character":6}}}]
 fun! ECY#goto#Do(res) abort
 "{{{
@@ -61,7 +69,7 @@ fun! ECY#goto#Do(res) abort
     endif
     let l:path = UriToPath(l:seleted['uri'])
     let l:start = l:seleted['range']['start']
-    let l:style = 'h'
+    let l:style = s:AskWindowsStyle()
 
     if bufnr(l:path) == -1 "file not in buffer.
       let l:is_new = v:true
