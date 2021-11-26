@@ -470,6 +470,7 @@ function! s:HandlerWindows(style) abort
   endif
 
   " do nothing.
+  " current buffer
   "}}}
 endfunction
 

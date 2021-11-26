@@ -27,8 +27,8 @@ fun! s:AskWindowsStyle()
 "{{{
   redraw!
   echo "Open Window by (v)ertical (h)orien (t)ab.\n>>"
-  let l:style = str2nr(input('Index: '))
-  return 'h'
+  let l:style = input('Style: ')
+  return l:style
 "}}}
 endf
 
