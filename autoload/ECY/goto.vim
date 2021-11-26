@@ -25,44 +25,59 @@ endf
 
 fun! s:AskWindowsStyle()
 "{{{
+  redraw!
   echo "Open Window by (v)ertical (h)orien (t)ab.\n>>"
-  let l:style = getchar()
-  return l:style
+  let l:style = str2nr(input('Index: '))
+  return 'h'
 "}}}
 endf
 
-" res == [{"path":"C:/test/go_hello_world/main.go","range":{"start":{"line":4,"character":1},"end":{"line":4,"character":6}}}]
-fun! ECY#goto#Do(res) abort
+fun! s:AskItem()
 "{{{
-  if type(a:res) == v:t_list && len(a:res) == 0
+  let s:show = ''
+  let i = 1
+  let l:uri = ''
+  for item in s:res
+    if has_key(item, 'uri')
+      let l:uri = UriToPath(item['uri'])
+    endif
+    let s:show .= printf("%s. %s \n", string(i), l:uri)
+    let i += 1
+  endfor
+  echo s:show
+  let l:int = str2nr(input('Index: '))
+  if l:int > len(s:res) || l:int == 0
+    call ECY#utils#echo('Quited')
+    return -1
+  endif
+  return l:int
+"}}}
+endf
+
+fun! ECY#goto#Do(res) abort
+  let s:res = a:res
+  call s:Do()
+endf
+
+fun! s:Do() abort
+"{{{
+  if type(s:res) == v:t_list && len(s:res) == 0
     return
   endif
 
-  if type(a:res) == v:t_dict
+  if type(s:res) == v:t_dict
     
   else
     let l:int = 0
-    if len(a:res) != 1
-      let s:show = ''
-      let i = 1
-      let l:uri = ''
-      for item in a:res
-        if has_key(item, 'uri')
-          let l:uri = UriToPath(item['uri'])
-        endif
-        let s:show .= printf("%s. %s \n", string(i), l:uri)
-        let i += 1
-      endfor
-      echo s:show
-      let l:int = str2nr(input('Index: '))
-      if l:int > len(a:res) || l:int == 0
-        call ECY#utils#echo('Quited')
+    if len(s:res) != 1
+      let l:int = s:AskItem()
+      if l:int == -1
         return
       endif
     endif
 
     let l:int -= 1
-    let l:seleted = a:res[l:int]
+    let l:seleted = s:res[l:int]
     if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range')
       call ECY#utils#echo('Wrong item.')
       return
