@@ -6,16 +6,7 @@
 
 ### Requires
 
-1. Vim >= 8.0 with `timer` and `job` .
-   strongly recommend to use the newest one(Vim 8.2).
-
-### Optional
-
-**Thanks to [pyinstaller](https://www.pyinstaller.org/), ECY had packed itself into one executable file, supports Windows, Linux and Macos. So you DONOT have to install Python anymore.**
-
-1. Python >= 3.0 with standard library.
-   strongly recommend to use python3.6+
-   [How to get python support for vim?](https://vi.stackexchange.com/questions/11526/how-to-enable-python-feature-in-vim)
+1. Vim >= 8.0 or neovim >= 0.2.0.
 
 ### Install
 
@@ -26,6 +17,6 @@ For vim-plug:
 
 > Plug 'JimmyHuang454/EasyCompleteYou'
 
-For Vunble:
+For user in China:
 
-> Plugin 'JimmyHuang454/EasyCompleteYou'
+> Plug 'https://gitee.com/Jimmy_Huang/EasyCompleteYou2'
