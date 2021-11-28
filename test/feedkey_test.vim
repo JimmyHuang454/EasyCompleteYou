@@ -14,8 +14,10 @@ endf
 fun! s:T3() abort
 "{{{
   if getline(4) != '123'
+    call test_frame#Got(getline(4))
     throw "completion not working."
   endif
+  call feedkeys("\<ctrl-n>", 'i')
   call feedkeys("\<Esc>", 'i')
 "}}}
 endf

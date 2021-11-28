@@ -16,7 +16,9 @@ if !exists("g:os")
   else
     let g:os = substitute(system('uname'), '\n', '', '')
     if g:os == 'Darwin'
-      let g:os = 'Mac'
+      let g:os = 'macOS'
+    else
+      let g:os = 'Linux'
     endif
   endif
 endif
@@ -102,14 +104,11 @@ elseif executable('python')
   let g:ECY_python_cmd = get(g:,'ECY_python_cmd', 'python')
 else
   let g:ECY_python_cmd = ''
-  let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
-  if !filereadable(g:ECY_client_main_path)
-    " execute ""
-  endif
+  let g:ECY_client_main_path = printf("%s/ECY_%s.exe", g:ECY_python_script_folder_dir, g:os)
 endif
 
-" let g:ECY_python_cmd = ''
-" let g:ECY_client_main_path = printf("%s/%s.exe", g:ECY_python_script_folder_dir, g:os)
+let g:ECY_python_cmd = ''
+let g:ECY_client_main_path = printf("%s/ECY_%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')
   let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
@@ -162,6 +161,9 @@ vmap ar <ESC>:ECYSeleteRangeParent<CR>
 vmap at <ESC>:ECYSeleteRangeChild<CR>
 
 command! -nargs=* ECYGoto              call s:Goto(<q-args>)
+command! -nargs=* ECYGotoV             call s:Goto(<q-args>)
+command! -nargs=* ECYGotoH             call s:Goto(<q-args>)
+command! -nargs=* ECYGotoT             call s:Goto(<q-args>)
 command! -nargs=0 ECYFormat            call ECY2_main#Format()
 command! -nargs=0 ECYRename            call ECY2_main#Rename()
 command! -nargs=0 ECYReStart           call ECY2_main#ReStart()

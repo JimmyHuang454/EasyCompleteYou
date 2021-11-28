@@ -204,7 +204,7 @@
   },
   "ECY_engines.javascript.theia.theia": {
     "cmd": {
-      "default_value": "C:/Users/qwer/Desktop/ts_Windows.exe --stdio",
+      "default_value": "typescript-language-server --stdio",
       "type": "string",
       "des": ["cmd to start theia."]
     }

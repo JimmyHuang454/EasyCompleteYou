@@ -14,8 +14,12 @@ fun! test_frame#Error(error_msg) abort
   call themis#log("completion not working.")
 endf
 
+fun! test_frame#Got(output) abort
+  call themis#log(printf("Got: '%s'", a:output))
+endf
+
 fun! s:QuitVim() abort
-  cquit
+  cquit!
 endf
 
 fun! s:Start(timer) abort

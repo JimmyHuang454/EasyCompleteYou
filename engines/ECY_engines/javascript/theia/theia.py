@@ -4,7 +4,7 @@ from ECY import utils
 
 class Operate(lsp.Operate):
     def __init__(self, engine_name):
-        lsp.Operate.__init__(self, engine_name, languageId='typescript')
+        lsp.Operate.__init__(self, engine_name, languageId='javascript')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
