@@ -554,3 +554,22 @@ function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
   normal! gv
   "}}}
 endfunction
+
+function! ECY#utils#TermStart(cmd, cwd)
+  "{{{
+  let l:options = {}
+  if a:cwd != ''
+    let l:options['cwd'] = a:cwd
+  endif
+  if !has('nvim')
+    call term_start(a:cmd, l:options)
+  else
+    split new
+    call termopen(a:cmd, l:options)
+  endif
+  "}}}
+endfunction
+
+function! ECY#utils#DownloadFile(url, output_path)
+  call ECY#utils#TermStart(printf('curl -L -o %s "%s"', a:output_path, a:url), '')
+endfunction
