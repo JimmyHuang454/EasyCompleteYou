@@ -20,6 +20,7 @@ parser.add_argument('--ci', action='store_true', help='for CI')
 parser.add_argument('--log_path', help='the file of log to output.')
 parser.add_argument('--sources_dir', help='Where the sources_dir is.')
 parser.add_argument('--install', help='install + engine_name')
+parser.add_argument('--uninstall', help='uninstall + engine_name')
 g_args = parser.parse_args()
 
 if g_args.ci:
@@ -53,9 +54,12 @@ if g_args.debug_log:
 def main():
     if g_args.install is not None:
         Install(g_args.install)
+    elif g_args.uninstall is not None:
+        UnInstall(g_args.install)
     else:
         rpc.BlindEvent(engines.Mannager())
         rpc.Daemon()
+
 
 if __name__ == '__main__':
     main()
