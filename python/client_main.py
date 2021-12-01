@@ -57,21 +57,5 @@ def main():
         rpc.BlindEvent(engines.Mannager())
         rpc.Daemon()
 
-
-def Install(package, location=None):
-    cmd = ['install']
-    cmd.append('-t')
-    if location is None:
-        cmd.append(BASE_DIR)
-    else:
-        cmd.append(location)
-    cmd.append(package)
-
-    if hasattr(pip, 'main'):
-        pip.main(cmd)
-    else:
-        pip._internal.main(cmd)
-
-
 if __name__ == '__main__':
     main()

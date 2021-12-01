@@ -113,7 +113,7 @@
   },
   "ECY_engines.golang.gopls.gopls": {
     "cmd": {
-      "default_value": "C:/Users/qwer/Desktop/gopls_Windows.exe",
+      "default_value": "gopls",
       "type": "string",
       "des": ["cmd to start gopls."]
     }

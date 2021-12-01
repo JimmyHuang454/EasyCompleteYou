@@ -2,6 +2,8 @@ import tarfile
 import requests
 import json
 
+from ECY_installer import base
+
 
 def GetDIST() -> str:
     res: str = requests.get('http://ip-api.com/json/?lang=zh-CN').text
@@ -35,19 +37,6 @@ def GetLastestVersion(pack_name: str, dist: str) -> list:
     raise ValueError("Can not find last_version.")
 
 
-def DownloadFile(url: str, output_path: str) -> None:
-    print(url)
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(output_path, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                # If you have chunk encoded response uncomment if
-                # and set chunk_size parameter to None.
-                #if chunk:
-                f.write(chunk)
-            f.close()
-
-
 def GetUrl(info: dict, dist: str) -> str:
     url: str = info['url']
     item = url.split('packages')
@@ -72,6 +61,6 @@ def Install(pack_name: str, save_dir: str) -> str:
     last_version = GetLastestVersion(pack_name, dist)
     last_version_url = GetUrl(last_version, dist)
     local_path = '%s/%s' % (save_dir, last_version['filename'])
-    DownloadFile(last_version_url, local_path)
+    base.DownloadFileWithProcessBar(last_version_url, local_path)
     Unpack(local_path, save_dir)
     return local_path

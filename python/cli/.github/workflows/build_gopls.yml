@@ -24,8 +24,8 @@ jobs:
           go version
           cd ./gopls
           go install
-          go build -o ./gopls_${{ runner.os }}.exe
-          ./gopls_${{ runner.os }}.exe --help
+          go build -o ./ECY_gopls_${{ runner.os }}.exe
+          ./ECY_gopls_${{ runner.os }}.exe --help
           ls
 
       - name: Release
@@ -33,4 +33,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./gopls/gopls_${{ runner.os }}.exe
+            ./gopls/ECY_gopls_${{ runner.os }}.exe

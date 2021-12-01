@@ -33,10 +33,12 @@ jobs:
           python3 --version
           pip3 install pyinstaller
           pip3 install pygments
+          pip3 install tqdm
+          pip3 install requests
 
-      - name: Build
+      - name: Build exe
         run: |
-          pyinstaller -F -n ECY_${{ runner.os }}.exe ./cli.py
+          pyinstaller -F -n ECY_main_${{ runner.os }}.exe ./cli.py
           ls
 
       - name: Release
@@ -44,4 +46,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./dist/ECY_${{ runner.os }}.exe
+            ./dist/ECY_main_${{ runner.os }}.exe

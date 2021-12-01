@@ -24,7 +24,7 @@ jobs:
           npm install pyright -prefix ./
           cd ./node_modules/pyright
           npm install
-          pkg package.json -o ./pyright_${{ runner.os }}.exe
+          pkg package.json -o ./ECY_pyright_${{ runner.os }}.exe
           ls
 
       - name: npm viml
@@ -32,7 +32,7 @@ jobs:
           npm install vim-language-server -prefix ./
           cd ./node_modules/vim-language-server
           npm install
-          pkg package.json -o ./viml_${{ runner.os }}.exe
+          pkg package.json -o ./ECY_viml_${{ runner.os }}.exe
           ls
 
       - name: npm ts
@@ -40,7 +40,7 @@ jobs:
           npm install typescript-language-server -prefix ./
           cd ./node_modules/typescript-language-server
           npm install
-          pkg package.json -o ./ts_${{ runner.os }}.exe
+          pkg package.json -o ./ECY_ts_${{ runner.os }}.exe
           ls
 
       - name: Checkout coc-html
@@ -54,7 +54,7 @@ jobs:
           cd ./html/
           yarn install
           yarn run build
-          pkg ./lib/server.js -o ./html_${{ runner.os }}.exe
+          pkg ./lib/server.js -o ./ECY_html_${{ runner.os }}.exe
           ls
 
       - name: Release
@@ -62,7 +62,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./node_modules/pyright/pyright_${{ runner.os }}.exe
-            ./node_modules/vim-language-server/viml_${{ runner.os }}.exe
-            ./node_modules/typescript-language-server/ts_${{ runner.os }}.exe
-            ./html/html_${{ runner.os }}.exe
+            ./node_modules/pyright/ECY_pyright_${{ runner.os }}.exe
+            ./node_modules/vim-language-server/ECY_viml_${{ runner.os }}.exe
+            ./node_modules/typescript-language-server/ECY_ts_${{ runner.os }}.exe
+            ./html/ECY_html_${{ runner.os }}.exe

@@ -36,13 +36,13 @@ jobs:
 
       - name: Build
         run: |
-          pyinstaller -F -n jedi_${{ runner.os }}.exe ./jedi_cli.py
+          pyinstaller -F -n ECY_jedi_${{ runner.os }}.exe ./jedi_cli.py
           ls
-          ./dist/jedi_${{ runner.os }}.exe --help
+          ./dist/ECY_jedi_${{ runner.os }}.exe --help
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./dist/jedi_${{ runner.os }}.exe
+            ./dist/ECY_jedi_${{ runner.os }}.exe
