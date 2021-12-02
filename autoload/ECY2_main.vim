@@ -1,10 +1,6 @@
 fun! ECY2_main#Init() abort
 "{{{
-  if g:ECY_python_cmd == ''
-    let l:run_cmd = g:ECY_client_main_path
-  else
-    let l:run_cmd = g:ECY_python_cmd . ' ' . g:ECY_client_main_path
-  endif
+  let l:run_cmd = g:ECY_client_main_path
   let l:run_cmd .= ' --sources_dir ' . g:ECY_source_folder_dir
   let l:run_cmd .= ' --log_path ' . g:ECY_debug_log_file_path
   if g:ECY_is_debug
