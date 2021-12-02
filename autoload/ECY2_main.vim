@@ -66,6 +66,20 @@ fun! ECY2_main#ReStart(...) abort
 "}}}
 endf
 
+fun! ECY2_main#InstallLS(server_name) abort
+"{{{
+  call ECY#utils#TermStart(printf('%s --install "%s" --sources_dir "%s"',
+        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir), '')
+"}}}
+endf
+
+fun! ECY2_main#UnInstallLS(server_name) abort
+"{{{
+  call ECY#utils#TermStart(printf('%s --uninstall "%s" --sources_dir "%s"',
+        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir), '')
+"}}}
+endf
+
 fun! ECY2_main#GetCodeLens(...) abort
 "{{{
   let l:engine_name = s:GetEngineName(a:000)

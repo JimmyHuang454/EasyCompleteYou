@@ -52,10 +52,12 @@ if g_args.debug_log:
 
 
 def main():
-    if g_args.install is not None:
-        Install(g_args.install)
-    elif g_args.uninstall is not None:
-        UnInstall(g_args.install)
+    if g_args.install is not None or g_args.uninstall is not None:
+        from ECY_installer import install_cli
+        if g_args.install is not None:
+            install_cli.Install(g_args.install)
+        else:
+            install_cli.UnInstall(g_args.install)
     else:
         rpc.BlindEvent(engines.Mannager())
         rpc.Daemon()
