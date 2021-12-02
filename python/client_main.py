@@ -27,6 +27,10 @@ if g_args.ci:
     print('quited with --ci')
     sys.exit()
 
+IS_INSTALL = False
+if g_args.install is not None or g_args.uninstall is not None:
+    IS_INSTALL = True
+
 if g_args.sources_dir is not None:
     sys.path.append(g_args.sources_dir)
 
@@ -34,7 +38,7 @@ if g_args.sources_dir is not None:
 #                                Debug                                #
 #######################################################################
 
-if g_args.debug_log:
+if g_args.debug_log and not IS_INSTALL:
     if g_args.log_path is None:
         output_log_dir = BASE_DIR + '/ECY_debug.log'
     else:
@@ -52,7 +56,7 @@ if g_args.debug_log:
 
 
 def main():
-    if g_args.install is not None or g_args.uninstall is not None:
+    if IS_INSTALL:
         from ECY_installer import install_cli
         if g_args.install is not None:
             install_cli.Install(g_args.install)
