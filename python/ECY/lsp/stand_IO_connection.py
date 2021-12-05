@@ -71,7 +71,7 @@ class ThreadOfJob(object):
                 'method': 'window/logMessage',
                 'params': {
                     'message': temp,
-                    'type': 4
+                    'type': 5
                 }
             }
             temp = {'server_id': self.server_id, 'data': json.dumps(data)}

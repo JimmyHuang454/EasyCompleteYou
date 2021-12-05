@@ -655,6 +655,7 @@ class Operate(object):
         if len(res) == 0 or res is None:
             rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
             return
+
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return

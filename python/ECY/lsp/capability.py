@@ -114,7 +114,10 @@ CAPABILITY = {
                         "source.organizeImports"
                     ]
                 }
-            }
+            },
+            "isPreferredSupport": True,
+            "disabledSupport": True,
+            "dataSupport": True,
         },
         "codeLens": {
             "dynamicRegistration": False
