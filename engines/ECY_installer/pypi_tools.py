@@ -59,9 +59,12 @@ def Install(pack_name: str, save_dir: str) -> str:
     pack_name = pack_name.lower()
     dist: str = GetDIST()
     last_version = GetLastestVersion(pack_name, dist)
+    version_name = last_version['filename']
     last_version_url = GetUrl(last_version, dist)
     local_path = '%s/%s' % (save_dir, last_version['filename'])
     local_path = local_path.replace('\\', '/')
+    save_dir = save_dir.replace('\\', '/')
     base.DownloadFileWithProcessBar(last_version_url, local_path)
     Unpack(local_path, save_dir)
-    return local_path
+    version_name = version_name.split('.tar.gz')
+    return save_dir + '/' + version_name[0]

@@ -15,6 +15,17 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     BASE_DIR = os.path.dirname(__file__)
 
+CONFIG_FILE_PATH = BASE_DIR + '/arch_config.json'
+CONFIG_INFO = {}
+if not os.path.exists(CONFIG_FILE_PATH):
+    with open(CONFIG_FILE_PATH, 'w+') as f:
+        f.write("{}")
+        f.close()
+else:
+    with open(CONFIG_FILE_PATH, 'r') as f:
+        CONFIG_INFO = json.loads(f.read())
+        f.close()
+
 usable_installer = {'clangd': clangd.Install(), 'jedi_ls': jedi_ls.Install()}
 
 
@@ -37,13 +48,21 @@ def NewArchieve(installer_name: str) -> str:
     return res
 
 
+def Update(server_name, info):
+    CONFIG_INFO[server_name] = info
+    with open(CONFIG_FILE_PATH, 'w') as f:
+        f.write(json.dumps(CONFIG_INFO))
+        f.close()
+
+
 def Install(server_name):
     current_os = GetCurrentOS()
     obj = usable_installer[server_name]
     fuc = current_os
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        fuc({'save_dir': NewArchieve(server_name)})
+        res = fuc({'save_dir': NewArchieve(server_name)})
+        Update(server_name, res)
         base.PrintGreen("Finished. Installed ", server_name)
 
 

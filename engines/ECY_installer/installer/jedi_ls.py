@@ -14,14 +14,14 @@ class Install(base.Install):
     def Windows(self, context):
         save_dir = context['save_dir']
         installed_dir = pypi_tools.Install('ECY-Windows-jedi', save_dir)
-        return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
+        return {'cmd': installed_dir + '/ECY_exe/ECY_jedi_Windows.exe'}
 
     def Linux(self, context):
         save_dir = context['save_dir']
         installed_dir = pypi_tools.Install('ECY_linux_clangd', save_dir)
-        return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
+        return {'cmd': installed_dir + '/ECY_exe/ECY_jedi_Windows.exe'}
 
     def macOS(self, context):
         save_dir = context['save_dir']
         installed_dir = pypi_tools.Install('ECY_mac_clangd', save_dir)
-        return {'cmd': installed_dir}
+        return {'cmd': installed_dir + '/ECY_exe/ECY_jedi_Windows.exe'}
