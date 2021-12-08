@@ -4,6 +4,7 @@ import json
 
 from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
+from ECY_installer import base
 
 from colorama import init
 from termcolor import colored
@@ -15,12 +16,6 @@ elif __file__:
     BASE_DIR = os.path.dirname(__file__)
 
 usable_installer = {'clangd': clangd.Install(), 'jedi_ls': jedi_ls.Install()}
-
-init()
-
-
-def PrintGreen(msg):
-    print(colored(msg, 'blue', 'on_green'))
 
 
 def GetCurrentOS():
@@ -49,7 +44,7 @@ def Install(server_name):
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
         fuc({'save_dir': NewArchieve(server_name)})
-        print("Finished. Installed %s." % server_name)
+        base.PrintGreen("Finished. Installed ", server_name)
 
 
 def UnInstall(server_name):
@@ -59,4 +54,4 @@ def UnInstall(server_name):
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
         fuc({'save_dir': NewArchieve(server_name)})
-        print("Finished. Uninstalled %s." % server_name)
+        base.PrintGreen("Finished. Uninstalled ", server_name)

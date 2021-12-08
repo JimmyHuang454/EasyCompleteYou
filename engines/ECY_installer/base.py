@@ -1,6 +1,10 @@
 from urllib.request import urlretrieve
 
 from tqdm import tqdm
+from colorama import init
+
+init()
+from termcolor import colored
 
 from ECY_installer import pypi_tools
 
@@ -18,6 +22,14 @@ def DownloadFileWithProcessBar(url: str, output_path: str):
                              miniters=1,
                              desc=url.split('/')[-1]) as t:
         urlretrieve(url, filename=output_path, reporthook=t.update_to)
+
+
+def PrintGreen(msg, colored_msg):
+    print(msg, colored(colored_msg, 'white', 'on_green'))
+
+
+def PrintPink(msg, colored_msg):
+    print(msg, colored(colored_msg, 'white', 'on_magenta'))
 
 
 def DownloadFile(url: str, output_path: str) -> None:

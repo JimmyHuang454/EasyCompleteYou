@@ -36,6 +36,7 @@ jobs:
           pip3 install tqdm
           pip3 install requests
           pip3 install colorama
+          pip3 install termcolor
 
       - name: Build exe
         run: |

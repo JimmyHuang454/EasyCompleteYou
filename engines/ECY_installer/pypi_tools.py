@@ -10,21 +10,21 @@ def GetDIST() -> str:
     dist: dict = {'CN': 'pypi.tuna.tsinghua.edu.cn'}
     res = json.loads(res)
     countryCode: str = res['countryCode']
-    print(res)
+    base.PrintPink('You are in: ', countryCode)
 
     if countryCode not in dist:
         res = 'pypi.org'
     else:
         res = dist[countryCode]
-    print(res)
+    base.PrintPink('Will use: ', res)
     return res
 
 
 def GetLastestVersion(pack_name: str, dist: str) -> list:
-    pypi_json = 'https://%s/pypi/%s/json' % (dist, pack_name)
-    res = requests.get(pypi_json).text
+    pypi_json_url = 'https://%s/pypi/%s/json' % (dist, pack_name)
+    res = requests.get(pypi_json_url).text
     if res.find('Not Found') != -1:
-        print(pypi_json)
+        print(pypi_json_url)
         print(res)
         raise ValueError("package '%s' not found." % pack_name)
     res = json.loads(res)
@@ -32,7 +32,7 @@ def GetLastestVersion(pack_name: str, dist: str) -> list:
     release = res['releases'][version]
     for item in release:
         if item['filename'].endswith('gz'):
-            print(item)
+            base.PrintPink('Will Download: ', item['filename'])
             return item
     raise ValueError("Can not find last_version.")
 
@@ -44,7 +44,7 @@ def GetUrl(info: dict, dist: str) -> str:
 
 
 def Unpack(zip_path: str, output_dir: str) -> None:
-    print(output_dir)
+    base.PrintPink('Save dir: ', output_dir)
     if zip_path.endswith("tar.gz"):
         tar = tarfile.open(zip_path, "r:gz")
         tar.extractall(output_dir)
