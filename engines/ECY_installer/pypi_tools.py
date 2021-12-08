@@ -56,11 +56,11 @@ def Unpack(zip_path: str, output_dir: str) -> None:
 
 
 def Install(pack_name: str, save_dir: str) -> str:
-    # pack_name = pack_name.replace('_', '-')
     dist: str = GetDIST()
     last_version = GetLastestVersion(pack_name, dist)
     last_version_url = GetUrl(last_version, dist)
     local_path = '%s/%s' % (save_dir, last_version['filename'])
+    local_path = local_path.replace('\\', '/')
     base.DownloadFileWithProcessBar(last_version_url, local_path)
     Unpack(local_path, save_dir)
     return local_path

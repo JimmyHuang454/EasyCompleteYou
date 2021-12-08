@@ -15,7 +15,6 @@ class Install(base.Install):
         save_dir = context['save_dir']
         installed_dir = ''
         installed_dir = pypi_tools.Install('ECY_windows_clangd', save_dir)
-        print("installed clangd")
         return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
 
     def Linux(self, context):

@@ -37,19 +37,17 @@ def Install(server_name):
     current_os = GetCurrentOS()
     obj = usable_installer[server_name]
     fuc = current_os
-    if getattr(g_args, item) and hasattr(obj, fuc):
+    if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        fuc({'save_dir': NewArchieve(item)})
-        i.append(item)
-        print("Finished. Installed %s." % i)
+        fuc({'save_dir': NewArchieve(server_name)})
+        print("Finished. Installed %s." % server_name)
 
 
 def UnInstall(server_name):
     current_os = GetCurrentOS()
     obj = usable_installer[server_name]
     fuc = "Clean" + current_os
-    if getattr(g_args, item) and hasattr(obj, fuc):
+    if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        fuc({'save_dir': NewArchieve(item)})
-        i.append(item)
-        print("Finished. Uninstalled %s." % i)
+        fuc({'save_dir': NewArchieve(server_name)})
+        print("Finished. Uninstalled %s." % server_name)

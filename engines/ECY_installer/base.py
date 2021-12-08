@@ -1,4 +1,4 @@
-from urllib import request
+from urllib.request import urlretrieve
 
 from tqdm import tqdm
 
@@ -17,7 +17,7 @@ def DownloadFileWithProcessBar(url: str, output_path: str):
                              unit_scale=True,
                              miniters=1,
                              desc=url.split('/')[-1]) as t:
-        request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+        urlretrieve(url, filename=output_path, reporthook=t.update_to)
 
 
 def DownloadFile(url: str, output_path: str) -> None:
