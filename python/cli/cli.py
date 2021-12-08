@@ -23,6 +23,8 @@ import xmlrpc.client
 import pygments
 import requests
 from tqdm import tqdm
+from colorama import init
+from termcolor import colored
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):

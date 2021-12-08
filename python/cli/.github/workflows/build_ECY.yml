@@ -35,6 +35,7 @@ jobs:
           pip3 install pygments
           pip3 install tqdm
           pip3 install requests
+          pip3 install colorama
 
       - name: Build exe
         run: |

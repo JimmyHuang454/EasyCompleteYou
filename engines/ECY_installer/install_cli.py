@@ -5,6 +5,9 @@ import json
 from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
 
+from colorama import init
+from termcolor import colored
+
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
     BASE_DIR = os.path.dirname(sys.executable)
@@ -12,6 +15,12 @@ elif __file__:
     BASE_DIR = os.path.dirname(__file__)
 
 usable_installer = {'clangd': clangd.Install(), 'jedi_ls': jedi_ls.Install()}
+
+init()
+
+
+def PrintGreen(msg):
+    print(colored(msg, 'blue', 'on_green'))
 
 
 def GetCurrentOS():
