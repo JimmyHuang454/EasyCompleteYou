@@ -25,6 +25,7 @@ ECY_img
 dist
 build
 ECY_arch
+arch_config.json
 const.txt
 .root
 # test.*
