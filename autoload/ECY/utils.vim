@@ -570,6 +570,15 @@ function! ECY#utils#TermStart(cmd, cwd)
   "}}}
 endfunction
 
+function! ECY#utils#executable(cmd)
+  "{{{
+  if executable(a:cmd)
+    return v:true
+  endif
+  return v:false
+  "}}}
+endfunction
+
 function! ECY#utils#DownloadFile(url, output_path)
   call ECY#utils#TermStart(printf('curl -L -o %s "%s"', a:output_path, a:url), '')
 endfunction

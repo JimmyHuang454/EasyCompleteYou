@@ -43,6 +43,11 @@
   },
   "ECY_engines.cpp.clangd.clangd": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start clangd."]
+    },
+    "cmd2": {
       "default_value": "clangd",
       "type": "string",
       "des": ["cmd to start clangd."]
@@ -60,6 +65,11 @@
   },
   "ECY_engines.html.lsp.vls": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start vls."]
+    },
+    "cmd2": {
       "default_value": "vls",
       "type": "string",
       "des": ["cmd to start vls."]
@@ -67,6 +77,11 @@
   },
   "ECY_engines.html.lsp.html_lsp": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start html_lsp."]
+    },
+    "cmd2": {
       "default_value": "html-languageserver --stdio",
       "type": "string",
       "des": ["cmd to start html_lsp."]
@@ -101,6 +116,11 @@
   },
   "ECY_engines.python.pyright.pyright": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start pyright."]
+    },
+    "cmd2": {
       "default_value": "pyright-langserver --stdio",
       "type": "string",
       "des": ["cmd to start pyright."]
@@ -113,6 +133,11 @@
   },
   "ECY_engines.golang.gopls.gopls": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start gopls."]
+    },
+    "cmd2": {
       "default_value": "gopls",
       "type": "string",
       "des": ["cmd to start gopls."]
@@ -120,6 +145,11 @@
   },
   "ECY_engines.rust.rust_analyzer.rust_analyzer": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start rust_analyzer."]
+    },
+    "cmd2": {
       "default_value": "rust_analyzer",
       "type": "string",
       "des": ["cmd to start rust_analyzer."]
@@ -127,7 +157,12 @@
   },
   "ECY_engines.python.jedi_ls.jedi_ls": {
     "cmd": {
-      "default_value": "C:/Users/qwer/Desktop/jedi_Windows.exe",
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start pyls."]
+    },
+    "cmd2": {
+      "default_value": "jedi-language-server",
       "type": "string",
       "des": ["cmd to start pyls."]
     },
@@ -204,6 +239,11 @@
   },
   "ECY_engines.javascript.theia.theia": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start theia."]
+    },
+    "cmd2": {
       "default_value": "typescript-language-server --stdio",
       "type": "string",
       "des": ["cmd to start theia."]
@@ -211,6 +251,11 @@
   },
   "ECY_engines.viml.vim_ts.vim": {
     "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start vim LS."]
+    },
+    "cmd2": {
       "default_value": "C:/Users/qwer/Desktop/viml_Windows.exe --stdio",
       "type": "string",
       "des": ["cmd to start vim LS."]

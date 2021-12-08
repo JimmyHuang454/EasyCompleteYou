@@ -1,12 +1,14 @@
 fun! ECY#engine_config#Init() abort
   let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
+  let g:ECY_installer_config_path = g:ECY_python_script_folder_dir . '/arch_config.json'
   try
-    call s:Load()
+    call s:LoadEngine()
+    call s:LoadInstallerInfo()
   catch
   endtry
 endf
 
-fun! s:Load() abort
+fun! s:LoadEngine() abort
 "{{{
   let g:ECY_engine_default_config_path = g:ECY_engine_config_dir . '/default_config.json'
 
@@ -48,6 +50,17 @@ fun! s:Load() abort
 "}}}
 endf
 
+fun! s:LoadInstallerInfo() abort
+"{{{
+  let g:ECY_installer_config = {}
+  if !filereadable(g:ECY_installer_config_path)
+    return
+  endif
+
+  let l:temp = readfile(g:ECY_installer_config_path)
+  let g:ECY_installer_config = json_decode(join(l:temp, "\n"))
+"}}}
+endf
 
 fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
 "{{{
@@ -76,5 +89,14 @@ fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
     return v:null
   endif
   return l:user_config[l:name]
+"}}}
+endf
+
+fun! ECY#engine_config#GetInstallerInfo(installer_name) abort
+"{{{
+  if !has_key(g:ECY_installer_config, a:installer_name)
+    return {}
+  endif
+  return g:ECY_installer_config[a:installer_name]
 "}}}
 endf

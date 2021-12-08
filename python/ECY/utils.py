@@ -68,10 +68,9 @@ def IsNeedToUpdate(context, regex):
     return cache
 
 
-def GetDefaultValue(var_name, default_value):
-    if rpc.DoCall('exists', [var_name]):
-        default_value = rpc.GetVaribal(var_name)
-    return default_value
+def GetInstallerConfig(installer_name):  # return {} if it is not installed.
+    temp = rpc.DoCall('ECY#engine_config#GetInstallerInfo', [installer_name])
+    return temp
 
 
 def InstallPackage(package_name):

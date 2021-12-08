@@ -26,7 +26,10 @@ else:
         CONFIG_INFO = json.loads(f.read())
         f.close()
 
-usable_installer = {'clangd': clangd.Install(), 'jedi_ls': jedi_ls.Install()}
+usable_installer = {
+    'ECY_engines.cpp.clangd.clangd': clangd.Install(),
+    'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
+}
 
 
 def GetCurrentOS():

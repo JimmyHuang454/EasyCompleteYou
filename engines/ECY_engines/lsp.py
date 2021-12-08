@@ -23,18 +23,14 @@ class Operate(object):
 
         self.engine_name = name
 
-        if starting_cmd is None:
-            starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
+        self.starting_cmd = starting_cmd
+        self.GetStartCMD()
+        logger.debug(self.starting_cmd)
 
-        if starting_cmd is None or starting_cmd == '':
-            raise ValueError("missing cmd.")
-
-        logger.debug(starting_cmd)
         self._lsp = language_server_protocol.LSP(timeout=10)
         self.use_completion_cache = use_completion_cache
         self.use_completion_cache_position = use_completion_cache_position
 
-        self.starting_cmd = starting_cmd
         self.refresh_regex = refresh_regex
 
         # in favour of `rootUri`.
@@ -79,6 +75,32 @@ class Operate(object):
 
         self._start_server()
         self._get_format_config()
+
+    def GetStartCMD(self):
+        if self.starting_cmd is None:
+            self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
+
+        if self.starting_cmd is None or self.starting_cmd == '':
+            self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd2')
+            if self.starting_cmd is None or self.starting_cmd == '':
+                raise ValueError("missing cmd.")
+            logger.debug('trying to use ' + self.starting_cmd)
+            # is_runable = rpc.DoCall('ECY#utils#executable',
+            #                         [self.starting_cmd])
+            is_runable = True
+            logger.debug('is_runable: ' + str(is_runable))
+            if not is_runable:
+                self.starting_cmd = utils.GetInstallerConfig(self.engine_name)
+                logger.debug(self.starting_cmd)
+                if 'cmd' in self.starting_cmd:
+                    self.starting_cmd = self.starting_cmd['cmd']
+                    logger.debug('using installer cmd')
+                else:
+                    raise ValueError("missing cmd.")
+            else:
+                logger.debug('using cmd2')
+        else:
+            logger.debug('using user setting cmd')
 
     def _start_server(self):
         self._lsp.StartJob(self.starting_cmd)

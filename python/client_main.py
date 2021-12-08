@@ -8,7 +8,11 @@ from ECY import rpc
 import ECY.engines.engines as engines
 from ECY.debug import logger
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+# determine if application is a script file or frozen exe
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+elif __file__:
+    BASE_DIR = os.path.dirname(__file__)
 
 #######################################################################
 #                                flags                                #
