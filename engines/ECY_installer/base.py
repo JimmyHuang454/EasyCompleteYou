@@ -51,7 +51,7 @@ class Install(object):
     def CleanLinux(self, contextd: dict) -> dict:
         return {}
 
-    def CleanMac(self, contextd: dict) -> dict:
+    def CleanmacOS(self, contextd: dict) -> dict:
         return {}
 
     def Windows(self, context: dict) -> dict:
@@ -60,7 +60,13 @@ class Install(object):
     def Linux(self, context: dict) -> dict:
         return {}
 
-    def Mac(self, context: dict) -> dict:
+    def macOS(self, context: dict) -> dict:
+        return {}
+
+    def CheckmacOS(self, context: dict) -> dict:
+        return {}
+
+    def CheckmacOS(self, context: dict) -> dict:
         return {}
 
     def Readme(self, context: dict) -> str:

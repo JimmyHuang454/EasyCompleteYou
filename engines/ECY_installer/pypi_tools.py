@@ -56,6 +56,7 @@ def Unpack(zip_path: str, output_dir: str) -> None:
 
 
 def Install(pack_name: str, save_dir: str) -> str:
+    pack_name = pack_name.lower()
     dist: str = GetDIST()
     last_version = GetLastestVersion(pack_name, dist)
     last_version_url = GetUrl(last_version, dist)

@@ -1,6 +1,7 @@
 from ECY_installer import pypi_tools
 from ECY_installer import base
 
+
 class Install(base.Install):
     """
     """
@@ -12,9 +13,7 @@ class Install(base.Install):
 
     def Windows(self, context):
         save_dir = context['save_dir']
-        installed_dir = ''
-        installed_dir = pypi_tools.Install('ECY_windows_clangd', save_dir)
-        print("installed clangd")
+        installed_dir = pypi_tools.Install('ECY-Windows-jedi', save_dir)
         return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
 
     def Linux(self, context):
@@ -22,7 +21,7 @@ class Install(base.Install):
         installed_dir = pypi_tools.Install('ECY_linux_clangd', save_dir)
         return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
 
-    def Mac(self, context):
+    def macOS(self, context):
         save_dir = context['save_dir']
         installed_dir = pypi_tools.Install('ECY_mac_clangd', save_dir)
         return {'cmd': installed_dir}
