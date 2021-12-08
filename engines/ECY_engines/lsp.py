@@ -12,6 +12,7 @@ class Operate(object):
     def __init__(self,
                  name,
                  starting_cmd=None,
+                 starting_cmd_argv=None,
                  refresh_regex=r'[\w+]',
                  rootUri=None,
                  rootPath=None,
@@ -25,6 +26,9 @@ class Operate(object):
 
         self.starting_cmd = starting_cmd
         self.GetStartCMD()
+        if starting_cmd_argv is not None:
+            self.starting_cmd += ' '
+            self.starting_cmd += starting_cmd_argv
         logger.debug(self.starting_cmd)
 
         self._lsp = language_server_protocol.LSP(timeout=10)

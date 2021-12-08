@@ -5,16 +5,9 @@ from ECY import utils
 
 class Operate(lsp.Operate):
     def __init__(self, engine_name):
-        try:
-            import ECY_clangd
-            starting_cmd = ECY_clangd.exe_path
-        except Exception as e:
-            starting_cmd = utils.GetEngineConfig(engine_name, 'cmd')
-            logger.exception(e)
-        starting_cmd += ' --limit-results=0'
         lsp.Operate.__init__(self,
                              engine_name,
-                             starting_cmd,
+                             starting_cmd_argv='--limit-results=0',
                              languageId='cpp',
                              use_completion_cache=True,
                              use_completion_cache_position=False)
