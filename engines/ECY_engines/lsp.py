@@ -1,5 +1,6 @@
 import threading
 import copy
+
 from ECY import utils
 from ECY.debug import logger
 from ECY.lsp import language_server_protocol
@@ -85,23 +86,16 @@ class Operate(object):
             self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
 
         if self.starting_cmd is None or self.starting_cmd == '':
-            self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd2')
-            if self.starting_cmd is None or self.starting_cmd == '':
-                raise ValueError("missing cmd.")
-            logger.debug('trying to use ' + self.starting_cmd)
-            # is_runable = rpc.DoCall('ECY#utils#executable',
-            #                         [self.starting_cmd])
-            is_runable = True
-            logger.debug('is_runable: ' + str(is_runable))
-            if not is_runable:
-                self.starting_cmd = utils.GetInstallerConfig(self.engine_name)
-                logger.debug(self.starting_cmd)
-                if 'cmd' in self.starting_cmd:
-                    self.starting_cmd = self.starting_cmd['cmd']
-                    logger.debug('using installer cmd')
-                else:
-                    raise ValueError("missing cmd.")
+            self.starting_cmd = utils.GetInstallerConfig(self.engine_name)
+            logger.debug('installer info:' + str(self.starting_cmd))
+            if 'cmd' in self.starting_cmd:
+                self.starting_cmd = self.starting_cmd['cmd']
+                logger.debug('using installer cmd')
             else:
+                self.starting_cmd = utils.GetEngineConfig(
+                    self.engine_name, 'cmd2')
+                if self.starting_cmd is None or self.starting_cmd == '':
+                    raise ValueError("missing cmd.")
                 logger.debug('using cmd2')
         else:
             logger.debug('using user setting cmd')
