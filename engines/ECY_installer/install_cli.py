@@ -4,6 +4,7 @@ import json
 
 from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
+from ECY_installer.installer import html
 from ECY_installer import base
 
 from colorama import init
@@ -28,6 +29,7 @@ else:
 
 usable_installer = {
     'ECY_engines.cpp.clangd.clangd': clangd.Install(),
+    'ECY_engines.html.lsp.html_lsp': html.Install(),
     'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
 }
 

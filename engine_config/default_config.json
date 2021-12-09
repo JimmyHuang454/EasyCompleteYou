@@ -82,7 +82,7 @@
       "des": ["cmd to start html_lsp."]
     },
     "cmd2": {
-      "default_value": "html-languageserver --stdio",
+      "default_value": "html-languageserver",
       "type": "string",
       "des": ["cmd to start html_lsp."]
     }
