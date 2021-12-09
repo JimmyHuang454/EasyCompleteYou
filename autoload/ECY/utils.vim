@@ -526,21 +526,6 @@ function! ECY#utils#DeleteBufferByFile(buffer_file) abort
   "}}}
 endfunction
 
-function! ECY#utils#TermStart(cmd, cwd) abort
-  "{{{
-  let l:options = {}
-  if a:cwd != ''
-    let l:options['cwd'] = a:cwd
-  endif
-  if g:is_vim
-    call term_start(a:cmd, l:options)
-  else
-    split new
-    call termopen(a:cmd, l:options)
-  endif
-  "}}}
-endfunction
-
 function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
   "{{{
   "a:range_head = [1,1]
@@ -555,13 +540,24 @@ function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
   "}}}
 endfunction
 
-function! ECY#utils#TermStart(cmd, cwd)
+function! ECY#utils#TermStart(cmd, opts)
   "{{{
+  let l:is_vim = !has('nvim')
   let l:options = {}
-  if a:cwd != ''
-    let l:options['cwd'] = a:cwd
+
+  if has_key(a:opts, 'cwd')
+    let l:options['cwd'] = a:opts['cwd']
   endif
-  if !has('nvim')
+
+  if has_key(a:opts, 'exit_cb')
+    if l:is_vim
+      let l:options['exit_cb'] = a:opts['exit_cb']
+    else
+      let l:options['on_exit'] = a:opts['exit_cb']
+    endif
+  endif
+
+  if l:is_vim
     call term_start(a:cmd, l:options)
   else
     split new
@@ -580,5 +576,5 @@ function! ECY#utils#executable(cmd)
 endfunction
 
 function! ECY#utils#DownloadFile(url, output_path)
-  call ECY#utils#TermStart(printf('curl -L -o %s "%s"', a:output_path, a:url), '')
+  call ECY#utils#TermStart(printf('curl -L -o %s "%s"', a:output_path, a:url), {})
 endfunction

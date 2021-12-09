@@ -3,7 +3,7 @@ fun! ECY#engine_config#Init() abort
   let g:ECY_installer_config_path = g:ECY_python_script_folder_dir . '/arch_config.json'
   try
     call s:LoadEngine()
-    call s:LoadInstallerInfo()
+    call ECY#engine_config#LoadInstallerInfo()
   catch
   endtry
 endf
@@ -50,7 +50,7 @@ fun! s:LoadEngine() abort
 "}}}
 endf
 
-fun! s:LoadInstallerInfo() abort
+fun! ECY#engine_config#LoadInstallerInfo() abort
 "{{{
   let g:ECY_installer_config = {}
   if !filereadable(g:ECY_installer_config_path)
