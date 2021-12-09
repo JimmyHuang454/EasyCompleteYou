@@ -4,7 +4,10 @@ from ECY import utils
 
 class Operate(lsp.Operate):
     def __init__(self, engine_name):
-        lsp.Operate.__init__(self, engine_name, languageId='python')
+        lsp.Operate.__init__(self,
+                             engine_name,
+                             starting_cmd_argv='--stdio',
+                             languageId='python')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

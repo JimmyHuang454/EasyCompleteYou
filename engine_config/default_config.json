@@ -121,7 +121,7 @@
       "des": ["cmd to start pyright."]
     },
     "cmd2": {
-      "default_value": "pyright-langserver --stdio",
+      "default_value": "pyright-langserver",
       "type": "string",
       "des": ["cmd to start pyright."]
     },
