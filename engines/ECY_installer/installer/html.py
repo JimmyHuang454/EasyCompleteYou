@@ -13,15 +13,12 @@ class Install(base.Install):
 
     def Windows(self, context):
         save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY-Windows-html', save_dir)
-        return {'cmd': installed_dir + '/ECY_exe/ECY_html_Windows.exe'}
+        return self.InstallEXE('html', 'Windows', save_dir)
 
     def Linux(self, context):
         save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY_linux_clangd', save_dir)
-        return {'cmd': installed_dir + '/ECY_exe/ECY_jedi_Windows.exe'}
+        return self.InstallEXE('html', 'Linux', save_dir)
 
     def macOS(self, context):
         save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY_mac_clangd', save_dir)
-        return {'cmd': installed_dir + '/ECY_exe/ECY_jedi_Windows.exe'}
+        return self.InstallEXE('html', 'macOS', save_dir)

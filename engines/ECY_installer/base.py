@@ -57,6 +57,14 @@ class Install(object):
     def DownloadFileWithProcessBar(self, url, output_path):
         DownloadFileWithProcessBar(url, output_path)
 
+    def InstallEXE(self, server_name, platform, save_dir):
+        installed_dir = pypi_tools.Install(
+            'ECY-%s-%s' % (platform, server_name), save_dir)
+        return {
+            'cmd':
+            installed_dir + '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform)
+        }
+
     def CleanWindows(self, contextd: dict) -> dict:
         return {}
 

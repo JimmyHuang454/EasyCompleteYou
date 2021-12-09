@@ -14,6 +14,11 @@ jobs:
         with:
           repository: JimmyHuang454/ECY_exe
 
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
@@ -22,6 +27,7 @@ jobs:
         run: |
           npm install -g pkg
           npm install pyright -prefix ./
+          python ./build_pyright.py
           cd ./node_modules/pyright
           npm install
           pkg package.json -o ./ECY_pyright_${{ runner.os }}.exe
