@@ -540,9 +540,20 @@ function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
   "}}}
 endfunction
 
+fun! s:OnInstallerExit_vim(Fuc_cb, job, status) abort
+"{{{
+  call a:Fuc_cb()
+"}}}
+endf
+
+fun! s:OnInstallerExit_neovim(Fuc_cb, job_id, data, event) abort
+"{{{
+  call a:Fuc_cb()
+"}}}
+endf
+
 function! ECY#utils#TermStart(cmd, opts)
   "{{{
-  let l:is_vim = !has('nvim')
   let l:options = {}
 
   if has_key(a:opts, 'cwd')
@@ -550,14 +561,14 @@ function! ECY#utils#TermStart(cmd, opts)
   endif
 
   if has_key(a:opts, 'exit_cb')
-    if l:is_vim
-      let l:options['exit_cb'] = a:opts['exit_cb']
+    if g:is_vim
+      let l:options['exit_cb'] = function('s:OnInstallerExit_vim', [a:opts['exit_cb']])
     else
-      let l:options['on_exit'] = a:opts['exit_cb']
+      let l:options['on_exit'] = function('s:OnInstallerExit_neovim', [a:opts['exit_cb']])
     endif
   endif
 
-  if l:is_vim
+  if g:is_vim
     call term_start(a:cmd, l:options)
   else
     split new

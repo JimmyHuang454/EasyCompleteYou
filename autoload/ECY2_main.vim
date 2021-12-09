@@ -69,8 +69,8 @@ endf
 fun! ECY2_main#InstallLS(server_name) abort
 "{{{
   call ECY#utils#TermStart(printf('%s --install "%s" --sources_dir "%s"',
-        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir), {})
-  call ECY#engine_config#LoadInstallerInfo()
+        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir), 
+        \{'exit_cb': function('ECY#engine_config#LoadInstallerInfo')})
 "}}}
 endf
 
