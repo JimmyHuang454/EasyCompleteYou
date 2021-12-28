@@ -23,7 +23,7 @@ jobs:
       - name: Checkout test framework
         uses: actions/checkout@v2
         with:
-          repository: thinca/vim-themis
+          repository: JimmyHuang454/vim-themis
           path: vim-themis
 
       #################
