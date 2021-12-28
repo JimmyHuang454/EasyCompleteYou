@@ -75,13 +75,13 @@ class Install(object):
         return {}
 
     def Windows(self, context: dict) -> dict:
-        return self.InstallEXE('html', 'Windows', context['save_dir'])
+        return self.InstallEXE(self.name, 'Windows', context['save_dir'])
 
     def Linux(self, context: dict) -> dict:
-        return self.InstallEXE('html', 'Linux', context['save_dir'])
+        return self.InstallEXE(self.name, 'Linux', context['save_dir'])
 
     def macOS(self, context: dict) -> dict:
-        return self.InstallEXE('html', 'macOS', context['save_dir'])
+        return self.InstallEXE(self.name, 'macOS', context['save_dir'])
 
     def CheckmacOS(self, context: dict) -> dict:
         return {}
