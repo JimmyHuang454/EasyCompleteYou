@@ -50,6 +50,7 @@ fun! s:Start(timer) abort
 endf
 
 fun! RunTest() abort
+  exe "so " . g:repo_root .'/test/feedkey_test.vim'
   call timer_start(100, function('s:Start'))
 endf
 
@@ -59,7 +60,4 @@ endfunction
 
 call themis#log('starting...')
 call test_frame#Init()
-
-exe "so " . g:repo_root .'/test/feedkey_test.vim'
-
 call RunTest()
