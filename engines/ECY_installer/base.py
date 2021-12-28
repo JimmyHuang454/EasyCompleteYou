@@ -48,8 +48,8 @@ def DownloadFile(url: str, output_path: str) -> None:
 class Install(object):
     """
     """
-    def __init__(self):
-        self.name: str = ''
+    def __init__(self, name: str):
+        self.name = name
 
     def DownloadFile(self, url, output_path):
         DownloadFile(url, output_path)
@@ -75,13 +75,13 @@ class Install(object):
         return {}
 
     def Windows(self, context: dict) -> dict:
-        return {}
+        return self.InstallEXE('html', 'Windows', context['save_dir'])
 
     def Linux(self, context: dict) -> dict:
-        return {}
+        return self.InstallEXE('html', 'Linux', context['save_dir'])
 
     def macOS(self, context: dict) -> dict:
-        return {}
+        return self.InstallEXE('html', 'macOS', context['save_dir'])
 
     def CheckmacOS(self, context: dict) -> dict:
         return {}
