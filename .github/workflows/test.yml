@@ -35,19 +35,11 @@ jobs:
         with:
           neovim: false
 
-      #############
-      #  install python  #
-      #############
+      ####################
+      #  Install Python  #
+      ####################
       - name: Install Python
         uses: actions/setup-python@v1
-
-      #############
-      #  print info  #
-      #############
-      - name: Print info
-        run: |
-          cd ./ECY/
-          ls
 
       - name: Run unit tests
         env:
