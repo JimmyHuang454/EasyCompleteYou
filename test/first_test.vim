@@ -28,6 +28,6 @@ endfunction
 
 function s:suite.my_test_2()
   " call s:assert.equals(s:abc, 1)
-  call s:assert.equals(mode(), 'n')
-  " call s:assert.equals(ECY#utils#GetCurrentBufferFileType(), 'nothing')
+  " call s:assert.equals(mode(), 'n')
+  call s:assert.equals(ECY#utils#GetCurrentBufferFileType(), 'nothing')
 endfunction
