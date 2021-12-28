@@ -6,15 +6,15 @@ fun! test_frame#Init()
   let s:testing_windows_nr = -1
 endf
 
-fun! test_frame#Add(test_case) abort
+fun! TestFrameAdd(test_case) abort
   call add(g:ECY_testing_case, a:test_case)
 endf
 
-fun! test_frame#Error(error_msg) abort
+fun! TestFrameError(error_msg) abort
   call themis#log("completion not working.")
 endf
 
-fun! test_frame#Got(output) abort
+fun! TestFrameGot(output) abort
   call themis#log(printf("Got: '%s'", a:output))
 endf
 
@@ -61,6 +61,5 @@ call themis#log('starting...')
 call test_frame#Init()
 
 exe "so " . g:repo_root .'/test/feedkey_test.vim'
-call test_frame#Add({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})
 
 call RunTest()
