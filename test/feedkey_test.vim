@@ -21,5 +21,3 @@ fun! s:T3() abort
   call feedkeys("\<Esc>", 'i')
 "}}}
 endf
-
-call test_frame#Add({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})

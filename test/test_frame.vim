@@ -59,5 +59,8 @@ endfunction
 
 call themis#log('starting...')
 call test_frame#Init()
+
 exe "so " . g:repo_root .'/test/feedkey_test.vim'
+call test_frame#Add({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})
+
 call RunTest()
