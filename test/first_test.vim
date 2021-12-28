@@ -11,7 +11,7 @@ endfunction
 "                                  content                                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function s:suite.test_default_engine_ok()
-  exe "so " . g:repo_root .'/test/test_frame.vim'
+  " exe "so " . g:repo_root .'/test/test_frame.vim'
   " call AddLine("abc\nabcd\nabc")
   " call cursor(3, 3)
 

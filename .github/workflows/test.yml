@@ -48,4 +48,4 @@ jobs:
         run: |
           cd ./ECY/test
           echo "${THEMIS_VIM}"
-          ../../vim-themis/bin/themis .
+          # ../../vim-themis/bin/themis .
