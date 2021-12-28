@@ -57,6 +57,7 @@ function! AddLine(str)
     put! =a:str
 endfunction
 
+call themis#log('starting...')
 call test_frame#Init()
 exe "so " . g:repo_root .'/test/feedkey_test.vim'
 call RunTest()
