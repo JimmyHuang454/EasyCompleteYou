@@ -6,7 +6,7 @@ fun! test_frame#Init()
   let s:testing_windows_nr = -1
 endf
 
-fun! TestFrameAdd(test_case) abort
+fun! g:TestFrameAdd(test_case) abort
   call add(g:ECY_testing_case, a:test_case)
 endf
 

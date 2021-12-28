@@ -22,4 +22,4 @@ fun! s:T3() abort
 "}}}
 endf
 
-call TestFrameAdd({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})
+call g:TestFrameAdd({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})
