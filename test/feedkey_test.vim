@@ -1,17 +1,17 @@
-fun! s:T1() abort
+fun! feedkey_test#T1() abort
 "{{{
   new 
   call feedkeys("i123\n1234\n12345\n12", 'in')
 "}}}
 endf
 
-fun! s:T2() abort
+fun! feedkey_test#T2() abort
 "{{{
   call feedkeys("\<tab>", 'i')
 "}}}
 endf
 
-fun! s:T3() abort
+fun! feedkey_test#T3() abort
 "{{{
   if getline(4) != '123'
     call TestFrameGot(getline(4))
@@ -21,5 +21,3 @@ fun! s:T3() abort
   call feedkeys("\<Esc>", 'i')
 "}}}
 endf
-
-call g:TestFrameAdd({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')},{'fuc': function('s:T3')}]})

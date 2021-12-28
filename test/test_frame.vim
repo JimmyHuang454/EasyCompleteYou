@@ -51,6 +51,7 @@ endf
 
 fun! RunTest() abort
   exe "so " . g:repo_root .'/test/feedkey_test.vim'
+  call g:TestFrameAdd({'event':[{'fuc': function('feedkey_test#T1')}, {'fuc': function('feedkey_test#T2')},{'fuc': function('feedkey_test#T3')}]})
   call timer_start(100, function('s:Start'))
 endf
 
