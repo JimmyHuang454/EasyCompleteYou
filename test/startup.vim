@@ -35,7 +35,7 @@ function AddRTP(path) abort
 endfunction
 
 function SoPath(path) abort
-  exe 'so ' . a:path
+  exe 'source ' . a:path
 endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -44,7 +44,7 @@ endfunction
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
 let g:log_info = ''
 call AddRTP(g:repo_root)
-call SoPath(printf('so %s/plugin/easycompleteyou2.vim', g:repo_root))
+call SoPath(printf('%s/plugin/easycompleteyou2.vim', g:repo_root))
 
 set encoding=utf-8
 set termencoding=utf-8
@@ -52,4 +52,4 @@ set fileencoding=utf-8
 scriptencoding utf-8
 
 call OutputLine(g:repo_root)
-call SoPath(printf('so %s/test/test_frame.vim', g:repo_root))
+call SoPath(printf('%s/test/test_frame.vim', g:repo_root))
