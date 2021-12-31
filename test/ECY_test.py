@@ -10,7 +10,6 @@ BASE_DIR = BASE_DIR.replace('\\', '/')
 
 if VIM_EXE is None:
     VIM_EXE = 'D:/Vim/vim82/vim'
-VIM_EXE = 'D:/Neovim/bin/nvim'
 
 START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 
@@ -39,12 +38,8 @@ class Case(object):
     def __init__(self, vim_script, timeout=5000):
         self.vim_script = vim_script
         self.timeout = timeout
-        if GetCurrentOS() == 'Windows':
-            self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
-                VIM_EXE, vim_script)
-        else:
-            self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s" 3>&1 1>&2 2>&3 3>&-' % (
-                VIM_EXE, vim_script)
+        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
+                                                                   vim_script)
         print(self.cmd)
         self.pro = subprocess.Popen(self.cmd,
                                     shell=True,
