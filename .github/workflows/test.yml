@@ -19,12 +19,6 @@ jobs:
         with:
           repository: JimmyHuang454/EasyCompleteYou
 
-      - name: Checkout test framework
-        uses: actions/checkout@v2
-        with:
-          repository: JimmyHuang454/vim-themis
-          path: vim-themis
-
       #################
       #  install vim  #
       #################

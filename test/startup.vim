@@ -1,5 +1,6 @@
-function! Output(msg) abort
+function! OutputLine(msg) abort
   echon a:msg
+  echon "\n"
 endfunction
 
 function! QuitVim() abort
@@ -20,7 +21,7 @@ set termencoding=utf-8
 set fileencoding=utf-8
 scriptencoding utf-8
 
-call Output(g:repo_root . '\n')
+call OutputLine(g:repo_root)
 
 let g:all_test_case = [g:repo_root . '/test/first_test.vim']
 
@@ -32,7 +33,8 @@ for test_case in g:all_test_case
   try
     exe 'so ' . test_case
   catch 
-    call Output(test_case . ' Failded.')
+    call OutputLine(test_case . ' Failded.')
+    echoerr 'sdf'
   endtry
 endfor
 
@@ -40,5 +42,5 @@ endfor
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    end                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-call Output('test end.\n')
+call OutputLine('test end.')
 call QuitVim()
