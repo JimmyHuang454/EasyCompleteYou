@@ -19,6 +19,7 @@ fun! s:Start(timer) abort
   try
     call l:Fuc()
   catch 
+    call OutputLine("Failded.")
     call OutputLine(v:exception)
     call OutputLine(v:throwpoint)
     call QuitVim()
@@ -38,7 +39,7 @@ fun! s:Start(timer) abort
 endf
 
 fun! test_frame#Run() abort
-  call timer_start(2000, function('s:Start'))
+  call timer_start(1000, function('s:Start'))
 endf
 
 call test_frame#Init()
