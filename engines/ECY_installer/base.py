@@ -46,18 +46,17 @@ def DownloadFile(url: str, output_path: str) -> None:
 
 
 class Install(object):
-    """
-    """
     def __init__(self, name: str):
-        self.name = name
+        self.name: str = name
 
-    def DownloadFile(self, url, output_path):
+    def DownloadFile(self, url: str, output_path: str):
         DownloadFile(url, output_path)
 
-    def DownloadFileWithProcessBar(self, url, output_path):
+    def DownloadFileWithProcessBar(self, url: str, output_path: str):
         DownloadFileWithProcessBar(url, output_path)
 
-    def InstallEXE(self, server_name, platform, save_dir):
+    def InstallEXE(self, server_name: str, platform: str,
+                   save_dir: str) -> dict:
         installed_dir = pypi_tools.Install(
             'ECY-%s-%s' % (platform, server_name), save_dir)
         return {
@@ -65,13 +64,13 @@ class Install(object):
             installed_dir + '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform)
         }
 
-    def CleanWindows(self, contextd: dict) -> dict:
+    def CleanWindows(self, context: dict) -> dict:
         return {}
 
-    def CleanLinux(self, contextd: dict) -> dict:
+    def CleanLinux(self, content: dict) -> dict:
         return {}
 
-    def CleanmacOS(self, contextd: dict) -> dict:
+    def CleanmacOS(self, content: dict) -> dict:
         return {}
 
     def Windows(self, context: dict) -> dict:
