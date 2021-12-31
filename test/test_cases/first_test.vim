@@ -8,7 +8,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call Expect(getline(1), '12')
+    call Expect(getline(1), '11')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, {'fuc': function('s:T2')}]})

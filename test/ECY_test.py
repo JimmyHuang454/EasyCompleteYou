@@ -10,7 +10,7 @@ BASE_DIR = BASE_DIR.replace('\\', '/')
 
 if VIM_EXE is None:
     VIM_EXE = 'D:/Vim/vim82/vim'
-VIM_EXE = 'D:/Neovim/bin/nvim'
+    VIM_EXE = 'D:/Neovim/bin/nvim'
 
 START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 
@@ -69,9 +69,9 @@ class Case(object):
                 f.close()
             os.remove(log_file_path)
 
-        is_ok = True
-        if output.find('Failded') != -1:
-            is_ok = False
+        is_ok = False
+        if output.find('Failded') == -1:
+            is_ok = True
         res = {
             'case': self.vim_script,
             'is_ok': is_ok,
