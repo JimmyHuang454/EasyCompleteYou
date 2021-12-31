@@ -22,11 +22,24 @@ function! AddLine(str)
   put! =a:str
 endfunction
 
+function AddRTP(path) abort
+  if isdirectory(a:path)
+    let path = substitute(a:path, '\\\+', '/', 'g')
+    let path = substitute(path, '/$', '', 'g')
+    let &runtimepath = escape(path, '\,') . ',' . &runtimepath
+    let after = path . '/after'
+    if isdirectory(after)
+      let &runtimepath .= ',' . after
+    endif
+  endif
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
 let g:log_info = ''
+call AddRTP(g:repo_root)
 
 set encoding=utf-8
 set termencoding=utf-8
