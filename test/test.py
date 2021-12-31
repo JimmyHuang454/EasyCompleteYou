@@ -13,7 +13,14 @@ if VIM_EXE is None:
 
 START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 
-all_test_case = [BASE_DIR + '/first_test.vim']
+all_test_case = []
+for [top, dirs, file] in os.walk(BASE_DIR + '/test_cases'):
+    for item in file:
+        full_path = os.path.join(top, item)
+        full_path = full_path.replace('\\', '/')
+        if not full_path.endswith('vim'):
+            continue
+        all_test_case.append(full_path)
 
 test_case_queue = queue.Queue()
 
