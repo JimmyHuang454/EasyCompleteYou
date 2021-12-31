@@ -70,7 +70,7 @@ class Case(object):
             os.remove(log_file_path)
 
         is_ok = False
-        if output.find('Failded') == -1:
+        if output.find('Failded') == -1 and output != '':
             is_ok = True
         res = {
             'case': self.vim_script,
