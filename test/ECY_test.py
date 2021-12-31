@@ -5,6 +5,8 @@ import sys
 import queue
 
 VIM_EXE = os.environ.get('VIM_EXE')
+IS_NEOVIM = os.environ.get('IS_NEOVIM')
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
 
@@ -42,11 +44,17 @@ class Case(object):
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
-        self.pro = subprocess.Popen(self.cmd,
-                                    shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    stdin=subprocess.PIPE)
+        if IS_NEOVIM and GetCurrentOS() == 'Windows':
+            self.pro = subprocess.Popen(self.cmd,
+                                        shell=True,
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+        else:
+            self.pro = subprocess.Popen(self.cmd,
+                                        shell=True,
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE,
+                                        stdin=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
     def Test(self):

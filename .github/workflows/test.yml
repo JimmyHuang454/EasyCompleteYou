@@ -36,5 +36,6 @@ jobs:
       - name: Run unit tests
         env:
           VIM_EXE: ${{ steps.vim.outputs.executable }}
+          IS_NEOVIM: ${{ matrix.neovim }}
         run: |
           python ./test/ECY_test.py
