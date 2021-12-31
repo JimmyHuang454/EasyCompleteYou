@@ -23,7 +23,8 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
-    call Type("\<Tab>")
+    " call Type("\<Tab>")
+    call ECY#completion#SelectItems(0, g:ECY_select_items[0])
 endfunction
 
 function! s:T5() abort
