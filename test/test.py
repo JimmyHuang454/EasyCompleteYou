@@ -13,4 +13,4 @@ START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE, START_UP_SCRIPT)
 
 print(cmd)
-subprocess.Popen(cmd).wait()
+subprocess.Popen(cmd, shell=True).wait()
