@@ -43,9 +43,6 @@ jobs:
 
       - name: Run unit tests
         env:
-          THEMIS_VIM: ${{ steps.vim.outputs.executable }}
-          PROFILE_LOG: profile.txt
+          VIM_EXE: ${{ steps.vim.outputs.executable }}
         run: |
-          cd ./ECY/test
-          echo "${THEMIS_VIM}"
-          # ../../vim-themis/bin/themis .
+          python ./ECY/test/test.py

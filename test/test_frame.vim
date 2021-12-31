@@ -59,6 +59,8 @@ function! AddLine(str)
     put! =a:str
 endfunction
 
-call themis#log('starting...')
-call test_frame#Init()
-call RunTest()
+" call themis#log('starting...')
+" call test_frame#Init()
+" call RunTest()
+call QuitVim()
+echon 'quit'
