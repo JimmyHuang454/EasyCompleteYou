@@ -6,16 +6,8 @@ fun! test_frame#Init()
   let s:testing_windows_nr = -1
 endf
 
-fun! g:TestFrameAdd(test_case) abort
+fun! test_frame#Add(test_case) abort
   call add(g:ECY_testing_case, a:test_case)
-endf
-
-fun! TestFrameError(error_msg) abort
-  call themis#log("completion not working.")
-endf
-
-fun! TestFrameGot(output) abort
-  call themis#log(printf("Got: '%s'", a:output))
 endf
 
 fun! s:QuitVim() abort
@@ -25,14 +17,14 @@ endf
 fun! s:Start(timer) abort
 "{{{
   let l:item = g:ECY_testing_case[s:testing_case_nr]['event'][s:testing_case_event]
-  call themis#log(' event: ' . string(l:item))
+  call OutputLine(' event: ' . string(l:item))
   let l:Fuc = l:item['fuc']
 
   try
     call l:Fuc()
   catch 
-    call themis#log(v:exception)
-    call themis#log(v:throwpoint)
+    call OutputLine(v:exception)
+    call OutputLine(v:throwpoint)
     call s:QuitVim()
   endtry
 
@@ -49,18 +41,8 @@ fun! s:Start(timer) abort
 "}}}
 endf
 
-fun! RunTest() abort
-  exe "so " . g:repo_root .'/test/feedkey_test.vim'
-  call g:TestFrameAdd({'event':[{'fuc': function('feedkey_test#T1')}, {'fuc': function('feedkey_test#T2')},{'fuc': function('feedkey_test#T3')}]})
+fun! test_frame#Run() abort
   call timer_start(100, function('s:Start'))
 endf
 
-function! AddLine(str)
-    put! =a:str
-endfunction
-
-" call themis#log('starting...')
-" call test_frame#Init()
-" call RunTest()
-call QuitVim()
-echon 'quit'
+call test_frame#Init()

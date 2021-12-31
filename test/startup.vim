@@ -3,6 +3,17 @@ function! OutputLine(msg) abort
   echon "\n"
 endfunction
 
+function! Expect(value, expected) abort
+  if a:value != a:expected
+    call OutputLine('Failded')
+    call OutputLine(printf('Extended: "%s"', a:expected))
+    call OutputLine(printf('Actual: "%s"', a:value))
+    throw "Wrong case."
+  else
+    call OutputLine('OK.')
+  endif
+endfunction
+
 function! QuitVim() abort
   cquit!
 endfunction
@@ -22,25 +33,4 @@ set fileencoding=utf-8
 scriptencoding utf-8
 
 call OutputLine(g:repo_root)
-
-let g:all_test_case = [g:repo_root . '/test/first_test.vim']
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                  do test                                   "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-for test_case in g:all_test_case
-  try
-    exe 'so ' . test_case
-  catch 
-    call OutputLine(test_case . ' Failded.')
-    echoerr 'sdf'
-  endtry
-endfor
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                    end                                     "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-call OutputLine('test end.')
-call QuitVim()
+exe printf('so %s/test/test_frame.vim', g:repo_root)
