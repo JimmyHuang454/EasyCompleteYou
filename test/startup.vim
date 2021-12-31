@@ -15,7 +15,7 @@ endfunction
 
 function! QuitVim() abort
   call writefile(split(g:log_info, "\n"), g:log_file, 'b')
-  cquit!
+  qall!
 endfunction
 
 function! AddLine(str)
