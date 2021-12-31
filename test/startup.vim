@@ -14,7 +14,7 @@ function! Expect(value, expected) abort
 endfunction
 
 function! QuitVim() abort
-  call writefile(split(g:log_info, "\n"), g:log_file, 'w')
+  call writefile(split(g:log_info, "\n"), g:log_file, 'b')
   cquit!
 endfunction
 

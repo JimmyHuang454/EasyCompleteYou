@@ -10,6 +10,7 @@ BASE_DIR = BASE_DIR.replace('\\', '/')
 
 if VIM_EXE is None:
     VIM_EXE = 'D:/Vim/vim82/vim'
+VIM_EXE = 'D:/Neovim/bin/nvim'
 
 START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 

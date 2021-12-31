@@ -37,4 +37,4 @@ jobs:
         env:
           VIM_EXE: ${{ steps.vim.outputs.executable }}
         run: |
-          python ./test/test.py
+          python ./test/ECY_test.py
