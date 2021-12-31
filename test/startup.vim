@@ -18,6 +18,10 @@ function! QuitVim() abort
   qall!
 endfunction
 
+function! Type(keys) abort
+    call feedkeys(a:keys, 'i')
+endfunction
+
 function! AddLine(str)
   put! =a:str
 endfunction

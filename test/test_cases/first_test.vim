@@ -10,20 +10,20 @@ function! s:T1() abort
     call Expect(&ft, 'python')
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'python')
     call Expect(mode(), 'n')
-    call feedkeys("i123\n12", 'in')
+    call Type("i123\n12")
 endfunction
 
 function! s:T2() abort
     call Expect(getline(1), '123')
-    call feedkeys("\<Esc>", 'in')
+    call Type("\<Esc>")
 endfunction
 
 function! s:T3() abort
-    call feedkeys("a", 'in')
+    call Type("a")
 endfunction
 
 function! s:T4() abort
-    call feedkeys("\<Tab>", 'i')
+    call Type("\<Tab>")
 endfunction
 
 function! s:T5() abort
