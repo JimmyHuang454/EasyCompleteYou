@@ -25,7 +25,7 @@ jobs:
         uses: rhysd/action-setup-vim@v1
         id: vim
         with:
-          neovim: false
+          neovim: ${{ matrix.neovim }}
 
       ####################
       #  Install Python  #
