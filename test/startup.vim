@@ -1,6 +1,5 @@
 function! OutputLine(msg) abort
-  echon a:msg
-  echon "\n"
+  let g:log_info .= a:msg . "\n"
 endfunction
 
 function! Expect(value, expected) abort
@@ -15,6 +14,7 @@ function! Expect(value, expected) abort
 endfunction
 
 function! QuitVim() abort
+  call writefile(split(g:log_info, "\n"), g:log_file, 'w')
   cquit!
 endfunction
 
@@ -26,6 +26,7 @@ endfunction
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
+let g:log_info = ''
 
 set encoding=utf-8
 set termencoding=utf-8

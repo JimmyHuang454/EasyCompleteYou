@@ -10,10 +10,6 @@ fun! test_frame#Add(test_case) abort
   call add(g:ECY_testing_case, a:test_case)
 endf
 
-fun! s:QuitVim() abort
-  cquit!
-endf
-
 fun! s:Start(timer) abort
 "{{{
   let l:item = g:ECY_testing_case[s:testing_case_nr]['event'][s:testing_case_event]
@@ -25,7 +21,7 @@ fun! s:Start(timer) abort
   catch 
     call OutputLine(v:exception)
     call OutputLine(v:throwpoint)
-    call s:QuitVim()
+    call QuitVim()
   endtry
 
   let s:testing_case_event += 1
@@ -33,7 +29,7 @@ fun! s:Start(timer) abort
     let s:testing_case_event = 0
     if s:testing_case_nr == len(g:ECY_testing_case[s:testing_case_nr]) - 1
       " all test ended.
-      call s:QuitVim()
+      call QuitVim()
     endif
     let s:testing_case_nr += 1
   endif

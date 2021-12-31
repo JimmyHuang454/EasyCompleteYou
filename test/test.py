@@ -1,6 +1,7 @@
 import subprocess
 import threading
 import os
+import sys
 import queue
 
 VIM_EXE = os.environ.get('VIM_EXE')
@@ -17,12 +18,25 @@ all_test_case = [BASE_DIR + '/first_test.vim']
 test_case_queue = queue.Queue()
 
 
+def GetCurrentOS():
+    temp = sys.platform
+    if temp == 'win32':
+        return 'Windows'
+    if temp == 'darwin':
+        return 'macOS'
+    return "Linux"
+
+
 class Case(object):
     def __init__(self, vim_script, timeout=5000):
         self.vim_script = vim_script
         self.timeout = timeout
-        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
-                                                                   vim_script)
+        if GetCurrentOS() == 'Windows':
+            self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
+                VIM_EXE, vim_script)
+        else:
+            self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s" 3>&1 1>&2 2>&3 3>&-' % (
+                VIM_EXE, vim_script)
         print(self.cmd)
         self.pro = subprocess.Popen(self.cmd,
                                     shell=True,
@@ -44,10 +58,13 @@ class Case(object):
             })
             return
 
-        output_lines = self.pro.stderr.readlines()
+        log_file_path = self.vim_script + '.log'
         output = ''
-        for item in output_lines:
-            output += str(item, encoding='utf-8') + '\n'
+        if os.path.exists(log_file_path):
+            with open(log_file_path, 'r', encoding='utf-8') as f:
+                output = f.read()
+                f.close()
+            os.remove(log_file_path)
 
         is_ok = True
         if output.find('Failded') != -1:

@@ -1,4 +1,5 @@
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
+let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
