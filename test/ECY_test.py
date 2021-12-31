@@ -91,7 +91,8 @@ while len(all_test_case) != 0:
     i += 1
     print(i)
     print(finished_case)
+    if not finished_case['is_ok']:
+        quit(1)
 
     if i == len(all_test_case):
         break
-
