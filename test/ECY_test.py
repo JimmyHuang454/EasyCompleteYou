@@ -42,10 +42,7 @@ class Case(object):
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
-        self.pro = subprocess.Popen(self.cmd,
-                                    shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+        self.pro = subprocess.Popen(self.cmd, shell=True)
         threading.Thread(target=self.Test).start()
 
     def Test(self):
