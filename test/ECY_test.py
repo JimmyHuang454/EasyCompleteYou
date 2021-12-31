@@ -10,6 +10,7 @@ BASE_DIR = BASE_DIR.replace('\\', '/')
 
 if VIM_EXE is None:
     VIM_EXE = 'D:/Vim/vim82/vim'
+VIM_EXE = 'D:/Neovim/bin/nvim'
 
 START_UP_SCRIPT = BASE_DIR + '/startup.vim'
 
@@ -44,15 +45,14 @@ class Case(object):
         self.pro = subprocess.Popen(self.cmd,
                                     shell=True,
                                     stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    stdin=subprocess.PIPE)
+                                    stderr=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
     def Test(self):
         try:
             self.pro.wait(self.timeout)
         except Exception as e:  # timeout
-            self.pro.terminate()
+            print('timeout', e)
             test_case_queue.put({
                 'case': self.vim_script,
                 'is_ok': False,
@@ -72,12 +72,14 @@ class Case(object):
         is_ok = True
         if output.find('Failded') != -1:
             is_ok = False
-        test_case_queue.put({
+        res = {
             'case': self.vim_script,
             'is_ok': is_ok,
             'output': output,
             'is_timeout': False,
-        })
+        }
+        test_case_queue.put(res)
+        print(res)
 
 
 running_test_cases = {}
@@ -90,7 +92,6 @@ while len(all_test_case) != 0:
     finished_case = test_case_queue.get()
     i += 1
     print(i)
-    print(finished_case)
     if not finished_case['is_ok']:
         quit(1)
 
