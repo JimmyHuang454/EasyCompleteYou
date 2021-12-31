@@ -1,9 +1,6 @@
-let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
+new
+call AddLine('11')
 
-set encoding=utf-8
-set termencoding=utf-8
-set fileencoding=utf-8
-scriptencoding utf-8
-
-echon 'test end.'
-cquit!
+if getline(1) != '11'
+    throw "1"
+endif
