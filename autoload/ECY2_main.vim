@@ -6,6 +6,7 @@ fun! ECY2_main#Init() abort
   if g:ECY_is_debug
     let l:run_cmd .= ' --debug_log'
   endif
+  let g:ECY_main_cmd = l:run_cmd
   call ECY#rpc#rpc_main#NewClient(l:run_cmd)
 "}}}
 endf
