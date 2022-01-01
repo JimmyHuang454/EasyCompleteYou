@@ -36,10 +36,9 @@ jobs:
         uses: actions/setup-python@v1
 
       - name: Run unit tests(Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Linux'
         env:
           VIM_EXE: ${{ steps.vim.outputs.executable }}
           IS_NEOVIM: ${{ matrix.neovim }}
         run: |
           python ./test/ECY_test.py
-
