@@ -9,6 +9,7 @@ function! s:T1() abort
     let &ft = 'test'
     call Expect(&ft, 'test')
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'test')
+    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY.engines.default_engine')
     call Expect(mode(), 'n')
     call Type("i123\n12")
 endfunction
