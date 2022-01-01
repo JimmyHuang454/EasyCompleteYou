@@ -22,7 +22,7 @@ jobs:
 
       - name: Test exe
         run: |
-          ./python/ECY_${{ runner.os }}.exe --ci
+          sudo ./python/ECY_${{ runner.os }}.exe --ci
 
       #################
       #  install vim  #
