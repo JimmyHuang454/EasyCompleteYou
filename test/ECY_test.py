@@ -5,6 +5,7 @@ import sys
 import queue
 
 VIM_EXE = os.environ.get('VIM_EXE')
+print(os.environ)
 print('VIM_EXE', VIM_EXE)
 IS_NEOVIM = os.environ.get('IS_NEOVIM')
 
