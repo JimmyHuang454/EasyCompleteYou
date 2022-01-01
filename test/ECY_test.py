@@ -59,7 +59,7 @@ class Case(object):
             #                  os.path.dirname(os.path.dirname(VIM_EXE)),
             #                  shell=True).wait()
             print('chmod.............')
-        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
+        self.cmd = 'sudo %s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
