@@ -5,11 +5,6 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
     new
-    let l:remote_id = ECY#rpc#ECY2_job#start(g:ECY_main_cmd)
-    if l:remote_id == -1
-        call Expect(l:remote_id, 1)
-    endif
-
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'nothing')
     call Expect(g:has_floating_windows_support, 'vim')
     let &ft = 'test'
