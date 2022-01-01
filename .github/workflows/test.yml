@@ -34,6 +34,11 @@ jobs:
         uses: actions/setup-python@v1
 
       - name: Run unit tests(Windows)
-        if: runner.os == 'Linux'
+        if: runner.os == 'Windows'
+        run: |
+          python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
+
+      - name: Run unit tests(Linux and macOS)
+        if: runner.os != 'Windows'
         run: |
           sudo python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
