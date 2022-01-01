@@ -41,4 +41,4 @@ jobs:
           VIM_EXE: ${{ steps.vim.outputs.executable }}
           IS_NEOVIM: ${{ matrix.neovim }}
         run: |
-          python ./test/ECY_test.py
+          sudo python ./test/ECY_test.py
