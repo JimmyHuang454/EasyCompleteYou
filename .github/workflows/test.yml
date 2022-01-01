@@ -20,10 +20,6 @@ jobs:
         with:
           repository: JimmyHuang454/EasyCompleteYou
 
-      - name: Test exe
-        run: |
-          ./python/ECY_${{ runner.os }}.exe --help
-
       #################
       #  install vim  #
       #################
@@ -44,4 +40,4 @@ jobs:
           VIM_EXE: ${{ steps.vim.outputs.executable }}
           IS_NEOVIM: ${{ matrix.neovim }}
         run: |
-          python ./test/ECY_test.py
+          sudo python ./test/ECY_test.py
