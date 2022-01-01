@@ -108,7 +108,6 @@ class Case(object):
             'is_timeout': False,
         }
         test_case_queue.put(res)
-        print(res)
 
 
 running_test_cases = {}
@@ -120,7 +119,7 @@ i = 0
 while len(all_test_case) != 0:
     finished_case = test_case_queue.get()
     i += 1
-    print(i)
+    print(i, finished_case)
     if not finished_case['is_ok']:
         quit(1)
 
