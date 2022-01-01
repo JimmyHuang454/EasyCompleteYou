@@ -38,4 +38,4 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Linux'
         run: |
-          sudo python ./test/ECY_test.py --is_neovim ${{ matrix.neovim }} --vim_exe "${{ steps.vim.outputs.executable }}"
+          sudo python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"

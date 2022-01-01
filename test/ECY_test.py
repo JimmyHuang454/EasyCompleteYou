@@ -12,8 +12,12 @@ parser.add_argument('--is_neovim', help='')
 g_args = parser.parse_args()
 
 VIM_EXE = g_args.vim_exe
+if g_args.is_neovim == 'false':
+    IS_NEOVIM = False
+else:
+    IS_NEOVIM = True
 print('VIM_EXE', VIM_EXE)
-IS_NEOVIM = g_args.is_neovim
+print('IS_NEOVIM', IS_NEOVIM)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
@@ -53,7 +57,7 @@ class Case(object):
         if GetCurrentOS() != 'Windows':
             subprocess.Popen('sudo chmod 750 -R ' +
                              os.path.dirname(os.path.dirname(VIM_EXE)),
-                             shell=True)
+                             shell=True).wait()
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
