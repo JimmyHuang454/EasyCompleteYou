@@ -7,9 +7,9 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        neovim: [false, true]
+        # neovim: [false, true]
         # os: [windows-latest]
-        # neovim: [false]
+        neovim: [false]
     runs-on: ${{ matrix.os }}
     steps:
       #############
