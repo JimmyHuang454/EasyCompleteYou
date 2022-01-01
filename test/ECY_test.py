@@ -3,11 +3,17 @@ import threading
 import os
 import sys
 import queue
+import argparse
 
-VIM_EXE = os.environ.get('VIM_EXE')
-print(os.environ)
+parser = argparse.ArgumentParser(
+    description='EasyCompleteYou, Easily complete you.')
+parser.add_argument('--vim_exe', help='')
+parser.add_argument('--is_neovim', help='')
+g_args = parser.parse_args()
+
+VIM_EXE = g_args.vim_exe
 print('VIM_EXE', VIM_EXE)
-IS_NEOVIM = os.environ.get('IS_NEOVIM')
+IS_NEOVIM = g_args.is_neovim
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')

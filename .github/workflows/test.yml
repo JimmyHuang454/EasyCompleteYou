@@ -6,7 +6,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
         # neovim: [false, true]
         # os: [windows-latest]
         neovim: [false]
@@ -35,10 +35,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v1
 
-      - name: Run unit tests
-        env:
-          VIM_EXE: ${{ steps.vim.outputs.executable }}
-          IS_NEOVIM: ${{ matrix.neovim }}
+      - name: Run unit tests(Windows)
+        if: runner.os == 'Linux'
         run: |
-          echo ${{ steps.vim.outputs.executable }}
-          sudo python ./test/ECY_test.py
+          sudo python ./test/ECY_test.py --is_neovim ${{ matrix.neovim }} --vim_exe "${{ steps.vim.outputs.executable }}"
