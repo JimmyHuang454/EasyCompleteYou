@@ -22,7 +22,7 @@ jobs:
 
       - name: Test exe
         run: |
-          ./python/ECY_${{ matrix.os }}.exe --ci
+          ./python/ECY_${{ runner.os }}.exe --ci
 
       #################
       #  install vim  #
