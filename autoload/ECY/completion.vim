@@ -506,11 +506,11 @@ function! s:MapSelecting() abort
       exe printf('imap <expr> %s pumvisible() ? "\<C-n>" : "\%s"', 
             \g:ECY_select_items[1], g:ECY_select_items[1])    
     else
-      exe 'imap <silent> ' . g:ECY_select_items[0].' <C-R>=ECY#completion#SelectItems(0,"\' . g:ECY_select_items[0] . '")<CR>'
-      exe 'imap <silent> ' . g:ECY_select_items[1].' <C-R>=ECY#completion#SelectItems(1,"\' . g:ECY_select_items[1] . '")<CR>'
+      exe printf('imap <silent> %s <C-R>=ECY#completion#SelectItems(%s,"\%s")<CR>', g:ECY_select_items[0], 0, g:ECY_select_items[0])
+      exe printf('imap <silent> %s <C-R>=ECY#completion#SelectItems(%s,"\%s")<CR>', g:ECY_select_items[1], 1, g:ECY_select_items[1])
     endif
 
-    exe 'imap <silent> ' . g:ECY_expand_snippets_key. ' <C-R>=ECY#completion#ExpandSnippet()<cr>'
+    exe printf('imap <silent> %s <C-R>=ECY#completion#ExpandSnippet()<CR>', g:ECY_expand_snippets_key)
   catch 
   endtry
 "}}}

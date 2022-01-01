@@ -6,6 +6,7 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 function! s:T1() abort
     new
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'nothing')
+    call Expect(g:has_floating_windows_support, 'vim')
     let &ft = 'test'
     call Expect(&ft, 'test')
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'test')
@@ -26,7 +27,9 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
-    call Type("\<Tab>")
+    call Expect(ECY#completion#IsMenuOpen(), 1)
+    call ECY#completion#SelectItems(0, "\<Tab>")
+    " call Type("\<Tab>")
 endfunction
 
 function! s:T5() abort
