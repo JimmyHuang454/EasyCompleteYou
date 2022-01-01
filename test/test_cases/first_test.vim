@@ -5,6 +5,7 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
     new
+    call OutputLine(g:ECY_main_cmd)
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'nothing')
     let &ft = 'test'
     call Expect(&ft, 'test')
