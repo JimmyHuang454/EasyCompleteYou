@@ -7,7 +7,7 @@ fun! ECY2_main#Init() abort
     let l:run_cmd .= ' --debug_log'
   endif
   let g:ECY_main_cmd = l:run_cmd
-  call ECY#rpc#rpc_main#NewClient(l:run_cmd)
+  call ECY#rpc#rpc_main#NewClient()
 "}}}
 endf
 
