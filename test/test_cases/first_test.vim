@@ -14,6 +14,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
+    call OutputLine(g:ECY_start_time)
     call Expect(exists('g:ECY_start_time'), 1)
     call Expect(getline(1), '123')
     call Type("\<Esc>")
