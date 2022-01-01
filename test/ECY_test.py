@@ -5,6 +5,7 @@ import sys
 import queue
 
 VIM_EXE = os.environ.get('VIM_EXE')
+print('VIM_EXE', VIM_EXE)
 IS_NEOVIM = os.environ.get('IS_NEOVIM')
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
