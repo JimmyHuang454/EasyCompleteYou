@@ -20,6 +20,10 @@ jobs:
         with:
           repository: JimmyHuang454/EasyCompleteYou
 
+      - name: Test exe
+        run: |
+          ./python/ECY_${{ matrix.os }}.exe --ci
+
       #################
       #  install vim  #
       #################
