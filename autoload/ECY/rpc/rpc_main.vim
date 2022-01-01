@@ -69,6 +69,10 @@ fun! ECY#rpc#rpc_main#NewClient(cmd)
       \ 'on_stdout': function('rpc_main#Input')
       \ })
   call ECY#rpc#rpc_event#Init()
+
+  if s:remote_id == -1
+    throw "[ECY] Failed to start server."
+  endif
 "}}}
 endf
 
