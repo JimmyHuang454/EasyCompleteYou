@@ -3,11 +3,11 @@ fun! rpc_main#echo(msg)
 endf
 
 fun! s:Send(msg)
-  if s:remote_id == -1
+  if g:ECY_server_id == -1
     return
   endif
   let l:json = json_encode(a:msg) . "\n"
-  call ECY#rpc#ECY2_job#send(s:remote_id, l:json)
+  call ECY#rpc#ECY2_job#send(g:ECY_server_id, l:json)
 endf
 
 fun! ECY#rpc#rpc_main#RPCEventsAll(msg, engine_name)
@@ -55,19 +55,26 @@ fun! rpc_main#Input(id, data, event)
 "}}}
 endf
 
-fun! ECY#rpc#rpc_main#NewClient(cmd)
+fun! s:NewClient()
 "{{{
-  if g:os != 'Windows'
-    call ECY#rpc#ECY2_job#start('sudo chmod -R 750 ' . g:ECY_base_dir, {})
-  endif
-
-  let s:remote_id = ECY#rpc#ECY2_job#start(a:cmd, {
+  let g:ECY_server_id = ECY#rpc#ECY2_job#start(g:ECY_main_cmd, {
       \ 'on_stdout': function('rpc_main#Input')
       \ })
   call ECY#rpc#rpc_event#Init()
+"}}}
+endf
 
-  if s:remote_id == -1
-    throw "[ECY] Failed to start server."
+fun! s:ChomdExit(id, data, event) abort
+  call s:NewClient()
+endf
+
+fun! ECY#rpc#rpc_main#NewClient()
+"{{{
+  if g:os != 'Windows'
+    call ECY#rpc#ECY2_job#start('sudo chmod -R 750 ' . g:ECY_base_dir,
+          \{'on_exit': function('s:ChomdExit')})
+  else
+    call s:NewClient()
   endif
 "}}}
 endf
@@ -113,7 +120,7 @@ fun! rpc_main#Init()
   let g:rpc_params = []
   let g:rpc_result = ''
   let g:rpc_seq_id = -1
-  let s:remote_id = -1
+  let g:ECY_server_id = -1
   let s:request_list = []
   let s:is_timer_running = v:false
 "}}}
