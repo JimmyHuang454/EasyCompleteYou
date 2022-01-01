@@ -55,9 +55,9 @@ class Case(object):
         self.vim_script = vim_script
         self.timeout = timeout
         if GetCurrentOS() != 'Windows':
-            subprocess.Popen('sudo chmod 750 -R ' +
-                             os.path.dirname(os.path.dirname(VIM_EXE)),
-                             shell=True).wait()
+            # subprocess.Popen('sudo chmod 750 -R ' +
+            #                  os.path.dirname(os.path.dirname(VIM_EXE)),
+            #                  shell=True).wait()
             print('chmod.............')
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
