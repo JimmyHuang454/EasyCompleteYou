@@ -6,15 +6,15 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 function! s:T1() abort
     new
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'nothing')
-    let &ft = 'python'
-    call Expect(&ft, 'python')
-    call Expect(ECY#utils#GetCurrentBufferFileType(), 'python')
+    let &ft = 'test'
+    call Expect(&ft, 'test')
+    call Expect(ECY#utils#GetCurrentBufferFileType(), 'test')
     call Expect(mode(), 'n')
     call Type("i123\n12")
 endfunction
 
 function! s:T2() abort
-    call Expect(exists('g:loaded_ECY2'), 1)
+    call Expect(exists('g:ECY_start_time'), 1)
     call Expect(getline(1), '123')
     call Type("\<Esc>")
 endfunction
