@@ -6,7 +6,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         # neovim: [false, true]
         # os: [windows-latest]
         neovim: [false]
@@ -38,4 +38,4 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Linux'
         run: |
-          sudo python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
+          /usr/bin/vim -u NONE -i NONE -n -N --cmd "source /home/runner/work/EasyCompleteYou/EasyCompleteYou/test/test_cases/first_test.vim"

@@ -113,7 +113,6 @@ running_test_cases = {}
 for test_case in all_test_case:
     running_test_cases[test_case] = {'obj': Case(test_case)}
 
-quit()
 i = 0
 while len(all_test_case) != 0:
     finished_case = test_case_queue.get()
