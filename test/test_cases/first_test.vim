@@ -11,7 +11,7 @@ function! s:T1() abort
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'test')
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY.engines.default_engine')
     call Expect(mode(), 'n')
-    call Type("i123\n12")
+    call Type("i123\n13")
 endfunction
 
 function! s:T2() abort
