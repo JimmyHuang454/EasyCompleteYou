@@ -27,6 +27,7 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
+    call OutputLine(g:ECY_current_popup_windows_info)
     call Expect(ECY#completion#IsMenuOpen(), 1)
     call ECY#completion#SelectItems(0, "\<Tab>")
     " call Type("\<Tab>")

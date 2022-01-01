@@ -1,5 +1,5 @@
 function! OutputLine(msg) abort
-  let g:log_info .= a:msg . "\n"
+  let g:log_info .= string(a:msg) . "\n"
 endfunction
 
 function! Expect(value, expected) abort
