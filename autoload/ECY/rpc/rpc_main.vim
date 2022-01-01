@@ -62,7 +62,7 @@ endf
 fun! ECY#rpc#rpc_main#NewClient(cmd)
 "{{{
   if g:os != 'Windows'
-    call ECY#rpc#ECY2_job#start('sudo chmod -R 750 ' . g:ECY_base_dir)
+    call ECY#rpc#ECY2_job#start('sudo chmod -R 750 ' . g:ECY_base_dir, {})
   endif
 
   let s:remote_id = ECY#rpc#ECY2_job#start(a:cmd, {
