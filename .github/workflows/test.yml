@@ -38,4 +38,4 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Linux'
         run: |
-          sudo vim -u NONE -i NONE -n -N --cmd "source /home/runner/work/EasyCompleteYou/EasyCompleteYou/test/test_cases/first_test.vim"
+          sudo python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"

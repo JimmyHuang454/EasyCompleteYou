@@ -74,6 +74,16 @@ class Case(object):
                                         stderr=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
+    def ReadLog(self):
+        log_file_path = self.vim_script + '.log'
+        output = ''
+        if os.path.exists(log_file_path):
+            with open(log_file_path, 'r', encoding='utf-8') as f:
+                output = f.read()
+                f.close()
+            os.remove(log_file_path)
+        return output
+
     def Test(self):
         try:
             self.pro.wait(self.timeout)
@@ -83,18 +93,11 @@ class Case(object):
                 'case': self.vim_script,
                 'is_ok': False,
                 'is_timeout': True,
-                'output': ''
+                'output': self.ReadLog()
             })
             return
 
-        log_file_path = self.vim_script + '.log'
-        output = ''
-        if os.path.exists(log_file_path):
-            with open(log_file_path, 'r', encoding='utf-8') as f:
-                output = f.read()
-                f.close()
-            os.remove(log_file_path)
-
+        output = self.ReadLog()
         is_ok = False
         if output.find('Failded') == -1 and output != '':
             is_ok = True
