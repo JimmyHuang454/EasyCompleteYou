@@ -38,4 +38,4 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Linux'
         run: |
-          /usr/bin/vim -u NONE -i NONE -n -N --cmd "source /home/runner/work/EasyCompleteYou/EasyCompleteYou/test/test_cases/first_test.vim"
+          sudo vim -u NONE -i NONE -n -N --cmd "source /home/runner/work/EasyCompleteYou/EasyCompleteYou/test/test_cases/first_test.vim"
