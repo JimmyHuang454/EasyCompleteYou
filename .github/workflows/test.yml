@@ -6,10 +6,8 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        # neovim: [false, true]
-        # os: [windows-latest]
-        neovim: [false]
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        neovim: [false, true]
     runs-on: ${{ matrix.os }}
     steps:
       #############
