@@ -6,7 +6,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         # neovim: [false, true]
         # os: [windows-latest]
         neovim: [false]
