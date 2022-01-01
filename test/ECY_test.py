@@ -94,7 +94,8 @@ class Case(object):
 
         output = self.ReadLog()
         is_ok = False
-        if output.find('Failded') == -1 and output != '':
+        if output.find('Failded') == -1 and output != '' and output.find(
+                'test ok') != -1:
             is_ok = True
         res = {
             'case': self.vim_script,

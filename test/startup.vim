@@ -13,6 +13,7 @@ function! Expect(value, expected) abort
 endfunction
 
 function! QuitVim() abort
+  call OutputLine('test ok.')
   qall!
 endfunction
 
