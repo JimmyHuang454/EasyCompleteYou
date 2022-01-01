@@ -8,8 +8,6 @@ function! Expect(value, expected) abort
     call OutputLine(printf('Extended: "%s"', a:expected))
     call OutputLine(printf('Actual: "%s"', a:value))
     throw "Wrong case."
-  else
-    call OutputLine('OK.')
   endif
 endfunction
 
@@ -47,6 +45,7 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
 let g:log_info = ''
+" call SoPath(printf('%s/test/plug.vim', g:repo_root))
 call AddRTP(g:repo_root)
 call SoPath(printf('%s/plugin/easycompleteyou2.vim', g:repo_root))
 

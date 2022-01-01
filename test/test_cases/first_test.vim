@@ -14,6 +14,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
+    call Expect(exists('g:loaded_ECY2'), 1)
     call Expect(getline(1), '123')
     call Type("\<Esc>")
 endfunction
@@ -23,8 +24,7 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
-    " call Type("\<Tab>")
-    call ECY#completion#SelectItems(0, g:ECY_select_items[0])
+    call Type("\<Tab>")
 endfunction
 
 function! s:T5() abort
