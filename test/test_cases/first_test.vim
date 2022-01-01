@@ -34,8 +34,8 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-    if getline(2) == '12'
-        call Expect(getline(2), '12')
+    if getline(2) == '13'
+        call Expect(getline(2), '13')
     else
         call Expect(getline(2), '123')
     endif
