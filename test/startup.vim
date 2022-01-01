@@ -1,5 +1,6 @@
 function! OutputLine(msg) abort
   let g:log_info .= string(a:msg) . "\n"
+  call writefile(split(g:log_info, "\n"), g:log_file, 'b')
 endfunction
 
 function! Expect(value, expected) abort
@@ -12,7 +13,6 @@ function! Expect(value, expected) abort
 endfunction
 
 function! QuitVim() abort
-  call writefile(split(g:log_info, "\n"), g:log_file, 'b')
   qall!
 endfunction
 
