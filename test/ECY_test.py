@@ -54,7 +54,7 @@ class Case(object):
     def __init__(self, vim_script, timeout=60):
         self.vim_script = vim_script
         self.timeout = timeout
-        self.cmd = 'sudo %s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
+        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
