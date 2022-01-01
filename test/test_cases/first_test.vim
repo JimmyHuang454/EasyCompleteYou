@@ -6,7 +6,6 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 function! s:T1() abort
     new
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'nothing')
-    call Expect(g:has_floating_windows_support, 'vim')
     let &ft = 'test'
     call Expect(&ft, 'test')
     call Expect(ECY#utils#GetCurrentBufferFileType(), 'test')

@@ -7,11 +7,7 @@ fun! s:Send(msg)
     return
   endif
   let l:json = json_encode(a:msg) . "\n"
-  try
-    call ECY#rpc#ECY2_job#send(s:remote_id, l:json)
-  catch 
-    call rpc_main#echo('ECY lost connection.')
-  endtry
+  call ECY#rpc#ECY2_job#send(s:remote_id, l:json)
 endf
 
 fun! ECY#rpc#rpc_main#RPCEventsAll(msg, engine_name)
