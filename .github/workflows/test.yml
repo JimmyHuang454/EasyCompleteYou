@@ -27,6 +27,10 @@ jobs:
           repository: honza/vim-snippets
           path: snippets
 
+      - name: ls
+        run: |
+          ls
+
       #################
       #  install vim  #
       #################
