@@ -6,9 +6,15 @@ endfunction
 function! Expect(value, expected) abort
   if a:value != a:expected
     call OutputLine('Failded')
-    call OutputLine(printf('Extended: "%s"', a:expected))
+    call OutputLine(printf('Expect: "%s"', a:expected))
     call OutputLine(printf('Actual: "%s"', a:value))
-    throw "Wrong case."
+  endif
+endfunction
+
+function! NotExpect(value, not_expected) abort
+  if a:value == a:not_expected
+    call OutputLine('Failded')
+    call OutputLine(printf('NotExpect: "%s"', a:not_expected))
   endif
 endfunction
 
