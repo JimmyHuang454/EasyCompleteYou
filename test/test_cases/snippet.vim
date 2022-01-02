@@ -6,15 +6,6 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:UltiSnipsExpandTrigger = "<A-d>"
-
-" call OutputLine(g:repo_root . '/snippets')
-" call AddRTP(g:repo_root . '/snippets')
-" call SoPath(printf('%s/plugin/vimsnippets.vim', g:repo_root . '/snippets'))
-
-call AddRTP(g:repo_root . '/ultisnips')
-call SoPath(printf('%s/plugin/UltiSnips.vim', g:repo_root . '/ultisnips'))
-
 function! s:T1() abort
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY.engines.default_engine')
     call Type("\<Tab>")
