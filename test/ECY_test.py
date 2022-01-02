@@ -107,15 +107,12 @@ class Case(object):
         test_case_queue.put(res)
 
 
-# INSTALL_CMD = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
-#     VIM_EXE, BASE_DIR + '/install_plug.vim')
-# print('Installing plug')
-# print(INSTALL_CMD)
-# subprocess.Popen(INSTALL_CMD,
-#                  shell=True,
-#                  stdout=subprocess.PIPE,
-#                  stderr=subprocess.PIPE).wait()
-# print('Installed plug')
+INSTALL_CMD = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
+    VIM_EXE, BASE_DIR + '/install_plug.vim')
+print('Installing plug')
+print(INSTALL_CMD)
+subprocess.Popen(INSTALL_CMD, shell=True).wait()
+print('Installed plug')
 
 running_test_cases = {}
 
