@@ -33,11 +33,9 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Windows'
         run: |
-          # ${{ steps.vim.outputs.executable }} -u NONE -i NONE -n -N --cmd "source ./test/install_plug.vim"
           python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
         run: |
-          # sudo ${{ steps.vim.outputs.executable }} -u NONE -i NONE -n -N --cmd "source ./test/install_plug.vim"
           sudo python ./test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"

@@ -59,5 +59,7 @@ set termencoding=utf-8
 set fileencoding=utf-8
 scriptencoding utf-8
 
-call SoPath(printf('%s/test/load_plug.vim', g:repo_root))
+call AddRTP(g:repo_root)
+call SoPath(printf('%s/plugin/easycompleteyou2.vim', g:repo_root))
+
 call SoPath(printf('%s/test/test_frame.vim', g:repo_root))
