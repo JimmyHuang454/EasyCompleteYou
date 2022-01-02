@@ -55,10 +55,6 @@ let g:repo_root = tr(g:repo_root, '\', '/')
 let g:log_info = ''
 call SoPath(printf('%s/test/plug.vim', g:repo_root))
 
-call plug#begin(fnamemodify(g:repo_root, ':h:h'))
-exe printf("Plug '%s'", g:repo_root)
-call plug#end()
-
 " call AddRTP(g:repo_root)
 " call SoPath(printf('%s/plugin/easycompleteyou2.vim', g:repo_root))
 
@@ -66,6 +62,10 @@ set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 scriptencoding utf-8
+
+call plug#begin(fnamemodify(g:repo_root, ':h:h'))
+exe printf("Plug '%s'", g:repo_root)
+call plug#end()
 
 call OutputLine(g:repo_root)
 call SoPath(printf('%s/test/test_frame.vim', g:repo_root))
