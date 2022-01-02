@@ -10,13 +10,22 @@ jobs:
         neovim: [false, true]
     runs-on: ${{ matrix.os }}
     steps:
-      #############
-      #  clone  #
-      #############
       - name: Checkout myself
         uses: actions/checkout@v2
         with:
           repository: JimmyHuang454/EasyCompleteYou
+
+      - name: Checkout ultisnips
+        uses: actions/checkout@v2
+        with:
+          repository: SirVer/ultisnips
+          path: ultisnips
+
+      - name: Checkout snippets
+        uses: actions/checkout@v2
+        with:
+          repository: honza/vim-snippets
+          path: snippets
 
       #################
       #  install vim  #
