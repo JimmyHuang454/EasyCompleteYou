@@ -51,11 +51,12 @@ endfunction
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
+let g:repo_root = tr(g:repo_root, '\', '/')
 let g:log_info = ''
 call SoPath(printf('%s/test/plug.vim', g:repo_root))
 
-silent! call plug#begin(fnamemodify(g:repo_root, ':h:h'))
-exe printf('Plug "%s"', g:repo_root)
+call plug#begin(fnamemodify(g:repo_root, ':h:h'))
+exe printf("Plug '%s'", g:repo_root)
 call plug#end()
 
 " call AddRTP(g:repo_root)
