@@ -63,7 +63,7 @@ set termencoding=utf-8
 set fileencoding=utf-8
 scriptencoding utf-8
 
-call plug#begin(fnamemodify(g:repo_root, ':h:h'))
+call plug#begin(fnamemodify(g:repo_root, ':h:h') . '/')
 exe printf("Plug '%s'", g:repo_root)
 call plug#end()
 
