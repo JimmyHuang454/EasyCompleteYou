@@ -61,5 +61,5 @@ scriptencoding utf-8
 
 call OutputLine(g:repo_root)
 
-call SoPath(printf('%s/test/install_plug.vim', g:repo_root))
+call SoPath(printf('%s/test/load_plug.vim', g:repo_root))
 call SoPath(printf('%s/test/test_frame.vim', g:repo_root))
