@@ -1,4 +1,4 @@
-name: ECY CI in Windows
+name: ECY CI
 on: [push, pull_request]
 
 jobs:
