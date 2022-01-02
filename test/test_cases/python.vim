@@ -16,7 +16,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call Type("jjjj\<Esc>")
+    call Type("jjj\<Esc>")
 endfunction
 
 function! s:T3() abort
