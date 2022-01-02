@@ -16,6 +16,22 @@ jobs:
           repository: JimmyHuang454/EasyCompleteYou
           path: ECY
 
+      - name: Checkout ultisnips
+        uses: actions/checkout@v2
+        with:
+          repository: SirVer/ultisnips
+          path: ultisnips
+
+      - name: Checkout snippets
+        uses: actions/checkout@v2
+        with:
+          repository: honza/vim-snippets
+          path: snippets
+
+      - name: ls
+        run: |
+          ls
+
       #################
       #  install vim  #
       #################
