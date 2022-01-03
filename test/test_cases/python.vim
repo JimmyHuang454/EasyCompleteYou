@@ -31,10 +31,13 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-    call Type("\<Tab>")
 endfunction
 
 function! s:T6() abort
+    call Type("\<Tab>")
+endfunction
+
+function! s:T7() abort
     call Expect(getline(1), 'import')
 endfunction
 
@@ -44,5 +47,6 @@ call test_frame#Add({'event':[{'fuc': function('s:T1')},
             \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
+            \{'fuc': function('s:T7')},
             \]})
 call test_frame#Run()
