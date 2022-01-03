@@ -6,7 +6,7 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest]
         neovim: [false, true]
     runs-on: ${{ matrix.os }}
     steps:
@@ -31,7 +31,6 @@ jobs:
       - name: ls
         run: |
           ls
-          pip3 install jedi_language_server
 
       #################
       #  install vim  #
@@ -51,9 +50,11 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Windows'
         run: |
+          pip3 install jedi_language_server
           python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
         run: |
+          sudo pip3 install jedi_language_server
           sudo python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
