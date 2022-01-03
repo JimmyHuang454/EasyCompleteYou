@@ -51,8 +51,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           pip3 install jedi_language_server
-          ${{ steps.vim.outputs.executable }} -u NONE -i NONE -n -N --cmd "source D:/a/EasyCompleteYou/EasyCompleteYou/ECY/test/test_cases/first_test.vim"
-          # python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
+          python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
