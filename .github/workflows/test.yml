@@ -6,8 +6,8 @@ jobs:
     name: Unit tests
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        neovim: [false, true]
+        os: [windows-latest]
+        neovim: [true]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout myself
@@ -51,7 +51,8 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           pip3 install jedi_language_server
-          python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
+          ${{ steps.vim.outputs.executable }} -u NONE -i NONE -n -N --cmd "source D:/a/EasyCompleteYou/EasyCompleteYou/ECY/test/test_cases/first_test.vim"
+          # python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
