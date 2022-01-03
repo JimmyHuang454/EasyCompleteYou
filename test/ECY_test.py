@@ -59,8 +59,7 @@ class Case(object):
         print(self.cmd)
         self.pro = subprocess.Popen(self.cmd,
                                     shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+                                    stdout=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
     def ReadLog(self):
