@@ -113,6 +113,7 @@ for test_case in all_test_case:
     running_test_cases[test_case] = {'obj': Case(test_case)}
 
 faided_case = []
+timeout_case = []
 i = 0
 while len(all_test_case) != 0:
     finished_case = test_case_queue.get()
@@ -120,14 +121,17 @@ while len(all_test_case) != 0:
     if not finished_case['is_ok']:
         faided_case.append(finished_case)
 
+    if finished_case['is_timeout']:
+        timeout_case.append(finished_case)
+
     if i == len(all_test_case):
         break
 
+print('\nTotal: %s, Failded: %s, Timeout: %s.' %
+      (i, len(faided_case), len(timeout_case)))
 
 if len(faided_case) != 0:
     print("-" * 10)
     for item in faided_case:
         print(item)
     quit(1)
-
-print('Total: %s, Failded: %s' % (i, len(faided_case)))
