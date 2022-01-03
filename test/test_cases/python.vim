@@ -12,6 +12,7 @@ function! s:T1() abort
     new
     let &ft = 'python'
     call Type("\<Tab>")
+    call OutputLine(ECY#switch_engine#GetBufferEngineName())
 endfunction
 
 function! s:T2() abort
