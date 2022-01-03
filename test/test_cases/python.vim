@@ -11,8 +11,8 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 function! s:T1() abort
     new
     let &ft = 'python'
-    call Type("\<Tab>")
     call OutputLine(ECY#switch_engine#GetBufferEngineName())
+    call Type("\<Tab>")
 endfunction
 
 function! s:T2() abort
