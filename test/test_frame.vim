@@ -34,7 +34,7 @@ fun! s:Start(timer) abort
     endif
     let s:testing_case_nr += 1
   endif
-  call timer_start(5000, function('s:Start'))
+  call timer_start(3000, function('s:Start'))
 "}}}
 endf
 

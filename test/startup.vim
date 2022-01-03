@@ -8,6 +8,7 @@ function! Expect(value, expected) abort
     call OutputLine('Failded')
     call OutputLine(printf('Expect: "%s"', a:expected))
     call OutputLine(printf('Actual: "%s"', a:value))
+    throw ""
   endif
 endfunction
 
@@ -15,6 +16,7 @@ function! NotExpect(value, not_expected) abort
   if a:value == a:not_expected
     call OutputLine('Failded')
     call OutputLine(printf('NotExpect: "%s"', a:not_expected))
+    throw ""
   endif
 endfunction
 

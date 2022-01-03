@@ -7,6 +7,7 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T1() abort
+    new
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY.engines.default_engine')
     call Type("\<Tab>")
 endfunction
