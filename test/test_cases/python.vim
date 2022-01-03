@@ -1,12 +1,12 @@
-let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h')
-let g:log_file = expand('<sfile>') . '.log'
-exe printf('so %s/test/startup.vim', g:repo_root)
-
+let g:ECY_engine_config = {'ECY_engines.python.jedi_ls.jedi_ls':{'cmd': 'jedi-language-server'}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    init                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ECY_engine_config = {'ECY_engines.python.jedi_ls.jedi_ls':{'cmd': 'jedi-language-server'}}
+
+let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h')
+let g:log_file = expand('<sfile>') . '.log'
+exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
     new
