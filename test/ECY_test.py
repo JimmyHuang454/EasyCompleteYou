@@ -57,17 +57,10 @@ class Case(object):
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
-        if IS_NEOVIM and GetCurrentOS() == 'Windows' and False:
-            self.pro = subprocess.Popen(self.cmd,
-                                        shell=True,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-        else:
-            self.pro = subprocess.Popen(self.cmd,
-                                        shell=True,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdin=subprocess.PIPE)
+        self.pro = subprocess.Popen(self.cmd,
+                                    shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
     def ReadLog(self):
