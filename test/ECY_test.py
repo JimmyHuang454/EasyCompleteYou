@@ -51,7 +51,7 @@ def GetCurrentOS():
 
 
 class Case(object):
-    def __init__(self, vim_script, timeout=100):
+    def __init__(self, vim_script, timeout=200):
         self.vim_script = vim_script
         self.timeout = timeout
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
