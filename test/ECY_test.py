@@ -57,8 +57,11 @@ class Case(object):
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
         print(self.cmd)
-        if IS_NEOVIM and GetCurrentOS() == 'Windows':
-            self.pro = subprocess.Popen(self.cmd, shell=True)
+        if IS_NEOVIM and GetCurrentOS() == 'Windows' and False:
+            self.pro = subprocess.Popen(self.cmd,
+                                        shell=True,
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
         else:
             self.pro = subprocess.Popen(self.cmd,
                                         shell=True,
