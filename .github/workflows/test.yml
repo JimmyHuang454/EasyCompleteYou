@@ -45,7 +45,7 @@ jobs:
       - name: Install Vim
         if: matrix.is_neovim == true
         uses: rhysd/action-setup-vim@v1
-        id: vim
+        id: neovim
         with:
           neovim: ${{ matrix.is_neovim }}
           version: ${{ matrix.neovim_version }}
