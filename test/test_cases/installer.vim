@@ -6,10 +6,12 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
     call Expect(g:ECY_installer_config, {})
-    call ECY2_main#InstallLS('ECY_engines.python.jedi_ls.jedi_ls')
+    call ECY2_main#InstallLS('ECY_engines.cpp.clangd.clangd')
 endfunction
 
 function! s:T2() abort
+    new
+    let &ft = 'c'
     call OutputLine(g:ECY_installer_config)
     call NotExpect(g:ECY_installer_config, {})
 endfunction
