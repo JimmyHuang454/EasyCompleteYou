@@ -35,7 +35,7 @@ fun! s:Start(timer) abort
     let s:testing_case_nr += 1
   endif
 
-  let l:delay = 3000
+  let l:delay = 5000
 
   if has_key(l:item, 'delay')
     let l:delay = l:item['delay']
