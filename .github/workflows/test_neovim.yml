@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   setup_env:
-    name: Unit tests
+    name: vim
     strategy:
       fail-fast: false
       matrix:
