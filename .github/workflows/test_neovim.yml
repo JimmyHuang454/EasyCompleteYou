@@ -1,0 +1,59 @@
+name: ECY CI
+on: [push, pull_request]
+
+jobs:
+  setup_env:
+    name: Unit tests
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        is_neovim: [true]
+        neovim_version: ["nightly", "stable", "v0.5.0", "v0.2.0"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout myself
+        uses: actions/checkout@v2
+        with:
+          repository: JimmyHuang454/EasyCompleteYou
+          path: ECY
+
+      - name: Checkout ultisnips
+        uses: actions/checkout@v2
+        with:
+          repository: SirVer/ultisnips
+          path: ultisnips
+
+      - name: Checkout snippets
+        uses: actions/checkout@v2
+        with:
+          repository: honza/vim-snippets
+          path: snippets
+
+      - name: ls
+        run: |
+          ls
+
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        id: vim
+        with:
+          neovim: ${{ matrix.is_neovim }}
+          version: ${{ matrix.neovim_version }}
+
+      ####################
+      #  Install Python  #
+      ####################
+      - name: Install Python
+        uses: actions/setup-python@v1
+
+      - name: Run unit tests(Windows)
+        if: runner.os == 'Windows'
+        run: |
+          pip3 install jedi_language_server
+          python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.is_neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"
+
+      - name: Run unit tests(Linux and macOS)
+        if: runner.os != 'Windows'
+        run: |
+          sudo pip3 install jedi_language_server
+          sudo python ./ECY/test/ECY_test.py --is_neovim "${{ matrix.is_neovim }}" --vim_exe "${{ steps.vim.outputs.executable }}"

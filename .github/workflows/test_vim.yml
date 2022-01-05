@@ -7,9 +7,8 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        is_neovim: [false, true]
+        is_neovim: [false]
         vim_version: ["nightly", "stable", "v8.0.0", "v8.2.0"]
-        neovim_version: ["nightly", "stable", "v0.5.0", "v0.2.0"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout myself
@@ -35,20 +34,11 @@ jobs:
           ls
 
       - name: Install Vim
-        if: matrix.is_neovim == false
         uses: rhysd/action-setup-vim@v1
         id: vim
         with:
           neovim: ${{ matrix.is_neovim }}
           version: ${{ matrix.vim_version }}
-
-      - name: Install Vim
-        if: matrix.is_neovim == true
-        uses: rhysd/action-setup-vim@v1
-        id: neovim
-        with:
-          neovim: ${{ matrix.is_neovim }}
-          version: ${{ matrix.neovim_version }}
 
       ####################
       #  Install Python  #
