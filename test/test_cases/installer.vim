@@ -10,6 +10,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
+    call OutputLine(g:ECY_installer_config)
     call NotExpect(g:ECY_installer_config, {})
 endfunction
 
