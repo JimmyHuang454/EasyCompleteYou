@@ -22,7 +22,7 @@ endfunction
 
 function! QuitVim() abort
   call OutputLine('test ok.')
-  qall!
+  cquit!
 endfunction
 
 function! Type(keys) abort

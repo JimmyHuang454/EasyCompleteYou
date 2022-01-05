@@ -131,4 +131,4 @@ if len(faided_case) != 0:
     print("-" * 10)
     for item in faided_case:
         print(item)
-    quit(1)
+    quit(100)
