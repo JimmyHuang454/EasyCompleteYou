@@ -5,8 +5,8 @@ jobs:
   setup_env:
     name: Unit tests
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         os: [windows-latest, macos-latest, ubuntu-latest]
         vim_version: ["nightly", "stable", "v8.0.0", "v8.2.0"]
     runs-on: ${{ matrix.os }}
