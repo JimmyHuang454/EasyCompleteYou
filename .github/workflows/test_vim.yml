@@ -1,4 +1,4 @@
-name: ECY CI
+name: ECY vim test
 on: [push, pull_request]
 
 jobs:
