@@ -31,7 +31,7 @@ fun! s:Into(level) abort " and selete with selete mode.
 
   call ECY#utils#SeleteRange(
         \[l:start['line'] + 1, l:start['character'] + 1],
-        \[l:end['line'] + 1, l:end['character'] + 1], bufnr())
+        \[l:end['line'] + 1, l:end['character'] + 1], bufnr(''))
   return l:temp
 "}}}
 endf

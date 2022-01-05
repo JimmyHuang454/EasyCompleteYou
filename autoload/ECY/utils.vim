@@ -105,7 +105,6 @@ fun! ECY#utils#show(msg, style, title)
   endif
   if a:style == 'buffer'
     exe 'new ' . a:title
-    " let l:current_buffer_nr = bufnr()
     call setline(1, l:msg)
   endif
   "}}}
@@ -141,7 +140,7 @@ endfunction
 
 function ECY#utils#GetCurrentBufferContent() abort " return list
   "{{{
-  return ECY#utils#GetBufferContent(bufnr())
+  return ECY#utils#GetBufferContent(bufnr(''))
   "}}}
 endfunction
 
@@ -530,7 +529,7 @@ function! ECY#utils#SeleteRange(range_head, range_tail, buffer_id)
   "{{{
   "a:range_head = [1,1]
   "a:range_head is 1-based.
-  if bufnr() != a:buffer_id
+  if bufnr('') != a:buffer_id
     return
   endif
 

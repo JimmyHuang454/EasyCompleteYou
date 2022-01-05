@@ -387,7 +387,7 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
 
    if g:ECY_current_popup_windows_info['is_use_text_edit']
-     call setbufline(bufnr(), line('.'), 
+     call setbufline(bufnr(''), line('.'), 
          \[g:ECY_current_popup_windows_info['original_position']['line_content']])
      call cursor([line('.'), 
            \g:ECY_current_popup_windows_info['original_position']['colum']
@@ -409,7 +409,7 @@ function! s:SelectItems_vim(next_or_pre) abort
 
   return
   if has_key(l:info, 'completion_text_edit')
-    call s:CompleteLine(bufnr(), 
+    call s:CompleteLine(bufnr(''), 
           \l:info['completion_text_edit']['start'], 
           \l:info['completion_text_edit']['end'],
           \l:to_complete)
