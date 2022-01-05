@@ -60,11 +60,12 @@ class Case(object):
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
             self.pro = subprocess.Popen(self.cmd, shell=True)
         else:
-            self.pro = subprocess.Popen(self.cmd,
-                                        shell=True,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdin=subprocess.PIPE)
+            self.pro = subprocess.Popen(self.cmd, shell=True)
+            # self.pro = subprocess.Popen(self.cmd,
+            #                             shell=True,
+            #                             stdout=subprocess.PIPE,
+            #                             stderr=subprocess.PIPE,
+            #                             stdin=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
 
     def ReadLog(self):
