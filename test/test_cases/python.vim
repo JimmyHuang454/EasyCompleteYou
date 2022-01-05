@@ -31,20 +31,20 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-endfunction
-
-function! s:T6() abort
     call Type("\<Tab>")
 endfunction
 
-function! s:T7() abort
+function! s:T6() abort
     call Expect(getline(1), 'import')
+endfunction
+
+function! s:T7() abort
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
             \{'fuc': function('s:T2')}, 
             \{'fuc': function('s:T3')},
-            \{'fuc': function('s:T4')},
+            \{'fuc': function('s:T4'), 'delay': 5000},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
