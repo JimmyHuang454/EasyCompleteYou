@@ -34,7 +34,13 @@ fun! s:Start(timer) abort
     endif
     let s:testing_case_nr += 1
   endif
-  call timer_start(5000, function('s:Start'))
+
+  let l:delay = 3000
+
+  if has_key(l:item, 'delay')
+    let l:delay = l:item['delay']
+  endif
+  call timer_start(l:delay, function('s:Start'))
 "}}}
 endf
 

@@ -40,4 +40,5 @@ call test_frame#Add({'event':[{'fuc': function('s:T1')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
             \]})
+
 call test_frame#Run()
