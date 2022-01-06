@@ -43,17 +43,11 @@ elseif &encoding !~? 'utf-\?8'
         \ echohl None
   call s:restore_cpo()
   finish
-" elseif !has('python3')
-"   echohl WarningMsg |
-"         \ echomsg "ECY unavailable: unable to load Python3." |
-"         \ echohl None
-"   call s:restore_cpo()
-"   finish
-elseif ( g:is_vim && (!exists('*job_start') || !has('channel')) ) || 
-      \ (!g:is_vim && !has('nvim-0.2.0'))
+elseif ( g:is_vim && has('patch-8.1.1491') ) || 
+      \ (!g:is_vim && !has('nvim-0.5.0'))
   echohl WarningMsg |
-        \ echomsg "ECY unavailable: requires NeoVim >= 0.2.0 ".
-        \ "or Vim 8 with +job +channel." |
+        \ echomsg "ECY unavailable: requires NeoVim >= 0.5.0 ".
+        \ "or Vim 8.1.1491+." |
         \ echohl None
   call s:restore_cpo()
   finish
