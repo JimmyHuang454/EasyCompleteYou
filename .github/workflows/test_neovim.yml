@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   setup_env:
-    name: vim
+    name: neovim
     strategy:
       fail-fast: false
       matrix:
