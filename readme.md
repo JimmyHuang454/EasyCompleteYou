@@ -6,7 +6,7 @@
 
 ### Requires
 
-1. Vim >= 8.2.0 or neovim >= 0.5.0.
+1. Vim >= 8.1.1491 or neovim >= 0.5.0.
 
 ### Install
 
