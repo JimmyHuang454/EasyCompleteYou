@@ -43,7 +43,7 @@ elseif &encoding !~? 'utf-\?8'
         \ echohl None
   call s:restore_cpo()
   finish
-elseif ( g:is_vim && has('patch-8.1.1491') ) || 
+elseif ( g:is_vim && !has('patch-8.1.1491') ) || 
       \ (!g:is_vim && !has('nvim-0.5.0'))
   echohl WarningMsg |
         \ echomsg "ECY unavailable: requires NeoVim >= 0.5.0 ".
