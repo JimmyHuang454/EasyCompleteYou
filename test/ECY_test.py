@@ -69,12 +69,21 @@ class Case(object):
 
     def ReadLog(self):
         log_file_path = self.vim_script + '.log'
+        ECY_log_file_path = self.vim_script + '.ECY_log'
         output = ''
         if os.path.exists(log_file_path):
             with open(log_file_path, 'r', encoding='utf-8') as f:
-                output = f.read()
+                output += f.read()
                 f.close()
             os.remove(log_file_path)
+
+        output += '\n------------\n'
+
+        if os.path.exists(ECY_log_file_path):
+            with open(ECY_log_file_path, 'r', encoding='utf-8') as f:
+                output += f.read()
+                f.close()
+            os.remove(ECY_log_file_path)
         return output
 
     def Test(self):

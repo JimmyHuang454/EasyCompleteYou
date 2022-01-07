@@ -81,7 +81,7 @@ else
 endif
 
 " must put these outside a function
-let g:ECY_base_dir = expand( '<sfile>:p:h:h' )
+let g:ECY_base_dir = expand('<sfile>:p:h:h')
 let g:ECY_base_dir = tr(g:ECY_base_dir, '\', '/')
 let g:ECY_buffer_version = {}
 let g:ECY_windows_are_showing = {}
@@ -90,7 +90,8 @@ let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
 let g:ECY_python_script_folder_dir = g:ECY_base_dir . '/python'
 let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.py'
 let g:ECY_source_folder_dir = g:ECY_base_dir . '/engines'
-let g:ECY_debug_log_file_path = g:ECY_python_script_folder_dir . '/ECY_debug.log'
+let g:ECY_debug_log_file_path = 
+      \get(g:,'ECY_debug_log_file_path', g:ECY_python_script_folder_dir . '/ECY_debug.log')
 let g:ECY_client_main_path = printf("%s/ECY_%s.exe", g:ECY_python_script_folder_dir, g:os)
 
 if exists('g:ycm_disable_for_files_larger_than_kb')

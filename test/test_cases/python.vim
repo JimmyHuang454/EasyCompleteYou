@@ -1,4 +1,6 @@
 let g:ECY_engine_config = {'ECY_engines.python.jedi_ls.jedi_ls':{'cmd': 'jedi-language-server'}}
+let g:ECY_is_debug = 1
+let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    init                                    "
