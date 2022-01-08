@@ -36,8 +36,9 @@ function! s:T4() abort
     call OutputLine(g:test_cpp)
 
     exe printf('new %s', g:test_cpp)
-    call Expect(&ft, 'cpp')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
+    let &ft = 'cpp'
+    call Expect(&ft, 'cpp')
     call ECY#utils#MoveToBuffer(8, 13, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.cpp.clangd.clangd')
