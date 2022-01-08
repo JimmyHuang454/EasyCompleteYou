@@ -10,7 +10,7 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T1() abort
     new
-    let &ft = 'cpp'
+    let &ft = 'html'
     call Type("\<Tab>")
 endfunction
 
