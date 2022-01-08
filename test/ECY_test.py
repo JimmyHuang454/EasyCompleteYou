@@ -139,6 +139,7 @@ print('\nTotal: %s, Failded: %s, Timeout: %s.' %
 if len(faided_case) != 0:
     print("-" * 10)
     for item in faided_case:
+        print('is_ok: ', item['case'])
         print('is_ok: ', item['is_ok'])
         print('is_timeout: ', item['is_timeout'])
         print(item['output'])
