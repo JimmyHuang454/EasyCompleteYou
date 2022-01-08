@@ -4,6 +4,7 @@ let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
 let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               Switch engine                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -29,10 +30,10 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                              test completion                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
 function! s:T4() abort
     call NotExpect(g:ECY_installer_config, {})
 
-    let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
     call OutputLine(g:test_cpp)
 
     exe printf('new %s', g:test_cpp)
