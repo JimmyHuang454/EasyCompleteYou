@@ -40,7 +40,7 @@ endfunction
 function! s:ChooseSource(next_or_pre) abort
   "{{{ this will call by 'user_ui.vim'
   let l:filetype = ECY#utils#GetCurrentBufferFileType()
-  if !exists("g:ECY_file_type_info2[".string(l:filetype)."]")
+  if !has_key(g:ECY_file_type_info2, l:filetype)
     " server should init it first
     return
   endif
@@ -76,17 +76,11 @@ endfunction
 fun! ECY#switch_engine#Do()
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call s:InitDefaultEngine(l:file_type)
+  call ECY#switch_engine#InitDefaultEngine(l:file_type)
   let s:last_engine = ECY#switch_engine#GetBufferEngineName()
 
-  if g:has_floating_windows_support == 'has_no'
-    call s:ChooseSource_Echoing()
-  elseif g:has_floating_windows_support == 'vim'
-    call s:ChooseSource_Echoing()
-    " call s:ChooseSource_vim()
-  else
-    call s:ChooseSource_neovim()
-  endif
+  " TODO
+  call s:ChooseSource_Echoing()
   call s:ChooseSource_cb()
   "}}}
 endf
@@ -210,7 +204,7 @@ fun! s:VimLeave()
   "}}}
 endf
 
-fun! s:InitDefaultEngine(file_type)
+fun! ECY#switch_engine#InitDefaultEngine(file_type)
   "{{{
   if !has_key(g:ECY_config, a:file_type)
     let g:ECY_config[a:file_type] = g:ECY_default_engine
@@ -234,7 +228,7 @@ endf
 fun! ECY#switch_engine#GetBufferEngineName()
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call s:InitDefaultEngine(l:file_type)
+  call ECY#switch_engine#InitDefaultEngine(l:file_type)
   return g:ECY_file_type_info2[l:file_type]['filetype_using']
   "}}}
 endf

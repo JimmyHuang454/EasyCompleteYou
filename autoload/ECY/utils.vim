@@ -112,8 +112,10 @@ endf
 
 function! ECY#utils#GetCurrentBufferPath(...) abort
   "{{{
-  " let l:full_path = fnamemodify(@%, ':p')
   let l:full_path = expand('%:p')
+  if l:full_path == ''
+    let l:full_path = 'ECY_untitled_' . bufnr('')
+  endif
   return l:full_path
   "}}}
 endfunction

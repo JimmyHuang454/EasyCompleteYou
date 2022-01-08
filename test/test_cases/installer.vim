@@ -12,8 +12,9 @@ endfunction
 function! s:T2() abort
     new
     let &ft = 'c'
-    call OutputLine(g:ECY_installer_config)
-    call NotExpect(g:ECY_installer_config, {})
+    call ECY#switch_engine#InitDefaultEngine(&ft)
+    let g:ECY_file_type_info2[&ft]['filetype_using'] = 'ECY_engines.cpp.clangd.clangd'
+    call Type("\<Esc>i123\n13")
 endfunction
 
 function! s:T3() abort
