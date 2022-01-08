@@ -20,7 +20,6 @@ endfunction
 
 function! s:T3() abort
     call Type("\<Esc>")
-    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.cpp.clangd.clangd')
 
     call Expect(g:ECY_installer_config, {})
     call ECY2_main#InstallLS('ECY_engines.cpp.clangd.clangd')
@@ -37,17 +36,19 @@ function! s:T4() abort
     call OutputLine(g:test_cpp)
 
     exe printf('new %s', g:test_cpp)
+    call Expect(&ft, 'cpp')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call ECY#utils#MoveToBuffer(8, 13, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
-    call Type("\<Esc>ach")
+    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.cpp.clangd.clangd')
 endfunction
 
 function! s:T5() abort
-    call Type("\<Tab>")
+    call Type("\<Esc>ach")
 endfunction
 
 function! s:T6() abort
+    call Type("\<Tab>")
     call Expect(getline(8), '  test_abbr.type_char')
 endfunction
 
