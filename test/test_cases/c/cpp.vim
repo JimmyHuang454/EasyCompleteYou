@@ -27,7 +27,7 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-    call Expect(getline(1), '  test_abbr.type_char')
+    call Expect(getline(8), '  test_abbr.type_char')
 endfunction
 
 function! s:T6() abort
