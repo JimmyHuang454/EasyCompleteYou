@@ -45,7 +45,7 @@ fun! s:Start(timer) abort
 endf
 
 fun! test_frame#Run() abort
-  call timer_start(10000, function('s:Start'))
+  call timer_start(15000, function('s:Start'))
 endf
 
 call test_frame#Init()
