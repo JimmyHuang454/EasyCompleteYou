@@ -10,20 +10,24 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    new
-    let &ft = 'c'
-    call ECY#switch_engine#InitDefaultEngine(&ft)
-    let g:ECY_file_type_info2[&ft]['filetype_using'] = 'ECY_engines.cpp.clangd.clangd'
-    call Type("\<Esc>i123\n13")
+    let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
+    call ECY#switch_engine#InitDefaultEngine('cpp')
+    let g:ECY_file_type_info2['cpp']['filetype_using'] = 'ECY_engines.cpp.clangd.clangd'
+
+    exe printf('new %s', g:test_cpp)
+    call ECY#utils#MoveToBuffer(8, 13, g:test_cpp, 'h')
+    call Type("\<Esc>ach")
 endfunction
 
 function! s:T3() abort
 endfunction
 
 function! s:T4() abort
+    call Type("\<Tab>")
 endfunction
 
 function! s:T5() abort
+    call Expect(getline(1), '  test_abbr.type_char')
 endfunction
 
 function! s:T6() abort
