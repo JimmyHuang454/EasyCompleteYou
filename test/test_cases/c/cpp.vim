@@ -1,11 +1,13 @@
+let g:ECY_is_debug = 1
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
+let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
 let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                               Switch engine                                "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T1() abort
-    let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
-    call OutputLine(g:test_cpp)
-
     new
     let &ft = 'cpp'
     call Type("\<Tab>")
@@ -23,7 +25,16 @@ function! s:T3() abort
     call ECY2_main#InstallLS('ECY_engines.cpp.clangd.clangd')
 endfunction
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                              test completion                               "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T4() abort
+    call NotExpect(g:ECY_installer_config, {})
+
+    let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
+    call OutputLine(g:test_cpp)
+
     exe printf('new %s', g:test_cpp)
     call ECY#utils#MoveToBuffer(8, 13, g:test_cpp, 'h')
     call Type("\<Esc>ach")
