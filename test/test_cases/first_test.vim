@@ -29,6 +29,7 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
+    call OutputLine(g:ECY_current_popup_windows_info)
     call NotExpect(g:ECY_current_popup_windows_info, {})
     call Expect(ECY#completion#IsMenuOpen(), 1)
     call Type("\<Tab>")
@@ -44,7 +45,7 @@ endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
             \{'fuc': function('s:T2')}, 
-            \{'fuc': function('s:T3')},
+            \{'fuc': function('s:T3'), 'delay': 10000},
             \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
             \]})
