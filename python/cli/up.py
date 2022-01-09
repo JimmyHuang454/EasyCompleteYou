@@ -3,6 +3,7 @@ import sys
 import subprocess
 import shutil
 import time
+import zipfile
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
@@ -85,6 +86,28 @@ def MoveFile(file_path, new_file_path):
 DoCMD('python -m pip install --upgrade build')
 DoCMD('python -m pip install --upgrade twine')
 
+############
+#  clangd  #
+############
+for dirs, _, files in os.walk(BASE_DIR + '/clangd'):
+    for item in files:
+        temp = item.split('-')
+        if temp[0] != 'clangd':
+            continue
+        handling_files = dirs + '/' + item
+        output_path = BASE_DIR + '/exes/'
+        if temp[1] == 'linux':
+            output_path += 'ECY_clangd_Linux.zip'
+        if temp[1] == 'windows':
+            output_path += 'ECY_clangd_Windows.zip'
+        if temp[1] == 'mac':
+            output_path += 'ECY_clangd_macOS.zip'
+        os.rename(handling_files, output_path)
+        print(output_path)
+
+#######################################################################
+#                             upload all                              #
+#######################################################################
 for dirs, _, files in os.walk(BASE_DIR + '/exes'):
     for item in files:
         temp = item.split('_')
@@ -96,10 +119,17 @@ for dirs, _, files in os.walk(BASE_DIR + '/exes'):
         print(server_name)
 
         arch = NewArchieve(platform, server_name)
-        MoveFile(dirs + '/' + item, arch + '/ECY_exe')
+
+        handling_files = dirs + '/' + item
+        output_dir = arch + '/ECY_exe'
+        if zipfile.is_zipfile(handling_files):
+            zipfile.ZipFile(handling_files).extractall(output_dir)
+        else:
+            MoveFile(handling_files, output_dir)
 
         DoCMD('python -m build', cwd=arch)
         DoCMD(
             'python -m twine upload --repository pypi dist/* --config-file "%s"'
             % (arch + '/.pypirc'),
             cwd=arch)
+

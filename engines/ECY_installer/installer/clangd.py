@@ -1,3 +1,5 @@
+import os
+
 from ECY_installer import pypi_tools
 from ECY_installer import base
 
@@ -6,22 +8,29 @@ class Install(base.Install):
     """
     """
     def __init__(self):
-        self.name = ''
+        base.Install.__init__(self, 'clangd')
 
-    def CleanWindows(self, context):
-        pass
+    def GetClangdBinDir(self, installed_dir: str) -> str:
+        for _, dirs, files in os.walk(installed_dir):
+            for item in dirs:
+                if item.find('clangd') != -1:
+                    return installed_dir + '/' + item + '/bin'
+            return
 
     def Windows(self, context):
-        save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY_windows_clangd', save_dir)
-        return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
+        res = self.InstallEXE(self.name, 'Windows', context['save_dir'])
+        res['cmd'] = self.GetClangdBinDir(res['installed_dir'] +
+                                          '/ECY_exe') + '/clangd.exe'
+        return res
 
     def Linux(self, context):
-        save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY_linux_clangd', save_dir)
-        return {'cmd': installed_dir + '/clangd_files/bin/clangd.exe'}
+        res = self.InstallEXE(self.name, 'Windows', context['save_dir'])
+        res['cmd'] = self.GetClangdBinDir(res['installed_dir'] +
+                                          '/ECY_exe') + '/clangd'
+        return res
 
     def macOS(self, context):
-        save_dir = context['save_dir']
-        installed_dir = pypi_tools.Install('ECY_mac_clangd', save_dir)
-        return {'cmd': installed_dir}
+        res = self.InstallEXE(self.name, 'Windows', context['save_dir'])
+        res['cmd'] = self.GetClangdBinDir(res['installed_dir'] +
+                                          '/ECY_exe') + '/clangd'
+        return res

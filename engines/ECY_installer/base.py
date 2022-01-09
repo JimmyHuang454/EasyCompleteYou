@@ -61,7 +61,9 @@ class Install(object):
             'ECY-%s-%s' % (platform, server_name), save_dir)
         return {
             'cmd':
-            installed_dir + '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform)
+            installed_dir + '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform),
+            'installed_dir':
+            installed_dir
         }
 
     def CleanWindows(self, context: dict) -> dict:
