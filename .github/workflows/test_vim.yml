@@ -50,6 +50,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           pip3 install jedi_language_server
+          jedi-language-server --help
           python ./ECY/test/ECY_test.py --is_neovim "false" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
