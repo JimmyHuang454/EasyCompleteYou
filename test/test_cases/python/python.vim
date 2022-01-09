@@ -12,7 +12,7 @@ function! s:T1() abort
     call OutputLine(g:test_cpp)
     call ECY#switch_engine#Set('python', 'ECY_engines.python.jedi_ls.jedi_ls')
     call OutputLine('1')
-    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
+    call ECY#utils#OpenFileAndMove(1, 5, g:test_cpp, 'h')
     call OutputLine('2')
     let &ft = 'python'
     call OutputLine(ECY#utils#GetCurrentBufferContent())
