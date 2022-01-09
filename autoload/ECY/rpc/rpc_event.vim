@@ -199,6 +199,7 @@ fun! ECY#rpc#rpc_event#Init()
     autocmd TextChangedI  * call s:TextChangedI()
     autocmd InsertEnter   * call s:InsertEnter()
   augroup END
+
   let g:event_pre = {}
   let g:event_callback = {}
 "}}}

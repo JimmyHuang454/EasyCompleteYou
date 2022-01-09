@@ -11,12 +11,9 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.py'
 function! s:T1() abort
     call OutputLine(g:test_cpp)
     call ECY#switch_engine#Set('python', 'ECY_engines.python.jedi_ls.jedi_ls')
-    call OutputLine('1')
-    call ECY#utils#OpenFileAndMove(1, 5, g:test_cpp, 'h')
-    call OutputLine('2')
+    call ECY#utils#OpenFileAndMove(13, 8, g:test_cpp, 'h')
     let &ft = 'python'
     call OutputLine(ECY#utils#GetCurrentBufferContent())
-    call OutputLine('3')
 endfunction
 
 function! s:T2() abort
@@ -37,7 +34,7 @@ function! s:T6() abort
 endfunction
 
 function! s:T7() abort
-    call Expect(getline(1), 'import')
+    call Expect(getline(13), 'obj.test_name')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
