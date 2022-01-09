@@ -85,6 +85,15 @@ fun! ECY#switch_engine#Do()
   "}}}
 endf
 
+fun! ECY#switch_engine#Set(file_type, engine_name)
+  "{{{
+  call ECY#switch_engine#InitDefaultEngine(a:file_type)
+  let g:ECY_file_type_info2[a:file_type]['filetype_using'] = a:engine_name
+
+  doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
+  "}}}
+endf
+
 fun! s:InsertLeave()
 "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()

@@ -6,41 +6,27 @@ let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
 exe printf('so %s/test/startup.vim', g:repo_root)
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               Switch engine                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.py'
+
 function! s:T1() abort
-    new
+    call OutputLine(g:test_cpp)
+    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
+    call OutputLine(ECY#utils#GetCurrentBufferContent())
+    call ECY#switch_engine#Set('python', 'ECY_engines.python.jedi_ls.jedi_ls')
     let &ft = 'python'
-    call Type("\<Tab>")
 endfunction
 
 function! s:T2() abort
-    call Type("jjj")
+    call Type("\<Esc>a")
 endfunction
 
 function! s:T3() abort
-    call Type("\<Esc>")
 endfunction
 
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              test completion                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.py'
 function! s:T4() abort
-    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.python.jedi_ls.jedi_ls')
-    call OutputLine(g:test_cpp)
-
-    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
-    call OutputLine(ECY#utils#GetCurrentBufferContent())
-    let &ft = 'python'
-
-    call OutputLine(ECY#utils#GetCurrentLine())
 endfunction
 
 function! s:T5() abort
-    call Type("\<Esc>a")
 endfunction
 
 function! s:T6() abort
@@ -55,7 +41,7 @@ call test_frame#Add({'event':[{'fuc': function('s:T1')},
             \{'fuc': function('s:T2')}, 
             \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},
-            \{'fuc': function('s:T5'), 'delay': 15000},
+            \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
             \]})
