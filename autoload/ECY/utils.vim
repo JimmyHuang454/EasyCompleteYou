@@ -110,7 +110,7 @@ fun! ECY#utils#show(msg, style, title)
   "}}}
 endf
 
-function! ECY#utils#GetCurrentBufferPath(...) abort
+function! ECY#utils#GetCurrentBufferPath() abort
   "{{{
   let l:full_path = expand('%:p')
   if l:full_path == ''

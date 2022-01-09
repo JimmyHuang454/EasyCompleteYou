@@ -38,7 +38,7 @@ function! s:T4() abort
     let &ft = 'python'
     call Expect(&ft, 'python')
 
-    call ECY#utils#MoveToBuffer(1, 6, g:test_cpp, 'h')
+    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
 endfunction
 
@@ -48,10 +48,10 @@ endfunction
 
 function! s:T6() abort
     call Type("\<Tab>")
-    call Expect(getline(1), 'import')
 endfunction
 
 function! s:T7() abort
+    call Expect(getline(1), 'import')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
