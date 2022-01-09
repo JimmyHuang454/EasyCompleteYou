@@ -343,7 +343,7 @@ function! s:SelectItems_vim(next_or_pre) abort
     let l:point = l:info['match_point']
     let i = 0
     while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if ECY#utils#GetCurrentBufferPath(i, l:point)
+      if ECY#utils#GetCurrentBufferPath()
         let l:hightlight = 'ECY_floating_windows_seleted_matched'
       else
         let l:hightlight = 'ECY_floating_windows_seleted'
