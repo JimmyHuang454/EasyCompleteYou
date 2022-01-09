@@ -32,13 +32,10 @@ function! s:T4() abort
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.python.jedi_ls.jedi_ls')
     call OutputLine(g:test_cpp)
 
-    exe printf('new %s', g:test_cpp)
+    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
-
-    let &ft = 'python'
     call Expect(&ft, 'python')
 
-    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
 endfunction
 
@@ -58,7 +55,7 @@ call test_frame#Add({'event':[{'fuc': function('s:T1')},
             \{'fuc': function('s:T2')}, 
             \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},
-            \{'fuc': function('s:T5'), 'delay': 10000},
+            \{'fuc': function('s:T5'), 'delay': 15000},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
             \]})
