@@ -590,3 +590,14 @@ endfunction
 function! ECY#utils#DownloadFile(url, output_path)
   call ECY#utils#TermStart(printf('curl -L -o %s "%s"', a:output_path, a:url), {})
 endfunction
+
+function! ECY#utils#GetUltiSnippets()
+"{{{
+  try
+    call UltiSnips#SnippetsInCurrentScope(1)
+    return g:current_ulti_dict_info
+  catch 
+    return {}
+  endtry
+"}}}
+endfunction

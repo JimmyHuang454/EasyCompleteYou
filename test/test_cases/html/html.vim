@@ -50,7 +50,7 @@ endfunction
 
 function! s:T6() abort
     call Type("\<Tab>")
-    call Expect(getline(8), '    abc_123')
+    call Expect(getline(14), '    abc_123')
 endfunction
 
 function! s:T7() abort

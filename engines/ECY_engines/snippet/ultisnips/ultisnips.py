@@ -16,10 +16,9 @@ class Operate(object):
         if file_type in self.snippet_cache:
             return
 
-        try:
-            rpc.DoCall('UltiSnips#SnippetsInCurrentScope', [1])
-            snippets = rpc.GetVaribal('g:current_ulti_dict_info')
-        except:
+        snippets = rpc.DoCall('ECY#utils#GetUltiSnippets')
+
+        if snippets == {}:
             return
 
         results_list = []
