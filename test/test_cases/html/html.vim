@@ -39,7 +39,7 @@ function! s:T4() abort
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     let &ft = 'html'
     call Expect(&ft, 'html')
-    call ECY#utils#MoveToBuffer(14, 8, g:test_cpp, 'h')
+    call ECY#utils#MoveToBuffer(14, 7, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.html.lsp.html_lsp')
 endfunction

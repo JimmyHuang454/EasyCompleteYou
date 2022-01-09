@@ -21,7 +21,6 @@ endfunction
 function! s:T3() abort
     call Type("\<Esc>")
 
-    call Expect(g:ECY_installer_config, {})
     call ECY2_main#InstallLS('ECY_engines.cpp.clangd.clangd')
 endfunction
 
@@ -39,7 +38,7 @@ function! s:T4() abort
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     let &ft = 'cpp'
     call Expect(&ft, 'cpp')
-    call ECY#utils#MoveToBuffer(8, 13, g:test_cpp, 'h')
+    call ECY#utils#MoveToBuffer(8, 12, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
     call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.cpp.clangd.clangd')
 endfunction
