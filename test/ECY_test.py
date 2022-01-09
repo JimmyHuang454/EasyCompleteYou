@@ -116,6 +116,11 @@ class Case(object):
 running_test_cases = {}
 
 for test_case in all_test_case:
+    with open(test_case, 'r', encoding='utf-8') as f:
+        temp = f.read()
+        f.close()
+        if temp.find('XXXX') != -1:
+            continue
     running_test_cases[test_case] = {'obj': Case(test_case)}
 
 faided_case = []

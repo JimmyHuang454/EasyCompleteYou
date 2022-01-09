@@ -10,10 +10,10 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.py'
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
-    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
-    call OutputLine(ECY#utils#GetCurrentBufferContent())
     call ECY#switch_engine#Set('python', 'ECY_engines.python.jedi_ls.jedi_ls')
+    call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
     let &ft = 'python'
+    call OutputLine(ECY#utils#GetCurrentBufferContent())
 endfunction
 
 function! s:T2() abort
