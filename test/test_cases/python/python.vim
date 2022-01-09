@@ -38,7 +38,7 @@ function! s:T7() abort
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
-            \{'fuc': function('s:T2')}, 
+            \{'fuc': function('s:T2'), 'delay': 20000}, 
             \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
