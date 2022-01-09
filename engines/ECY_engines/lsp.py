@@ -32,7 +32,7 @@ class Operate(object):
             self.starting_cmd += starting_cmd_argv
         logger.debug(self.starting_cmd)
 
-        self._lsp = language_server_protocol.LSP(timeout=20)
+        self._lsp = language_server_protocol.LSP(timeout=60)
         self.use_completion_cache = use_completion_cache
         self.use_completion_cache_position = use_completion_cache_position
 
