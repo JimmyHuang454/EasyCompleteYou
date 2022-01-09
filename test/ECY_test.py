@@ -126,7 +126,7 @@ for test_case in all_test_case:
 faided_case = []
 timeout_case = []
 i = 0
-while len(all_test_case) != 0:
+while len(running_test_cases) != 0:
     finished_case = test_case_queue.get()
     i += 1
     if not finished_case['is_ok']:
@@ -135,7 +135,7 @@ while len(all_test_case) != 0:
     if finished_case['is_timeout']:
         timeout_case.append(finished_case)
 
-    if i == len(all_test_case):
+    if i == len(running_test_cases):
         break
 
 print('\nTotal: %s, Failded: %s, Timeout: %s.' %
