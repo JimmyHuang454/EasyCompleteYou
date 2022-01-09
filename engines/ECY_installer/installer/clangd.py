@@ -24,13 +24,13 @@ class Install(base.Install):
         return res
 
     def Linux(self, context):
-        res = self.InstallEXE(self.name, 'Windows', context['save_dir'])
+        res = self.InstallEXE(self.name, 'Linux', context['save_dir'])
         res['cmd'] = self.GetClangdBinDir(res['installed_dir'] +
                                           '/ECY_exe') + '/clangd'
         return res
 
     def macOS(self, context):
-        res = self.InstallEXE(self.name, 'Windows', context['save_dir'])
+        res = self.InstallEXE(self.name, 'macOS', context['save_dir'])
         res['cmd'] = self.GetClangdBinDir(res['installed_dir'] +
                                           '/ECY_exe') + '/clangd'
         return res
