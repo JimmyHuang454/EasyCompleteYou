@@ -25,7 +25,7 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
-    call Expect(getline(13), 'obj.test_name')
+    call Expect(getline(13), 'obj.test_name  # test_name')
 endfunction
 
 function! s:T5() abort
