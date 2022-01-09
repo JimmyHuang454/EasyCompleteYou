@@ -34,7 +34,7 @@ function! s:T4() abort
 
     call ECY#utils#MoveToBuffer(1, 5, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
-    call Expect(&ft, 'python')
+    let &ft = 'python'
 
     call OutputLine(ECY#utils#GetCurrentLine())
 endfunction
