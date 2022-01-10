@@ -55,16 +55,8 @@ class Case(object):
         self.vim_script = vim_script
         self.timeout = timeout
 
-        if GetCurrentOS() != 'Windows':
-            if IS_NEOVIM:
-                self.cmd = 'sudo nvim -u NONE -i NONE -n -N --cmd "source %s"' % (
-                    vim_script)
-            else:
-                self.cmd = 'sudo vim -u NONE -i NONE -n -N --cmd "source %s"' % (
-                    vim_script)
-        else:
-            self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
-                VIM_EXE, vim_script)
+        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
+            VIM_EXE, vim_script)
 
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':

@@ -1,12 +1,12 @@
+from ECY_installer import pypi_tools
+from termcolor import colored
+import os
 from urllib.request import urlretrieve
 
 from tqdm import tqdm
 from colorama import init
 
 init()
-from termcolor import colored
-
-from ECY_installer import pypi_tools
 
 
 class DownloadProgressBar(tqdm):
@@ -40,7 +40,7 @@ def DownloadFile(url: str, output_path: str) -> None:
             for chunk in r.iter_content(chunk_size=8192):
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
-                #if chunk:
+                # if chunk:
                 f.write(chunk)
             f.close()
 
@@ -59,12 +59,10 @@ class Install(object):
                    save_dir: str) -> dict:
         installed_dir = pypi_tools.Install(
             'ECY-%s-%s' % (platform, server_name), save_dir)
-        return {
-            'cmd':
-            installed_dir + '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform),
-            'installed_dir':
-            installed_dir
-        }
+        res = installed_dir + \
+            '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform),
+        os.environ['ECY_clangd'] = res
+        return {'cmd': res, 'installed_dir': installed_dir}
 
     def CleanWindows(self, context: dict) -> dict:
         return {}
