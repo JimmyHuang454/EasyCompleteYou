@@ -25,17 +25,17 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
-    call Type("\<Tab>")
 endfunction
 
 function! s:T5() abort
-    call Expect(getline(8), '  test_abbr.type_char')
 endfunction
 
 function! s:T6() abort
+    call Type("\<Tab>")
 endfunction
 
 function! s:T7() abort
+    call Expect(getline(8), '  test_abbr.type_char')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
