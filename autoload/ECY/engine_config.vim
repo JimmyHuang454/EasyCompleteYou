@@ -61,7 +61,7 @@ fun! ECY#engine_config#LoadInstallerInfo() abort
   let g:ECY_installer_config = json_decode(join(l:temp, "\n"))
   if g:os != 'Windows'
     " new file need sudo again
-    call ECY#rpc#ECY2_job#start('sudo chmod -R 775 ' . g:ECY_base_dir)
+    call ECY#rpc#ECY2_job#start('sudo chmod -R 775 ' . g:ECY_base_dir, {})
   endif
 "}}}
 endf
