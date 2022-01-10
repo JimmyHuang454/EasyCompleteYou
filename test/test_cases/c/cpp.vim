@@ -21,7 +21,7 @@ function! s:T2() abort
 endfunction
 
 function! s:T3() abort
-    call Type("\<Esc>ach")
+    call Type("\<Esc>aty1")
 endfunction
 
 function! s:T4() abort
@@ -35,7 +35,7 @@ function! s:T6() abort
 endfunction
 
 function! s:T7() abort
-    call Expect(getline(8), '  test_abbr.type_char')
+    call Expect(getline(8), '  test_abbr.type_1')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},

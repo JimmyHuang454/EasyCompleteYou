@@ -1,6 +1,6 @@
 struct cpp_t {
-  int type_int;
-  char type_char;
+  int type_1;
+  char type_2;
 };
 
 int main(void) {
