@@ -7,6 +7,8 @@ import shlex
 import queue
 import threading
 import re
+import os
+
 from ECY.debug import logger
 
 
@@ -111,19 +113,17 @@ class Operate:
         self.server_count = 0
         self._queue = queue.Queue()
 
-    def StartJob(self, shell_cmd):
-        # can not redect stderr to subprocess.PIPE
+    def StartJob(self, cmd, argvs=None):
         try:
-            if type(shell_cmd) == list:
-                shell_cmd = " ".join(shell_cmd)
-            cmd = shlex.split(shell_cmd)
-            # CREATE_NO_WINDOW = 0x08000000
+            if argvs is not None:
+                cmd += ' ' + argvs
+
+            logger.debug("real cmd: " + cmd)
             process_obj = subprocess.Popen(cmd,
                                            shell=True,
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE,
                                            stdin=subprocess.PIPE)
-            # stderr = subprocess.STDOUT)
             self.server_count += 1
 
             process_hanlder = ThreadOfJob(self.server_count, process_obj,
@@ -141,7 +141,8 @@ class Operate:
             self.server_info[self.server_count]['proc_object'] = process_obj
             self.server_info[
                 self.server_count]['thread_object'] = process_hanlder
-        except:
+        except Exception as e:
+            logger.exception(e)
             return None
         return self.server_count
 

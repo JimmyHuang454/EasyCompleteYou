@@ -26,11 +26,8 @@ class Operate(object):
         self.engine_name = name
 
         self.starting_cmd = starting_cmd
+        self.starting_cmd_argv = starting_cmd_argv
         self.GetStartCMD()
-        if starting_cmd_argv is not None:
-            self.starting_cmd += ' '
-            self.starting_cmd += starting_cmd_argv
-        logger.debug(self.starting_cmd)
 
         self._lsp = language_server_protocol.LSP(timeout=20)
         self.use_completion_cache = use_completion_cache
@@ -101,7 +98,7 @@ class Operate(object):
             logger.debug('using user setting cmd')
 
     def _start_server(self):
-        self._lsp.StartJob(self.starting_cmd)
+        self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)
 
         res = self._lsp.initialize(
             rootUri=self.rootUri,
