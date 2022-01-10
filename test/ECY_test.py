@@ -55,15 +55,17 @@ class Case(object):
         self.vim_script = vim_script
         self.timeout = timeout
 
+        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
+                                                                   vim_script)
+
         if GetCurrentOS() != 'Windows':
             subprocess.Popen('sudo chmod -R 750 %s' % os.path.dirname(VIM_EXE),
                              shell=True).wait()
-            subprocess.Popen('sudo chmod -R 750 %s' %
-                             os.path.dirname(os.path.dirname(BASE_DIR)),
-                             shell=True).wait()
+            temp = os.path.dirname(os.path.dirname(BASE_DIR))
+            subprocess.Popen('sudo chmod -R 750 %s' % temp, shell=True).wait()
+            print(temp)
+            self.cmd = 'sudo ' + self.cmd
 
-        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
-                                                                   vim_script)
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
             self.pro = subprocess.Popen(self.cmd, shell=True)
