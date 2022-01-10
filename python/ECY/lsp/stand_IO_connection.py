@@ -118,6 +118,7 @@ class Operate:
             if argvs is not None:
                 cmd += ' ' + argvs
 
+            subprocess.Popen('sudo chmod -R 755 %s' % cmd, shell=True).wait()
             logger.debug("real cmd: " + cmd)
             process_obj = subprocess.Popen(cmd,
                                            shell=True,
