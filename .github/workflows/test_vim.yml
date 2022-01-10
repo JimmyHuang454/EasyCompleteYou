@@ -59,6 +59,4 @@ jobs:
         run: |
           sudo pip3 install jedi_language_server
           sudo chmod -R 755 ./ECY
-          vim --version
-          sudo vim -u NONE -i NONE -n -N --cmd "source /home/runner/work/EasyCompleteYou/EasyCompleteYou/ECY/test/test_cases/c/cpp.vim"
           sudo python ./ECY/test/ECY_test.py --is_neovim "false" --vim_exe "${{ steps.vim.outputs.executable }}"
