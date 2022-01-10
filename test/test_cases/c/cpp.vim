@@ -13,11 +13,10 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    exe printf('new %s', g:test_cpp)
-    let &ft = 'cpp'
+    call ECY#utils#OpenFileAndMove(8, 12, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
-    call ECY#utils#MoveToBuffer(8, 12, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
+    let &ft = 'cpp'
 endfunction
 
 function! s:T3() abort
