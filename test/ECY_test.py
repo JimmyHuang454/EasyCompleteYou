@@ -59,12 +59,11 @@ class Case(object):
                                                                    vim_script)
 
         if GetCurrentOS() != 'Windows':
-            subprocess.Popen('sudo chmod -R 750 %s' % os.path.dirname(VIM_EXE),
+            subprocess.Popen('sudo chmod -R 755 %s' % os.path.dirname(VIM_EXE),
                              shell=True).wait()
             temp = os.path.dirname(os.path.dirname(BASE_DIR))
-            subprocess.Popen('sudo chmod -R 750 %s' % temp, shell=True).wait()
+            subprocess.Popen('sudo chmod -R 755 %s' % temp, shell=True).wait()
             print(temp)
-            self.cmd = 'sudo ' + self.cmd
 
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':

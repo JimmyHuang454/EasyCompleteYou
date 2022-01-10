@@ -71,7 +71,7 @@ endf
 fun! ECY#rpc#rpc_main#NewClient()
 "{{{
   if g:os != 'Windows'
-    call ECY#rpc#ECY2_job#start('sudo chmod -R 750 ' . g:ECY_base_dir,
+    call ECY#rpc#ECY2_job#start('sudo chmod -R 755 ' . g:ECY_base_dir,
           \{'on_exit': function('s:ChomdExit')})
   else
     call s:NewClient()
