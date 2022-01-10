@@ -49,6 +49,11 @@ def GetCurrentOS():
         return 'macOS'
     return "Linux"
 
+if GetCurrentOS() != 'Windows':
+    subprocess.Popen('sudo chmod -R 750 %s' %
+                     os.path.dirname(BASE_DIR),
+                     shell=True)
+
 
 class Case(object):
     def __init__(self, vim_script, timeout=300):
