@@ -57,7 +57,10 @@ class Case(object):
 
         if GetCurrentOS() != 'Windows':
             subprocess.Popen('sudo chmod -R 750 %s' % os.path.dirname(VIM_EXE),
-                             shell=True)
+                             shell=True).wait()
+            subprocess.Popen('sudo chmod -R 750 %s' %
+                             os.path.dirname(os.path.dirname(BASE_DIR)),
+                             shell=True).wait()
 
         self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
                                                                    vim_script)
