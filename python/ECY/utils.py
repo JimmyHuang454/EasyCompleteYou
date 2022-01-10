@@ -96,10 +96,8 @@ def GetCurrentOS():
     temp = sys.platform
     if temp == 'win32':
         return 'Windows'
-    if temp == 'cygwin':
-        return 'Cygwin'
     if temp == 'darwin':
-        return 'Mac'
+        return 'macOS'
     return "Linux"
 
 

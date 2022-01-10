@@ -3,8 +3,10 @@ import logging
 import argparse
 import os
 import sys
+import subprocess
 
 from ECY import rpc
+from ECY import utils
 import ECY.engines.engines as engines
 from ECY.debug import logger
 
@@ -60,6 +62,9 @@ if g_args.debug_log and not IS_INSTALL:
 
 
 def main():
+    if utils.GetCurrentOS() != "Windows":
+        subprocess.Popen('sudo chmod -R 750 %s' % BASE_DIR, shell=True)
+
     if IS_INSTALL:
         from ECY_installer import install_cli
         if g_args.install is not None:
