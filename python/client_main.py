@@ -64,7 +64,6 @@ if g_args.debug_log and not IS_INSTALL:
 def main():
     if utils.GetCurrentOS() != "Windows":
         subprocess.Popen('sudo chmod -R 775 %s' % BASE_DIR, shell=True).wait()
-        subprocess.Popen('ls -al', shell=True).wait()
 
     if IS_INSTALL:
         from ECY_installer import install_cli

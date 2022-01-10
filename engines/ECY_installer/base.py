@@ -1,6 +1,5 @@
 from ECY_installer import pypi_tools
 from termcolor import colored
-import os
 from urllib.request import urlretrieve
 
 from tqdm import tqdm
@@ -61,7 +60,6 @@ class Install(object):
             'ECY-%s-%s' % (platform, server_name), save_dir)
         res = installed_dir + \
             '/ECY_exe/ECY_%s_%s.exe' % (server_name, platform),
-        os.environ['ECY_clangd'] = res
         return {'cmd': res, 'installed_dir': installed_dir}
 
     def CleanWindows(self, context: dict) -> dict:
