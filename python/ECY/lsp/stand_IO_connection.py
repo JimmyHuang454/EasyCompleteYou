@@ -115,10 +115,17 @@ class Operate:
 
     def StartJob(self, cmd, argvs=None):
         try:
+            if type(cmd) is list:
+                cmd = " ".join(cmd)
+            logger.debug(cmd)
+
+
             if argvs is not None:
+                if type(argvs) is list:
+                    argvs = " ".join(argvs)
                 cmd += ' ' + argvs
 
-            logger.debug("real cmd: " + cmd)
+            logger.debug("real cmd: " + str(cmd))
             process_obj = subprocess.Popen(cmd,
                                            shell=True,
                                            stdout=subprocess.PIPE,

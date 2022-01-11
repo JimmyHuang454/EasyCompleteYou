@@ -586,6 +586,81 @@ class Operate(object):
         context['show_list'] = self.results_list  # update
         return context
 
+    def _to_ECY_format(self, context):
+        if context is None:
+            return  # server not supports.
+
+        show_list = []
+        for item in context['show_list']:
+            results_format = {
+                'abbr': '',
+                'word': '',
+                'kind': '',
+                'menu': '',
+                'info': '',
+                'user_data': ''
+            }
+
+            item_name = item['label']
+            results_format['abbr'] = item_name
+            results_format['word'] = item_name
+
+            if 'kind' in item:
+                results_format['kind'] = self._lsp.GetKindNameByNumber(
+                    item['kind'])
+            else:
+                results_format['kind'] = 'Unkonw'
+
+            menu = []
+            if 'detail' in item:
+                menu = item['detail'].split('\n')
+
+            if 'tags' in item:
+                for tag in item['tags']:
+                    if tag == 1:
+                        menu.append('Deprecated')
+            elif 'deprecated' in item:
+                # @deprecated Use `tags` instead if supported.
+                menu.append('Deprecated')
+
+            results_format['menu'] = menu
+
+            insertTextFormat = 0
+            if 'insertTextFormat' in item:
+                insertTextFormat = item['insertTextFormat']
+
+            if insertTextFormat == 2:
+                results_format['kind'] += '~'
+
+            # When an edit is provided the value of `insertText` is ignored.
+            word = ''
+            if 'textEdit' in item:
+                word = item['textEdit']['newText']
+            elif 'insertText' in item:
+                word = item['insertText']
+
+            if word != '':
+                if insertTextFormat == 2:
+                    results_format['snippet'] = word
+                else:
+                    results_format['word'] = word
+
+            document = []
+            if 'documentation' in item:
+                document.extend(
+                    self._format_markupContent(item['documentation']))
+            results_format['info'] = '\n'.join(document)
+
+            if 'completion_text_edit' in item and False:
+                results_format['completion_text_edit'] = item[
+                    'completion_text_edit']
+                results_format['word'] = item['textEdit']['newText']
+
+            show_list.append(results_format)
+        context['origin_list'] = context['show_list']
+        context['show_list'] = show_list
+        return context
+
     def ExecuteCommand(self, context):
         if 'executeCommandProvider' not in self.capabilities:
             self._show_msg('executeCommand is not supported.')
@@ -875,7 +950,8 @@ class Operate(object):
         rpc.DoCall('ECY#hover#Open', [content])
 
     def _format_markupContent(self, content):
-        # content = res['documentation']
+        """return list
+        """
         if content is None:
             return []
 

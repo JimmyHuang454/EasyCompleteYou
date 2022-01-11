@@ -42,8 +42,11 @@ CAPABILITY = {
                 "commitCharactersSupport": False,
                 "documentationFormat": ["plaintext"],
                 "deprecatedSupport": False,
-                "insertReplaceSupport": False,
+                "insertReplaceSupport": True,
                 "preselectSupport": False
+            },
+            "resolveSupport": {
+                "properties": ['documentation', 'detail']
             },
             "completionItemKind": {
                 "valueSet": []
