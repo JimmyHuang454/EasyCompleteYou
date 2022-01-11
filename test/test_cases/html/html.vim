@@ -1,65 +1,45 @@
-" XXXX
 let g:ECY_is_debug = 1
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
 let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
 let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
+let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.html'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                               Switch engine                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T1() abort
-    new
-    let &ft = 'html'
-    call Type("\<Tab>")
-endfunction
-
-function! s:T2() abort
-    call Type("jjjj")
-endfunction
-
-function! s:T3() abort
-    call Type("\<Esc>")
-
-    call Expect(g:ECY_installer_config, {})
+    call OutputLine(g:test_cpp)
+    call ECY#switch_engine#Set('html', 'ECY_engines.html.lsp.html_lsp')
     call ECY2_main#InstallLS('ECY_engines.html.lsp.html_lsp')
 endfunction
 
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                              test completion                               "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.html'
-function! s:T4() abort
-    call NotExpect(g:ECY_installer_config, {})
-
-    call OutputLine(g:test_cpp)
-
-    exe printf('new %s', g:test_cpp)
+function! s:T2() abort
+    call ECY#utils#OpenFileAndMove(14, 6, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
-    let &ft = 'html'
-    call Expect(&ft, 'html')
-    call ECY#utils#MoveToBuffer(14, 7, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentLine())
-    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.html.lsp.html_lsp')
+    let &ft = 'html'
+endfunction
+
+function! s:T3() abort
+    call Type("\<Esc>a")
+endfunction
+
+function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-    call Type("\<Esc>a")
 endfunction
 
 function! s:T6() abort
     call Type("\<Tab>")
-    call Expect(getline(14), '    abc_123')
 endfunction
 
 function! s:T7() abort
+    call Expect(getline(8), '    abc_123')
 endfunction
 
-call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
-            \{'fuc': function('s:T2')}, 
-            \{'fuc': function('s:T3'), 'delay': 45000},
+call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
+            \{'fuc': function('s:T2')},
+            \{'fuc': function('s:T3'), 'delay': 25000},
             \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
