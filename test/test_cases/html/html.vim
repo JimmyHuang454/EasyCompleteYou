@@ -13,7 +13,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call ECY#utils#OpenFileAndMove(14, 6, g:test_cpp, 'h')
+    call ECY#utils#OpenFileAndMove(15, 7, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())
     let &ft = 'html'
@@ -34,7 +34,7 @@ function! s:T6() abort
 endfunction
 
 function! s:T7() abort
-    call Expect(getline(8), '    abc_123')
+    call Expect(getline(8), '  <datalist')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
