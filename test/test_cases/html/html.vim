@@ -34,7 +34,7 @@ function! s:T6() abort
 endfunction
 
 function! s:T7() abort
-    call Expect(getline(8), '  <datalist')
+    call Expect(getline(15), '  <datalist')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
