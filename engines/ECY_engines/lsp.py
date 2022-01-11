@@ -29,7 +29,7 @@ class Operate(object):
         self.starting_cmd_argv = starting_cmd_argv
         self.GetStartCMD()
 
-        self._lsp = language_server_protocol.LSP(timeout=20)
+        self._lsp = language_server_protocol.LSP(timeout=40)
         self.use_completion_cache = use_completion_cache
         self.use_completion_cache_position = use_completion_cache_position
 
