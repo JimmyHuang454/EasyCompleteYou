@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   setup_env:
-    name: pyright, viml, ts, html
+    name: pyright, viml, ts, html, vls
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
@@ -41,12 +41,20 @@ jobs:
           pkg package.json -o ./ECY_viml_${{ runner.os }}.exe
           ls
 
-      - name: npm ts
+      # - name: npm ts
+      #   run: |
+      #     npm install typescript-language-server -prefix ./
+      #     cd ./node_modules/typescript-language-server
+      #     npm install
+      #     pkg package.json -o ./ECY_ts_${{ runner.os }}.exe
+      #     ls
+
+      - name: npm vls
         run: |
-          npm install typescript-language-server -prefix ./
-          cd ./node_modules/typescript-language-server
+          npm install vls -prefix ./
+          cd ./node_modules/vls
           npm install
-          pkg package.json -o ./ECY_ts_${{ runner.os }}.exe
+          pkg package.json -o ./ECY_vls_${{ runner.os }}.exe
           ls
 
       - name: Checkout coc-html
@@ -71,4 +79,5 @@ jobs:
             ./node_modules/pyright/ECY_pyright_${{ runner.os }}.exe
             ./node_modules/vim-language-server/ECY_viml_${{ runner.os }}.exe
             ./node_modules/typescript-language-server/ECY_ts_${{ runner.os }}.exe
+            ./node_modules/vls/ECY_vls_${{ runner.os }}.exe
             ./html/ECY_html_${{ runner.os }}.exe
