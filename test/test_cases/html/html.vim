@@ -24,9 +24,11 @@ function! s:T3() abort
 endfunction
 
 function! s:T4() abort
+    call Type("\<Esc>")
 endfunction
 
 function! s:T5() abort
+    call Type("\<Esc>a")
 endfunction
 
 function! s:T6() abort
@@ -39,9 +41,9 @@ endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
             \{'fuc': function('s:T2')},
-            \{'fuc': function('s:T3'), 'delay': 25000},
+            \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},
-            \{'fuc': function('s:T5')},
+            \{'fuc': function('s:T5'), 'delay': 25000},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
             \]})
