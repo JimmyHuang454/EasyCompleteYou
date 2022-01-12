@@ -309,8 +309,8 @@ class Operate(object):
         i = 0
         if is_current_line:
             for item in res:
-                if item['startLine'] <= start_position['Line'] and item[
-                        'endLine'] >= start_position['Line']:
+                if item['startLine'] <= start_position['line'] and item[
+                        'endLine'] >= start_position['line']:
                     break
                 i += 1
 
