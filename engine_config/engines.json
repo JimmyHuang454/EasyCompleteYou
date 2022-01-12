@@ -58,6 +58,10 @@
     "file_type": ["json"],
     "engine_name": "ECY_engines.json.json"
   }, {
+    "file_type": ["lua"],
+    "disabled": true,
+    "engine_name": "ECY_engines.lua.lua"
+  }, {
     "file_type": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.all.spell"

@@ -87,6 +87,18 @@
       "des": ["cmd to start json."]
     }
   },
+  "ECY_engines.lua.lua": {
+    "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start lua-language-server."]
+    },
+    "cmd2": {
+      "default_value": "lua-language-server",
+      "type": "string",
+      "des": ["cmd to start lua-language-server."]
+    }
+  },
   "ECY_engines.html.lsp.html_lsp": {
     "cmd": {
       "default_value": "",
