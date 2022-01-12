@@ -75,6 +75,18 @@
       "des": ["cmd to start vls."]
     }
   },
+  "ECY_engines.json.json": {
+    "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start json."]
+    },
+    "cmd2": {
+      "default_value": "vscode-json-languageserver",
+      "type": "string",
+      "des": ["cmd to start json."]
+    }
+  },
   "ECY_engines.html.lsp.html_lsp": {
     "cmd": {
       "default_value": "",
