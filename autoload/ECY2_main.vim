@@ -207,6 +207,36 @@ fun! ECY2_main#SeleteRange(...) abort
 "}}}
 endf
 
+fun! s:FoldingRange(engine_name, is_current_line) abort
+"{{{
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'is_current_line': a:is_current_line, 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'FoldingRange', 
+        \'params': l:params, 
+        \'engine_name': a:engine_name})
+"}}}
+endf
+
+fun! ECY2_main#FoldingRangeCurrentLine(...) abort
+"{{{
+  let l:engine_name = s:GetEngineName(a:000)
+  call s:FoldingRange(l:engine_name, 1)
+"}}}
+endf
+
+fun! ECY2_main#FoldingRange(...) abort
+"{{{
+  let l:engine_name = s:GetEngineName(a:000)
+  call s:FoldingRange(l:engine_name, 0)
+"}}}
+endf
+
 fun! ECY2_main#ClangdSwitchHeader(...) abort
 "{{{
   let l:engine_name = s:GetEngineName(a:000)

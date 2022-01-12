@@ -196,6 +196,9 @@ class Operate(object):
         res.extend(msg)
         rpc.DoCall('ECY#utils#echo', [res])
 
+    def _show_not_support_msg(self, features):
+        self._show_msg("%s is not supported." % features)
+
     def _handle_show_msg(self):
         if not utils.GetEngineConfig('GLOBAL_SETTING', 'lsp.showMessage'):
             return
@@ -266,11 +269,12 @@ class Operate(object):
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
-            self._show_msg('SelectionRange is not supported.')
+            self._show_not_support_msg('SelectionRange')
             return
+
         params = context['params']
-        uri = params['buffer_path']
-        uri = self._lsp.PathToUri(uri)
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
         start_position = params['buffer_position']
         position = {
             'line': start_position['line'],
@@ -282,8 +286,41 @@ class Operate(object):
 
         if res is not None:
             res = res[0]
-            res['path'] = uri
+            res['path'] = path
             rpc.DoCall('ECY#selete_range#Do', [res])
+
+    def FoldingRange(self, context):
+        if 'foldingRangeProvider' not in self.capabilities:
+            self._show_not_support_msg('FoldingRange')
+            return
+
+        params = context['params']
+        path = params['buffer_path']
+        start_position = params['buffer_position']
+        is_current_line = params['is_current_line']
+        uri = self._lsp.PathToUri(path)
+        res = self._lsp.foldingRange(uri).GetResponse()
+        res = res['result']
+
+        if res is None:
+            self._show_msg('Nothing to fold.')
+            return
+
+        i = 0
+        if is_current_line:
+            for item in res:
+                if item['startLine'] <= start_position['Line'] and item[
+                        'endLine'] >= start_position['Line']:
+                    break
+                i += 1
+
+        res = {'res': res}
+        res['path'] = path
+        res['is_current_line'] = is_current_line
+        res['buffer_position'] = start_position
+        res['seleting_folding_range'] = i
+
+        rpc.DoCall('ECY#folding_range#Do', [res])
 
     def OnWorkSpaceSymbol(self, context):
         if 'workspaceSymbolProvider' not in self.capabilities:

@@ -146,8 +146,7 @@ CAPABILITY = {
         },
         "foldingRange": {
             "dynamicRegistration": False,
-            "rangeLimit": 100,
-            "lineFoldingOnly": True
+            "lineFoldingOnly": False
         },
         "semanticTokens": {
             "requests": {

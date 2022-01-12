@@ -612,6 +612,10 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}, 'positions': [position]}
         return self._build_send(params, 'textDocument/selectionRange')
 
+    def foldingRange(self, uri):
+        params = {'textDocument': {'uri': uri}}
+        return self._build_send(params, 'textDocument/foldingRange')
+
     def PathToUri(self, file_path):
         return urljoin('file:', pathname2url(file_path))
 

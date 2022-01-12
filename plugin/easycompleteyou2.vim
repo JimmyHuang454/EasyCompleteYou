@@ -161,6 +161,8 @@ command! -nargs=0 ECYSymbols           call ECY2_main#GetWorkSpaceSymbol()
 command! -nargs=0 ECYSeleteRange       call ECY2_main#SeleteRange()
 command! -nargs=0 ECYSeleteRangeParent call ECY#selete_range#Parent()
 command! -nargs=0 ECYSeleteRangeChild  call ECY#selete_range#Child()
+command! -nargs=0 ECYFoldLine          call ECY2_main#FoldingRangeCurrentLine()
+command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
