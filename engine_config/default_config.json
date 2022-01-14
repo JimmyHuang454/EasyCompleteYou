@@ -63,7 +63,7 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.html.lsp.vls": {
+  "ECY_engines.html.vls": {
     "cmd": {
       "default_value": "",
       "type": "string",
@@ -99,7 +99,7 @@
       "des": ["cmd to start lua-language-server."]
     }
   },
-  "ECY_engines.html.lsp.html_lsp": {
+  "ECY_engines.html.html": {
     "cmd": {
       "default_value": "",
       "type": "string",
