@@ -59,7 +59,6 @@ class Case(object):
                                                                    vim_script)
 
         print(self.cmd)
-        return
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
             self.pro = subprocess.Popen(self.cmd, shell=True)
         else:
