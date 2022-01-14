@@ -51,7 +51,7 @@ def GetCurrentOS():
 
 
 class Case(object):
-    def __init__(self, vim_script, timeout=300, is_wait=False):
+    def __init__(self, vim_script, timeout=300, is_wait=True):
         self.vim_script = vim_script
         self.timeout = timeout
 
@@ -59,6 +59,7 @@ class Case(object):
                                                                    vim_script)
 
         print(self.cmd)
+        return
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
             self.pro = subprocess.Popen(self.cmd, shell=True)
         else:

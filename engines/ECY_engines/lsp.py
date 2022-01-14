@@ -520,7 +520,6 @@ class Operate(object):
 
         results_format['menu'] = detail
         results_format['info'] = document
-        logger.debug(results_format)
 
         rpc.DoCall('ECY#preview_windows#Show', [results_format])
 

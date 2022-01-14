@@ -9,7 +9,7 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.html'
 function! s:T1() abort
     call OutputLine(g:test_cpp)
     call ECY#switch_engine#Set('html', 'ECY_engines.html.lsp.html_lsp')
-    call ECY2_main#InstallLS('ECY_engines.html.lsp.html_lsp')
+    " call ECY2_main#InstallLS('ECY_engines.html.lsp.html_lsp')
 endfunction
 
 function! s:T2() abort
@@ -38,10 +38,10 @@ endfunction
 function! s:T7() abort
 endfunction
 
-call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 25000},
+call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 15000},
             \{'fuc': function('s:T2')},
             \{'fuc': function('s:T3')},
-            \{'fuc': function('s:T4'), 'delay': 25000},
+            \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
