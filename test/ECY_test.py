@@ -51,12 +51,12 @@ def GetCurrentOS():
 
 
 class Case(object):
-    def __init__(self, vim_script, timeout=300):
+    def __init__(self, vim_script, timeout=300, is_wait=True):
         self.vim_script = vim_script
         self.timeout = timeout
 
-        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (
-            VIM_EXE, vim_script)
+        self.cmd = '%s -u NONE -i NONE -n -N --cmd "source %s"' % (VIM_EXE,
+                                                                   vim_script)
 
         print(self.cmd)
         if IS_NEOVIM and GetCurrentOS() == 'Windows':
@@ -68,6 +68,8 @@ class Case(object):
                                         stderr=subprocess.PIPE,
                                         stdin=subprocess.PIPE)
         threading.Thread(target=self.Test).start()
+        if is_wait:
+            self.pro.wait()
 
     def ReadLog(self):
         log_file_path = self.vim_script + '.log'
