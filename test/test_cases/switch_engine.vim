@@ -29,7 +29,5 @@ endfunction
 call test_frame#Add({'event':[{'fuc': function('s:T1')}, 
             \{'fuc': function('s:T2')}, 
             \{'fuc': function('s:T3')},
-            \{'fuc': function('s:T4')},
-            \{'fuc': function('s:T5')},
             \]})
 call test_frame#Run()
