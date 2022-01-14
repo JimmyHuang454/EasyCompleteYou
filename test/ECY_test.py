@@ -67,9 +67,10 @@ class Case(object):
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE,
                                         stdin=subprocess.PIPE)
-        threading.Thread(target=self.Test).start()
         if is_wait:
-            self.pro.wait()
+            self.Test()
+        else:
+            threading.Thread(target=self.Test).start()
 
     def ReadLog(self):
         log_file_path = self.vim_script + '.log'
