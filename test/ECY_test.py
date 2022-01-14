@@ -51,7 +51,7 @@ def GetCurrentOS():
 
 
 class Case(object):
-    def __init__(self, vim_script, timeout=100, is_wait=True):
+    def __init__(self, vim_script, timeout=300, is_wait=False):
         self.vim_script = vim_script
         self.timeout = timeout
 
