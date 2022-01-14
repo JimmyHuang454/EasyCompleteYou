@@ -41,7 +41,7 @@ endfunction
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 25000},
             \{'fuc': function('s:T2')},
             \{'fuc': function('s:T3')},
-            \{'fuc': function('s:T4'), 'delay': 10000},
+            \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \]})
