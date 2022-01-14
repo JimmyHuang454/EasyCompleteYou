@@ -47,13 +47,13 @@
     "engine_name": "ECY_engines.javascript.theia.theia"
   }, {
     "file_type": ["html", "xhtml", "vue"],
-    "engine_name": "ECY_engines.html.lsp.html_lsp"
+    "engine_name": "ECY_engines.html.html"
   }, {
     "file_type": ["vim"],
     "engine_name": "ECY_engines.viml.vim_ts.vim"
   }, {
     "file_type": ["vue"],
-    "engine_name": "ECY_engines.html.lsp.vls"
+    "engine_name": "ECY_engines.html.vls"
   }, {
     "file_type": ["json"],
     "engine_name": "ECY_engines.json.json"

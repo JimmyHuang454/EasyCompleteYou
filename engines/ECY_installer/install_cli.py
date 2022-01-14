@@ -6,6 +6,17 @@ from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
 from ECY_installer.installer import html
 from ECY_installer.installer import pyright
+from ECY_installer.installer import json
+from ECY_installer.installer import vls
+
+usable_installer = {
+    'ECY_engines.cpp.clangd.clangd': clangd.Install(),
+    'ECY_engines.html.html': html.Install(),
+    'ECY_engines.python.pyright.pyright': pyright.Install(),
+    'ECY_engines.html.vls': vls.Install(),
+    'ECY_engines.json.json': json.Install(),
+    'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
+}
 
 from ECY_installer import base
 
@@ -28,13 +39,6 @@ else:
     with open(CONFIG_FILE_PATH, 'r') as f:
         CONFIG_INFO = json.loads(f.read())
         f.close()
-
-usable_installer = {
-    'ECY_engines.cpp.clangd.clangd': clangd.Install(),
-    'ECY_engines.html.lsp.html_lsp': html.Install(),
-    'ECY_engines.python.pyright.pyright': pyright.Install(),
-    'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
-}
 
 
 def GetCurrentOS():
