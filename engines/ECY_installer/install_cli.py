@@ -6,7 +6,7 @@ from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
 from ECY_installer.installer import html
 from ECY_installer.installer import pyright
-from ECY_installer.installer import json
+from ECY_installer.installer import json  as lsp_json
 from ECY_installer.installer import vls
 
 usable_installer = {
@@ -14,7 +14,7 @@ usable_installer = {
     'ECY_engines.html.html': html.Install(),
     'ECY_engines.python.pyright.pyright': pyright.Install(),
     'ECY_engines.html.vls': vls.Install(),
-    'ECY_engines.json.json': json.Install(),
+    'ECY_engines.json.json': lsp_json.Install(),
     'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
 }
 
