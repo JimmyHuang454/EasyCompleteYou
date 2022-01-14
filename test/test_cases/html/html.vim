@@ -1,3 +1,4 @@
+" XXXX
 let g:ECY_is_debug = 1
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
 let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
@@ -28,20 +29,20 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-endfunction
-
-function! s:T6() abort
     call Type("\<Tab>")
 endfunction
 
-function! s:T7() abort
+function! s:T6() abort
     call Expect(getline(15), '  <datalist')
+endfunction
+
+function! s:T7() abort
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 25000},
             \{'fuc': function('s:T2')},
             \{'fuc': function('s:T3')},
-            \{'fuc': function('s:T4')},
+            \{'fuc': function('s:T4'), 'delay': 25000},
             \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
