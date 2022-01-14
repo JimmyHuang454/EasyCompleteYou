@@ -660,7 +660,7 @@ class Operate(object):
                 # @deprecated Use `tags` instead if supported.
                 menu.append('Deprecated')
 
-            results_format['menu'] = menu
+            results_format['menu'] = "\n".join(menu)
 
             insertTextFormat = 0
             if 'insertTextFormat' in item:
