@@ -1,4 +1,3 @@
-" XXXX
 let g:ECY_is_debug = 1
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
 let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
@@ -14,22 +13,21 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call ECY#utils#OpenFileAndMove(15, 7, g:test_cpp, 'h')
+    call ECY#utils#OpenFileAndMove(15, 1, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())
     let &ft = 'html'
 endfunction
 
 function! s:T3() abort
-    call Type("\<Esc>a")
+    call Type("\<Esc>a<")
 endfunction
 
 function! s:T4() abort
-    call Type("\<Esc>")
+    call Type("datal")
 endfunction
 
 function! s:T5() abort
-    call Type("\<Esc>a")
 endfunction
 
 function! s:T6() abort
@@ -40,11 +38,11 @@ function! s:T7() abort
     call Expect(getline(15), '  <datalist')
 endfunction
 
-call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 45000},
+call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 25000},
             \{'fuc': function('s:T2')},
             \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},
-            \{'fuc': function('s:T5'), 'delay': 25000},
+            \{'fuc': function('s:T5')},
             \{'fuc': function('s:T6')},
             \{'fuc': function('s:T7')},
             \]})

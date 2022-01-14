@@ -132,4 +132,3 @@ for dirs, _, files in os.walk(BASE_DIR + '/exes'):
             'python -m twine upload --repository pypi dist/* --config-file "%s"'
             % (arch + '/.pypirc'),
             cwd=arch)
-

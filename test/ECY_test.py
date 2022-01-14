@@ -23,7 +23,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
 
 if VIM_EXE is None:
-    VIM_EXE = 'D:/Vim/vim82/vim'
+    VIM_EXE = 'vim'
     # VIM_EXE = 'D:/Neovim/bin/nvim'
     # IS_NEOVIM = True
 
