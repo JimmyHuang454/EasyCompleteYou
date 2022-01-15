@@ -55,6 +55,10 @@
     "file_type": ["vue"],
     "engine_name": "ECY_engines.html.vls"
   }, {
+    "file_type": ["yaml"],
+    "disabled": true,
+    "engine_name": "ECY_engines.yaml.yaml"
+  }, {
     "file_type": ["json"],
     "engine_name": "ECY_engines.json.json"
   }, {

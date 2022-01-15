@@ -59,3 +59,5 @@ jobs:
         run: |
           sudo pip3 install jedi_language_server
           sudo python ./ECY/test/ECY_test.py --is_neovim "false" --vim_exe "${{ steps.vim.outputs.executable }}"
+
+

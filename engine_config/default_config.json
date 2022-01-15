@@ -75,6 +75,18 @@
       "des": ["cmd to start vls."]
     }
   },
+  "ECY_engines.yaml.yaml": {
+    "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start yaml."]
+    },
+    "cmd2": {
+      "default_value": "yaml-language-server",
+      "type": "string",
+      "des": ["cmd to start yaml."]
+    }
+  },
   "ECY_engines.json.json": {
     "cmd": {
       "default_value": "",
