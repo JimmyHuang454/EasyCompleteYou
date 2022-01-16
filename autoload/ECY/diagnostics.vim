@@ -363,7 +363,7 @@ function! s:CalculatePosition(line, col, end_line, end_col) abort
 "}}}
 endfunction
 
-function! s:HighlightRange(range, highlights) abort
+function! ECY#diagnostics#HighlightRange(range, highlights) abort
 "{{{ return a list of `matchaddpos` e.g. [match_point1, match_point2]
 "a:range = {'start': { 'line': 5, 'colum': 23 },'end' : { 'line': 6, 'colum': 0 } }
 "
@@ -412,7 +412,7 @@ function! s:PlaceSignAndHighlight(position, diagnostics, items, style, path,
   catch 
   endtry
   if a:current_buffer_path == a:path
-    call s:HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
+    call ECY#diagnostics#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
   endif
 "}}}
 endfunction

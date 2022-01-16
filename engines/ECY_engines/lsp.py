@@ -252,6 +252,47 @@ class Operate(object):
         self._change_workspace_folder(context)
         # self.semanticTokens(context)
 
+    def DocumentLink(self, context):
+        if 'documentLinkProvider' not in self.capabilities:
+            return
+        params = context['params']
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
+        res = self._lsp.documentLink(uri).GetResponse()
+        res = res['result']
+
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        if res is None:
+            return
+
+        for item in res:
+            if 'target' in item:
+                item['target']['path'] = self._lsp.UriToPath(
+                    item['target']['uri'])
+
+        res = {'res': res}
+        res['buffer_path'] = path
+        res['buffer_id'] = params['buffer_id']
+
+        rpc.DoCall('ECY#document_link#Do', [res])
+
+    def DocumentLinkResolve(self, context):
+        if 'documentLinkProvider' not in self.capabilities:
+            return
+        if self.capabilities[
+                'documentLinkProvider'] is not dict or 'resolveProvider' in self.capabilities[
+                    'documentLinkProvider']:
+            return
+
+        params = context['params']
+        DocumentLink = params['DocumentLink']
+        res = self._lsp.documentLinkResolve(DocumentLink).GetResponse()
+        res = res['result']
+        # TODO
+
     def _change_workspace_folder(self, context):
         if 'workspace' not in self.capabilities or 'workspaceFolders' not in self.capabilities[
                 'workspace'] or not self.capabilities['workspace'][

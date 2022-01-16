@@ -71,7 +71,7 @@ fun! ECY#rpc#rpc_event#GetBufferIDNotChange()
 "}}}
 endf
 
-fun! GetBufferIDByPath(path)
+fun! ECY#rpc#rpc_event#GetBufferIDByPath(path)
 "{{{
   if !has_key(g:ECY_buffer_version, a:path)
     throw "Bad path."

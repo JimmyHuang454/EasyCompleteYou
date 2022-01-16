@@ -608,6 +608,13 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}, 'position': position}
         return self._build_send(params, 'textDocument/prepareCallHierarchy')
 
+    def documentLink(self, uri):
+        params = {'textDocument': {'uri': uri}}
+        return self._build_send(params, 'textDocument/documentLink')
+
+    def documentLinkResolve(self, DocumentLink):
+        return self._build_send(DocumentLink, 'documentLink/resolve')
+
     def selectionRange(self, position, uri):
         params = {'textDocument': {'uri': uri}, 'positions': [position]}
         return self._build_send(params, 'textDocument/selectionRange')
