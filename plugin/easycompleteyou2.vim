@@ -171,11 +171,11 @@ call ECY#engine_config#Init()
 call ECY#completion#Init()
 call ECY#signature_help#Init()
 call ECY#goto#Init()
-" call ECY#document_link#Init()
 call ECY#selete_range#Init()
 call ECY#preview_windows#Init()
 call ECY#switch_engine#Init()
 call ECY#diagnostics#Init()
+call ECY#document_link#Init()
 call ECY2_main#Init()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
