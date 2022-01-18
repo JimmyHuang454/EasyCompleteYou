@@ -370,6 +370,7 @@ function! ECY#diagnostics#HighlightRange(range, highlights) abort
 "colum is 0-based, but highlight's colum is 1-based, so we add 1.
 "ensure cursor in buffer you want to highlight before you call this function.
 
+return
   " map like a loop
   call map(s:CalculatePosition(a:range['start']['line'],
           \a:range['start']['colum'] + 1,
