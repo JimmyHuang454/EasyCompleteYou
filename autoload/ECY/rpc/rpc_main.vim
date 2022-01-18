@@ -63,7 +63,6 @@ fun! s:NewClient()
   call ECY#rpc#rpc_event#Init()
 
   call ECY#engine_config#Init()
-  call ECY#completion#Init()
   call ECY#signature_help#Init()
   call ECY#goto#Init()
   call ECY#selete_range#Init()
