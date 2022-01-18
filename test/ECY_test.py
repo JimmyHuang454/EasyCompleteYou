@@ -59,14 +59,15 @@ class Case(object):
                                                                    vim_script)
 
         print(self.cmd)
-        if IS_NEOVIM and GetCurrentOS() == 'Windows':
-            self.pro = subprocess.Popen(self.cmd, shell=True)
-        else:
-            self.pro = subprocess.Popen(self.cmd,
-                                        shell=True,
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        stdin=subprocess.PIPE)
+        # if IS_NEOVIM and GetCurrentOS() == 'Windows':
+        #     self.pro = subprocess.Popen(self.cmd, shell=True)
+        # else:
+        #     self.pro = subprocess.Popen(self.cmd,
+        #                                 shell=True,
+        #                                 stdout=subprocess.PIPE,
+        #                                 stderr=subprocess.PIPE,
+        #                                 stdin=subprocess.PIPE)
+        self.pro = subprocess.Popen(self.cmd, shell=True)
         if is_wait:
             self.Test()
         else:
