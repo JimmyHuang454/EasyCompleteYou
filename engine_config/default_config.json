@@ -179,7 +179,7 @@
       "des": ["cmd to start gopls."]
     }
   },
-  "ECY_engines.rust.rust_analyzer.rust_analyzer": {
+  "ECY_engines.rust.rust_analyzer": {
     "cmd": {
       "default_value": "",
       "type": "string",
