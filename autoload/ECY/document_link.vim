@@ -65,7 +65,6 @@ fun! s:Update() abort " and selete with selete mode.
   if !ECY2_main#IsWorkAtCurrentBuffer()
     return
   endif
-  return
 
   call ECY#document_link#ClearAll()
 
@@ -73,6 +72,7 @@ fun! s:Update() abort " and selete with selete mode.
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
+  return
   call ECY#rpc#rpc_event#call({'event_name': 'DocumentLink', 'params': l:params})
 "}}}
 endf
