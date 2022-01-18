@@ -647,6 +647,8 @@ class Operate(object):
             self.completion_isInCompleted = False
 
         for item in self.results_list:
+            # TODO
+            break
             if 'textEdit' in item:
                 ranges = item['textEdit']['range']
                 item['completion_text_edit'] = {

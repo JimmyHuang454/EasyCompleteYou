@@ -29,6 +29,13 @@ jobs:
           out-file-path: "clangd"
           fileName: "*"
 
+      - uses: robinraju/release-downloader@v1.2
+        with:
+          repository: "rust-analyzer/rust-analyzer"
+          latest: true
+          out-file-path: "rust_analyzer"
+          fileName: "*"
+
       - name: Build pypi
         env:
           PYPI: ${{ secrets.PYPI }}

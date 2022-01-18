@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import time
 import zipfile
+import gzip
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
@@ -105,6 +106,30 @@ for dirs, _, files in os.walk(BASE_DIR + '/clangd'):
         os.rename(handling_files, output_path)
         print(output_path)
 
+###################
+#  rust_analyzer  #
+###################
+handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-pc-windows-msvc.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Windows.gz'
+os.rename(handling_files, output_path)
+
+handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-apple-darwin.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_macOS.gz'
+os.rename(handling_files, output_path)
+
+handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-unknown-linux-gnu.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Linux.gz'
+os.rename(handling_files, output_path)
+
+
+def UnGz(file_name: str) -> str:
+    f_name = file_name.replace(".gz", "")
+    g_file = gzip.GzipFile(file_name)
+    open(f_name, "wb+").write(g_file.read())
+    g_file.close()
+    return f_name
+
+
 #######################################################################
 #                             upload all                              #
 #######################################################################
@@ -124,6 +149,8 @@ for dirs, _, files in os.walk(BASE_DIR + '/exes'):
         output_dir = arch + '/ECY_exe'
         if zipfile.is_zipfile(handling_files):
             zipfile.ZipFile(handling_files).extractall(output_dir)
+        elif handling_files.endswith('.gz'):
+            MoveFile(UnGz(handling_files), output_dir)
         else:
             MoveFile(handling_files, output_dir)
 

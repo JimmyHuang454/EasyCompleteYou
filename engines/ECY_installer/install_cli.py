@@ -6,15 +6,17 @@ from ECY_installer.installer import clangd
 from ECY_installer.installer import jedi_ls
 from ECY_installer.installer import html
 from ECY_installer.installer import pyright
-from ECY_installer.installer import json  as lsp_json
+from ECY_installer.installer import json as lsp_json
 from ECY_installer.installer import vls
+from ECY_installer.installer import rust_analyzer
 
-usable_installer = {
+USABLE_INSTALLER = {
     'ECY_engines.cpp.clangd.clangd': clangd.Install(),
     'ECY_engines.html.html': html.Install(),
     'ECY_engines.python.pyright.pyright': pyright.Install(),
     'ECY_engines.html.vls': vls.Install(),
     'ECY_engines.json.json': lsp_json.Install(),
+    'ECY_engines.rust.rust_analyzer': rust_analyzer.Install(),
     'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
 }
 
@@ -69,7 +71,7 @@ def Update(server_name, info):
 
 def Install(server_name):
     current_os = GetCurrentOS()
-    obj = usable_installer[server_name]
+    obj = USABLE_INSTALLER[server_name]
     fuc = current_os
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
@@ -80,7 +82,7 @@ def Install(server_name):
 
 def UnInstall(server_name):
     current_os = GetCurrentOS()
-    obj = usable_installer[server_name]
+    obj = USABLE_INSTALLER[server_name]
     fuc = "Clean" + current_os
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)

@@ -186,7 +186,7 @@
       "des": ["cmd to start rust_analyzer."]
     },
     "cmd2": {
-      "default_value": "rust_analyzer",
+      "default_value": "rust-analyzer",
       "type": "string",
       "des": ["cmd to start rust_analyzer."]
     }
