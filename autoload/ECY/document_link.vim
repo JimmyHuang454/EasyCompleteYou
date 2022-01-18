@@ -46,6 +46,7 @@ fun! ECY#document_link#RenderBuffer(buffer_path) abort
 
   let l:info = g:ECY_document_link_info[a:buffer_path]
   let l:range = {'start': { 'line': 1, 'colum': 1 },'end' : { 'line': 2, 'colum': 1 } }
+  return
   call ECY#diagnostics#HighlightRange(l:range, 'ECY_document_link_style')
 "}}}
 endf
