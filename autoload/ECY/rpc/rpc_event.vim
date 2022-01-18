@@ -73,10 +73,10 @@ endf
 
 fun! ECY#rpc#rpc_event#GetBufferIDByPath(path)
 "{{{
-  if !has_key(g:ECY_buffer_version, a:path)
-    throw "Bad path."
+  if has_key(g:ECY_buffer_version, a:path)
+    return g:ECY_buffer_version[a:path]
   endif
-  return g:ECY_buffer_version[a:path]
+  return 0
 "}}}
 endf
 

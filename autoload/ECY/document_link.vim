@@ -72,7 +72,6 @@ fun! s:Update() abort " and selete with selete mode.
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  return
   call ECY#rpc#rpc_event#call({'event_name': 'DocumentLink', 'params': l:params})
 "}}}
 endf
@@ -90,4 +89,3 @@ fun! ECY#document_link#Do(res) abort " Update
   call ECY#document_link#RenderBuffer(ECY#utils#GetCurrentBufferPath())
 "}}}
 endf
-
