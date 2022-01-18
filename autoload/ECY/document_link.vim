@@ -6,6 +6,9 @@ fun! ECY#document_link#Init() abort
   let g:ECY_enable_document_link = 
         \get(g:, 'ECY_enable_document_link', v:true)
 
+  let g:ECY_disable_document_link_in_insert_mode = 
+        \get(g:, 'ECY_disable_document_link_in_insert_mode', v:true)
+
   let g:ECY_document_link_info = {}
 
   hi ECY_document_link_style  term=underline gui=underline cterm=underline
@@ -26,7 +29,7 @@ endf
 
 fun! s:InsertEnter() abort " and selete with selete mode.
 "{{{
-  if !ECY2_main#IsWorkAtCurrentBuffer()
+  if !ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_disable_document_link_in_insert_mode
     return
   endif
 
@@ -36,14 +39,11 @@ endf
 
 fun! ECY#document_link#RenderBuffer(buffer_path) abort
 "{{{
-  if ECY#utils#GetCurrentBufferPath() != a:buffer_path
-    return
-  endif
-  if !has_key(g:ECY_document_link_info, a:buffer_path)
+  if ECY#utils#GetCurrentBufferPath() != a:buffer_path || 
+        \!has_key(g:ECY_document_link_info, a:buffer_path)
     return
   endif
 
-  return
   let l:info = g:ECY_document_link_info[a:buffer_path]
   let l:range = {'start': { 'line': 1, 'colum': 1 },'end' : { 'line': 2, 'colum': 1 } }
   call ECY#diagnostics#HighlightRange(l:range, 'ECY_document_link_style')
@@ -65,6 +65,7 @@ fun! s:Update() abort " and selete with selete mode.
   if !ECY2_main#IsWorkAtCurrentBuffer()
     return
   endif
+  return
 
   call ECY#document_link#ClearAll()
 
