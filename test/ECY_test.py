@@ -96,6 +96,7 @@ class Case(object):
             self.pro.wait(self.timeout)
         except Exception as e:  # timeout
             print('timeout', e)
+            self.pro.terminate()
             test_case_queue.put({
                 'case': self.vim_script,
                 'is_ok': False,

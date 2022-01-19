@@ -4,7 +4,7 @@ let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
 let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
-let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.rs'
+let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/hello_test/src/main.rs'
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
