@@ -626,7 +626,8 @@ class LSP(conec.Operate):
         return self._build_send(params, 'textDocument/foldingRange')
 
     def PathToUri(self, file_path):
-        return quote(urljoin('file:', pathname2url(file_path)))
+        # file_path = quote(file_path)
+        return urljoin('file:', pathname2url(file_path))
 
     def UriToPath(self, uri):
         try:
