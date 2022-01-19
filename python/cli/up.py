@@ -110,15 +110,15 @@ for dirs, _, files in os.walk(BASE_DIR + '/clangd'):
 #  rust_analyzer  #
 ###################
 handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-pc-windows-msvc.gz'
-output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Windows.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Windows.exe.gz'
 os.rename(handling_files, output_path)
 
 handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-apple-darwin.gz'
-output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_macOS.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_macOS.exe.gz'
 os.rename(handling_files, output_path)
 
 handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-unknown-linux-gnu.gz'
-output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Linux.gz'
+output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Linux.exe.gz'
 os.rename(handling_files, output_path)
 
 
