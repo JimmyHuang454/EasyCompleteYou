@@ -20,6 +20,7 @@ ECY_server.log
 *.log
 *.spec
 ECY_config.txt
+target
 deps
 ECY_img
 dist
