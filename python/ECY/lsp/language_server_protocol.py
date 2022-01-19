@@ -7,8 +7,10 @@ import threading
 import queue
 import os
 from urllib.parse import urljoin
-from urllib.request import pathname2url
+from urllib.parse import quote
+from urllib.parse import unquote
 from urllib.parse import urlparse
+from urllib.request import pathname2url
 from urllib.request import url2pathname
 
 from ECY.debug import logger
@@ -624,7 +626,7 @@ class LSP(conec.Operate):
         return self._build_send(params, 'textDocument/foldingRange')
 
     def PathToUri(self, file_path):
-        return urljoin('file:', pathname2url(file_path))
+        return quote(urljoin('file:', pathname2url(file_path)))
 
     def UriToPath(self, uri):
         try:
@@ -633,9 +635,10 @@ class LSP(conec.Operate):
                 file_path = url2pathname(urlparse(uri).path).strip('\\')
                 if file_path[0].islower():
                     file_path = file_path[0].upper() + file_path[1:]
-                return file_path
+                res = file_path
             else:
-                return url2pathname(urlparse(uri).path)
+                res = url2pathname(urlparse(uri).path)
+            return unquote(res)
         except Exception as e:
             logger.exception(e)
             return "file:///home/ECY/1"
