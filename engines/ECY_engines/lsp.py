@@ -270,6 +270,7 @@ class Operate(object):
 
         for item in res:
             if 'target' in item:
+                item['target'] = {'uri': item['target']}
                 item['target']['path'] = self._lsp.UriToPath(
                     item['target']['uri'])
 

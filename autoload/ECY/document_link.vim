@@ -20,8 +20,9 @@ fun! ECY#document_link#Init() abort
 
   augroup ECY_document_link
     autocmd!
-    autocmd InsertLeave   * call s:Update()
     autocmd BufEnter      * call s:Update()
+    autocmd InsertLeave   * call s:Update()
+    autocmd TextChanged   * call s:Update()
     autocmd InsertEnter   * call s:InsertEnter()
   augroup END
 "}}}
@@ -45,8 +46,14 @@ fun! ECY#document_link#RenderBuffer(buffer_path) abort
   endif
 
   let l:info = g:ECY_document_link_info[a:buffer_path]
-  let l:range = {'start': { 'line': 1, 'colum': 1 },'end' : { 'line': 2, 'colum': 1 } }
-  call ECY#diagnostics#HighlightRange(l:range, 'ECY_document_link_style')
+
+  for item in l:info['res']
+    let l:temp = item['range']
+    let l:range = {'start': { 
+          \'line': l:temp['start']['line'] + 1, 'colum': l:temp['start']['character'] },
+          \'end' : { 'line': l:temp['end']['line'] + 1, 'colum': l:temp['end']['character']}}
+    call ECY#diagnostics#HighlightRange(l:range, 'ECY_document_link_style')
+  endfor
 "}}}
 endf
 
