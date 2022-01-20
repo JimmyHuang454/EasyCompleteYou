@@ -13,7 +13,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call ECY#utils#OpenFileAndMove(8, 12, g:test_cpp, 'h')
+    call ECY#utils#OpenFileAndMove(10, 12, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())
     let &ft = 'cpp'
@@ -28,7 +28,7 @@ function! s:T4() abort
 endfunction
 
 function! s:T5() abort
-    call Expect(getline(8), '  test_abbr.type_1')
+    call Expect(getline(10), '  test_abbr.type_1')
 endfunction
 
 function! s:T6() abort

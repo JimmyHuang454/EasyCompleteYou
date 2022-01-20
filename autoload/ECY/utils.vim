@@ -601,3 +601,12 @@ function! ECY#utils#GetUltiSnippets()
   endtry
 "}}}
 endfunction
+
+function! ECY#utils#AskWindowsStyle()
+"{{{
+  redraw!
+  echo "Open Window by (v)ertical (h)orizon (t)ab.\n"
+  let l:style = input('Style: ')
+  return l:style
+"}}}
+endfunction

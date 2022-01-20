@@ -291,8 +291,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
   let g:ECY_windows_are_showing['diagnostics'] = 
         \quickui#preview#display(l:text, {
           \'syntax': 'ECY_diagnostics', 
-          \'number': 0,
-          \'h':len(l:text)})
+          \'number': 0})
 "}}}
 endfunction
 

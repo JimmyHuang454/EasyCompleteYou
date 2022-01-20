@@ -96,3 +96,29 @@ fun! ECY#document_link#Do(res) abort " Update
   call ECY#document_link#RenderBuffer(ECY#utils#GetCurrentBufferPath())
 "}}}
 endf
+
+fun! ECY#document_link#Open() abort
+"{{{
+  let l:buffer_path = ECY#utils#GetCurrentBufferPath()
+
+  if !has_key(g:ECY_document_link_info, l:buffer_path)
+    return
+  endif
+
+  let l:info = g:ECY_document_link_info[l:buffer_path]
+
+  for item in l:info['res']
+    let l:res = item
+    let l:range = item['range']
+    let l:line  = line('.')
+    let l:col   = col('.')
+    if l:range['start']['line'] <= l:line && l:range['end']['line'] >= l:line &&
+          \l:range['start']['character'] <= l:col && l:range['end']['character']  >= l:col
+      break
+    endif
+  endfor
+
+  let l:style = ECY#utils#AskWindowsStyle()
+  call ECY#utils#OpenFileAndMove(1, 1, l:res['target']['path'], l:style)
+"}}}
+endf

@@ -23,15 +23,6 @@ fun! s:WindowsLeave()
 "}}}
 endf
 
-fun! s:AskWindowsStyle()
-"{{{
-  redraw!
-  echo "Open Window by (v)ertical (h)orizon (t)ab.\n"
-  let l:style = input('Style: ')
-  return l:style
-"}}}
-endf
-
 fun! s:AskItem()
 "{{{
   let s:show = ''
@@ -90,7 +81,7 @@ fun! s:Open() abort
     endif
     let l:path = l:seleted['path']
     let l:start = l:seleted['range']['start']
-    let l:style = s:AskWindowsStyle()
+    let l:style = ECY#utils#AskWindowsStyle()
 
     if bufnr(l:path) == -1 "file not in buffer.
       let l:is_new = v:true

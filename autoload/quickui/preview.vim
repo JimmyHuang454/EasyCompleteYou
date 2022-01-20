@@ -87,7 +87,7 @@ function! quickui#preview#display(content, opts)
 	endif
 	if has('nvim') == 0
 		let winid = popup_create(source, {'wrap':1, 'mapping':0, 'hidden':1})
-		let opts = {'maxwidth':w, 'maxheight':h, 'minwidth':w, 'minheight':h}
+		let opts = {}
 		call popup_move(winid, opts)
 		let opts = {'close':'button'}
 		let opts.border = border? [1,1,1,1,1,1,1,1,1] : repeat([0], 9)
