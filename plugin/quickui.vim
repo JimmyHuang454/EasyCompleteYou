@@ -11,8 +11,8 @@
 
 
 " require vim 8.2+
-if has('patch-8.2.1') == 0 || has('nvim')
-	" finish
+if has('patch-8.2.1') == 0 || has('nvim') || exists('g:quickui_version')
+	finish
 endif
 
 

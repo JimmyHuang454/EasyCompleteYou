@@ -338,6 +338,16 @@ function! quickui#utils#scroll(winid, offset)
 	endif
 endfunc
 
+"----------------------------------------------------------------------
+" first line to show in window.
+"----------------------------------------------------------------------
+function! quickui#utils#set_firstline(winid, line)
+	if g:quickui#core#has_nvim == 0
+		call popup_setoptions(a:winid, {'firstline': a:line})
+	else
+		call nvim_win_set_cursor(a:winid, [a:line, 0])
+	endif
+endfunc
 
 
 "----------------------------------------------------------------------

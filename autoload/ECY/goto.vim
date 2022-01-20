@@ -45,21 +45,26 @@ fun! s:AskItem()
     let i += 1
   endfor
   echo s:show
-  let l:int = str2nr(input('Index: '))
-  if l:int > len(s:res) || l:int == 0
+  let l:index = str2nr(input('Index: '))
+  if l:index > len(s:res) || l:index == 0
     call ECY#utils#echo('Quited')
     return -1
   endif
-  return l:int
+  return l:index
 "}}}
 endf
 
-fun! ECY#goto#Do(res) abort
+fun! ECY#goto#Open(res) abort
   let s:res = a:res
-  call s:Do()
+  call s:Open()
 endf
 
-fun! s:Do() abort
+fun! ECY#goto#Preview(res) abort
+  let s:res = a:res
+  call s:Preview()
+endf
+
+fun! s:Open() abort
 "{{{
   if type(s:res) == v:t_list && len(s:res) == 0
     return
@@ -68,21 +73,22 @@ fun! s:Do() abort
   if type(s:res) == v:t_dict
     
   else
-    let l:int = 0
+    let l:index = 0
     if len(s:res) != 1
-      let l:int = s:AskItem()
-      if l:int == -1
+      let l:index = s:AskItem()
+      if l:index == -1
         return
       endif
     endif
 
-    let l:int -= 1
-    let l:seleted = s:res[l:int]
-    if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range')
+    let l:index -= 1
+    let l:seleted = s:res[l:index]
+    if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range') || 
+          \!has_key(l:seleted, 'path')
       call ECY#utils#echo('Wrong item.')
       return
     endif
-    let l:path = UriToPath(l:seleted['uri'])
+    let l:path = l:seleted['path']
     let l:start = l:seleted['range']['start']
     let l:style = s:AskWindowsStyle()
 
@@ -98,6 +104,41 @@ fun! s:Do() abort
     if l:is_new && g:ECY_is_unload_buffer_after_goto
       let g:ECY_unload_buffer[l:buffer_nr] = v:true
     endif
+  endif
+"}}}
+endf
+
+fun! s:Preview() abort
+"{{{
+  if type(s:res) == v:t_list && len(s:res) == 0
+    return
+  endif
+
+  if type(s:res) == v:t_dict
+    
+  else
+    let l:index = 0
+    if len(s:res) != 1
+      let l:index = s:AskItem()
+      if l:index == -1
+        return
+      endif
+    endif
+
+    let l:index -= 1
+    let l:seleted = s:res[l:index]
+    if !has_key(l:seleted, 'uri') || !has_key(l:seleted, 'range') || 
+          \!has_key(l:seleted, 'path')
+      call ECY#utils#echo('Wrong item.')
+      return
+    endif
+
+    let l:path = l:seleted['path']
+    let l:start = l:seleted['range']['start']
+
+    let l:opts = {'syntax': &syn, 'title': l:path}
+    let l:win_id = quickui#preview#open(l:path, l:opts)
+    call quickui#utils#set_firstline(l:win_id, l:start['line'] + 1)
   endif
 "}}}
 endf

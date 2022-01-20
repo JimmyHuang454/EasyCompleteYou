@@ -913,7 +913,7 @@ class Operate(object):
             results_list.append(temp)
         return results_list
 
-    def _goto_response(self, res):
+    def _goto_response(self, res, is_preview=False):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -930,7 +930,10 @@ class Operate(object):
             if 'uri' in item:
                 item['path'] = self._lsp.UriToPath(item['uri'])
 
-        rpc.DoCall('ECY#goto#Do', [res])
+        if is_preview:
+            rpc.DoCall('ECY#goto#Preview', [res])
+        else:
+            rpc.DoCall('ECY#goto#Open', [res])
 
     def GotoDefinition(self, context):
         if 'definitionProvider' not in self.capabilities:
@@ -946,7 +949,7 @@ class Operate(object):
         }
 
         res = self._lsp.definition(position, uri).GetResponse()
-        self._goto_response(res)
+        self._goto_response(res, params['is_preview'])
 
     def GotoTypeDefinition(self, context):
         if 'typeDefinitionProvider' not in self.capabilities:
@@ -962,7 +965,7 @@ class Operate(object):
         }
 
         res = self._lsp.typeDefinition(position, uri).GetResponse()
-        self._goto_response(res)
+        self._goto_response(res, params['is_preview'])
 
     def GotoImplementation(self, context):
         if 'implementationProvider' not in self.capabilities:
@@ -978,7 +981,7 @@ class Operate(object):
         }
 
         res = self._lsp.implementation(position, uri).GetResponse()
-        self._goto_response(res)
+        self._goto_response(res, params['is_preview'])
 
     def GotoDeclaration(self, context):
         if 'declarationProvider' not in self.capabilities:
@@ -995,7 +998,7 @@ class Operate(object):
 
         res = self._lsp.declaration(position, uri).GetResponse()
 
-        self._goto_response(res)
+        self._goto_response(res, params['is_preview'])
 
     def OnHover(self, context):
         if 'hoverProvider' not in self.capabilities:

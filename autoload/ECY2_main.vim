@@ -175,22 +175,6 @@ fun! ECY2_main#GetDocumentSymbol(...) abort
 "}}}
 endf
 
-fun! ECY2_main#GotoDefinition(...) abort
-"{{{
-  let l:engine_name = s:GetEngineName(a:000)
-  let l:params = {
-                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_line': ECY#utils#GetCurrentLine(), 
-                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoDefinition', 
-        \'params': l:params, 
-        \'engine_name': l:engine_name})
-"}}}
-endf
-
 fun! ECY2_main#SeleteRange(...) abort
 "{{{
   let l:engine_name = s:GetEngineName(a:000)
@@ -266,49 +250,22 @@ fun! ECY2_main#PrepareCallHierarchy() abort
 "}}}
 endf
 
-fun! ECY2_main#GotoImplementation(...) abort
+fun! ECY2_main#Goto(engine_name, event_name, is_preview) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = a:engine_name
+  if l:engine_name == ''
+    let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+  endif
+
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'is_preview': a:is_preview, 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
                 \}
 
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoImplementation', 
-        \'params': l:params, 
-        \'engine_name': l:engine_name})
-"}}}
-endf
-
-fun! ECY2_main#GotoDeclaration(...) abort
-"{{{
-  let l:engine_name = s:GetEngineName(a:000)
-  let l:params = {
-                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_line': ECY#utils#GetCurrentLine(), 
-                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoDeclaration', 
-        \'params': l:params, 
-        \'engine_name': l:engine_name})
-"}}}
-endf
-
-fun! ECY2_main#GotoTypeDefinition(...) abort
-"{{{
-  let l:engine_name = s:GetEngineName(a:000)
-  let l:params = {
-                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_line': ECY#utils#GetCurrentLine(), 
-                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'GotoTypeDefinition', 
+  call ECY#rpc#rpc_event#call({'event_name': a:event_name, 
         \'params': l:params, 
         \'engine_name': l:engine_name})
 "}}}

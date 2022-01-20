@@ -116,22 +116,60 @@ if g:has_floating_windows_support == 'vim'
   endw
 endif
 
-function! s:Goto(types) abort
+function! s:Goto(types, is_preview) abort
 "{{{
   if a:types == 'definitions' || a:types == 'definition'
-    call ECY2_main#GotoDefinition()
+    call ECY2_main#Goto('', 'GotoDefinition', a:is_preview)
   elseif a:types == 'declaration'
-    call ECY2_main#GotoDeclaration()
+    call ECY2_main#Goto('', 'GotoDeclaration', a:is_preview)
   elseif a:types == 'implementation'
-    call ECY2_main#GotoImplementation()
+    call ECY2_main#Goto('', 'GotoImplementation', a:is_preview)
   elseif a:types == 'typeDefinition' || a:types == 'type_definition'
-    call ECY2_main#GotoTypeDefinition()
+    call ECY2_main#Goto('', 'GotoTypeDefinition', a:is_preview)
   else
     echo a:types
   endif
 "}}}
 endfunction
 
+function! g:ECYGotoMenu() abort
+"{{{
+  let content = [
+        \ ["&Definition\t", "call ECY2_main#Goto('', 'GotoDefinition', 0)"],
+        \ ["De&claration\t", "call ECY2_main#Goto('', 'GotoDeclaration', 0)"],
+        \ ["&Implementation\t", "call ECY2_main#Goto('', 'Implementation', 0)"],
+        \ ["&TypeDefinition\t", "call ECY2_main#Goto('', 'TypeDefinition', 0)"],
+        \ ['-'],
+        \ ["Definition Preview\t", "call ECY2_main#Goto('', 'GotoDefinition', 1)"],
+        \ ["Declaration Preview\t", "call ECY2_main#Goto('', 'GotoDeclaration', 1)"],
+        \ ["Implementation Preview\t", "call ECY2_main#Goto('', 'Implementation', 1)"],
+        \ ["TypeDefinition Preview\t", "call ECY2_main#Goto('', 'TypeDefinition', 1)"],
+        \ ]
+  " set cursor to the last position
+  let opts = {'index': g:quickui#context#cursor, 
+        \'title': ECY#switch_engine#GetBufferEngineName()}
+  call quickui#context#open(content, opts)
+"}}}
+endfunction
+
+function! s:Menu() abort
+"{{{
+  let content = [
+        \ ["&Hover\t", 'ECYHover' ],
+        \ ["&Format\t", 'ECYFormat'],
+        \ ["&Rename\t", 'ECYRename' ],
+        \ ["&Symbol\t", 'ECYSymbol' ],
+        \ ["&FoldLine\t", 'ECYFoldLine'],
+        \ ["&DocSymbol\t", 'ECYDocSymbol' ],
+        \ ["&Goto\t", 'call g:ECYGotoMenu()'],
+        \ ["S&eleteRange\t", 'ECYSeleteRange'],
+        \ ]
+  " set cursor to the last position
+  let opts = {'index': g:quickui#context#cursor, 
+        \'title': ECY#switch_engine#GetBufferEngineName()}
+  call quickui#context#open(content, opts)
+"}}}
+endfunction
 
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
@@ -144,10 +182,9 @@ vmap ae <ESC>:ECYSeleteRangeParent<CR>
 vmap ar <ESC>:ECYSeleteRangeParent<CR>
 vmap at <ESC>:ECYSeleteRangeChild<CR>
 
-command! -nargs=* ECYGoto              call s:Goto(<q-args>)
-command! -nargs=* ECYGotoV             call s:Goto(<q-args>)
-command! -nargs=* ECYGotoH             call s:Goto(<q-args>)
-command! -nargs=* ECYGotoT             call s:Goto(<q-args>)
+command! -nargs=* ECY                  call s:Menu()
+command! -nargs=* ECYGoto              call s:Goto(<q-args>, 0)
+command! -nargs=* ECYGotoP             call s:Goto(<q-args>, 1)
 command! -nargs=0 ECYHover             call ECY2_main#Hover()
 command! -nargs=0 ECYFormat            call ECY2_main#Format()
 command! -nargs=0 ECYRename            call ECY2_main#Rename()
