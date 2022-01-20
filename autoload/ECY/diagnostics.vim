@@ -46,7 +46,6 @@ function ECY#diagnostics#Init() abort
   let g:ECY_diagnostics_items_all              = []
   let g:ECY_windows_are_showing['diagnostics'] = -1
   let g:ECY_diagnostics_items_with_engine_name = {'nothing': []}
-  let g:ECY_show_diagnostics_when_cursor_hold = v:false
   " user don't want to update diagnostics in insert mode, but engine had
   " returned diagnostics, so we cache it and update after user leave insert
   " mode.
@@ -72,8 +71,7 @@ fun! s:InsertLeave()
 endf
 
 function s:SetUpEvent() abort
-  augroup EasyCompleteYou_Diagnosis
-    autocmd CursorHold  * call s:OnCursorHold()
+  augroup ECY_Diagnosis
     autocmd InsertLeave * call s:InsertLeave()
   augroup END
 endfunction
@@ -116,12 +114,6 @@ function s:CalculateScreenSign(start, end) abort
   endfor
   return l:res
 "}}}
-endfunction
-
-function s:OnCursorHold() abort
-  if g:ECY_windows_are_showing['diagnostics'] == -1 && g:ECY_show_diagnostics_when_cursor_hold
-    call ECY#diagnostics#ShowCurrentLineDiagnosis(v:true)
-  endif
 endfunction
 
 function! ECY#diagnostics#ShowCurrentLineDiagnosis(is_triggered_by_event) abort
@@ -242,12 +234,8 @@ endfunction
 
 function! s:CloseDiagnosisPopupWindows() abort
 "{{{
-  if g:ECY_windows_are_showing['diagnostics'] != -1
-    if g:has_floating_windows_support == 'vim'
-      call popup_close(g:ECY_windows_are_showing['diagnostics'])
-      let g:ECY_windows_are_showing['diagnostics'] = -1
-    endif
-  endif
+  call quickui#preview#close()
+  let g:ECY_windows_are_showing['diagnostics'] = -1
 "}}}
 endfunction
 
@@ -299,26 +287,12 @@ function! s:ShowDiagnosis_vim(index_list) abort
     call add(l:text, printf('%s [L-%s, C-%s] %s', l:style, l:line, l:colum, l:nr))
     call extend(l:text, s:FormatInfo(item['diagnostics']))
   endfor
-  if g:ECY_PreviewWindows_style == 'append'
-    " show a popup windows aside current cursor.
-    let l:opts = {
-        \ 'minwidth': g:ECY_preview_windows_size[0][0],
-        \ 'maxwidth': g:ECY_preview_windows_size[0][1],
-        \ 'minheight': g:ECY_preview_windows_size[1][0],
-        \ 'maxheight': g:ECY_preview_windows_size[1][1],
-        \ 'border': [],
-        \ 'close': 'click',
-        \ 'borderchars': ['-', '|', '-', '|', '┌', '┐', '┘', '└'],
-        \ 'callback': 'g:Diagnosis_vim_cb',
-        \ 'scrollbar': 1,
-        \ 'firstline': 1,
-        \ 'padding': [0,1,0,1],
-        \ 'zindex': 2000}
-    let l:nr = popup_atcursor(l:text, l:opts)
-    call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_diagnostics')
-    " call win_execute(l:nr, l:exe)
-    let g:ECY_windows_are_showing['diagnostics'] = l:nr
-  endif
+
+  let g:ECY_windows_are_showing['diagnostics'] = 
+        \quickui#preview#display(l:text, {
+          \'syntax': 'ECY_diagnostics', 
+          \'number': 0,
+          \'h':len(l:text)})
 "}}}
 endfunction
 
@@ -592,7 +566,7 @@ function! ECY#diagnostics#Toggle() abort
     call ECY#diagnostics#CleanAllSignHighlight()
     call ECY#diagnostics#ClearAllSign()
     let s:current_diagnostics       = {}
-    let g:ECY_windows_are_showing['diagnostics']    = -1
+    let g:ECY_windows_are_showing['diagnostics'] = -1
     let g:ECY_diagnostics_items_all = []
     let g:ECY_diagnostics_items_with_engine_name = {}
   endif
