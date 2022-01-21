@@ -63,6 +63,11 @@ class Operate(object):
 
         self.languageId = languageId
 
+        self.enabled_document_link = rpc.GetVaribal(
+            'g:ECY_enable_document_link')
+
+        self.enabled_code_lens = rpc.GetVaribal('g:ECY_enable_code_lens')
+
         self._did_open_list = {}
         self._diagnosis_cache = []
         self.results_list = []
@@ -136,7 +141,7 @@ class Operate(object):
                 'GLOBAL_SETTING', 'lsp_formatting')
 
     def _handle_edit(self):
-        while 1:
+        while True:
             try:
                 response = self._lsp.GetRequestOrNotification(
                     'workspace/applyEdit')
@@ -250,11 +255,13 @@ class Operate(object):
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
         self._change_workspace_folder(context)
-        # self.semanticTokens(context)
+        self.GetCodeLens(context)
+        self.DocumentLink(context)
 
     def DocumentLink(self, context):
-        if 'documentLinkProvider' not in self.capabilities:
+        if 'documentLinkProvider' not in self.capabilities or not self.enabled_document_link:
             return
+        rpc.DoCall('ECY#document_link#ClearAll')
         params = context['params']
         path = params['buffer_path']
         uri = self._lsp.PathToUri(path)
@@ -281,7 +288,7 @@ class Operate(object):
         rpc.DoCall('ECY#document_link#Do', [res])
 
     def DocumentLinkResolve(self, context):
-        if 'documentLinkProvider' not in self.capabilities:
+        if 'documentLinkProvider' not in self.capabilities or not self.enabled_document_link:
             return
         if self.capabilities[
                 'documentLinkProvider'] is not dict or 'resolveProvider' in self.capabilities[
@@ -308,6 +315,10 @@ class Operate(object):
 
     def OnTextChanged(self, context):
         self._did_open_or_change(context)
+        params = context['params']
+        if params['change_mode'] == 'n':  # normal mode
+            self.GetCodeLens(context)
+            self.DocumentLink(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -508,6 +519,8 @@ class Operate(object):
     def OnInsertLeave(self, context):
         self.completion_position_cache = {}
         self.completion_isInCompleted = False
+        self.GetCodeLens(context)
+        self.DocumentLink(context)
 
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
@@ -753,6 +766,12 @@ class Operate(object):
             return
         cmd_params = params['cmd_params']
         self._lsp.executeCommand(cmd_name, arguments=cmd_params)
+        rpc.DoCall('ECY#code_lens#Do', [res])
+
+    def GetExecuteCommand(self, context):
+        if 'executeCommandProvider' not in self.capabilities:
+            self._show_not_support_msg('executeCommand')
+            return
 
     def _get_registerCapability(self):
         while True:
@@ -1082,17 +1101,20 @@ class Operate(object):
         self._goto_response(res)
 
     def GetCodeLens(self, context):
-        if 'codeLensProvider' not in self.capabilities:
-            self._show_not_support_msg('GetCodeLens')
+        if 'codeLensProvider' not in self.capabilities or not self.enabled_code_lens:
             return
         params = context['params']
-        uri = params['buffer_path']
-        uri = self._lsp.PathToUri(uri)
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
         res = self._lsp.codeLens(uri).GetResponse()
+
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
-        # TODO
+        res = res['result']
+
+        res = {'res': res, 'path': path}
+        rpc.DoCall('ECY#code_lens#Do', [res])
 
     def PrepareCallHierarchy(self, context):
         params = context['params']

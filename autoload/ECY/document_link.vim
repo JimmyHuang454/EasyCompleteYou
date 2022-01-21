@@ -13,28 +13,6 @@ fun! ECY#document_link#Init() abort
 
   hi ECY_document_link_style  term=underline gui=underline cterm=underline
   let g:ECY_document_link_style = get(g:,'ECY_document_link_style','ECY_document_link_style')
-
-  if !g:ECY_enable_document_link
-    return
-  endif
-
-  augroup ECY_document_link
-    autocmd!
-    autocmd BufEnter      * call s:Update()
-    autocmd InsertLeave   * call s:Update()
-    autocmd TextChanged   * call s:Update()
-    autocmd InsertEnter   * call s:InsertEnter()
-  augroup END
-"}}}
-endf
-
-fun! s:InsertEnter() abort " and selete with selete mode.
-"{{{
-  if !ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_disable_document_link_in_insert_mode
-    return
-  endif
-
-  call ECY#document_link#ClearAll()
 "}}}
 endf
 
@@ -67,22 +45,6 @@ fun! ECY#document_link#ClearAll() abort
 "}}}
 endf
 
-fun! s:Update() abort " and selete with selete mode.
-"{{{
-  if !ECY2_main#IsWorkAtCurrentBuffer()
-    return
-  endif
-
-  call ECY#document_link#ClearAll()
-
-  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'DocumentLink', 'params': l:params})
-"}}}
-endf
-
 fun! ECY#document_link#Do(res) abort " Update
 "{{{
   let l:buffer_path = a:res['buffer_path']
@@ -99,6 +61,10 @@ endf
 
 fun! ECY#document_link#Open() abort
 "{{{
+  if !g:ECY_enable_document_link
+    return
+  endif
+
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
 
   if !has_key(g:ECY_document_link_info, l:buffer_path)

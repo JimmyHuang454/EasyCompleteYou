@@ -44,6 +44,14 @@ fun! ECY2_main#ExecuteCommand(engine_name, cmd_name, cmd_params) abort
 "}}}
 endf
 
+fun! ECY2_main#GetExecuteCommand(...) abort
+"{{{
+  let l:engine_name = s:GetEngineName(a:000)
+  call ECY#rpc#rpc_event#call({'event_name': 'GetExecuteCommand', 'params': {},
+        \'engine_name': l:engine_name})
+"}}}
+endf
+
 fun! ECY2_main#CheckAllEngine() abort
 "{{{
 
