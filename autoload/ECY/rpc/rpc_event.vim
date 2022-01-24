@@ -149,6 +149,20 @@ fun! s:InsertEnter()
 "}}}
 endf
 
+fun! s:BufWritePost()
+"{{{
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
+  
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'OnSave', 'params': l:params})
+"}}}
+endf
+
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
   if !ECY2_main#IsWorkAtCurrentBuffer()
@@ -196,8 +210,9 @@ fun! ECY#rpc#rpc_event#Init()
     autocmd TextChanged   * call s:OnTextChanged()
     autocmd InsertLeave   * call ECY#rpc#rpc_event#OnInsertLeave()
 
-    autocmd TextChangedI  * call s:TextChangedI()
-    autocmd InsertEnter   * call s:InsertEnter()
+    autocmd TextChangedI * call s:TextChangedI()
+    autocmd InsertEnter  * call s:InsertEnter()
+    autocmd BufWritePost * call s:BufWritePost()
   augroup END
 
   let g:event_pre = {}

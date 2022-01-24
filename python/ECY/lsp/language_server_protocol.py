@@ -328,6 +328,15 @@ class LSP(conec.Operate):
                                 'textDocument/didChange',
                                 isNotification=True)
 
+    def didSave(self, uri, version, text=None):
+        textDocument = {'version': version, 'uri': uri}
+        params = {'textDocument': textDocument}
+        if text is not None:
+            params['text'] = text
+        return self._build_send(params,
+                                'textDocument/didSave',
+                                isNotification=True)
+
     def completionItem_resolve(self, completion_item):
         return self._build_send(completion_item, 'completionItem/resolve')
 

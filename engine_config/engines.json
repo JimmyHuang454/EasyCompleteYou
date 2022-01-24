@@ -13,7 +13,7 @@
     "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
     "file_type": ["python"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.python.pyright.pyright"
   }, {
     "file_type": ["python"],

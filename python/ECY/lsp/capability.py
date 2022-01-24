@@ -31,8 +31,8 @@ CAPABILITY = {
     "textDocument": {
         "synchronization": {
             "dynamicRegistration": False,
-            "willSave": True,
-            "willSaveWaitUntil": True,
+            "willSave": False,
+            "willSaveWaitUntil": False,
             "didSave": True
         },
         "completion": {

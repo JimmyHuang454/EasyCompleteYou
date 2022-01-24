@@ -258,6 +258,17 @@ class Operate(object):
         self.GetCodeLens(context)
         self.DocumentLink(context)
 
+    def OnSave(self, context):
+        if 'textDocumentSync' not in self.capabilities or 'save' not in self.capabilities[
+                'textDocumentSync'] or not self.capabilities[
+                    'textDocumentSync']['save']:
+            return
+        params = context['params']
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
+        version = context['params']['buffer_id']
+        self._lsp.didSave(uri, version)
+
     def DocumentLink(self, context):
         if 'documentLinkProvider' not in self.capabilities or not self.enabled_document_link:
             return
