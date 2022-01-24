@@ -18,6 +18,7 @@ from ECY import utils
 from ECY.lsp import symbol_kind
 from ECY.lsp import completion_kind
 from ECY.lsp import capability
+from ECY.lsp import uri as uri_op
 from ECY.lsp import stand_IO_connection as conec
 
 
@@ -626,23 +627,10 @@ class LSP(conec.Operate):
         return self._build_send(params, 'textDocument/foldingRange')
 
     def PathToUri(self, file_path):
-        # file_path = quote(file_path)
-        return urljoin('file:', pathname2url(file_path))
+        return uri_op.from_fs_path(file_path)
 
-    def UriToPath(self, uri):
-        try:
-            if utils.GetCurrentOS() == 'Windows':
-                # url2pathname does not understand %3A (VS Code's encoding forced on all servers :/)
-                file_path = url2pathname(urlparse(uri).path).strip('\\')
-                if file_path[0].islower():
-                    file_path = file_path[0].upper() + file_path[1:]
-                res = file_path
-            else:
-                res = url2pathname(urlparse(uri).path)
-            return unquote(res)
-        except Exception as e:
-            logger.exception(e)
-            return "file:///home/ECY/1"
+    def UriToPath(self, input_uri):
+        return uri_op.to_fs_path(input_uri)
 
     def GetDiagnosticSeverity(self, kindNr):
         # {{{
