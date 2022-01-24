@@ -259,7 +259,11 @@ class Operate(object):
         self.DocumentLink(context)
 
     def OnSave(self, context):
-        if 'textDocumentSync' not in self.capabilities or 'save' not in self.capabilities[
+        if 'textDocumentSync' not in self.capabilities:
+            return
+        if type(self.capabilities['textDocumentSync']) is not dict:
+            return
+        if 'save' not in self.capabilities[
                 'textDocumentSync'] or not self.capabilities[
                     'textDocumentSync']['save']:
             return
