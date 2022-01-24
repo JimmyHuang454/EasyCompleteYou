@@ -27,7 +27,7 @@
     "engine_name": "ECY_engines.vim_lsp.vim_lsp"
   }, {
     "file_type": ["all"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.all.fzf.fzf"
   }, {
     "file_type": ["rust"],
@@ -70,5 +70,9 @@
     "file_type": ["all"],
     "disabled": false,
     "engine_name": "ECY_engines.all.efm"
+  }, {
+    "file_type": ["all"],
+    "disabled": true,
+    "engine_name": "ECY_engines.tag.tagls"
   }]
 }

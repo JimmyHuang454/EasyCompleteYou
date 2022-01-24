@@ -167,6 +167,33 @@
       "des": ["included path while parsing."]
     }
   },
+  "ECY_engines.tag.tagls": {
+    "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start tagls."]
+    },
+    "cmd2": {
+      "default_value": "python -m tagls",
+      "type": "string",
+      "des": ["cmd to start tagls."]
+    },
+    "initializationOptions.register_official_methods": {
+      "default_value": [],
+      "type": "list",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.gtags_provider": {
+      "default_value": "leaderf",
+      "type": "string",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.cache_dir": {
+      "default_value": "C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2",
+      "type": "string",
+      "des": ["LS init opts"]
+    }
+  },
   "ECY_engines.golang.gopls.gopls": {
     "cmd": {
       "default_value": "",
