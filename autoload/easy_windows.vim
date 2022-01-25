@@ -1,4 +1,5 @@
 let g:is_vim = !has('nvim')
+let g:has_nvim_0_6_0 = has('nvim-0.6.0')
 let g:EW_info = {}
 let s:windows_id = 0
 
@@ -85,17 +86,9 @@ function! s:EW._open(text_list, opts) abort
   endif
   let self['text_list'] = l:text_list
 
+  let l:real_opts = {}
   if g:is_vim
 "{{{
-    let l:real_opts = {}
-
-    if has_key(a:opts, 'zindex')
-      let l:real_opts['zindex'] = a:opts['zindex']
-      let self['zindex'] = a:opts['zindex']
-    else
-      let l:real_opts['zindex'] = self['zindex']
-    endif
-
     let self['title'] = ''
     if has_key(a:opts, 'title')
       let l:real_opts['title'] = a:opts['title']
@@ -111,7 +104,21 @@ function! s:EW._open(text_list, opts) abort
     let l:winid = popup_create(self['text_list'], l:real_opts)
 "}}}
   else
-    " TODO
+"{{{
+    let l:bufnr = nvim_create_buf(v:false, v:true)
+    call setbufvar(l:bufnr, '&buftype', 'nofile')
+    call setbufvar(l:bufnr, '&bufhidden', 'hide')
+    call setbufvar(l:bufnr, '&swapfile', 0)
+    call setbufvar(l:bufnr, '&undolevels', -1)
+    " neovim's bug
+    call setbufvar(l:bufnr, '&modifiable', 1)
+    call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
+
+    let l:real_opts = {'relative': 'cursor', 'width': 10, 'height': 2, 'col': 0,
+      \ 'row': 1, 'anchor': 'NW', 'style': 'minimal'}
+    let l:winid = nvim_open_win(l:bufnr, 0, l:real_opts)
+    let self['nvim_buf_id'] = l:bufnr
+"}}}
   endif
 
   let self['winid'] = l:winid
@@ -136,6 +143,11 @@ function! s:EW._open(text_list, opts) abort
   call self._set_firstline(1)
   if has_key(a:opts, 'firstline')
     call self._set_firstline(a:opts['firstline'])
+  endif
+
+  call self._set_zindex(50)
+  if has_key(a:opts, 'zindex')
+    call self._set_zindex(a:opts['zindex'])
   endif
 
   call self._exe_cmd('setl scrolloff=0', 0)
@@ -185,6 +197,7 @@ function! s:EW._close() abort
   if g:is_vim
     call popup_close(self['winid'])
   else
+    exe printf('close! %s', self['nvim_buf_id'])
   endif
 
   unlet g:EW_info[self['EW_id']]
@@ -291,6 +304,7 @@ function! s:EW._set_text(text_list) abort
   if g:is_vim
     call popup_settext(self['winid'], l:text_list)
   else
+    call nvim_buf_set_lines(self['nvim_buf_id'], 0, -1, v:true, l:text_list)
   endif
 
   let self['text_list'] = l:text_list
@@ -453,6 +467,8 @@ function! s:EW._set_width(width) abort
   if g:is_vim
     call self.__set_opts('minwidth', a:width)
   endif
+
+  let self['width'] = a:width
 "}}}
 endfunction
 
@@ -465,6 +481,8 @@ function! s:EW._set_height(height) abort
   if g:is_vim
     call self.__set_opts('minheight', a:height)
   endif
+
+  let self['height'] = a:height
 "}}}
 endfunction
 
@@ -515,6 +533,10 @@ function! s:EW._set_firstline(line) abort
     return
   endif
 
+  if a:line > len(self['text_list']) || a:line <= 0
+    return
+  endif
+
   if g:is_vim
     call self.__set_opts('firstline', a:line)
   else
@@ -525,6 +547,41 @@ function! s:EW._set_firstline(line) abort
 "}}}
 endfunction
 
+function! s:EW._set_zindex(zindex) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let self['zindex'] = a:zindex
+
+  if !g:has_nvim_0_6_0
+    return
+  endif
+  call self.__set_opts('zindex', a:zindex)
+"}}}
+endfunction
+
+function! s:EW._scroll_down() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  call self._set_firstline(self['firstline'] + 1)
+"}}}
+endfunction
+
+function! s:EW._scroll_up() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  call self._set_firstline(self['firstline'] - 1)
+"}}}
+endfunction
+
 let g:test = easy_windows#new()
 
 call g:test._open(['import vim'], {})
@@ -532,6 +589,7 @@ call g:test._set_syntax('python')
 call g:test._set_number()
 call g:test._unset_number()
 call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
-call g:test._set_line_text('print("hello3")', 1)
-call g:test._set_line_text('print("hello4")', 2)
-" call g:test._set_duration(3000)
+" call g:test._set_line_text('print("hello3")', 1)
+" call g:test._set_line_text('print("hello4")', 2)
+call g:test._set_duration(3000)
+" call g:test._scroll_down()
