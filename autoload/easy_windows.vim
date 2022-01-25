@@ -133,6 +133,11 @@ function! s:EW._open(text_list, opts) abort
     call self._set_wrap()
   endif
 
+  call self._set_firstline(1)
+  if has_key(a:opts, 'firstline')
+    call self._set_firstline(a:opts['firstline'])
+  endif
+
   call self._exe_cmd('setl scrolloff=0', 0)
   call self._exe_cmd('setl signcolumn=no', 0)
   call self._exe_cmd('setl nocursorline', 0)
@@ -183,6 +188,7 @@ function! s:EW._close() abort
   endif
 
   unlet g:EW_info[self['EW_id']]
+  let self['is_created'] = 0
 "}}}
 endfunction
 
@@ -193,7 +199,7 @@ function! s:EW._move(x, y) abort
   endif
 
   if g:is_vim
-    call popup_move(self['winid'], a:opts)
+    call popup_move(self['winid'], {'line': a:x, 'col': a:y})
   endif
 
 "}}}
@@ -509,6 +515,22 @@ function! s:EW._set_duration(milliseconds) abort
 
   let self['duration'] = a:milliseconds
   call timer_start(a:milliseconds, function('s:Duration', [self._close]))
+"}}}
+endfunction
+
+function! s:EW._set_firstline(line) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  if g:is_vim
+    call self.__set_opts('firstline', a:line)
+  else
+		call nvim_win_set_cursor(self['winid'], [a:line, 0])
+  endif
+
+  let self['firstline'] = a:line
 "}}}
 endfunction
 
