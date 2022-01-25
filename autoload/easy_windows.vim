@@ -294,6 +294,8 @@ function! s:EW._set_text(text_list) abort
   endif
 
   let self['text_list'] = l:text_list
+  call self._get_height()
+  call self._get_width()
 "}}}
 endfunction
 
@@ -376,19 +378,21 @@ function! s:EW._set_wrap() abort
 
   let self['wrap'] = 1
   call self._get_height()
+  call self._get_width()
 "}}}
 endfunction
 
 function! s:EW._unset_wrap() abort
 "{{{
-  if !self['is_created'] || !self['is_set_number']
+  if !self['is_created']
     return
   endif
 
-  call self._exe_cmd('setl wrap', 0)
+  call self._exe_cmd('setl nowrap', 0)
 
   let self['wrap'] = 0
   call self._get_height()
+  call self._get_width()
 "}}}
 endfunction
 
@@ -470,16 +474,8 @@ function! s:EW._get_width() abort
     return
   endif
 
-  let l:width = 0
-  for item in self['text_list']
-    if len(item) < l:width
-      continue
-    endif
-    let l:width = len(item)
-  endfor
-
+  let l:width = winwidth(self['winid'])
   let self['width'] = l:width
-
   return l:width
 "}}}
 endfunction
@@ -490,14 +486,9 @@ function! s:EW._get_height() abort
     return
   endif
 
-  if g:is_vim
-    let l:first_line = line('w0', self['winid'])
-    let l:last_line = line('w$', self['winid'])
-    let l:height = l:last_line - l:first_line + 1
-  else
-  endif
-
+  let l:height = winheight(self['winid'])
   let self['height'] = l:height
+  return l:height
 "}}}
 endfunction
 
@@ -540,7 +531,7 @@ call g:test._open(['import vim'], {})
 call g:test._set_syntax('python')
 call g:test._set_number()
 call g:test._unset_number()
-call g:test._set_text("print('hello1')\nprint('hello2')")
+call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
 call g:test._set_line_text('print("hello3")', 1)
 call g:test._set_line_text('print("hello4")', 2)
-call g:test._set_duration(3000)
+" call g:test._set_duration(3000)
