@@ -13,7 +13,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call Type("jjj")
+    call Type("jj")
 endfunction
 
 function! s:T3() abort
