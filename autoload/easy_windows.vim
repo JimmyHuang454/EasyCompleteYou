@@ -114,7 +114,7 @@ function! s:EW._open(text_list, opts) abort
     call setbufvar(l:bufnr, '&modifiable', 1)
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
 
-    let l:real_opts = {'relative': 'cursor', 'width': 10, 'height': 2, 'col': 0,
+    let l:real_opts = {'relative': 'cursor', 'width': 30, 'height': 5, 'col': 0,
       \ 'row': 1, 'anchor': 'NW', 'style': 'minimal'}
     let l:winid = nvim_open_win(l:bufnr, 0, l:real_opts)
     let self['nvim_buf_id'] = l:bufnr
@@ -148,6 +148,16 @@ function! s:EW._open(text_list, opts) abort
   call self._set_zindex(50)
   if has_key(a:opts, 'zindex')
     call self._set_zindex(a:opts['zindex'])
+  endif
+
+  call self._set_x(1)
+  if has_key(a:opts, 'x')
+    call self._set_x(a:opts['x'])
+  endif
+
+  call self._set_y(1)
+  if has_key(a:opts, 'y')
+    call self._set_y(a:opts['y'])
   endif
 
   call self._exe_cmd('setl scrolloff=0', 0)
@@ -253,7 +263,6 @@ function! s:EW.__set_opts(opts_name, value) abort
   if !self['is_created']
     return
   endif
-
   let l:temp = {}
   let l:temp[a:opts_name] = a:value
 
@@ -319,13 +328,16 @@ function! s:EW._set_line_text(line_text, linenr) abort
     return
   endif
 
-  if type(a:line_text) != v:t_string || len(self['text_list']) < a:linenr
+  if type(a:line_text) != v:t_string 
+        \|| len(self['text_list']) < a:linenr || a:linenr <= 0
     return
   endif
 
   if g:is_vim
     let l:bufnr = winbufnr(self['winid'])
     call setbufline(l:bufnr, a:linenr, a:line_text)
+  else
+    call nvim_buf_set_lines(self['nvim_buf_id'], a:linenr - 1, a:linenr, v:true, [a:line_text])
   endif
 
   call remove(self['text_list'], a:linenr - 1)
@@ -416,9 +428,12 @@ function! s:EW._get_x() abort
     return
   endif
 
-  if g:is_vim
-    return popup_getpos(self['winid'])['line']
+  if !has_key(self, 'x')
+    return 1
+  else
+    return self['x']
   endif
+
 "}}}
 endfunction
 
@@ -428,9 +443,12 @@ function! s:EW._get_y() abort
     return
   endif
 
-  if g:is_vim
-    return popup_getpos(self['winid'])['col']
+  if !has_key(self, 'y')
+    return 1
+  else
+    return self['y']
   endif
+
 "}}}
 endfunction
 
@@ -440,7 +458,13 @@ function! s:EW._set_x(x) abort
     return
   endif
 
-  call self.__set_opts('line', a:x)
+  if g:is_vim
+    call self.__set_opts('col', a:x)
+  else
+    call nvim_win_set_config(self['winid'], 
+          \{'relative': 'editor', 'col': a:x - 1, 'row': self._get_y() - 1 })
+  endif
+  let self['x'] = a:x
 "}}}
 endfunction
 
@@ -451,10 +475,12 @@ function! s:EW._set_y(y) abort
   endif
 
   if g:is_vim
-    call self.__set_opts('col', a:y)
+    call self.__set_opts('line', a:y)
   else
-    call self.__set_opts('col', a:y)
+    call nvim_win_set_config(self['winid'], 
+          \{'relative': 'editor', 'row': a:y - 1, 'col': self._get_x() - 1 })
   endif
+  let self['y'] = a:y
 "}}}
 endfunction
 
@@ -582,6 +608,34 @@ function! s:EW._scroll_up() abort
 "}}}
 endfunction
 
+function! s:EW._center_vertical() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let l:vim_height = &lines
+  let l:vim_middle = l:vim_height / 2
+  let l:height = self._get_height()
+  let l:middle = l:height / 2
+  call self._set_y(l:vim_middle - l:middle)
+"}}}
+endfunction
+
+function! s:EW._center_horizontal() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let l:vim_width = &columns
+  let l:vim_middle = l:vim_width / 2
+  let l:height = self._get_width()
+  let l:middle = l:height / 2
+  call self._set_x(l:vim_middle - l:middle)
+"}}}
+endfunction
+
 let g:test = easy_windows#new()
 
 call g:test._open(['import vim'], {})
@@ -589,7 +643,9 @@ call g:test._set_syntax('python')
 call g:test._set_number()
 call g:test._unset_number()
 call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
-" call g:test._set_line_text('print("hello3")', 1)
-" call g:test._set_line_text('print("hello4")', 2)
-call g:test._set_duration(3000)
+call g:test._set_line_text('print("hello3")', 1)
+call g:test._set_line_text('print("hello4")', 2)
+call g:test._set_duration(10000)
+call g:test._center_vertical()
+call g:test._center_horizontal()
 " call g:test._scroll_down()
