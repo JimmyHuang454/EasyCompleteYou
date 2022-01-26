@@ -135,7 +135,7 @@ function! s:EW._open(text_list, opts) abort
     call self._set_number()
   endif
 
-  call self._unset_wrap()
+  call self._unset_wrap() " init width and height
   if has_key(a:opts, 'wrap') && a:opts['wrap']
     call self._set_wrap()
   endif
@@ -491,7 +491,9 @@ function! s:EW._set_width(width) abort
   endif
 
   if g:is_vim
-    call self.__set_opts('minwidth', a:width)
+    call popup_move(self['winid'], {'minwidth': a:width, 'maxwidth': a:width})
+  else
+    call self.__set_opts('width', a:width)
   endif
 
   let self['width'] = a:width
@@ -505,7 +507,9 @@ function! s:EW._set_height(height) abort
   endif
 
   if g:is_vim
-    call self.__set_opts('minheight', a:height)
+    call popup_move(self['winid'], {'minheight': a:height, 'maxheight': a:height})
+  else
+    call self.__set_opts('height', a:height)
   endif
 
   let self['height'] = a:height
@@ -566,10 +570,27 @@ function! s:EW._set_firstline(line) abort
   if g:is_vim
     call self.__set_opts('firstline', a:line)
   else
-		call nvim_win_set_cursor(self['winid'], [a:line, 0])
+    if a:line > 5
+      call nvim_win_set_cursor(self['winid'], [a:line, 0])
+      call self._exe_cmd('noautocmd normal! zt', 0)
+    endif
   endif
 
   let self['firstline'] = a:line
+"}}}
+endfunction
+
+function! s:EW._get_firstline() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  if !has_key(self, 'firstline')
+    let self['firstline'] = 1
+  endif
+
+  return self['firstline']
 "}}}
 endfunction
 
@@ -636,16 +657,93 @@ function! s:EW._center_horizontal() abort
 "}}}
 endfunction
 
+function! s:EW._get_showing_lines() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let l:text_list = self['text_list']
+  let l:first_line = self._get_firstline() - 1
+  let l:last_line = l:first_line + self['height'] - 1
+
+  return l:text_list[l:first_line: l:last_line]
+"}}}
+endfunction
+
+function! s:EW._align_width() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let l:showing_lines = self._get_showing_lines()
+
+  let l:min = 0
+  for item in l:showing_lines
+    if len(item) <= l:min
+      continue
+    endif
+    let l:min = len(item)
+  endfor
+
+  if has_key(self, 'minwidth')
+    if l:min < self['minwidth']
+      let l:min = self['minwidth']
+    endif
+  endif
+  call self._set_width(l:min)
+"}}}
+endfunction
+
+function! s:EW._align_height() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let l:min = len(self['text_list'])
+
+  if has_key(self, 'minheight')
+    if l:min < self['minheight']
+      let l:min = self['minheight']
+    endif
+  endif
+  call self._set_height(l:min)
+"}}}
+endfunction
+
 let g:test = easy_windows#new()
 
-call g:test._open(['import vim'], {})
-call g:test._set_syntax('python')
-call g:test._set_number()
-call g:test._unset_number()
-call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
-call g:test._set_line_text('print("hello3")', 1)
-call g:test._set_line_text('print("hello4")', 2)
-call g:test._set_duration(10000)
-call g:test._center_vertical()
+let i = 1
+let content = []
+while i < 100
+  call add(content, string(i))
+  let i += 1
+endw
+
+call g:test._open(content, {})
+
+call g:test._set_height(10)
 call g:test._center_horizontal()
+call g:test._center_vertical()
+call g:test._set_firstline(64)
+call g:test._set_duration(4000)
+
+" call g:test._open(['import vim'], {})
+" call g:test._set_syntax('python')
+" call g:test._set_number()
+" call g:test._unset_number()
+" call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
+" call g:test._set_line_text('print("hello3")', 1)
+" call g:test._set_line_text('print("hello4")', 2)
+" call g:test._set_duration(3000)
+" call g:test._center_vertical()
+" call g:test._center_horizontal()
+" call g:test._exe_cmd('noautocmd normal! zt')
+" call g:test._set_height(2)
+" call g:test._set_firstline(3)
+" call g:test._align_width()
+" call g:test._align_height()
+" let g:abcd = g:test._get_showing_lines()
 " call g:test._scroll_down()
