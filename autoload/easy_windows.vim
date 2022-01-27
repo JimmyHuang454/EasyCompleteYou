@@ -30,6 +30,22 @@ function! easy_windows#new() abort
   return l:obj
 endfunction
 
+function! easy_windows#clear_all() abort
+  for item in keys(g:EW_info)
+    call g:EW_info[item]._close()
+  endfor
+endfunction
+
+function! easy_windows#get_cursor_screen_y() abort
+	let l:pos = win_screenpos('.')
+  return l:pos[0] + winline() - 1
+endfunction
+
+function! easy_windows#get_cursor_screen_x() abort
+	let l:pos = win_screenpos('.')
+  return pos[1] + wincol() - 1
+endfunction
+
 function! s:Callback(winid, CB, event_name) abort
   call CB(a:winid, a:event_name)
 endfunction
@@ -113,11 +129,9 @@ function! s:EW._open(text_list, opts) abort
     " neovim's bug
     call setbufvar(l:bufnr, '&modifiable', 1)
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
-
-    let l:real_opts = {'relative': 'cursor', 'width': 30, 'height': 5, 'col': 0,
-      \ 'row': 1, 'anchor': 'NW', 'style': 'minimal'}
-    let l:winid = nvim_open_win(l:bufnr, 0, l:real_opts)
     let self['nvim_buf_id'] = l:bufnr
+
+    let l:winid = self.__nvim_show()
 "}}}
   endif
 
@@ -179,8 +193,20 @@ function! s:EW._hide() abort
   if g:is_vim
     call popup_hide(self['winid'])
   else
+		call nvim_win_close(self['winid'], 1)
   endif
   let self['is_hided'] = 1
+  let self['is_created'] = 0
+"}}}
+endfunction
+
+function! s:EW.__nvim_show() abort
+"{{{
+  let l:real_opts = {'relative': 'cursor', 'width': 30, 'height': 5, 'col': 0,
+    \ 'row': 1, 'anchor': 'NW', 'style': 'minimal'}
+  let l:winid = nvim_open_win(self['nvim_buf_id'], 0, l:real_opts)
+  let self['winid'] = l:winid
+  return l:winid
 "}}}
 endfunction
 
@@ -193,8 +219,10 @@ function! s:EW._show() abort
   if g:is_vim
     call popup_show(self['winid'])
   else
+    let self['winid'] = self.__nvim_show()
   endif
   let self['is_hided'] = 0
+  let self['is_created'] = 1
 "}}}
 endfunction
 
@@ -367,6 +395,17 @@ function! s:EW._set_syntax(syntax_name) abort
 
   call self._exe_cmd(printf('let &syn = "%s"', a:syntax_name), 0)
   let self['syntax'] = a:syntax_name
+"}}}
+endfunction
+
+function! s:EW._set_filetype(filetype) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  call self._exe_cmd(printf('let &ft = "%s"', a:filetype), 0)
+  let self['filetype'] = a:syntax_name
 "}}}
 endfunction
 
@@ -603,6 +642,7 @@ function! s:EW._set_zindex(zindex) abort
   if !g:has_nvim_0_6_0
     return
   endif
+
   call self.__set_opts('zindex', a:zindex)
 "}}}
 endfunction
@@ -741,6 +781,20 @@ function! s:EW._align_height() abort
 "}}}
 endfunction
 
+function! s:EW._highlight(hl_name, start_x, start_y, end_x, end_y) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+	let l:sep = 'c'
+	let l:cmd = 'syn region ' . a:hl_name . ' '
+	let l:cmd .= ' start=/\%' . a:start_y . 'l\%' . a:start_x . sep . '/'
+  let l:cmd .= ' end=/\%' . a:end_y . 'l\%' . a:end_x . sep . '/'
+  call self._exe_cmd(l:cmd, 0)
+"}}}
+endfunction
+
 let g:test = easy_windows#new()
 
 let i = 1
@@ -755,7 +809,8 @@ call g:test._open(content, {})
 call g:test._set_height(10)
 call g:test._center_horizontal()
 call g:test._center_vertical()
-call g:test._set_firstline(8)
+" call g:test._set_firstline(8)
+call g:test._highlight('String', 1, 1, 1, 2)
 " call g:test._set_duration(4000)
 nmap <C-n> :call g:test._scroll_down()<CR>
 
