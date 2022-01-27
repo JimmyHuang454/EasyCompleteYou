@@ -570,10 +570,8 @@ function! s:EW._set_firstline(line) abort
   if g:is_vim
     call self.__set_opts('firstline', a:line)
   else
-    if a:line > 5
-      call nvim_win_set_cursor(self['winid'], [a:line, 0])
-      call self._exe_cmd('noautocmd normal! zt', 0)
-    endif
+    call nvim_win_set_cursor(self['winid'], [a:line, 0])
+    call self._exe_cmd('noautocmd normal! zt', 0)
   endif
 
   let self['firstline'] = a:line
@@ -615,6 +613,10 @@ function! s:EW._scroll_down() abort
     return
   endif
 
+  if self._get_firstline() == len(self['text_list'])
+    return
+  endif
+
   call self._set_firstline(self['firstline'] + 1)
 "}}}
 endfunction
@@ -622,6 +624,10 @@ endfunction
 function! s:EW._scroll_up() abort
 "{{{
   if !self['is_created']
+    return
+  endif
+
+  if self._get_firstline() == 1
     return
   endif
 
@@ -692,6 +698,17 @@ function! s:EW._align_width() abort
       let l:min = self['minwidth']
     endif
   endif
+
+  if has_key(self, 'maxwidth')
+    if l:min > self['maxwidth']
+      let l:min = self['maxwidth']
+    endif
+  endif
+
+  if l:min > &columns
+    let l:min = &columns
+  endif
+
   call self._set_width(l:min)
 "}}}
 endfunction
@@ -709,6 +726,17 @@ function! s:EW._align_height() abort
       let l:min = self['minheight']
     endif
   endif
+
+  if has_key(self, 'maxheight')
+    if l:min > self['maxheight']
+      let l:min = self['maxheight']
+    endif
+  endif
+
+  if l:min > &lines
+    let l:min = &lines
+  endif
+
   call self._set_height(l:min)
 "}}}
 endfunction
@@ -717,7 +745,7 @@ let g:test = easy_windows#new()
 
 let i = 1
 let content = []
-while i < 100
+while i < 20
   call add(content, string(i))
   let i += 1
 endw
@@ -727,8 +755,9 @@ call g:test._open(content, {})
 call g:test._set_height(10)
 call g:test._center_horizontal()
 call g:test._center_vertical()
-call g:test._set_firstline(64)
-call g:test._set_duration(4000)
+call g:test._set_firstline(8)
+" call g:test._set_duration(4000)
+nmap <C-n> :call g:test._scroll_down()<CR>
 
 " call g:test._open(['import vim'], {})
 " call g:test._set_syntax('python')
