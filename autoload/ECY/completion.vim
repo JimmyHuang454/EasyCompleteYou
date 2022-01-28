@@ -37,43 +37,34 @@ fun! s:DoCompletion_vim(context)
   let s:show_item_position = a:context['start_position']
   let s:show_item_position['colum'] = l:col
 
-  let l:col = strwidth(l:fliter_words)
-  let l:col  = 'cursor-' . l:col
-  let l:opts = {'pos': 'topleft',
-        \'zindex':2000,
-        \'line':'cursor+1',
-        \'col': l:col}
   let l:to_show = []
-  let l:to_show_matched_point = []
   let l:max_len_of_showing_item = 1
   for value in l:items_info
     let l:showing = value['abbr'].value['kind']
     call add(l:to_show, l:showing)
-    call add(l:to_show_matched_point, value['match_point'])
     if len(l:showing) > l:max_len_of_showing_item
       let l:max_len_of_showing_item = len(l:showing)
     endif
   endfor
 
-  let j = 0
-  while j < len(l:to_show)
-    let l:temp = l:max_len_of_showing_item - len(l:to_show[j])
-    let i = 0
-    while i < l:temp
-      let l:to_show[j] .= ' '
-      let i += 1
-    endw
-    let j += 1
-  endw
-  let s:popup_windows_nr = popup_create(l:to_show, l:opts)
+  let s:popup_obj = easy_windows#new()
+
+  let l:col = strwidth(l:fliter_words)
+  let l:col  = easy_windows#get_cursor_screen_x() - l:col
+  let l:line  = easy_windows#get_cursor_screen_y() + 1
+  let l:opts = {'y': l:line, 'x': l:col}
+
+  let s:popup_windows_nr = s:popup_obj._open(l:to_show, l:opts)
+  call s:popup_obj._align_width()
+  call s:popup_obj._align_height()
+
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,
         \'start_position': s:show_item_position,
         \'is_use_text_edit': v:false,
         \'original_position': {'line': line('.'), 
         \'colum': col('.'), 'line_content':getline('.')},
-        \'items_info': l:items_info,
-        \'opts': popup_getoptions(s:popup_windows_nr)}
+        \'items_info': l:items_info}
   " In vim, there are no API to get the floating windows' width, we calculate
   " it at here.
   " it must contain at least one item of list, so we set 0 at here.
@@ -82,25 +73,13 @@ fun! s:DoCompletion_vim(context)
 
   let g:ECY_current_popup_windows_info['keyword_cache'] = l:fliter_words
 
-  " hightlight it
   let i = 0
-  while i < len(l:to_show_matched_point)
-    let j = 0
-    let l:point = l:to_show_matched_point[i]
-    while j < len(l:to_show[i])
-      if IsInList(j, l:point)
-        let l:hightlight = 'ECY_floating_windows_normal_matched'
-      else
-        let l:hightlight = 'ECY_floating_windows_normal'
-      endif
-      let l:line  = i + 1
-      let l:start = j + 1
-      let l:exe = "call prop_add(".l:line.",".l:start.", {'length':1,'type': '".l:hightlight."'})"
-      call win_execute(s:popup_windows_nr, l:exe)
-      let j += 1
-    endw
+  for item in l:items_info
+    for point in item['match_point']
+      call s:popup_obj._add_match('ECY_floating_windows_normal_matched', [[l:i + 1, point + 1]])
+    endfor
     let i += 1
-  endw
+  endfor
 
   return s:popup_windows_nr
 "}}}
@@ -249,15 +228,12 @@ function! ECY#completion#Close(...) abort
     return
   endif
 
-  if g:has_floating_windows_support == 'vim'
-    try
-      call popup_close(s:popup_windows_nr)
-    catch 
-    endtry
-    let s:popup_windows_nr = -1
-  else
-    "TODO: neovim
+  if s:popup_windows_nr == -1
+    return
   endif
+  call s:popup_obj._close()
+  let s:popup_windows_nr = -1
+
   call ECY#preview_windows#Close()
   call s:RecoverIndent()
 "}}}
@@ -266,17 +242,10 @@ endfunction
 function! ECY#completion#IsMenuOpen() abort
 "{{{
   if g:ECY_use_floating_windows_to_be_popup_windows == v:true
-    if g:has_floating_windows_support == 'vim'
-      if g:ECY_use_floating_windows_to_be_popup_windows == v:false
-        return pumvisible()
-      endif
-      if s:popup_windows_nr != -1
-        return v:true
-      endif
-      return v:false
-    elseif g:has_floating_windows_support == 'neovim'
-      "TODO
+    if s:popup_windows_nr != -1
+      return v:true
     endif
+    return v:false
   else
     return pumvisible()
   endif
@@ -329,61 +298,21 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
   let g:ECY_current_popup_windows_info['selecting_item'] = l:next_item
 
+  call s:popup_obj._delete_match('ECY_floating_windows_seleted')
+  call s:popup_obj._delete_match('ECY_floating_windows_seleted_matched')
+
   if l:next_item == 0
     let l:to_complete =  g:ECY_current_popup_windows_info['keyword_cache']
     let l:info = {}
     " don't need to hightlight at here
   else
     let l:to_complete =  l:items_info[l:next_item - 1]['word']
-
-    let l:exe = "call prop_clear(". l:next_item .")"
-    call win_execute(s:popup_windows_nr, l:exe)
     let l:info = l:items_info[l:next_item - 1]
-    let l:temp = len(l:info['abbr'] . l:info['kind'])
-    let l:point = l:info['match_point']
-    let i = 0
-    while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if ECY#utils#GetCurrentBufferPath()
-        let l:hightlight = 'ECY_floating_windows_seleted_matched'
-      else
-        let l:hightlight = 'ECY_floating_windows_seleted'
-      endif
-      if l:temp > i
-        let l:start = i + 1
-        let l:length = 1
-      else
-        let l:length = 100
-      endif
-      let l:exe = "call prop_add(".l:next_item.",".l:start.", {'length':".l:length.",'type': '".l:hightlight."'})"
-      call win_execute(s:popup_windows_nr, l:exe)
-      let i += 1
-    endw
-  endif
 
-  " unhighlight the old one.
-  if l:current_item != 0
-    let l:exe = "call prop_clear(". l:current_item .")"
-    call win_execute(s:popup_windows_nr, l:exe)
-    let l:info = l:items_info[l:current_item - 1]
-    let l:temp = len(l:info['abbr'].l:info['kind'])
-    let l:point = l:info['match_point']
-    let i = 0
-    while i < g:ECY_current_popup_windows_info['floating_windows_width']
-      if IsInList(i, l:point)
-        let l:hightlight = 'ECY_floating_windows_normal_matched'
-      else
-        let l:hightlight = 'ECY_floating_windows_normal'
-      endif
-      if l:temp > i
-        let l:start = i + 1
-        let l:length = 1
-      else
-        let l:length = 100
-      endif
-      let l:exe = "call prop_add(".l:current_item.",".l:start.", {'length':".l:length.",'type': '".l:hightlight."'})"
-      call win_execute(s:popup_windows_nr, l:exe)
-      let i += 1
-    endw
+    call s:popup_obj._add_match('ECY_floating_windows_seleted', [l:next_item])
+    for item in l:info['match_point']
+      call s:popup_obj._add_match('ECY_floating_windows_seleted_matched', [[l:next_item, item + 1]])
+    endfor
   endif
 
    if g:ECY_current_popup_windows_info['is_use_text_edit']
@@ -407,7 +336,6 @@ function! s:SelectItems_vim(next_or_pre) abort
   call complete(l:start_colum, [l:to_complete])
   return
 
-  return
   if has_key(l:info, 'completion_text_edit')
     call s:CompleteLine(bufnr(''), 
           \l:info['completion_text_edit']['start'], 
@@ -530,10 +458,10 @@ fun! ECY#completion#Init()
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
 
-  call ECY#utils#DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596	guibg=#073642	ctermfg=red	  ctermbg=darkBlue')
-  call ECY#utils#DefineColor('ECY_floating_windows_normal', 'guifg=#839496	guibg=#073642	ctermfg=white	ctermbg=darkBlue')
-  call ECY#utils#DefineColor('ECY_floating_windows_seleted_matched', 'guifg=#FFFF99	guibg=#586e75	ctermfg=red	ctermbg=Blue')
-  call ECY#utils#DefineColor('ECY_floating_windows_seleted', 'guifg=#eee8d5	guibg=#586e75	ctermfg=white	ctermbg=Blue')
+  call ECY#utils#DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596 ctermfg=red	  ctermbg=darkBlue')
+  call ECY#utils#DefineColor('ECY_floating_windows_normal', 'guifg=#839496	ctermfg=white	ctermbg=darkBlue')
+  call ECY#utils#DefineColor('ECY_floating_windows_seleted_matched', 'guibg=#586e75	ctermfg=red	ctermbg=Blue')
+  call ECY#utils#DefineColor('ECY_floating_windows_seleted', 'guibg=#586e75	ctermfg=white	ctermbg=Blue')
 
   augroup ECY_completion
     autocmd!

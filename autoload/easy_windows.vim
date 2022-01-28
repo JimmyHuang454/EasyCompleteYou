@@ -27,7 +27,7 @@ function! easy_windows#new() abort
   let l:obj = deepcopy(s:EW)
   let g:EW_info[s:windows_id] = l:obj
   let l:obj['EW_id'] = s:windows_id
-  let l:obj['highlight'] = []
+  let l:obj['highlight'] = {}
   let l:obj['is_created'] = 0
   return l:obj
 endfunction
@@ -184,11 +184,11 @@ function! s:EW._open(text_list, opts) abort
     call self._set_y(1)
   endif
 
-  call self._exe_cmd('setl scrolloff=0', 0)
-  call self._exe_cmd('setl signcolumn=no', 0)
-  call self._exe_cmd('setl nocursorline', 0)
-  call self._exe_cmd('setl nocursorcolumn', 0)
-  call self._exe_cmd('setl nospell', 0)
+  " call self._exe_cmd('setl scrolloff=0', 0)
+  " call self._exe_cmd('setl signcolumn=no', 0)
+  " call self._exe_cmd('setl nocursorline', 0)
+  " call self._exe_cmd('setl nocursorcolumn', 0)
+  " call self._exe_cmd('setl nospell', 0)
 
   let self['real_opts'] = l:real_opts
 
@@ -208,7 +208,6 @@ function! s:EW._hide() abort
 		call nvim_win_close(self['winid'], 1)
   endif
   let self['is_hided'] = 1
-  let self['is_created'] = 0
 "}}}
 endfunction
 
@@ -234,7 +233,6 @@ function! s:EW._show() abort
     let self['winid'] = self.__nvim_show()
   endif
   let self['is_hided'] = 0
-  let self['is_created'] = 1
 "}}}
 endfunction
 
@@ -838,39 +836,86 @@ function! s:EW._align_height() abort
 "}}}
 endfunction
 
-function! easy_windows#hightlight(EW_id, hl_name, start_x, start_y, end_x, end_y) abort
-  let l:hl_id = matchaddpos(a:hl_name, [1, 1])
-  call add(g:EW_info[a:EW_id]['highlight'], {'hl_name': a:hl_name, 'hl_id': l:hl_id})
+function! easy_windows#hightlight(EW_id, hl_name, pos) abort
+  " if a:end_y < a:start_y
+  "   return
+  " endif
+
+  " if a:end_y == a:start_y && a:end_x < a:start_x
+  "   return
+  " endif
+
+  let l:hl_id = matchaddpos(a:hl_name, a:pos)
+  let g:EW_info[a:EW_id]['highlight'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
 endfunction
 
-function! s:EW._highlight(hl_name, start_x, start_y, end_x, end_y) abort
-"{{{
+function! s:EW._add_match(hl_name, pos) abort
+"{{{ 1-based.
   if !self['is_created']
     return
   endif
 
-  call self._exe_cmd(printf("call easy_windows#hightlight(%s, '%s', %s, %s, %s, %s)", 
-        \self['EW_id'], 
-        \a:hl_name,
-        \a:start_x,
-        \a:start_y,
-        \a:end_x,
-        \a:end_y,
-        \), 0)
+  if g:is_vim
+    call self._exe_cmd(printf("call easy_windows#hightlight(%s, '%s', %s)", 
+          \self['EW_id'], 
+          \a:hl_name,
+          \a:pos,
+          \), 0)
+  else
+    " matchaddpos also works at nvim, but it's slow. So ...
+    let l:hl_id = nvim_create_namespace('')
+    for item in a:pos
+      if type(item) == v:t_number
+        call nvim_buf_add_highlight(self['nvim_buf_id'],
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \0,
+              \-1,
+              \)
+      elseif len(item) == 2
+        call nvim_buf_add_highlight(self['nvim_buf_id'],
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \item[1] - 1,
+              \item[1],
+              \)
+      elseif len(item) == 3
+        call nvim_buf_add_highlight(self['nvim_buf_id'],
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \item[1],
+              \item[1] + item[2],
+              \)
+      endif
+    endfor
+    let self['highlight'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
+  endif
+
 "}}}
 endfunction
 
-function! s:EW._clean_highlight(hl_name) abort
+function! s:EW._delete_match(hl_name) abort
 "{{{
   if !self['is_created']
     return
   endif
+  
+  let l:hl = g:EW_info[self['EW_id']]['highlight']
 
-  for item in g:EW_info[self['EW_id']]['highlight']
-    if item['hl_name'] != a:hl_name
+  for item in keys(l:hl)
+    if l:hl[item]['hl_name'] != a:hl_name
       continue
     endif
-    call self._exe_cmd(printf('call matchdelete(%s)', item['hl_id']), 0)
+    let l:hl_id = l:hl[item]['hl_id']
+    if g:is_vim
+      call self._exe_cmd(printf('call matchdelete(%s)', l:hl_id), 0)
+    else
+      call nvim_buf_clear_namespace(self['nvim_buf_id'], l:hl_id, 0, -1)
+    endif
+    unlet l:hl[item]
   endfor
 "}}}
 endfunction

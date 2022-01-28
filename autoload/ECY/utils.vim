@@ -152,15 +152,13 @@ function ECY#utils#GetBufferContent(buffer_nr) abort " return list
   "}}}
 endfunction
 
-function ECY#utils#DefineColor(name, colora) abort
+function ECY#utils#DefineColor(name, color) abort
   "{{{
   if hlexists(a:name) 
     return
   endif
-  exe 'hi '.a:name . ' '. a:colora
-  if g:has_floating_windows_support == 'vim'
-    call prop_type_add(a:name, {'highlight': a:name})
-  endif
+
+  exe printf('hi %s %s', a:name, a:color)
   "}}}
 endfunction
 
