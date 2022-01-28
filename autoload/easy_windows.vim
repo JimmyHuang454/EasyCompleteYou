@@ -27,6 +27,8 @@ function! easy_windows#new() abort
   let l:obj = deepcopy(s:EW)
   let g:EW_info[s:windows_id] = l:obj
   let l:obj['EW_id'] = s:windows_id
+  let l:obj['highlight'] = []
+  let l:obj['is_created'] = 0
   return l:obj
 endfunction
 
@@ -137,6 +139,7 @@ function! s:EW._open(text_list, opts) abort
 
   let self['winid'] = l:winid
   let self['is_created'] = 1
+  let self['is_hided'] = 0
   let self['text_list'] = l:text_list
 
   if has_key(a:opts, 'syntax')
@@ -188,6 +191,8 @@ function! s:EW._open(text_list, opts) abort
   call self._exe_cmd('setl nospell', 0)
 
   let self['real_opts'] = l:real_opts
+
+  return l:winid
 "}}}
 endfunction
 
@@ -245,8 +250,9 @@ function! s:EW._close() abort
     exe printf('close! %s', self['nvim_buf_id'])
   endif
 
-  unlet g:EW_info[self['EW_id']]
   let self['is_created'] = 0
+  let self['is_hided'] = 1
+  unlet g:EW_info[self['EW_id']]
 "}}}
 endfunction
 
@@ -832,16 +838,39 @@ function! s:EW._align_height() abort
 "}}}
 endfunction
 
+function! easy_windows#hightlight(EW_id, hl_name, start_x, start_y, end_x, end_y) abort
+  let l:hl_id = matchaddpos(a:hl_name, [1, 1])
+  call add(g:EW_info[a:EW_id]['highlight'], {'hl_name': a:hl_name, 'hl_id': l:hl_id})
+endfunction
+
 function! s:EW._highlight(hl_name, start_x, start_y, end_x, end_y) abort
 "{{{
   if !self['is_created']
     return
   endif
 
-	let l:sep = 'c'
-	let l:cmd = 'syn region ' . a:hl_name . ' '
-	let l:cmd .= ' start=/\%' . a:start_y . 'l\%' . a:start_x . sep . '/'
-  let l:cmd .= ' end=/\%' . a:end_y . 'l\%' . a:end_x . sep . '/'
-  call self._exe_cmd(l:cmd, 0)
+  call self._exe_cmd(printf("call easy_windows#hightlight(%s, '%s', %s, %s, %s, %s)", 
+        \self['EW_id'], 
+        \a:hl_name,
+        \a:start_x,
+        \a:start_y,
+        \a:end_x,
+        \a:end_y,
+        \), 0)
+"}}}
+endfunction
+
+function! s:EW._clean_highlight(hl_name) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  for item in g:EW_info[self['EW_id']]['highlight']
+    if item['hl_name'] != a:hl_name
+      continue
+    endif
+    call self._exe_cmd(printf('call matchdelete(%s)', item['hl_id']), 0)
+  endfor
 "}}}
 endfunction
