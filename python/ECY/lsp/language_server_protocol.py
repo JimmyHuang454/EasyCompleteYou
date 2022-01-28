@@ -176,6 +176,7 @@ class LSP(conec.Operate):
         if not isNotification:
             # id_text       = "ECY_"+str(self._id)
             send['id'] = self._id
+            params['workDoneToken'] = self._get_workdone_token()
         context = LSPRequest(method, self._id, timeout=self.default_timeout)
         self._waitting_response[self._id] = context
         self.id_lock.release()
@@ -346,19 +347,10 @@ class LSP(conec.Operate):
 
     def _get_workdone_token(self):
         self.workDoneToken_id += 1
-        return self.workDoneToken_id
+        return "ECY_workDoneToken-" + str(self.workDoneToken_id)
 
-    def prepareRename(self,
-                      uri,
-                      languageId,
-                      text,
-                      version,
-                      position,
-                      new_name,
-                      workDoneToken=None):
-
-        if workDoneToken is None:
-            workDoneToken = self._get_workdone_token()
+    def prepareRename(self, uri, languageId, text, version, position,
+                      new_name):
 
         if new_name == '':
             raise ValueError("new_name can not be None")
@@ -372,22 +364,11 @@ class LSP(conec.Operate):
         params = {
             'textDocument': textDocument,
             'position': position,
-            'workDoneToken': workDoneToken,
             'newName': new_name
         }
         return self._build_send(params, 'textDocument/rename')
 
-    def rename(self,
-               uri,
-               languageId,
-               text,
-               version,
-               position,
-               new_name,
-               workDoneToken=None):
-
-        if workDoneToken is None:
-            workDoneToken = self._get_workdone_token()
+    def rename(self, uri, languageId, text, version, position, new_name):
 
         if new_name == '':
             raise ValueError("new_name can not be None")
@@ -401,7 +382,6 @@ class LSP(conec.Operate):
         params = {
             'textDocument': textDocument,
             'position': position,
-            'workDoneToken': workDoneToken,
             'newName': new_name
         }
         return self._build_send(params, 'textDocument/rename')
@@ -423,15 +403,8 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/formatting')
 
-    def codeLens(self, uri, workDoneToken=None, ProgressToken=None):
-        if workDoneToken is None:
-            workDoneToken = self._get_workdone_token()
-        if ProgressToken is None:
-            ProgressToken = self._get_progress_token()
-
+    def codeLens(self, uri):
         params = {
-            'workDoneToken': workDoneToken,
-            'partialResultToken': ProgressToken,
             'textDocument': {
                 'uri': uri
             }
@@ -479,22 +452,9 @@ class LSP(conec.Operate):
             'position': self.Position(line, colum)
         }
 
-    def codeAction(self,
-                   uri,
-                   start_position,
-                   end_position,
-                   diagnostic=[],
-                   workDoneToken=None,
-                   ProgressToken=None):
-
-        if workDoneToken is None:
-            workDoneToken = self._get_workdone_token()
-        if ProgressToken is None:
-            ProgressToken = self._get_progress_token()
+    def codeAction(self, uri, start_position, end_position, diagnostic=[]):
 
         params = {
-            'workDoneToken': workDoneToken,
-            'partialResultToken': ProgressToken,
             'range': self.Range(start_position, end_position),
             'context': {
                 'diagnostics': diagnostic
@@ -505,12 +465,9 @@ class LSP(conec.Operate):
         }
         return self._build_send(params, 'textDocument/codeAction')
 
-    def executeCommand(self, command, workDoneToken=None, arguments=[]):
-        if workDoneToken is None:
-            self.workDoneToken_id += 1
-            workDoneToken = self.workDoneToken_id
+    def executeCommand(self, command, arguments=[]):
 
-        params = {'workDoneToken': workDoneToken, 'command': command}
+        params = {'command': command}
 
         if type(arguments) is not list:
             raise ValueError("type of arguments must be list.")
@@ -563,16 +520,12 @@ class LSP(conec.Operate):
         params = {'query': query}
         return self._build_send(params, 'workspace/symbol')
 
-    def signatureHelp(self, uri, position, ProgressToken=None, context=None):
-        if ProgressToken is None:
-            ProgressToken = self._get_progress_token()
-
+    def signatureHelp(self, uri, position, context=None):
         # position = {'line': 0 , 'character': 0}
         textDocument = {'uri': uri}
         params = {
             'textDocument': textDocument,
             'position': position,
-            'progressToken': ProgressToken
         }
 
         if context is not None:
@@ -583,10 +536,7 @@ class LSP(conec.Operate):
                    position,
                    uri,
                    includeDeclaration=True,
-                   query="",
-                   ProgressToken="",
-                   partialProgressToken=""):
-        # ProgressToken = number | string
+                   query=""):
         params = {
             'textDocument': {
                 'uri': uri
@@ -594,8 +544,6 @@ class LSP(conec.Operate):
             'context': {
                 'includeDeclaration': includeDeclaration
             },
-            'workDoneToken': ProgressToken,
-            'partialResultToken': partialProgressToken,
             'position': position
         }
         return self._build_send(params, 'textDocument/references')

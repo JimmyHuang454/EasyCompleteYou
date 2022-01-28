@@ -93,7 +93,7 @@ def to_fs_path(uri):
 
         elif RE_DRIVE_LETTER_PATH.match(path):
             # windows drive letter: file:///C:/far/boo
-            value = path[1].lower() + path[2:]
+            value = path[1].upper() + path[2:]
 
         else:
             # Other path

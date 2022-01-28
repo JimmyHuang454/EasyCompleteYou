@@ -139,39 +139,46 @@ function! s:EW._open(text_list, opts) abort
   let self['is_created'] = 1
   let self['text_list'] = l:text_list
 
-  call self._set_syntax('')
   if has_key(a:opts, 'syntax')
     call self._set_syntax(a:opts['syntax'])
+  else
+    call self._set_syntax('')
   endif
 
-  call self._unset_number()
   if has_key(a:opts, 'number') && a:opts['number']
     call self._set_number()
+  else
+    call self._unset_number()
   endif
 
-  call self._unset_wrap() " init width and height
   if has_key(a:opts, 'wrap') && a:opts['wrap']
     call self._set_wrap()
+  else
+    call self._unset_wrap() " init width and height
   endif
 
-  call self._set_firstline(1)
   if has_key(a:opts, 'firstline')
     call self._set_firstline(a:opts['firstline'])
+  else
+    call self._set_firstline(1)
   endif
 
-  call self._set_zindex(50)
   if has_key(a:opts, 'zindex')
     call self._set_zindex(a:opts['zindex'])
+  else
+    call self._set_zindex(50)
   endif
 
-  call self._set_x(1)
   if has_key(a:opts, 'x')
     call self._set_x(a:opts['x'])
+  else
+    call self._set_x(1)
   endif
 
-  call self._set_y(1)
   if has_key(a:opts, 'y')
     call self._set_y(a:opts['y'])
+  else
+    call self._set_y(1)
   endif
 
   call self._exe_cmd('setl scrolloff=0', 0)
@@ -579,6 +586,50 @@ function! s:EW._get_height() abort
 "}}}
 endfunction
 
+function! s:EW._set_minwidth(minwidth) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let self['minwidth'] = a:minwidth
+  call self._align_width()
+"}}}
+endfunction
+
+function! s:EW._set_maxwidth(maxwidth) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let self['maxwidth'] = a:minwidth
+  call self._align_width()
+"}}}
+endfunction
+
+function! s:EW._set_minheight(minheight) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let self['minheight'] = a:minheight
+  call self._align_height()
+"}}}
+endfunction
+
+function! s:EW._set_maxheight(maxheight) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  let self['maxheight'] = a:maxheight
+  call self._align_height()
+"}}}
+endfunction
+
 function! s:Duration(EW_close, timer_id) abort
 "{{{
   call a:EW_close()
@@ -794,40 +845,3 @@ function! s:EW._highlight(hl_name, start_x, start_y, end_x, end_y) abort
   call self._exe_cmd(l:cmd, 0)
 "}}}
 endfunction
-
-let g:test = easy_windows#new()
-
-let i = 1
-let content = []
-while i < 20
-  call add(content, string(i))
-  let i += 1
-endw
-
-call g:test._open(content, {})
-
-call g:test._set_height(10)
-call g:test._center_horizontal()
-call g:test._center_vertical()
-" call g:test._set_firstline(8)
-call g:test._highlight('String', 1, 1, 1, 2)
-" call g:test._set_duration(4000)
-nmap <C-n> :call g:test._scroll_down()<CR>
-
-" call g:test._open(['import vim'], {})
-" call g:test._set_syntax('python')
-" call g:test._set_number()
-" call g:test._unset_number()
-" call g:test._set_text("print('hello1')\nprint('hello2')\n3\n4")
-" call g:test._set_line_text('print("hello3")', 1)
-" call g:test._set_line_text('print("hello4")', 2)
-" call g:test._set_duration(3000)
-" call g:test._center_vertical()
-" call g:test._center_horizontal()
-" call g:test._exe_cmd('noautocmd normal! zt')
-" call g:test._set_height(2)
-" call g:test._set_firstline(3)
-" call g:test._align_width()
-" call g:test._align_height()
-" let g:abcd = g:test._get_showing_lines()
-" call g:test._scroll_down()
