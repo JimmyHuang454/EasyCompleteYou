@@ -52,11 +52,9 @@ fun! s:DoCompletion_vim(context)
   let l:col = strwidth(l:fliter_words)
   let l:col  = easy_windows#get_cursor_screen_x() - l:col
   let l:line  = easy_windows#get_cursor_screen_y() + 1
-  let l:opts = {'y': l:line, 'x': l:col}
+  let l:opts = {'y': l:line, 'x': l:col, 'width': l:max_len_of_showing_item, 'height': len(l:to_show)}
 
   let s:popup_windows_nr = s:popup_obj._open(l:to_show, l:opts)
-  call s:popup_obj._align_width()
-  call s:popup_obj._align_height()
 
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,

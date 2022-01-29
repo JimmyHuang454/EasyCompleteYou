@@ -66,7 +66,7 @@ endif
 let g:ECY_use_floating_windows_to_be_popup_windows = 
       \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
 
-if g:is_vim && exists('*nvim_win_set_config')
+if !g:is_vim && exists('*nvim_win_set_config')
   let g:has_floating_windows_support = 'neovim'
   let g:has_floating_windows_support = 'vim' 
 elseif exists('*popup_create') && exists('*popup_setoptions')
@@ -200,7 +200,6 @@ command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-call easy_windows#init()
 call ECY#completion#Init()
 call ECY2_main#Init()
 
