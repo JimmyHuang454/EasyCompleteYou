@@ -1,3 +1,8 @@
+let g:is_vim = !has('nvim')
+let g:has_nvim_0_6_0 = has('nvim-0.6.0')
+let g:EW_info = {}
+let s:windows_id = 0
+
 let s:EW = {'pos': 'topleft', 
       \'title': '', 
       \'drag': 1, 
@@ -81,6 +86,11 @@ function! s:EW._open(text_list, opts) abort
   let self['x'] = l:x
   let self['y'] = l:y
 
+  let l:width = has_key(a:opts, 'width') ? a:opts['width'] : 10
+  let l:height = has_key(a:opts, 'height') ? a:opts['height'] : 10
+  let self['width'] = l:width
+  let self['height'] = l:height
+
   if g:is_vim
 "{{{
     let self['title'] = ''
@@ -90,6 +100,10 @@ function! s:EW._open(text_list, opts) abort
     endif
     let l:real_opts['col'] = l:x
     let l:real_opts['line'] = l:y
+    let l:real_opts['minwidth'] = l:width
+    let l:real_opts['maxwidth'] = l:width
+    let l:real_opts['minheight'] = l:height
+    let l:real_opts['maxheight'] = l:height
 
     let l:winid = popup_create(self['text_list'], l:real_opts)
 "}}}
@@ -102,17 +116,16 @@ function! s:EW._open(text_list, opts) abort
     call setbufvar(l:bufnr, '&bufhidden', 'hide')
     call setbufvar(l:bufnr, '&swapfile', 0)
     call setbufvar(l:bufnr, '&undolevels', -1)
-    " neovim's bug
-    call setbufvar(l:bufnr, '&modifiable', 1)
+    call setbufvar(l:bufnr, '&modifiable', 1) " neovim's bug
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
     let self['nvim_buf_id'] = l:bufnr
 
     let l:real_opts['col'] = l:x
     let l:real_opts['row'] = l:y
+    let l:real_opts['width'] = l:width
+    let l:real_opts['height'] = l:height
 
     let l:real_opts['relative'] = 'editor'
-    let l:real_opts['width'] = 30
-    let l:real_opts['height'] = 5
     let l:real_opts['anchor'] = 'NW'
     let l:real_opts['style'] = 'minimal'
     let l:winid = self.__nvim_show()
@@ -912,11 +925,4 @@ endfunction
 function! easy_windows#get_cursor_screen_x() abort
 	let l:pos = win_screenpos('.')
   return pos[1] + wincol() - 1
-endfunction
-
-function! easy_windows#init() abort
-  let g:is_vim = !has('nvim')
-  let g:has_nvim_0_6_0 = has('nvim-0.6.0')
-  let g:EW_info = {}
-  let s:windows_id = 0
 endfunction
