@@ -66,14 +66,10 @@ endif
 let g:ECY_use_floating_windows_to_be_popup_windows = 
       \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
 
-if g:is_vim && exists('*nvim_win_set_config') " neovim
-  " TODO:
+if g:is_vim && exists('*nvim_win_set_config')
   let g:has_floating_windows_support = 'neovim'
-  let g:has_floating_windows_support = 'has_no' 
-
-elseif exists('*popup_create') && 
-      \exists('*win_execute') && 
-      \exists('*popup_atcursor') && exists('*popup_close')
+  let g:has_floating_windows_support = 'vim' 
+elseif exists('*popup_create') && exists('*popup_setoptions')
   let g:has_floating_windows_support = 'vim'
 else
   let g:has_floating_windows_support = 'has_no'
