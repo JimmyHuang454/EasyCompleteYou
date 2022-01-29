@@ -1,8 +1,3 @@
-let g:is_vim = !has('nvim')
-let g:has_nvim_0_6_0 = has('nvim-0.6.0')
-let g:EW_info = {}
-let s:windows_id = 0
-
 let s:EW = {'pos': 'topleft', 
       \'title': '', 
       \'drag': 1, 
@@ -21,32 +16,6 @@ let s:EW = {'pos': 'topleft',
       \'is_hided': 0,
       \'is_created': 0,
       \}
-
-function! easy_windows#new() abort
-  let s:windows_id += 1
-  let l:obj = deepcopy(s:EW)
-  let g:EW_info[s:windows_id] = l:obj
-  let l:obj['EW_id'] = s:windows_id
-  let l:obj['highlight'] = {}
-  let l:obj['is_created'] = 0
-  return l:obj
-endfunction
-
-function! easy_windows#clear_all() abort
-  for item in keys(g:EW_info)
-    call g:EW_info[item]._close()
-  endfor
-endfunction
-
-function! easy_windows#get_cursor_screen_y() abort
-	let l:pos = win_screenpos('.')
-  return l:pos[0] + winline() - 1
-endfunction
-
-function! easy_windows#get_cursor_screen_x() abort
-	let l:pos = win_screenpos('.')
-  return pos[1] + wincol() - 1
-endfunction
 
 function! s:Callback(winid, CB, event_name) abort
   call CB(a:winid, a:event_name)
@@ -105,6 +74,13 @@ function! s:EW._open(text_list, opts) abort
   let self['text_list'] = l:text_list
 
   let l:real_opts = {}
+  let self['real_opts'] = l:real_opts
+
+  let l:x = has_key(a:opts, 'x') ? a:opts['x'] : 1
+  let l:y = has_key(a:opts, 'y') ? a:opts['y'] : 1
+  let self['x'] = l:x
+  let self['y'] = l:y
+
   if g:is_vim
 "{{{
     let self['title'] = ''
@@ -112,17 +88,15 @@ function! s:EW._open(text_list, opts) abort
       let l:real_opts['title'] = a:opts['title']
       let self['title'] = a:opts['title']
     endif
-
-    let self['duration'] = 0
-    if has_key(a:opts, 'duration')
-      let l:real_opts['time'] = a:opts['duration']
-      let self['duration'] = a:opts['duration']
-    endif
+    let l:real_opts['col'] = l:x
+    let l:real_opts['line'] = l:y
 
     let l:winid = popup_create(self['text_list'], l:real_opts)
 "}}}
   else
 "{{{
+    let l:x -= 1
+    let l:y -= 1
     let l:bufnr = nvim_create_buf(v:false, v:true)
     call setbufvar(l:bufnr, '&buftype', 'nofile')
     call setbufvar(l:bufnr, '&bufhidden', 'hide')
@@ -133,6 +107,14 @@ function! s:EW._open(text_list, opts) abort
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
     let self['nvim_buf_id'] = l:bufnr
 
+    let l:real_opts['col'] = l:x
+    let l:real_opts['row'] = l:y
+
+    let l:real_opts['relative'] = 'editor'
+    let l:real_opts['width'] = 30
+    let l:real_opts['height'] = 5
+    let l:real_opts['anchor'] = 'NW'
+    let l:real_opts['style'] = 'minimal'
     let l:winid = self.__nvim_show()
 "}}}
   endif
@@ -172,17 +154,6 @@ function! s:EW._open(text_list, opts) abort
     call self._set_zindex(50)
   endif
 
-  if has_key(a:opts, 'x')
-    call self._set_x(a:opts['x'])
-  else
-    call self._set_x(1)
-  endif
-
-  if has_key(a:opts, 'y')
-    call self._set_y(a:opts['y'])
-  else
-    call self._set_y(1)
-  endif
 
   " call self._exe_cmd('setl scrolloff=0', 0)
   " call self._exe_cmd('setl signcolumn=no', 0)
@@ -190,7 +161,6 @@ function! s:EW._open(text_list, opts) abort
   " call self._exe_cmd('setl nocursorcolumn', 0)
   " call self._exe_cmd('setl nospell', 0)
 
-  let self['real_opts'] = l:real_opts
 
   return l:winid
 "}}}
@@ -213,9 +183,7 @@ endfunction
 
 function! s:EW.__nvim_show() abort
 "{{{
-  let l:real_opts = {'relative': 'cursor', 'width': 30, 'height': 5, 'col': 0,
-    \ 'row': 1, 'anchor': 'NW', 'style': 'minimal'}
-  let l:winid = nvim_open_win(self['nvim_buf_id'], 0, l:real_opts)
+  let l:winid = nvim_open_win(self['nvim_buf_id'], 0, self['real_opts'])
   let self['winid'] = l:winid
   return l:winid
 "}}}
@@ -245,7 +213,7 @@ function! s:EW._close() abort
   if g:is_vim
     call popup_close(self['winid'])
   else
-    exe printf('close! %s', self['nvim_buf_id'])
+    exe printf('bd! %s', self['nvim_buf_id'])
   endif
 
   let self['is_created'] = 0
@@ -918,4 +886,37 @@ function! s:EW._delete_match(hl_name) abort
     unlet l:hl[item]
   endfor
 "}}}
+endfunction
+
+function! easy_windows#new() abort
+  let s:windows_id += 1
+  let l:obj = deepcopy(s:EW)
+  let g:EW_info[s:windows_id] = l:obj
+  let l:obj['EW_id'] = s:windows_id
+  let l:obj['highlight'] = {}
+  let l:obj['is_created'] = 0
+  return l:obj
+endfunction
+
+function! easy_windows#clear_all() abort
+  for item in keys(g:EW_info)
+    call g:EW_info[item]._close()
+  endfor
+endfunction
+
+function! easy_windows#get_cursor_screen_y() abort
+	let l:pos = win_screenpos('.')
+  return l:pos[0] + winline() - 1
+endfunction
+
+function! easy_windows#get_cursor_screen_x() abort
+	let l:pos = win_screenpos('.')
+  return pos[1] + wincol() - 1
+endfunction
+
+function! easy_windows#init() abort
+  let g:is_vim = !has('nvim')
+  let g:has_nvim_0_6_0 = has('nvim-0.6.0')
+  let g:EW_info = {}
+  let s:windows_id = 0
 endfunction
