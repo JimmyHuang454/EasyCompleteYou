@@ -1,7 +1,13 @@
 let g:is_vim = !has('nvim')
 let g:has_nvim_0_6_0 = has('nvim-0.6.0')
 let g:EW_info = {}
+let s:close_after_cursor_moved = {}
 let s:windows_id = 0
+
+augroup EW_cursor
+  autocmd!
+  autocmd CursorMoved * call s:CloseAtCursor()
+augroup END
 
 let s:EW = {'pos': 'topleft', 
       \'title': '', 
@@ -24,6 +30,17 @@ let s:EW = {'pos': 'topleft',
 
 function! s:Callback(winid, CB, event_name) abort
   call CB(a:winid, a:event_name)
+endfunction
+
+function! s:CloseAtCursor() abort
+  let l:current_line = line('.')
+  for item in keys(s:close_after_cursor_moved)
+    if s:close_after_cursor_moved[item]['showing_cursor'] == l:current_line
+      continue
+    endif
+    call s:close_after_cursor_moved[item]._close()
+    unlet s:close_after_cursor_moved[item]
+  endfor
 endfunction
 
 " x - Screen line where to position the popup. 1-based.
@@ -136,6 +153,11 @@ function! s:EW._open(text_list, opts) abort
   let self['is_created'] = 1
   let self['is_hided'] = 0
   let self['text_list'] = l:text_list
+  let self['showing_cursor'] = line('.')
+
+  if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
+    let s:close_after_cursor_moved[self['winid']] = self
+  endif
 
   if has_key(a:opts, 'syntax')
     call self._set_syntax(a:opts['syntax'])
