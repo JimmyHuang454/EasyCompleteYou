@@ -61,6 +61,8 @@ fun! s:DoCompletion_vim(context)
   let g:ECY_current_popup_windows_info = {'windows_nr': s:popup_windows_nr,
         \'selecting_item':0,
         \'start_position': s:show_item_position,
+        \'line': l:line,
+        \'col': l:col,
         \'is_use_text_edit': v:false,
         \'original_position': {'line': line('.'), 
         \'colum': col('.'), 'line_content':getline('.')},
@@ -302,11 +304,11 @@ function! s:SelectItems_vim(next_or_pre) abort
   call s:popup_obj._delete_match('ECY_floating_windows_seleted_matched')
 
   if l:next_item == 0
-    let l:to_complete =  g:ECY_current_popup_windows_info['keyword_cache']
+    let l:to_complete = g:ECY_current_popup_windows_info['keyword_cache']
     let l:info = {}
     " don't need to hightlight at here
   else
-    let l:to_complete =  l:items_info[l:next_item - 1]['word']
+    let l:to_complete = l:items_info[l:next_item - 1]['word']
     let l:info = l:items_info[l:next_item - 1]
 
     call s:popup_obj._add_match('ECY_floating_windows_seleted', [l:next_item])

@@ -50,13 +50,9 @@ endfunction
 function! ECY#preview_windows#Close() abort
 "{{{
   if g:ECY_use_floating_windows_to_be_popup_windows == v:true
-    if g:has_floating_windows_support == 'vim'
-      if s:preview_windows_nr != -1
-        call popup_close(s:preview_windows_nr)
-        let s:preview_windows_nr = -1
-      endif
-    elseif g:has_floating_windows_support == 'neovim'
-      " TODO
+    if s:preview_windows_nr != -1
+      call s:preview_obj._close()
+      let s:preview_windows_nr = -1
     endif
   else
 "{{{ old school
@@ -113,39 +109,21 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
     return -1
   endif
 
-  if g:ECY_PreviewWindows_style == 'append'
-    if g:ECY_use_floating_windows_to_be_popup_windows == v:true
-      let l:col = g:ECY_current_popup_windows_info['floating_windows_width'] 
-            \+ g:ECY_current_popup_windows_info['opts']['col']
-      let l:line = g:ECY_current_popup_windows_info['opts']['line']
-    else
-      " has floating windows, but user don't want to use it to be popup window
-      let l:event = copy(v:event)
-      let l:col  = l:event['col'] + l:event['width'] + 1
-      let l:line = l:event['row'] + 1
-    endif
-
-    let l:opts = {
-        \ 'minwidth': g:ECY_preview_windows_size[0][0],
-        \ 'maxwidth': g:ECY_preview_windows_size[0][1],
-        \ 'pos': 'topleft',
-        \ 'col': l:col,
-        \ 'line': l:line,
-        \ 'minheight': g:ECY_preview_windows_size[1][0],
-        \ 'maxheight': g:ECY_preview_windows_size[1][1],
-        \ 'border': [],
-        \ 'close': 'click',
-        \ 'scrollbar': 1,
-        \ 'firstline': 1,
-        \ 'padding': [0,1,0,1],
-        \ 'zindex': 2000}
+  if g:ECY_use_floating_windows_to_be_popup_windows == v:true
+    let l:col = g:ECY_current_popup_windows_info['floating_windows_width'] 
+          \+ g:ECY_current_popup_windows_info['col']
+    let l:line = g:ECY_current_popup_windows_info['line']
   else
-    " TODO:
-    " waitting for vim to support more operation of floating windows
+    " has floating windows, but user don't want to use it to be popup window
+    let l:event = copy(v:event)
+    let l:col  = l:event['col'] + l:event['width'] + 1
+    let l:line = l:event['row'] + 1
   endif
 
-  let l:nr = popup_create(l:to_show_list,l:opts)
-  call setbufvar(winbufnr(l:nr), '&syntax', a:using_highlight)
-  return l:nr
+  let s:preview_obj = easy_windows#new()
+  let l:winid = s:preview_obj._open(l:to_show_list, {'x': l:col, 'y': l:line})
+  call s:preview_obj._set_syntax(a:using_highlight)
+
+  return l:winid
 "}}}
 endfunction

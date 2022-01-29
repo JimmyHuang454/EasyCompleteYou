@@ -206,6 +206,7 @@ command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call easy_windows#init()
 call ECY#completion#Init()
 call ECY2_main#Init()
 
