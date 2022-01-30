@@ -496,37 +496,59 @@ class Operate(object):
         if res is None:
             return
 
-        # if len(res['signatures']) == 0:
-        #     return
+        activeSignature = 0
+        default_active_param = 0
+        if 'activeSignature' in res:
+            activeSignature = res['activeSignature']
+        if 'activeParameter' in res:
+            default_active_param = res['activeParameter']
 
-        # i = 0
-        # content = []
-        # for item in res['signatures']:
-        #     content.append("%s. %s" % (i, item['label']))
+        to_show = []
+        i = 0
+        for SignatureHelp in res['signatures']:
+            line = ''
+            if i == activeSignature:
+                line = '=> '
+            label = SignatureHelp['label']
+            line += label
 
-        # hilight_str = []
-        # if 'activeSignature' in res and res['activeSignature'] is not None:
-        #     hilight_str.append("%s\." % (res['activeSignature']))
-        #     activeSignature = res['activeSignature']
-        # else:
-        #     activeSignature = {}
+            if 'activeParameter' in SignatureHelp:
+                active_param = SignatureHelp['activeParameter']
+            else:
+                active_param = default_active_param
 
-        # if 'activeParameter' in res and res['activeParameter'] is not None:
-        #     try:
-        #         activeParameter = res['parameters'][res['activeParameter']]
-        #         hilight_str.append("%s" % (activeParameter))
-        #     except:
-        #         activeParameter = {}
-        # else:
-        #     activeParameter = {}
+            if 'parameters' in SignatureHelp and active_param < len(
+                    SignatureHelp['parameters']):
+                param_label = SignatureHelp['parameters'][active_param][
+                    'label']
+                start = label.find(param_label)
+                end = start + len(param_label)
 
-        # if 'documentation' in activeParameter:
-        #     content.extend(
-        #         self._format_markupContent(activeParameter['documentation']))
+            to_show.append(line)
+            i += 1
 
-        # if 'documentation' in activeSignature:
-        #     content.extend(
-        #         self._format_markupContent(activeSignature['documentation']))
+        to_show.append('--------')
+
+        selecting_signature = res['signatures'][activeSignature]
+
+        if 'documentation' in selecting_signature:
+            to_show.extend(
+                self._format_markupContent(
+                    selecting_signature['documentation']))
+
+        if 'activeParameter' in selecting_signature:
+            active_param = SignatureHelp['activeParameter']
+        else:
+            active_param = default_active_param
+
+        if 'parameters' in selecting_signature and active_param < len(
+                selecting_signature['parameters']):
+            selecting_parameters = selecting_signature['parameters'][
+                active_param]
+            if 'documentation' in selecting_parameters:
+                to_show.extend(selecting_parameters['documentation'])
+
+        res['to_show'] = to_show
 
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
