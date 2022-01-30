@@ -233,7 +233,7 @@ function! s:CloseDiagnosisPopupWindows() abort
   if s:showing_winid == -1
     return
   endif
-  call s:diagnostics_obj._close()
+  call s:popup_obj._close()
   let s:showing_winid = -1
 "}}}
 endfunction
@@ -287,16 +287,16 @@ function! s:ShowDiagnosis_vim(index_list) abort
     call extend(l:text, s:FormatInfo(item['diagnostics']))
   endfor
 
-  let s:diagnostics_obj = easy_windows#new()
+  let s:popup_obj = easy_windows#new()
 
-  let s:showing_winid = s:diagnostics_obj._open(l:text, {
+  let s:showing_winid = s:popup_obj._open(l:text, {
         \'at_cursor': 1,
         \'exit_cb': function('s:PopupClosed'),
         \'x': easy_windows#get_cursor_screen_x() + 1,
         \'y': easy_windows#get_cursor_screen_y() + 1,
         \'syntax': 'ECY_diagnostics'})
-  call s:diagnostics_obj._align_width()
-  call s:diagnostics_obj._align_height()
+  call s:popup_obj._align_width()
+  call s:popup_obj._align_height()
 "}}}
 endfunction
 

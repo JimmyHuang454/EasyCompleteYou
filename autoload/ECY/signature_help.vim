@@ -1,7 +1,7 @@
 
 fun! ECY#signature_help#Init() abort
 "{{{
-  let g:ECY_windows_are_showing['signature_help'] = -1
+  let s:showing_winid = -1
   let g:ECY_signature_help_activeParameter = ''
   let g:ECY_signature_help_activeSignature = ''
 
@@ -68,16 +68,12 @@ endf
 
 fun! ECY#signature_help#Close() abort
 "{{{
-  if g:has_floating_windows_support == 'vim'
-    if g:ECY_windows_are_showing['signature_help'] != -1
-      call popup_close(g:ECY_windows_are_showing['signature_help'])
-    endif
-  elseif g:has_floating_windows_support == 'neovim'
-    " TODO
-  else
+  if s:showing_winid == -1
     return
   endif
-  let g:ECY_windows_are_showing['signature_help'] = -1
+
+  call s:popup_obj._close()
+  let s:showing_winid = -1
 "}}}
 endf
 
@@ -96,23 +92,16 @@ fun! s:Vim(results) abort
     let i += 1
   endfor
 
-  let l:opts = {
-      \ 'minwidth': g:ECY_preview_windows_size[0][0],
-      \ 'maxwidth': g:ECY_preview_windows_size[0][1],
-      \ 'minheight': g:ECY_preview_windows_size[1][0],
-      \ 'maxheight': g:ECY_preview_windows_size[1][1],
-      \ 'border': [],
-      \ 'close': 'click',
-      \ 'borderchars': ['-', '|', '-', '|', '┌', '┐', '┘', '└'],
-      \ 'scrollbar': 1,
-      \ 'firstline': 1,
-      \ 'padding': [0,0,0,0],
-      \ 'zindex': 1000,
-      \'pos':'botleft',
-      \'line':'cursor-1',
-      \'col': 'cursor'}
-  let l:nr = popup_create(l:to_show, l:opts)
-  let g:ECY_windows_are_showing['signature_help'] = l:nr
+  let s:popup_obj = easy_windows#new()
+  let s:showing_winid = s:popup_obj._open(l:to_show, {
+        \'at_cursor': 1,
+        \'anchor': 'SW',
+        \'exit_cb': function('s:PopupClosed'),
+        \'x': easy_windows#get_cursor_screen_x(),
+        \'y': easy_windows#get_cursor_screen_y() - 1,
+        \'syntax': 'ECY_signature_help'})
+  call s:popup_obj._align_width()
+  call s:popup_obj._align_height()
 
   let l:activeSignature = 0
   if has_key(a:results, 'activeSignature')
@@ -137,7 +126,9 @@ fun! s:Vim(results) abort
     catch
     endtry
   endif
-
-  call setbufvar(winbufnr(l:nr), '&syntax', 'ECY_signature_help')
 "}}}
 endf
+
+function! s:PopupClosed() abort
+  let s:showing_winid = -1
+endfunction
