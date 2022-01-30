@@ -44,7 +44,7 @@ function ECY#diagnostics#Init() abort
   let s:sign_id_dict                           = {}
   let s:current_diagnostics                    = {}
   let g:ECY_diagnostics_items_all              = []
-  let g:ECY_windows_are_showing['diagnostics'] = -1
+  let s:showing_winid = -1
   let g:ECY_diagnostics_items_with_engine_name = {'nothing': []}
   " user don't want to update diagnostics in insert mode, but engine had
   " returned diagnostics, so we cache it and update after user leave insert
@@ -228,14 +228,13 @@ function! ECY#diagnostics#ShowNextDiagnosis(next_or_pre) abort
 "}}}
 endfunction
 
-function! g:Diagnosis_vim_cb(id, key) abort
-  let g:ECY_windows_are_showing['diagnostics'] = -1
-endfunction
-
 function! s:CloseDiagnosisPopupWindows() abort
 "{{{
-  call quickui#preview#close()
-  let g:ECY_windows_are_showing['diagnostics'] = -1
+  if s:showing_winid == -1
+    return
+  endif
+  call s:diagnostics_obj._close()
+  let s:showing_winid = -1
 "}}}
 endfunction
 
@@ -288,11 +287,21 @@ function! s:ShowDiagnosis_vim(index_list) abort
     call extend(l:text, s:FormatInfo(item['diagnostics']))
   endfor
 
-  let g:ECY_windows_are_showing['diagnostics'] = 
-        \quickui#preview#display(l:text, {
-          \'syntax': 'ECY_diagnostics', 
-          \'number': 0})
+  let s:diagnostics_obj = easy_windows#new()
+
+  let s:showing_winid = s:diagnostics_obj._open(l:text, {
+        \'at_cursor': 1,
+        \'exit_cb': function('s:PopupClosed'),
+        \'x': easy_windows#get_cursor_screen_x() + 1,
+        \'y': easy_windows#get_cursor_screen_y() + 1,
+        \'syntax': 'ECY_diagnostics'})
+  call s:diagnostics_obj._align_width()
+  call s:diagnostics_obj._align_height()
 "}}}
+endfunction
+
+function! s:PopupClosed() abort
+  let s:showing_winid = -1
 endfunction
 
 function! s:ShowDiagnosis_all(index_list) abort
@@ -565,7 +574,7 @@ function! ECY#diagnostics#Toggle() abort
     call ECY#diagnostics#CleanAllSignHighlight()
     call ECY#diagnostics#ClearAllSign()
     let s:current_diagnostics       = {}
-    let g:ECY_windows_are_showing['diagnostics'] = -1
+    let s:showing_winid = -1
     let g:ECY_diagnostics_items_all = []
     let g:ECY_diagnostics_items_with_engine_name = {}
   endif
