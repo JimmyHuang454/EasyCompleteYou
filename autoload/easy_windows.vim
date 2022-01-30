@@ -133,6 +133,7 @@ function! s:EW._open(text_list, opts) abort
       let l:real_opts['pos'] = 'botright'
     endif
 
+    let l:real_opts['fixed'] = 1
     let l:real_opts['col'] = l:x
     let l:real_opts['line'] = l:y
     let l:real_opts['minwidth'] = l:width
