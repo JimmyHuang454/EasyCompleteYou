@@ -9,7 +9,7 @@ augroup EW_cursor
   autocmd CursorMoved * call s:CloseAtCursor()
 augroup END
 
-let s:EW = {'pos': 'topleft', 
+let s:EW = {'anchor': 'NW', 
       \'title': '', 
       \'drag': 1, 
       \'syntax': '',
@@ -108,6 +108,13 @@ function! s:EW._open(text_list, opts) abort
   let self['width'] = l:width
   let self['height'] = l:height
 
+  if has_key(a:opts, 'anchor')
+    let l:anchor = a:opts['anchor']
+  else
+    let l:anchor = 'NW'
+  endif
+  let self['anchor'] = l:anchor
+
   if g:is_vim
 "{{{
     let self['title'] = ''
@@ -115,6 +122,17 @@ function! s:EW._open(text_list, opts) abort
       let l:real_opts['title'] = a:opts['title']
       let self['title'] = a:opts['title']
     endif
+
+    if l:anchor == 'NW'
+      let l:real_opts['pos'] = 'topleft'
+    elseif l:anchor == 'NE'
+      let l:real_opts['pos'] = 'topright'
+    elseif l:anchor == 'SW'
+      let l:real_opts['pos'] = 'botleft'
+    elseif l:anchor == 'SE'
+      let l:real_opts['pos'] = 'botright'
+    endif
+
     let l:real_opts['col'] = l:x
     let l:real_opts['line'] = l:y
     let l:real_opts['minwidth'] = l:width
@@ -137,6 +155,7 @@ function! s:EW._open(text_list, opts) abort
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
     let self['nvim_buf_id'] = l:bufnr
 
+    let l:real_opts['anchor'] = l:anchor
     let l:real_opts['col'] = l:x
     let l:real_opts['row'] = l:y
     let l:real_opts['width'] = l:width
