@@ -76,7 +76,7 @@ fun! ECY#document_link#Open() abort
   for item in l:info['res']
     let l:res = item
     let l:range = item['range']
-    let l:line  = line('.')
+    let l:line  = line('.') - 1
     let l:col   = col('.')
     if l:range['start']['line'] <= l:line && l:range['end']['line'] >= l:line &&
           \l:range['start']['character'] <= l:col && l:range['end']['character']  >= l:col
