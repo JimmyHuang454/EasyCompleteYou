@@ -1,7 +1,6 @@
 
 fun! ECY#signature_help#Init() abort
 "{{{
-  let s:showing_winid = -1
   let g:ECY_signature_help_activeParameter = ''
   let g:ECY_signature_help_activeSignature = ''
 
@@ -68,12 +67,10 @@ endf
 
 fun! ECY#signature_help#Close() abort
 "{{{
-  if s:showing_winid == -1
-    return
-  endif
-
-  call s:popup_obj._close()
-  let s:showing_winid = -1
+  try
+    call s:signature_help_obj._close()
+  catch 
+  endtry
 "}}}
 endf
 
@@ -92,16 +89,14 @@ fun! s:Vim(results) abort
     let i += 1
   endfor
 
-  let s:popup_obj = easy_windows#new()
-  let s:showing_winid = s:popup_obj._open(l:to_show, {
-        \'at_cursor': 1,
+  let s:signature_help_obj = easy_windows#new()
+  let l:temp = s:signature_help_obj._open(l:to_show, {
         \'anchor': 'SW',
-        \'exit_cb': function('s:PopupClosed'),
         \'x': easy_windows#get_cursor_screen_x(),
-        \'y': easy_windows#get_cursor_screen_y() - 1,
-        \'syntax': 'ECY_signature_help'})
-  call s:popup_obj._align_width()
-  call s:popup_obj._align_height()
+        \'y': easy_windows#get_cursor_screen_y() - 1})
+
+  call s:signature_help_obj._align_width()
+  call s:signature_help_obj._align_height()
 
   let l:activeSignature = 0
   if has_key(a:results, 'activeSignature')
@@ -128,7 +123,3 @@ fun! s:Vim(results) abort
   endif
 "}}}
 endf
-
-function! s:PopupClosed() abort
-  let s:showing_winid = -1
-endfunction

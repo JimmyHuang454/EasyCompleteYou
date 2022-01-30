@@ -217,7 +217,7 @@ function! s:EW._open(text_list, opts) abort
   " call self._exe_cmd('setl nospell', 0)
 
   if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
-    let s:close_after_cursor_moved[self['winid']] = self
+    let s:close_after_cursor_moved[self['EW_id']] = self
   endif
 
   return l:winid
@@ -323,6 +323,20 @@ function! s:EW._exe_cmd(cmd, is_silent) abort
     endif
 
     keepalt call nvim_set_current_win(current)
+  endif
+  "}}}
+endfunction
+
+function! s:EW._set_var(var_name, value) abort
+  "{{{
+  if !self['is_created']
+    return
+  endif
+
+  if g:is_vim
+    call setbufvar(winbufnr(self['winid']), a:var_name, a:value)
+  else
+    call nvim_win_set_option(self['winid'], a:var_name, a:value)
   endif
   "}}}
 endfunction
@@ -434,7 +448,7 @@ function! s:EW._set_syntax(syntax_name) abort
     return
   endif
 
-  call self._exe_cmd(printf('let &syn = "%s"', a:syntax_name), 0)
+  call self._set_var('&syntax', a:syntax_name)
   let self['syntax'] = a:syntax_name
 "}}}
 endfunction

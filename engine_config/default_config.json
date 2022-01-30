@@ -319,7 +319,7 @@
       "des": ["cmd to start vim LS."]
     },
     "cmd2": {
-      "default_value": "C:/Users/qwer/Desktop/viml_Windows.exe --stdio",
+      "default_value": "vim-language-server",
       "type": "string",
       "des": ["cmd to start vim LS."]
     }
