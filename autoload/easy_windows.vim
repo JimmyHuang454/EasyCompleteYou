@@ -155,8 +155,8 @@ function! s:EW._open(text_list, opts) abort
   let self['text_list'] = l:text_list
   let self['showing_cursor'] = line('.')
 
-  if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
-    let s:close_after_cursor_moved[self['winid']] = self
+  if has_key(a:opts, 'exit_cb')
+    let self['exit_cb'] = a:opts['exit_cb']
   endif
 
   if has_key(a:opts, 'syntax')
@@ -196,6 +196,9 @@ function! s:EW._open(text_list, opts) abort
   " call self._exe_cmd('setl nocursorcolumn', 0)
   " call self._exe_cmd('setl nospell', 0)
 
+  if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
+    let s:close_after_cursor_moved[self['winid']] = self
+  endif
 
   return l:winid
 "}}}
@@ -249,6 +252,10 @@ function! s:EW._close() abort
     call popup_close(self['winid'])
   else
     exe printf('bd! %s', self['nvim_buf_id'])
+  endif
+
+  if has_key(self, 'exit_cb')
+    call self['exit_cb']()
   endif
 
   let self['is_created'] = 0
