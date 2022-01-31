@@ -33,7 +33,7 @@ class Operate(lsp.Operate):
                              engine_name,
                              languageId='viml',
                              starting_cmd_argv='--stdio',
-                             refresh_regex=r'[\w+\:\#\&]',
+                             refresh_regex=r'[\w+\#\&]',
                              initializationOptions=initializationOptions)
 
     def OnCompletion(self, context):

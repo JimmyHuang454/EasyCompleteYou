@@ -82,44 +82,25 @@ fun! s:Vim(results) abort
     return
   endif
 
-  let l:to_show = []
-  let i = 0
-  for item in a:results['signatures']
-    call add(l:to_show, printf("%s. %s", string(i), item['label']))
-    let i += 1
-  endfor
+  let l:to_show = a:results['to_show']
 
   let s:signature_help_obj = easy_windows#new()
   let l:temp = s:signature_help_obj._open(l:to_show, {
         \'anchor': 'SW',
+        \'syntax': &ft,
         \'x': easy_windows#get_cursor_screen_x(),
         \'y': easy_windows#get_cursor_screen_y() - 1})
 
   call s:signature_help_obj._align_width()
   call s:signature_help_obj._align_height()
 
-  let l:activeSignature = 0
-  if has_key(a:results, 'activeSignature')
-    let l:activeSignature = a:results['activeSignature']
-  endif
-
+  let l:activeSignature = a:results['activeSignature']
   let l:signatures = a:results['signatures'][l:activeSignature]
-  let g:ECY_signature_help_activeParameter = s:Translate(string(l:activeSignature) . '.')
+  call s:signature_help_obj._add_match('ECY_document_link_style', [l:activeSignature + 1])
 
-  let g:ECY_signature_help_activeSignature = ''
-  if has_key(a:results, 'activeParameter')
-    let l:parameters = l:signatures['parameters']
-    let l:activeParameter = a:results['activeParameter']
-    try
-      let l:activeParameter = l:parameters[l:activeParameter]
-      let g:ECY_signature_help_activeSignature = s:Translate(l:activeParameter['label'])
-
-      if has_key(l:activeParameter, 'documentation')
-        call add(l:to_show, g:ECY_cut_line)
-        call extend(l:to_show, l:activeParameter['documentation'])
-      endif
-    catch
-    endtry
+  if has_key(l:signatures, 'start')
+    call s:signature_help_obj._add_match('Search', [[l:activeSignature + 1, 
+          \l:signatures['start'] + 1, l:signatures['str_len']]])
   endif
 "}}}
 endf

@@ -507,8 +507,8 @@ class Operate(object):
         i = 0
         for SignatureHelp in res['signatures']:
             line = ''
-            if i == activeSignature:
-                line = '=> '
+            # if i == activeSignature:
+            #     line = '=> '
             label = SignatureHelp['label']
             line += label
 
@@ -522,7 +522,9 @@ class Operate(object):
                 param_label = SignatureHelp['parameters'][active_param][
                     'label']
                 start = label.find(param_label)
-                end = start + len(param_label)
+                str_len = len(param_label)
+                SignatureHelp['start'] = start
+                SignatureHelp['str_len'] = str_len
 
             to_show.append(line)
             i += 1
@@ -549,6 +551,7 @@ class Operate(object):
                 to_show.extend(selecting_parameters['documentation'])
 
         res['to_show'] = to_show
+        res['activeSignature'] = activeSignature
 
         if len(res) != 0:
             rpc.DoCall('ECY#signature_help#Show', [res])
