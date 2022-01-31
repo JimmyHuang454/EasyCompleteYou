@@ -87,12 +87,12 @@ fun! s:Vim(results) abort
   let s:signature_help_obj = easy_windows#new()
   let l:temp = s:signature_help_obj._open(l:to_show, {
         \'anchor': 'SW',
-        \'syntax': &ft,
         \'x': easy_windows#get_cursor_screen_x(),
         \'y': easy_windows#get_cursor_screen_y() - 1})
 
   call s:signature_help_obj._align_width()
   call s:signature_help_obj._align_height()
+  call s:signature_help_obj._set_syntax(&ft)
 
   let l:activeSignature = a:results['activeSignature']
   let l:signatures = a:results['signatures'][l:activeSignature]
