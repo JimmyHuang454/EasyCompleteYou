@@ -134,6 +134,7 @@ function! s:EW._open(text_list, opts) abort
     endif
 
     let l:real_opts['fixed'] = 1
+    let l:real_opts['posinvert'] = 0
     let l:real_opts['col'] = l:x
     let l:real_opts['line'] = l:y
     let l:real_opts['minwidth'] = l:width
@@ -145,8 +146,18 @@ function! s:EW._open(text_list, opts) abort
 "}}}
   else
 "{{{
+    if l:anchor == 'NE'
+      let l:x += 1
+    elseif l:anchor == 'SW'
+      let l:y += 1
+    elseif l:anchor == 'SE'
+      let l:x += 1
+      let l:y += 1
+    endif
+
     let l:x -= 1
     let l:y -= 1
+
     let l:bufnr = nvim_create_buf(v:false, v:true)
     call setbufvar(l:bufnr, '&buftype', 'nofile')
     call setbufvar(l:bufnr, '&bufhidden', 'hide')
@@ -163,7 +174,6 @@ function! s:EW._open(text_list, opts) abort
     let l:real_opts['height'] = l:height
 
     let l:real_opts['relative'] = 'editor'
-    let l:real_opts['anchor'] = 'NW'
     let l:real_opts['style'] = 'minimal'
     let l:winid = self.__nvim_show()
 "}}}
@@ -177,12 +187,6 @@ function! s:EW._open(text_list, opts) abort
 
   if has_key(a:opts, 'exit_cb')
     let self['exit_cb'] = a:opts['exit_cb']
-  endif
-
-  if has_key(a:opts, 'syntax')
-    call self._set_syntax(a:opts['syntax'])
-  else
-    call self._set_syntax('')
   endif
 
   if has_key(a:opts, 'number') && a:opts['number']
@@ -209,12 +213,17 @@ function! s:EW._open(text_list, opts) abort
     call self._set_zindex(50)
   endif
 
-
   " call self._exe_cmd('setl scrolloff=0', 0)
   " call self._exe_cmd('setl signcolumn=no', 0)
   " call self._exe_cmd('setl nocursorline', 0)
   " call self._exe_cmd('setl nocursorcolumn', 0)
   " call self._exe_cmd('setl nospell', 0)
+
+  if has_key(a:opts, 'syntax')
+    call self._set_syntax(a:opts['syntax'])
+  else
+    call self._set_syntax('')
+  endif
 
   if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
     let s:close_after_cursor_moved[self['EW_id']] = self
@@ -313,7 +322,7 @@ function! s:EW._exe_cmd(cmd, is_silent) abort
   if g:is_vim
     keepalt call win_execute(self['winid'], l:cmd, l:is_silent)
   else
-    let current = nvim_get_current_win()
+    let l:current_win = nvim_get_current_win()
     keepalt call nvim_set_current_win(self['winid'])
 
     if l:is_silent == 0
@@ -322,7 +331,7 @@ function! s:EW._exe_cmd(cmd, is_silent) abort
       silent exec l:cmd
     endif
 
-    keepalt call nvim_set_current_win(current)
+    keepalt call nvim_set_current_win(l:current_win)
   endif
   "}}}
 endfunction
@@ -448,7 +457,7 @@ function! s:EW._set_syntax(syntax_name) abort
     return
   endif
 
-  call self._set_var('&syntax', a:syntax_name)
+  call self._exe_cmd(printf("let &syntax = '%s'", a:syntax_name), 0)
   let self['syntax'] = a:syntax_name
 "}}}
 endfunction
@@ -552,13 +561,19 @@ function! s:EW._set_x(x) abort
     return
   endif
 
+  let l:x = a:x
+
   if g:is_vim
-    call self.__set_opts('col', a:x)
+    call self.__set_opts('col', l:x)
   else
+    let l:x -= 1
+    if self['anchor'] == 'NE'
+      let l:x += 1
+    endif
     call nvim_win_set_config(self['winid'], 
-          \{'relative': 'editor', 'col': a:x - 1, 'row': self._get_y() - 1 })
+          \{'relative': 'editor', 'col': l:x, 'row': self._get_y()})
   endif
-  let self['x'] = a:x
+  let self['x'] = l:x
 "}}}
 endfunction
 
@@ -568,13 +583,23 @@ function! s:EW._set_y(y) abort
     return
   endif
 
+  let l:y = a:y
+
   if g:is_vim
-    call self.__set_opts('line', a:y)
+    call self.__set_opts('line', l:y)
   else
+    let l:y -= 1
+
+    if l:anchor == 'SW'
+      let l:y += 1
+    elseif l:anchor == 'SE'
+      let l:y += 1
+    endif
+
     call nvim_win_set_config(self['winid'], 
-          \{'relative': 'editor', 'row': a:y - 1, 'col': self._get_x() - 1 })
+          \{'relative': 'editor', 'row': l:y, 'col': self._get_x()})
   endif
-  let self['y'] = a:y
+  let self['y'] = l:y
 "}}}
 endfunction
 
@@ -930,8 +955,8 @@ function! s:EW._add_match(hl_name, pos) abort
               \l:hl_id,
               \a:hl_name,
               \item[0] - 1,
-              \item[1],
-              \item[1] + item[2],
+              \item[1] - 1,
+              \item[1] + item[2] - 1,
               \)
       endif
     endfor
