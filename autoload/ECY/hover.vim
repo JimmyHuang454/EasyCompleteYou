@@ -6,6 +6,12 @@ fun! ECY#hover#Open(msg) abort
   if mode() != 'n'
     return
   endif
- let opts = {"close":"button", "title":"Vim Messages", 'syntax': &syn}
- call quickui#textbox#open(a:msg, opts)
+
+ let s:popup_obj = easy_windows#new()
+ let l:temp = s:popup_obj._open(a:msg, {
+       \'at_cursor': 1,
+       \'x': easy_windows#get_cursor_screen_x(),
+       \'y': easy_windows#get_cursor_screen_y() - 1})
+  call s:popup_obj._align_width()
+  call s:popup_obj._align_height()
 endf

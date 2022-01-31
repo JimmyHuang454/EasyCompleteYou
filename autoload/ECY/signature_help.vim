@@ -22,35 +22,6 @@ fun! s:OnInsertLeave() abort
 "}}}
 endf
 
-fun! s:Translate(origin) abort
-"{{{
-  let l:translated = ''
-  let i = 0
-  while i < len(a:origin)
-    let item = a:origin[i]
-    if item == '*'
-      let l:translated .= "\\*"
-    elseif item == '.'
-      let l:translated .= "\\."
-    elseif item == '+'
-      let l:translated .= "\\+"
-    elseif item == '{'
-      let l:translated .= "\\{"
-    elseif item == '}'
-      let l:translated .= "\\}"
-    elseif item == '['
-      let l:translated .= "\\["
-    elseif item == ']'
-      let l:translated .= "\\]"
-    else
-      let l:translated .= item
-    endif
-    let i += 1
-  endw
-  return l:translated
-"}}}
-endf
-
 fun! ECY#signature_help#Show(results) abort
 "{{{
   if !g:ECY_enable_signature_help || mode() != 'i'
