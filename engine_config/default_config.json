@@ -52,6 +52,26 @@
       "type": "string",
       "des": ["cmd to start clangd."]
     },
+    "use_completion_cache": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["Is use completion cache?"]
+    },
+    "all_scopes_completion": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["If set to true, code completion will include index symbols that are not defined in the scopes (e.g. namespaces) visible from the code completion point. Such completions can insert scope qualifiers."]
+    },
+    "background_index": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["Index project code in the background and persist index on disk."]
+    },
+    "clang_format_fallback_style": {
+      "default_value": "",
+      "type": "string",
+      "des": ["clang-format style to apply by default when no .clang-format file is found."]
+    },
     "initializationOptions.fallbackFlags": {
       "default_value": [],
       "type": "list",

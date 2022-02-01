@@ -5,9 +5,32 @@ from ECY import utils
 
 class Operate(lsp.Operate):
     def __init__(self, engine_name):
-        lsp.Operate.__init__(self,
-                             engine_name,
-                             languageId='cpp')
+        starting_cmd_argv = ''
+        if utils.GetEngineConfig(engine_name, 'all_scopes_completion'):
+            starting_cmd_argv += '--all-scopes-completion '
+
+        if utils.GetEngineConfig(engine_name, 'background_index'):
+            starting_cmd_argv += '--background-index '
+
+        clang_format_fallback_style = utils.GetEngineConfig(
+            engine_name, 'clang_format_fallback_style')
+
+        if clang_format_fallback_style != "":
+            starting_cmd_argv += '--fallback-style="%s" ' % clang_format_fallback_style
+
+        if utils.GetEngineConfig(engine_name, 'use_completion_cache'):
+            starting_cmd_argv += '--limit-results=0 '
+            lsp.Operate.__init__(self,
+                                 engine_name,
+                                 starting_cmd_argv=starting_cmd_argv,
+                                 languageId='cpp',
+                                 use_completion_cache=True,
+                                 use_completion_cache_position=True)
+        else:
+            lsp.Operate.__init__(self,
+                                 engine_name,
+                                 starting_cmd_argv=starting_cmd_argv,
+                                 languageId='cpp')
 
     def SwitchSourceHeader(self, context):
         params = context['params']
@@ -19,7 +42,7 @@ class Operate(lsp.Operate):
             params, 'textDocument/switchSourceHeader').GetResponse()
 
         if 'error' in res:
-            self._goto_response(res)  #show error msg
+            self._goto_response(res)  # show error msg
             return
 
         res = res['result']
