@@ -7,10 +7,7 @@ class Operate(lsp.Operate):
     def __init__(self, engine_name):
         lsp.Operate.__init__(self,
                              engine_name,
-                             starting_cmd_argv='--limit-results=0',
-                             languageId='cpp',
-                             use_completion_cache=True,
-                             use_completion_cache_position=False)
+                             languageId='cpp')
 
     def SwitchSourceHeader(self, context):
         params = context['params']

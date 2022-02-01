@@ -19,7 +19,7 @@ class Operate(object):
                  rootPath=None,
                  languageId='',
                  workspaceFolders=None,
-                 use_completion_cache=True,
+                 use_completion_cache=False,
                  use_completion_cache_position=False,
                  initializationOptions=None):
 
