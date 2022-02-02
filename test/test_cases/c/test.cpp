@@ -6,3 +6,13 @@ int main(void) {
   test_abbr.
   return 0;
 }
+
+void assignment() {
+  char *a = NULL;
+  char *b = 0;
+  char c = 0;
+}
+
+int *ret_ptr() {
+  return 0;
+}

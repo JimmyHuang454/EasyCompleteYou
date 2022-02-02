@@ -11,7 +11,7 @@ fun! ECY#hover#Open(msg) abort
  let l:temp = s:popup_obj._open(a:msg, {
        \'at_cursor': 1,
        \'x': easy_windows#get_cursor_screen_x(),
-       \'y': easy_windows#get_cursor_screen_y() - 1})
+       \'y': easy_windows#get_cursor_screen_y() + 1})
   call s:popup_obj._align_width()
   call s:popup_obj._align_height()
 endf

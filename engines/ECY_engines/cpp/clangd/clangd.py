@@ -18,6 +18,11 @@ class Operate(lsp.Operate):
         if clang_format_fallback_style != "":
             starting_cmd_argv += '--fallback-style="%s" ' % clang_format_fallback_style
 
+        pch_storage = utils.GetEngineConfig(engine_name, 'pch_storage')
+
+        if pch_storage != "" and pch_storage in ['disk', 'memory']:
+            starting_cmd_argv += '--pch-storage="%s" ' % pch_storage
+
         if utils.GetEngineConfig(engine_name, 'use_completion_cache'):
             starting_cmd_argv += '--limit-results=0 '
             lsp.Operate.__init__(self,

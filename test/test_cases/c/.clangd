@@ -2,3 +2,16 @@ CompileFlags:
   Add:
     - '-isystem'
     - './test_include/'
+
+Diagnostics:
+  ClangTidy:
+    Add:
+      [
+        performance-*,
+        bugprone-*,
+        portability-*,
+        modernize-*,
+      ]
+    Remove: modernize-use-trailing-return-type
+    CheckOptions:
+      WarnOnFloatingPointNarrowingConversion: false

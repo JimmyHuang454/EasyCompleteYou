@@ -72,6 +72,11 @@
       "type": "string",
       "des": ["clang-format style to apply by default when no .clang-format file is found."]
     },
+    "pch_storage": {
+      "default_value": "",
+      "type": "string",
+      "des": ["Storing PCHs in memory increases memory usages, but may improve performance."]
+    },
     "initializationOptions.fallbackFlags": {
       "default_value": [],
       "type": "list",
