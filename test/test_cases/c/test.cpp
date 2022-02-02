@@ -1,9 +1,5 @@
 #include <stdio.h>
-
-struct cpp_t {
-  int type_1;
-  char type_2;
-};
+#include <test_include.h>
 
 int main(void) {
   struct cpp_t test_abbr;
