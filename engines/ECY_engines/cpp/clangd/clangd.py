@@ -51,22 +51,26 @@ class Operate(lsp.Operate):
             return
 
         res = res['result']
-        if res is not None:
-            self._goto_response({
-                'result': [{
-                    "uri": res,
-                    "range": {
-                        "start": {
-                            "line": 0,
-                            "character": 1
-                        },
-                        "end": {
-                            "line": 0,
-                            "character": 6
-                        }
+
+        if res is None:
+            self._show_msg('res is None')
+            return
+
+        self._goto_response({
+            'result': [{
+                "uri": res,
+                "range": {
+                    "start": {
+                        "line": 0,
+                        "character": 1
+                    },
+                    "end": {
+                        "line": 0,
+                        "character": 6
                     }
-                }]
-            })
+                }
+            }]
+        })
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)

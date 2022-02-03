@@ -225,6 +225,11 @@ function! s:EW._open(text_list, opts) abort
     call self._set_syntax('')
   endif
 
+  if has_key(a:opts, 'created_cb')
+    let self['created_cb'] = a:opts['created_cb']
+    call self['created_cb']()
+  endif
+
   if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
     let s:close_after_cursor_moved[self['EW_id']] = self
   endif

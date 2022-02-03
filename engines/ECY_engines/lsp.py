@@ -46,11 +46,12 @@ class Operate(object):
         else:
             self.rootUri = rootUri
 
+        self.workspace_cache = []
         if workspaceFolders is None:
-            self.workspaceFolders = [{
-                'uri': self.rootUri,
-                'name': 'ECY_' + self.rootPath
-            }]
+            self.workspaceFolders = None
+            temp = {'uri': self.rootUri, 'name': self.rootPath}
+            self.workspace_cache.append(temp)
+            self.workspaceFolders = [temp]
         else:
             self.workspaceFolders = workspaceFolders
 
@@ -73,7 +74,6 @@ class Operate(object):
         self.results_list = []
         self.rename_info = {}
         self.rename_id = 0
-        self.workspace_cache = []
         self.completion_position_cache = {}
         self.completion_isInCompleted = False
         self.current_seleted_item = {}
@@ -827,7 +827,7 @@ class Operate(object):
                             self.capabilities['workspace'] = {}
                         self.capabilities['workspace'][
                             'workspaceFolders'] = True
-                    self._lsp._build_response(None, item['id'])
+                self._lsp._build_response(None, jobs['id'])
             except Exception as e:
                 logger.exception(e)
 

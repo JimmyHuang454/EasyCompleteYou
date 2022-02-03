@@ -63,7 +63,7 @@
       "des": ["If set to true, code completion will include index symbols that are not defined in the scopes (e.g. namespaces) visible from the code completion point. Such completions can insert scope qualifiers."]
     },
     "background_index": {
-      "default_value": false,
+      "default_value": true,
       "type": "boolean",
       "des": ["Index project code in the background and persist index on disk."]
     },
