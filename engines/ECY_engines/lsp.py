@@ -539,7 +539,7 @@ class Operate(object):
                     selecting_signature['documentation']))
 
         if 'activeParameter' in selecting_signature:
-            active_param = SignatureHelp['activeParameter']
+            active_param = selecting_signature['activeParameter']
         else:
             active_param = default_active_param
 
