@@ -499,18 +499,19 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}}
         return self._build_send(params, 'textDocument/documentSymbol')
 
-    def semanticTokens(self, ranges, uri, previousResultId='0'):
+    def semanticTokens(self, uri, ranges, previousResultId=None):
         params = {'textDocument': self.TextDocumentIdentifier(uri)}
-        if ranges == 'all':
+        if ranges == 'full':
             event = 'textDocument/semanticTokens/full'
-        elif ranges == 'all_delta':
+        elif ranges == 'full_dalta':
+            # previousResultId can not be None
             params['previousResultId'] = previousResultId
-            event = 'textDocument/semanticTokens/full'
+            event = 'textDocument/semanticTokens/full/delta'
         elif type(ranges) is dict:
             params['range'] = ranges
             event = 'textDocument/semanticTokens/range'
         else:
-            params = {}
+            params = None
             event = 'workspace/semanticTokens/refresh'
         return self._build_send(params, event)
 
