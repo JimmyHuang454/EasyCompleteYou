@@ -73,6 +73,7 @@ class Operate(object):
         self._diagnosis_cache = []
         self.results_list = []
         self.rename_info = {}
+        self.semantic_info = {}
         self.rename_id = 0
         self.completion_position_cache = {}
         self.completion_isInCompleted = False
@@ -119,6 +120,7 @@ class Operate(object):
         threading.Thread(target=self._get_registerCapability,
                          daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
+        threading.Thread(target=self._get_workspace_config, daemon=True).start()
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
@@ -831,6 +833,20 @@ class Operate(object):
             except Exception as e:
                 logger.exception(e)
 
+    def _get_workspace_config(self):
+        while True:
+            try:
+                jobs = self._lsp.GetRequestOrNotification(
+                    'workspace/configuration')
+                logger.debug(jobs)
+                params = jobs['params']
+                res = {}
+                for item in params:
+                    res[item] = utils.GetEngineConfig(self.engine_name, item)
+                self._lsp._build_response(res, jobs['id'])
+            except Exception as e:
+                logger.exception(e)
+
     def _get_diagnosis(self):
         while True:
             try:
@@ -862,11 +878,46 @@ class Operate(object):
     def semanticTokens(self, context):
         if 'semanticTokensProvider' not in self.capabilities:
             return
+        semanticTokensProvider = self.capabilities['semanticTokensProvider']
+
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
 
-        res = self._lsp.semanticTokens('all_delta', uri).GetResponse()
-        # TODO
+        is_support_delta = False
+        is_support_full = False
+        is_support_range = False
+
+        if 'full' in semanticTokensProvider:
+            is_support_full = True
+
+        if 'range' in semanticTokensProvider:
+            is_support_range = True
+
+        if is_support_full and type(
+                semanticTokensProvider
+        ) is dict and 'delta' in semanticTokensProvider[
+                'full'] and semanticTokensProvider['full']['delta']:
+            is_support_delta = True
+
+        if uri in self.semantic_info and is_support_delta:
+            send_type = 'full_dalta'
+        elif is_support_full:
+            send_type = 'full'
+        elif is_support_range:
+            send_type = 'range'
+        else:
+            return
+
+        res = self._lsp.semanticTokens(uri, send_type).GetResponse()
+
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+
+        if res is None:
+            return
 
     def DoCodeAction(self, context):
         params = context['params']
