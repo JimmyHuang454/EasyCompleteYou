@@ -1,12 +1,20 @@
 
-function! ECY#vim_lsp#main#Request(context) abort
+function! ECY#vim_lsp#main#Request() abort
 "{{{
     let l:server_name = lsp#get_allowed_servers()[0]
+
+      let l:context = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                    \'buffer_line': ECY#utils#GetCurrentLine(), 
+                    \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                    \'time_stamp': reltimefloat(reltime()), 
+                    \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                    \}
 
     " let l:server_name = context['server_name']
 
     let l:server = lsp#get_server_info(l:server_name)
-    let l:position = a:context['vim_lsp_position']
+    let l:position = ECY#utils#GetCurrentLineAndPosition()
+    let l:position = {'line': l:position['line'], 'character': l:position['colum']}
 
     call lsp#send_request(l:server_name, {
         \ 'method': 'textDocument/completion',
@@ -14,7 +22,7 @@ function! ECY#vim_lsp#main#Request(context) abort
         \   'textDocument': lsp#get_text_document_identifier(),
         \   'position': l:position,
         \ },
-        \ 'on_notification': function('s:handle_completion', [l:server, a:context]),
+        \ 'on_notification': function('s:handle_completion', [l:server, l:context]),
         \ })
 
 "}}}

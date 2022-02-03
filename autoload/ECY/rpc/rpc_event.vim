@@ -165,6 +165,11 @@ endf
 
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
+  if ECY#switch_engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
+    call ECY#vim_lsp#main#Request()
+    return
+  endif
+
   if !ECY2_main#IsWorkAtCurrentBuffer()
     return
   endif

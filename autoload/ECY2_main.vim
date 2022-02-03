@@ -322,6 +322,10 @@ fun! ECY2_main#IsWorkAtCurrentBuffer() abort
     return b:ECY_is_work_at_current_buffer
   endif
 
+  if ECY#switch_engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
+    return v:false
+  endif
+
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
   for item in g:ECY_file_type_blacklist
     if l:file_type =~ item
