@@ -115,6 +115,12 @@ function! s:EW._open(text_list, opts) abort
   endif
   let self['anchor'] = l:anchor
 
+  if has_key(a:opts, 'hide')
+    let self['is_hided'] = 1
+  else
+    let self['is_hided'] = 0
+  endif
+
   if g:is_vim
 "{{{
     let self['title'] = ''
@@ -134,6 +140,7 @@ function! s:EW._open(text_list, opts) abort
     endif
 
     let l:real_opts['fixed'] = 1
+    let l:real_opts['hide'] = self['is_hided'] ? 1 : 0
     let l:real_opts['posinvert'] = 0
     let l:real_opts['col'] = l:x
     let l:real_opts['line'] = l:y
@@ -175,13 +182,16 @@ function! s:EW._open(text_list, opts) abort
 
     let l:real_opts['relative'] = 'editor'
     let l:real_opts['style'] = 'minimal'
-    let l:winid = self.__nvim_show()
+    if !self['is_hided']
+      let l:winid = self.__nvim_show()
+    else
+      let l:winid = -1
+    endif
 "}}}
   endif
 
   let self['winid'] = l:winid
   let self['is_created'] = 1
-  let self['is_hided'] = 0
   let self['text_list'] = l:text_list
   let self['showing_cursor'] = line('.')
 
@@ -251,6 +261,7 @@ function! s:EW._hide() abort
     call popup_hide(self['winid'])
   else
 		call nvim_win_close(self['winid'], 1)
+    let self['winid'] = -1
   endif
   let self['is_hided'] = 1
 "}}}
