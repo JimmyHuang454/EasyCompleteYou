@@ -192,7 +192,8 @@ function! s:EW._open(text_list, opts) abort
   if has_key(a:opts, 'number') && a:opts['number']
     call self._set_number()
   else
-    call self._unset_number()
+    " call self._unset_number()
+    let self['is_set_number'] = 0
   endif
 
   if has_key(a:opts, 'wrap') && a:opts['wrap']
@@ -204,7 +205,8 @@ function! s:EW._open(text_list, opts) abort
   if has_key(a:opts, 'firstline')
     call self._set_firstline(a:opts['firstline'])
   else
-    call self._set_firstline(1)
+    " call self._set_firstline(1)
+    let self['firstline'] = 1
   endif
 
   if has_key(a:opts, 'zindex')
@@ -222,7 +224,8 @@ function! s:EW._open(text_list, opts) abort
   if has_key(a:opts, 'syntax')
     call self._set_syntax(a:opts['syntax'])
   else
-    call self._set_syntax('')
+    " call self._set_syntax('')
+    let self['syntax'] = ''
   endif
 
   if has_key(a:opts, 'created_cb')
