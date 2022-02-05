@@ -7,9 +7,7 @@ class Operate(lsp.Operate):
         lsp.Operate.__init__(self,
                              engine_name,
                              languageId='python',
-                             starting_cmd_argv='--stdio',
-                             use_completion_cache=True,
-                             use_completion_cache_position=True)
+                             starting_cmd_argv='--stdio')
 
     def OnCompletion(self, context):
         context = super().OnCompletion(context)
