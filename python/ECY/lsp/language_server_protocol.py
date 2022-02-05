@@ -176,7 +176,8 @@ class LSP(conec.Operate):
         if not isNotification:
             # id_text       = "ECY_"+str(self._id)
             send['id'] = self._id
-            params['workDoneToken'] = self._get_workdone_token()
+            if params is not None:
+                params['workDoneToken'] = self._get_workdone_token()
         context = LSPRequest(method, self._id, timeout=self.default_timeout)
         self._waitting_response[self._id] = context
         self.id_lock.release()

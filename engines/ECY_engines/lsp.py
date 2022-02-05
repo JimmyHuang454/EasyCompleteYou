@@ -120,7 +120,8 @@ class Operate(object):
         threading.Thread(target=self._get_registerCapability,
                          daemon=True).start()
         threading.Thread(target=self._handle_edit, daemon=True).start()
-        threading.Thread(target=self._get_workspace_config, daemon=True).start()
+        threading.Thread(target=self._get_workspace_config,
+                         daemon=True).start()
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
@@ -259,6 +260,7 @@ class Operate(object):
         self._change_workspace_folder(context)
         self.GetCodeLens(context)
         self.DocumentLink(context)
+        self.semanticTokens(context)
 
     def OnSave(self, context):
         if 'textDocumentSync' not in self.capabilities:
@@ -875,6 +877,59 @@ class Operate(object):
         if 'command' in seleted_item:
             pass  # TODO
 
+    def _build_token_modifiers(self, modifiers):
+        str_bin = format(modifiers, 'b')
+        tokenModifiers = self.capabilities['semanticTokensProvider']['legend'][
+            'tokenModifiers']
+
+        res = []
+        i = len(str_bin)
+        for item in str_bin:
+            i -= 1
+            if item == '0':
+                continue
+            res.append(tokenModifiers[i])
+
+        return res
+
+    def _build_token_type(self, tokenType):
+        tokenType_list = self.capabilities['semanticTokensProvider']['legend'][
+            'tokenTypes']
+
+        return tokenType_list[tokenType]
+
+    def _build_semantic(self, data):
+        res = []
+        item = len(data) / 5
+        i = 0
+        colum_count = 0
+        line_count = 0
+        while i < item:
+            j = i * 5
+            line = data[j]
+            line_count += line
+            colum = data[j + 1]
+            if line == 0:
+                colum_count += colum
+                colum = colum_count
+            else:
+                colum_count = colum
+
+            res.append({
+                'line':
+                line_count,
+                'startChar':
+                colum,
+                'length':
+                data[j + 2],
+                'tokenType':
+                self._build_token_type(data[j + 3]),
+                'tokenModifiers':
+                self._build_token_modifiers(data[j + 4]),
+            })
+            i += 1
+        return res
+
     def semanticTokens(self, context):
         if 'semanticTokensProvider' not in self.capabilities:
             return
@@ -888,36 +943,47 @@ class Operate(object):
         is_support_range = False
 
         if 'full' in semanticTokensProvider:
-            is_support_full = True
+            if type(semanticTokensProvider['full']) is bool:
+                is_support_full = semanticTokensProvider['full']
+            else:
+                is_support_full = True
 
         if 'range' in semanticTokensProvider:
-            is_support_range = True
+            if type(semanticTokensProvider['range']) is bool:
+                is_support_range = semanticTokensProvider['range']
+            else:
+                is_support_range = True
 
         if is_support_full and type(
                 semanticTokensProvider
-        ) is dict and 'delta' in semanticTokensProvider[
-                'full'] and semanticTokensProvider['full']['delta']:
-            is_support_delta = True
+        ) is dict and 'delta' in semanticTokensProvider['full']:
+            is_support_delta = semanticTokensProvider['full']['delta']
 
+        previousResultId = None
         if uri in self.semantic_info and is_support_delta:
             send_type = 'full_dalta'
-        elif is_support_full:
-            send_type = 'full'
+            previousResultId = self.semantic_info[uri]['resultId']
         elif is_support_range:
             send_type = 'range'
+        elif is_support_full:
+            send_type = 'full'
         else:
             return
 
-        res = self._lsp.semanticTokens(uri, send_type).GetResponse()
+        res = self._lsp.semanticTokens(
+            uri, send_type, previousResultId=previousResultId).GetResponse()
 
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
 
         res = res['result']
-
         if res is None:
             return
+
+        if send_type == 'full':
+            self.semantic_info[uri] = res
+            logger.debug(self._build_semantic(res['data']))
 
     def DoCodeAction(self, context):
         params = context['params']
