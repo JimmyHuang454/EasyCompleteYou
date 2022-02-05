@@ -151,12 +151,14 @@ CAPABILITY = {
         "semanticTokens": {
             "requests": {
                 "range": True,
-                "full": True
+                "full": {
+                    'delta': True
+                }
             },
             "tokenTypes": [],
             "formats": ['relative'],
-            "overlappingTokenSupport": True,
-            "multilineTokenSupport": True,
+            "overlappingTokenSupport": False,
+            "multilineTokenSupport": False,
             "tokenModifiers": []
         }
     },
