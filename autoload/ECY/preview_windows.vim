@@ -100,7 +100,7 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
   endif
   if l:item_info != []
     if l:item_menu != [] 
-      call add(l:to_show_list, g:ECY_cut_line)
+      call add(l:to_show_list, '')
     endif
     call extend(l:to_show_list, l:item_info)
   endif

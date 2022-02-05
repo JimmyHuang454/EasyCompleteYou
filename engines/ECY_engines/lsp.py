@@ -134,6 +134,8 @@ class Operate(object):
                 self.signature_help_triggerCharacters.extend(
                     temp['retriggerCharacters'])
 
+        self._init_semantic()
+
         self._lsp.initialized()
 
     def _get_format_config(self):
@@ -142,6 +144,36 @@ class Operate(object):
         if self.engine_format_setting == None:
             self.engine_format_setting = utils.GetEngineConfig(
                 'GLOBAL_SETTING', 'lsp_formatting')
+
+    def _init_semantic(self):
+        self.semantic_color = utils.GetEngineConfig(self.engine_name,
+                                                    'semantic_color')
+        if self.semantic_color is None:
+            self.semantic_color = {}
+
+        if 'semanticTokensProvider' not in self.capabilities:
+            return
+        semanticTokensProvider = self.capabilities['semanticTokensProvider']
+        self.is_support_delta = False
+        self.is_support_full = False
+        self.is_support_range = False
+
+        if 'full' in semanticTokensProvider:
+            if type(semanticTokensProvider['full']) is bool:
+                self.is_support_full = semanticTokensProvider['full']
+            else:
+                self.is_support_full = True
+
+        if 'range' in semanticTokensProvider:
+            if type(semanticTokensProvider['range']) is bool:
+                self.is_support_range = semanticTokensProvider['range']
+            else:
+                self.is_support_range = True
+
+        if self.is_support_full and type(
+                semanticTokensProvider
+        ) is dict and 'delta' in semanticTokensProvider['full']:
+            self.is_support_delta = semanticTokensProvider['full']['delta']
 
     def _handle_edit(self):
         while True:
@@ -933,39 +965,17 @@ class Operate(object):
     def semanticTokens(self, context):
         if 'semanticTokensProvider' not in self.capabilities:
             return
-        semanticTokensProvider = self.capabilities['semanticTokensProvider']
 
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
 
-        is_support_delta = False
-        is_support_full = False
-        is_support_range = False
-
-        if 'full' in semanticTokensProvider:
-            if type(semanticTokensProvider['full']) is bool:
-                is_support_full = semanticTokensProvider['full']
-            else:
-                is_support_full = True
-
-        if 'range' in semanticTokensProvider:
-            if type(semanticTokensProvider['range']) is bool:
-                is_support_range = semanticTokensProvider['range']
-            else:
-                is_support_range = True
-
-        if is_support_full and type(
-                semanticTokensProvider
-        ) is dict and 'delta' in semanticTokensProvider['full']:
-            is_support_delta = semanticTokensProvider['full']['delta']
-
         previousResultId = None
-        if uri in self.semantic_info and is_support_delta:
+        if uri in self.semantic_info and self.is_support_delta:
             send_type = 'full_dalta'
             previousResultId = self.semantic_info[uri]['resultId']
-        elif is_support_range:
+        elif self.is_support_range:
             send_type = 'range'
-        elif is_support_full:
+        elif self.is_support_full:
             send_type = 'full'
         else:
             return
