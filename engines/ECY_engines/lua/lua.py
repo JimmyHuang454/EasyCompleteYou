@@ -1,6 +1,5 @@
 from ECY_engines import lsp
 from ECY import rpc
-from ECY_engines.snippet.ultisnips import ultisnips
 from ECY import utils
 
 
