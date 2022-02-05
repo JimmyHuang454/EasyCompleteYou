@@ -170,7 +170,7 @@ fun! ECY#rpc#rpc_event#OnCompletion()
     return
   endif
 
-  if !ECY2_main#IsWorkAtCurrentBuffer()
+  if !ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_completion_enable
     return
   endif
   
@@ -222,5 +222,6 @@ fun! ECY#rpc#rpc_event#Init()
 
   let g:event_pre = {}
   let g:event_callback = {}
+  let g:ECY_buffer_version = {}
 "}}}
 endf

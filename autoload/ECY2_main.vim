@@ -1,5 +1,16 @@
 fun! ECY2_main#Init() abort
 "{{{
+  let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
+
+  let g:ECY_debug_log_file_path = 
+        \get(g:,'ECY_debug_log_file_path', g:ECY_python_script_folder_dir . '/ECY_debug.log')
+
+  let g:ECY_disable_for_files_larger_than_kb
+        \= ECY#engine_config#GetEngineConfig('ECY', 'disable_for_files_larger_than_kb')
+
+  let g:ECY_file_type_blacklist
+        \= ECY#engine_config#GetEngineConfig('ECY', 'file_type_blacklist')
+
   let l:run_cmd = g:ECY_client_main_path
   let l:run_cmd .= ' --sources_dir ' . g:ECY_source_folder_dir
   let l:run_cmd .= ' --log_path ' . g:ECY_debug_log_file_path

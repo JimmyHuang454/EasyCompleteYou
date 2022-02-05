@@ -96,7 +96,22 @@
       "default_value": true,
       "type": "boolean",
       "des": [""]
-    }
+    },
+    "use_floating_windows_to_be_popup_windows": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "file_type_blacklist": {
+      "default_value": ["log"],
+      "type": "list",
+      "des": [""]
+    },
+    "disable_for_files_larger_than_kb": {
+      "default_value": 1024,
+      "type": "int",
+      "des": [""]
+    },
   },
   "ECY_engines.cpp.clangd.clangd": {
     "cmd": {

@@ -458,6 +458,19 @@ fun! ECY#completion#Init()
   let g:ECY_triggering_length
         \= ECY#engine_config#GetEngineConfig('ECY', 'completion.triggering_length')
 
+  let g:ECY_use_floating_windows_to_be_popup_windows = 
+        \ECY#engine_config#GetEngineConfig('ECY', 'use_floating_windows_to_be_popup_windows')
+
+  if !g:is_vim && exists('*nvim_win_set_config')
+    let g:has_floating_windows_support = 'neovim'
+    let g:has_floating_windows_support = 'vim' 
+  elseif exists('*popup_create') && exists('*popup_setoptions')
+    let g:has_floating_windows_support = 'vim'
+  else
+    let g:has_floating_windows_support = 'has_no'
+    let g:ECY_use_floating_windows_to_be_popup_windows = v:false
+  endif
+
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
 

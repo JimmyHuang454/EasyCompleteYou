@@ -63,54 +63,14 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                 init vars                                  "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ECY_use_floating_windows_to_be_popup_windows = 
-      \get(g:, 'ECY_use_floating_windows_to_be_popup_windows', v:true)
-
-if !g:is_vim && exists('*nvim_win_set_config')
-  let g:has_floating_windows_support = 'neovim'
-  let g:has_floating_windows_support = 'vim' 
-elseif exists('*popup_create') && exists('*popup_setoptions')
-  let g:has_floating_windows_support = 'vim'
-else
-  let g:has_floating_windows_support = 'has_no'
-  let g:ECY_use_floating_windows_to_be_popup_windows = v:false
-endif
-
 " must put these outside a function
 let g:ECY_base_dir = expand('<sfile>:p:h:h')
 let g:ECY_base_dir = tr(g:ECY_base_dir, '\', '/')
-let g:ECY_buffer_version = {}
-let g:ECY_windows_are_showing = {}
-let g:ECY_is_debug = get(g:,'ECY_is_debug', v:false)
 
 let g:ECY_python_script_folder_dir = g:ECY_base_dir . '/python'
 let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.py'
 let g:ECY_source_folder_dir = g:ECY_base_dir . '/engines'
-let g:ECY_debug_log_file_path = 
-      \get(g:,'ECY_debug_log_file_path', g:ECY_python_script_folder_dir . '/ECY_debug.log')
 let g:ECY_client_main_path = printf("%s/ECY_%s.exe", g:ECY_python_script_folder_dir, g:os)
-
-if exists('g:ycm_disable_for_files_larger_than_kb')
-  let g:ECY_disable_for_files_larger_than_kb = g:ycm_disable_for_files_larger_than_kb
-else
-  let g:ECY_disable_for_files_larger_than_kb
-        \= get(g:,'ECY_disable_for_files_larger_than_kb', 1024)
-endif
-
-let g:ECY_file_type_blacklist
-      \= get(g:,'ECY_file_type_blacklist', ['log'])
-
-let g:ECY_preview_windows_size = 
-      \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
-
-if g:has_floating_windows_support == 'vim'
-  let i = g:ECY_preview_windows_size[0][1]
-  let g:ECY_cut_line = ''
-  while i != 0
-    let g:ECY_cut_line .= '-'
-    let i -= 1
-  endw
-endif
 
 function! s:Goto(types, is_preview) abort
 "{{{
@@ -200,6 +160,9 @@ command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ECY_preview_windows_size = 
+      \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
+
 call ECY#engine_config#Init()
 call ECY#completion#Init()
 call ECY2_main#Init()
