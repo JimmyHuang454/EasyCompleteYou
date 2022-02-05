@@ -41,6 +41,63 @@
       "des": ["timeout after request."]
     }
   },
+  "ECY": {
+    "completion.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "completion.triggering_length": {
+      "default_value": 1,
+      "type": "int",
+      "des": [""]
+    },
+    "completion.expand_snippets_key": {
+      "default_value": "<CR>",
+      "type": "string",
+      "des": [""]
+    },
+    "completion.select_item": {
+      "default_value": ["<tab>", "<s-tab>"],
+      "type": "list",
+      "des": [""]
+    },
+    "diagnostics.update_diagnostics_in_insert_mode": {
+      "default_value": false,
+      "type": "boolean",
+      "des": [""]
+    },
+    "diagnostics.key_to_show_current_line_diagnostics": {
+      "default_value": "H",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.key_to_show_next_diagnostics": {
+      "default_value": "[j",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.text_highlight": {
+      "default_value": "ECY_diagnostics_highlight",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.erro_sign_highlight": {
+      "default_value": "ECY_erro_sign_highlight",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.warn_sign_highlight": {
+      "default_value": "ECY_warn_sign_highlight",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    }
+  },
   "ECY_engines.cpp.clangd.clangd": {
     "cmd": {
       "default_value": "",
@@ -126,13 +183,18 @@
   },
   "ECY_engines.lua.lua": {
     "cmd": {
-      "default_value": "",
+      "default_value": "C:/Users/qwer/Downloads/lua-language-server-2.5.6-win32-x64/bin/lua-language-server.exe",
       "type": "string",
       "des": ["cmd to start lua-language-server."]
     },
     "cmd2": {
       "default_value": "lua-language-server",
       "type": "string",
+      "des": ["cmd to start lua-language-server."]
+    },
+    "Lua.configuration.completion.enable": {
+      "default_value": true,
+      "type": "boolean",
       "des": ["cmd to start lua-language-server."]
     }
   },

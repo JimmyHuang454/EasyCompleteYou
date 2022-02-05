@@ -1,11 +1,9 @@
 fun! ECY#engine_config#Init() abort
   let g:ECY_engine_config_dir = g:ECY_base_dir . '/engine_config'
   let g:ECY_installer_config_path = g:ECY_python_script_folder_dir . '/arch_config.json'
-  try
-    call s:LoadEngine()
-    call ECY#engine_config#LoadInstallerInfo()
-  catch
-  endtry
+
+  call s:LoadEngine()
+  call ECY#engine_config#LoadInstallerInfo()
 endf
 
 fun! s:LoadEngine() abort

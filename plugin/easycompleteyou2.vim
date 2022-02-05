@@ -200,6 +200,7 @@ command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call ECY#engine_config#Init()
 call ECY#completion#Init()
 call ECY2_main#Init()
 

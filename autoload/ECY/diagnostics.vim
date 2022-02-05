@@ -4,24 +4,25 @@
 function ECY#diagnostics#Init() abort
 "{{{ var init
   let g:ECY_enable_diagnostics
-        \= get(g:,'ECY_enable_diagnostics', v:true)
+        \= ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.enable')
 
   if !g:ECY_enable_diagnostics
     return
   endif
 
   hi ECY_diagnostics_highlight  term=undercurl gui=undercurl guisp=DarkRed cterm=underline
-  let g:ECY_diagnostics_highlight = get(g:,'ECY_diagnostics_highlight','ECY_diagnostics_highlight')
+  let g:ECY_diagnostics_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.text_highlight')
 
   hi ECY_erro_sign_highlight  guifg=red	    ctermfg=red	
   hi ECY_warn_sign_highlight  guifg=yellow	ctermfg=yellow
-  let g:ECY_erro_sign_highlight = get(g:,'ECY_erro_sign_highlight', 'ECY_erro_sign_highlight')
-  let g:ECY_warn_sign_highlight = get(g:,'ECY_warn_sign_highlight', 'ECY_warn_sign_highlight')
+  let g:ECY_erro_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.erro_sign_highlight')
+  let g:ECY_warn_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn_sign_highlight')
 
   " 1 means ask diagnostics when there are changes not including user in insert mode, trigger by DoCompletion()
   " 2 means ask diagnostics when there are changes including user in insert mode, trigger by OnBufferTextChanged().
   let g:ECY_is_update_diagnostics_in_insert_mode
-        \= get(g:,'ECY_is_update_diagnostics_in_insert_mode', 1)
+        \= ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.update_diagnostics_in_insert_mode')
+
   if g:ECY_is_update_diagnostics_in_insert_mode == 2
     let g:ECY_is_update_diagnostics_in_insert_mode = v:true
   else
@@ -54,8 +55,8 @@ function ECY#diagnostics#Init() abort
   call s:SetUpEvent()
   " call s:SetUpPython()
 
-  let g:ECY_key_to_show_current_line_diagnostics = get(g:,'ECY_key_to_show_current_line_diagnostics', 'H')
-  let g:ECY_key_to_show_next_diagnostics = get(g:,'ECY_key_to_show_next_diagnostics', '[j')
+  let g:ECY_key_to_show_current_line_diagnostics = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.key_to_show_current_line_diagnostics')
+  let g:ECY_key_to_show_next_diagnostics = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.key_to_show_next_diagnostics')
   exe 'nmap ' . g:ECY_key_to_show_current_line_diagnostics . ' :call ECY#diagnostics#ShowCurrentLineDiagnosis(v:false)<CR>'
   exe 'nmap ' . g:ECY_key_to_show_next_diagnostics . ' :call ECY#diagnostics#ShowNextDiagnosis(1)<CR>'
 "}}}
