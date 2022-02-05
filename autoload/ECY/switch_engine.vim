@@ -132,7 +132,7 @@ fun! ECY#switch_engine#Init()
   call s:InitUsableEngine()
 
   let g:ECY_show_switching_source_popup
-        \= get(g:,'ECY_show_switching_source_popup','<Tab>')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'show_switching_engine_popup')
 
   let g:ECY_use_snippet
         \= get(g:,'ECY_use_snippet',"<C-b>")

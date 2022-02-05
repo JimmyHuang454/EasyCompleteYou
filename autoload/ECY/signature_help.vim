@@ -5,7 +5,7 @@ fun! ECY#signature_help#Init() abort
   let g:ECY_signature_help_activeSignature = ''
 
   let g:ECY_enable_signature_help
-        \= get(g:,'ECY_enable_signature_help', v:true)
+        \= ECY#engine_config#GetEngineConfig('ECY', 'signature_help.enable')
 
   if g:ECY_enable_signature_help
     augroup ECY_signature_help

@@ -4,10 +4,10 @@
 fun! ECY#document_link#Init() abort
 "{{{
   let g:ECY_enable_document_link = 
-        \get(g:, 'ECY_enable_document_link', v:true)
+        \ECY#engine_config#GetEngineConfig('ECY', 'document_link.enable')
 
   let g:ECY_disable_document_link_in_insert_mode = 
-        \get(g:, 'ECY_disable_document_link_in_insert_mode', v:true)
+        \ECY#engine_config#GetEngineConfig('ECY', 'document_link.disable_in_insert_mode')
 
   let g:ECY_document_link_info = {}
 

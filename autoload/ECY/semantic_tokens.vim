@@ -1,10 +1,10 @@
 fun! ECY#semantic_tokens#Init() abort
 "{{{
   let g:ECY_enable_semantic_tokens = 
-        \get(g:, 'ECY_enable_semantic_tokens', v:true)
+        \ECY#engine_config#GetEngineConfig('ECY', 'semantic_tokens.enable')
 
   let g:ECY_disable_semantic_tokens_in_insert_mode = 
-        \get(g:, 'ECY_disable_semantic_tokens_in_insert_mode', v:true)
+        \ECY#engine_config#GetEngineConfig('ECY', 'semantic_tokens.disable_in_insert_mode')
 
   let g:ECY_semantic_tokens_info = {}
 "}}}

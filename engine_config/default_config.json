@@ -111,6 +111,41 @@
       "default_value": 1024,
       "type": "int",
       "des": [""]
+    },
+    "document_link.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "document_link.disable_in_insert_mode": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "goto.unload_buffer_after_goto": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "semantic_tokens.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "semantic_tokens.disable_in_insert_mode": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "signature_help.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    }
+    "show_switching_engine_popup": {
+      "default_value": "<Tab>",
+      "type": "boolean",
+      "des": [""]
     }
   },
   "ECY_engines.cpp.clangd.clangd": {

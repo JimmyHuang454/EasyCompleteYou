@@ -1,6 +1,8 @@
 fun! ECY#goto#Init()
 "{{{
-  let g:ECY_is_unload_buffer_after_goto = get(g:,'ECY_is_unload_buffer_after_goto', v:true)
+  let g:ECY_is_unload_buffer_after_goto = 
+        \ECY#engine_config#GetEngineConfig('ECY', 'goto.unload_buffer_after_goto')
+
   let g:ECY_unload_buffer = {}
 
   augroup ECY_goto
@@ -12,6 +14,10 @@ endf
 
 fun! s:WindowsLeave()
 "{{{
+  if !g:ECY_is_unload_buffer_after_goto
+    return
+  endif
+
   let l:buf_id = bufnr()
   if has_key(g:ECY_unload_buffer, l:buf_id)
     try
