@@ -447,13 +447,16 @@ endfunction
 fun! ECY#completion#Init()
 "{{{
   let g:ECY_expand_snippets_key
-        \= get(g:,'ECY_expand_snippets_key','<cr>')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.expand_snippets_key')
+
+  let g:ECY_completion_enable
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.enable')
 
   let g:ECY_select_items
-        \= get(g:, 'ECY_select_items',['<tab>','<s-tab>'])
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.select_item')
 
   let g:ECY_triggering_length
-        \= get(g:,'ECY_triggering_length',1)
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.triggering_length')
 
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
