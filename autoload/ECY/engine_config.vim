@@ -15,18 +15,18 @@ fun! s:LoadEngine() abort
   let g:ECY_default_value = readfile(g:ECY_engine_default_config_path)
   let g:ECY_default_value = json_decode(join(g:ECY_default_value, "\n"))
 
-  if !exists('g:ECY_engine_config')
-    let g:ECY_engine_config = {}
+  if !exists('g:ECY_config')
+    let g:ECY_config = {}
   endif
 
   for item in keys(g:ECY_default_value)
-    if !has_key(g:ECY_engine_config, item)
-      let g:ECY_engine_config[item] = {}
+    if !has_key(g:ECY_config, item)
+      let g:ECY_config[item] = {}
     endif
     for item2 in keys(g:ECY_default_value[item])
       let l:line = split(item2, '\.')
       let l:name_len = len(l:line)
-      let l:user_config = g:ECY_engine_config[item]
+      let l:user_config = g:ECY_config[item]
       if l:name_len > 1
         let i = 0
         while i < (l:name_len - 1)
@@ -68,13 +68,13 @@ endf
 
 fun! ECY#engine_config#GetEngineConfig(engine_name, key) abort
 "{{{
-  if !has_key(g:ECY_engine_config, a:engine_name)
+  if !has_key(g:ECY_config, a:engine_name)
     return v:null
   endif
 
   let l:line = split(a:key, '\.')
   let l:name_len = len(l:line)
-  let l:user_config = g:ECY_engine_config[a:engine_name]
+  let l:user_config = g:ECY_config[a:engine_name]
   if l:name_len > 1
     let i = 0
     while i < (l:name_len - 1)

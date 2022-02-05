@@ -152,20 +152,20 @@ fun! ECY#switch_engine#Init()
   exe 'nmap ' . g:ECY_show_switching_source_popup .
         \ ' :call ECY#switch_engine#Do()<CR>'
 
-  let g:ECY_config_path = g:ECY_base_dir.'/ECY_config.txt'
+  let g:ECY_file_type_using_path = g:ECY_base_dir.'/ECY_file_type_using.txt'
 
   let g:ECY_default_engine = 'ECY.engines.default_engine' " should change while python's changed
 
   let g:ECY_file_type_info2 = {}
 
   try
-    let g:ECY_config = json_decode(readfile(g:ECY_config_path)[0])
+    let g:ECY_file_type_using = json_decode(readfile(g:ECY_file_type_using_path)[0])
   catch 
-    call writefile(["{}"], g:ECY_config_path, 'b')
-    let g:ECY_config = {}
+    call writefile(["{}"], g:ECY_file_type_using_path, 'b')
+    let g:ECY_file_type_using = {}
   endtry
 
-  augroup ECY_config
+  augroup ECY_file_type_using
     autocmd!
     autocmd VimLeave    * call s:VimLeave()
     autocmd InsertLeave * call s:InsertLeave()
@@ -203,9 +203,9 @@ fun! s:VimLeave()
   try
     for key in keys(g:ECY_file_type_info2)
       let l:temp = g:ECY_file_type_info2[key]
-      let g:ECY_config[key] = l:temp['filetype_using']
+      let g:ECY_file_type_using[key] = l:temp['filetype_using']
     endfor
-    call writefile([json_encode(g:ECY_config)], g:ECY_config_path, 'b')
+    call writefile([json_encode(g:ECY_file_type_using)], g:ECY_file_type_using_path, 'b')
   catch 
   endtry
   "}}}
@@ -213,14 +213,14 @@ endf
 
 fun! ECY#switch_engine#InitDefaultEngine(file_type)
   "{{{
-  if !has_key(g:ECY_config, a:file_type)
-    let g:ECY_config[a:file_type] = g:ECY_default_engine
+  if !has_key(g:ECY_file_type_using, a:file_type)
+    let g:ECY_file_type_using[a:file_type] = g:ECY_default_engine
   endif
 
   if !has_key(g:ECY_file_type_info2, a:file_type)
     let g:ECY_file_type_info2[a:file_type] = {
           \'available_sources': [], 
-          \'filetype_using': g:ECY_config[a:file_type]
+          \'filetype_using': g:ECY_file_type_using[a:file_type]
           \}
     for item in g:ECY_all_buildin_engine
       if !IsInList(a:file_type, item['file_type']) && !IsInList('all', item['file_type'])

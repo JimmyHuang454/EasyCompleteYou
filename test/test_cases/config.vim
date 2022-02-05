@@ -1,4 +1,4 @@
-let g:ECY_engine_config = {'ECY_engines.python.jedi_ls.jedi_ls':{'cmd': 'jedi-language-server'}}
+let g:ECY_config = {'ECY_engines.python.jedi_ls.jedi_ls':{'cmd': 'jedi-language-server'}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                    init                                    "
@@ -9,9 +9,9 @@ let g:log_file = expand('<sfile>') . '.log'
 exe printf('so %s/test/startup.vim', g:repo_root)
 
 function! s:T1() abort
-    call Expect(g:ECY_engine_config['ECY_engines.python.jedi_ls.jedi_ls']['cmd'], 'jedi-language-server')
-    call Expect(g:ECY_engine_config['ECY_engines.python.jedi_ls.jedi_ls']['cmd2'], 'jedi-language-server')
-    call Expect(g:ECY_engine_config['ECY_engines.cpp.clangd.clangd']['cmd'], '')
+    call Expect(g:ECY_config['ECY_engines.python.jedi_ls.jedi_ls']['cmd'], 'jedi-language-server')
+    call Expect(g:ECY_config['ECY_engines.python.jedi_ls.jedi_ls']['cmd2'], 'jedi-language-server')
+    call Expect(g:ECY_config['ECY_engines.cpp.clangd.clangd']['cmd'], '')
 endfunction
 
 function! s:T2() abort
