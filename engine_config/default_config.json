@@ -111,7 +111,7 @@
       "default_value": 1024,
       "type": "int",
       "des": [""]
-    },
+    }
   },
   "ECY_engines.cpp.clangd.clangd": {
     "cmd": {
