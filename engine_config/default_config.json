@@ -141,7 +141,7 @@
       "default_value": true,
       "type": "boolean",
       "des": [""]
-    }
+    },
     "show_switching_engine_popup": {
       "default_value": "<Tab>",
       "type": "boolean",
