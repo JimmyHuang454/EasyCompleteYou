@@ -975,14 +975,6 @@ function! s:EW._align_height() abort
 endfunction
 
 function! easy_windows#hightlight(EW_id, hl_name, pos) abort
-  " if a:end_y < a:start_y
-  "   return
-  " endif
-
-  " if a:end_y == a:start_y && a:end_x < a:start_x
-  "   return
-  " endif
-
   let l:hl_id = matchaddpos(a:hl_name, a:pos)
   let g:EW_info[a:EW_id]['highlight'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
 endfunction

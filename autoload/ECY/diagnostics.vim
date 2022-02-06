@@ -292,6 +292,7 @@ function! s:ShowDiagnosis_vim(index_list) abort
 
   let s:showing_winid = s:popup_obj._open(l:text, {
         \'at_cursor': 1,
+        \'use_border': 1,
         \'exit_cb': function('s:PopupClosed'),
         \'x': easy_windows#get_cursor_screen_x() + 1,
         \'y': easy_windows#get_cursor_screen_y() + 1,

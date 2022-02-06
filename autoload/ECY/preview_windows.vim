@@ -121,7 +121,7 @@ function s:PreviewWindows_vim(msg, using_highlight) abort
   endif
 
   let s:preview_obj = easy_windows#new()
-  let l:winid = s:preview_obj._open(l:to_show_list, {'x': l:col, 'y': l:line})
+  let l:winid = s:preview_obj._open(l:to_show_list, {'x': l:col, 'y': l:line, 'use_border': 1})
   call s:preview_obj._set_syntax(a:using_highlight)
   call s:preview_obj._align_height()
   call s:preview_obj._align_width()

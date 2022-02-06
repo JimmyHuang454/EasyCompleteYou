@@ -58,6 +58,7 @@ fun! s:Vim(results) abort
   let s:signature_help_obj = easy_windows#new()
   let l:temp = s:signature_help_obj._open(l:to_show, {
         \'anchor': 'SW',
+        \'use_border': 1,
         \'x': easy_windows#get_cursor_screen_x(),
         \'y': easy_windows#get_cursor_screen_y() - 1})
 
