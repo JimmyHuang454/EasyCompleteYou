@@ -121,6 +121,20 @@ function! s:EW._open(text_list, opts) abort
     let self['is_hided'] = 0
   endif
 
+  if has_key(a:opts, 'use_border') && a:opts['use_border']
+    let self['use_border'] = 1
+  else
+    let self['use_border'] = 0
+  endif
+
+  if self['use_border']
+    if has_key(a:opts, 'border_char')
+      let self['border_char'] = a:opts['border_char']
+    else
+      let self['border_char'] = ['│', '┌', '─', '┐', '└', '─', '┘', '│']
+    endif
+  endif
+
   if g:is_vim
 "{{{
     let self['title'] = ''
@@ -148,6 +162,22 @@ function! s:EW._open(text_list, opts) abort
     let l:real_opts['maxwidth'] = l:width
     let l:real_opts['minheight'] = l:height
     let l:real_opts['maxheight'] = l:height
+
+    if self['use_border']
+      let l:real_opts['border'] = []
+
+      let l:border = self['border_char']
+      let l:real_opts['borderchars'] = [
+            \l:border[2],
+            \l:border[0],
+            \l:border[5],
+            \l:border[7],
+            \l:border[1],
+            \l:border[3],
+            \l:border[6],
+            \l:border[4],
+            \]
+    endif
 
     let l:winid = popup_create(self['text_list'], l:real_opts)
 "}}}
@@ -182,6 +212,26 @@ function! s:EW._open(text_list, opts) abort
 
     let l:real_opts['relative'] = 'editor'
     let l:real_opts['style'] = 'minimal'
+
+    if g:has_nvim_0_6_0
+      let l:real_opts['noautocmd'] = 1
+
+      if self['use_border']
+        let l:border = self['border_char']
+        let l:real_opts['border'] = [
+              \[l:border[1], 'Pmenu'],
+              \[l:border[2], 'Pmenu'],
+              \[l:border[3], 'Pmenu'],
+              \[l:border[0], 'Pmenu'],
+              \[l:border[6], 'Pmenu'],
+              \[l:border[5], 'Pmenu'],
+              \[l:border[4], 'Pmenu'],
+              \[l:border[7], 'Pmenu'],
+              \]
+      endif
+    endif
+
+
     if !self['is_hided']
       let l:winid = self.__nvim_show()
     else
@@ -609,9 +659,9 @@ function! s:EW._set_y(y) abort
   else
     let l:y -= 1
 
-    if l:anchor == 'SW'
+    if self['anchor'] == 'SW'
       let l:y += 1
-    elseif l:anchor == 'SE'
+    elseif self['anchor'] == 'SE'
       let l:y += 1
     endif
 
