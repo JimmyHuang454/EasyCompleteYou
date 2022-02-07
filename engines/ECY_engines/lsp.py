@@ -146,16 +146,20 @@ class Operate(object):
                 'GLOBAL_SETTING', 'lsp_formatting')
 
     def _init_semantic(self):
-        self.semantic_color = utils.GetEngineConfig(self.engine_name,
-                                                    'semantic_color')
-        if self.semantic_color is None:
-            self.semantic_color = {}
-
         if 'semanticTokensProvider' not in self.capabilities:
             return
+
+        self.semantic_color = utils.GetEngineConfig(self.engine_name,
+                                                    'semantic_color')
+
+        logger.debug(self.semantic_color)
+
+        if type(self.semantic_color) is not list:
+            self.semantic_color = []
+
         semanticTokensProvider = self.capabilities['semanticTokensProvider']
-        self.is_support_delta = False
         self.is_support_full = False
+        self.is_support_delta = False
         self.is_support_range = False
 
         if 'full' in semanticTokensProvider:
@@ -170,9 +174,11 @@ class Operate(object):
             else:
                 self.is_support_range = True
 
-        if self.is_support_full and type(
-                semanticTokensProvider
-        ) is dict and 'delta' in semanticTokensProvider['full']:
+        if not self.is_support_full:
+            return
+        if type(semanticTokensProvider['full']) is not dict:
+            return
+        if 'delta' in semanticTokensProvider['full']:
             self.is_support_delta = semanticTokensProvider['full']['delta']
 
     def _handle_edit(self):
@@ -947,23 +953,30 @@ class Operate(object):
             else:
                 colum_count = colum
 
-            res.append({
-                'line':
-                line_count,
-                'startChar':
-                colum,
-                'length':
-                data[j + 2],
-                'tokenType':
-                self._build_token_type(data[j + 3]),
-                'tokenModifiers':
-                self._build_token_modifiers(data[j + 4]),
-            })
+            tokenType = self._build_token_type(data[j + 3])
+            tokenModifiers = self._build_token_modifiers(data[j + 4])
+
+            for color_item in self.semantic_color:
+                is_defined = True
+                for color in color_item[0]:
+                    if tokenType != color and color not in tokenModifiers:
+                        is_defined = False
+                        break
+
+                if is_defined:
+                    res.append({
+                        'line': line_count,
+                        'startChar': colum,
+                        'length': data[j + 2],
+                        'tokenType': tokenType,
+                        'tokenModifiers': tokenModifiers,
+                    })
+                    break
             i += 1
         return res
 
     def semanticTokens(self, context):
-        if 'semanticTokensProvider' not in self.capabilities:
+        if 'semanticTokensProvider' not in self.capabilities or self.semantic_color == []:
             return
 
         params = context['params']

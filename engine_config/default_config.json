@@ -193,6 +193,11 @@
       "default_value": null,
       "type": "string",
       "des": ["LS init opts"]
+    },
+    "semantic_color": {
+      "default_value": [],
+      "type": "list",
+      "des": [""]
     }
   },
   "ECY_engines.html.vls": {
