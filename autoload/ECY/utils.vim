@@ -608,3 +608,40 @@ function! ECY#utils#AskWindowsStyle()
   return l:style
 "}}}
 endfunction
+
+function! ECY#utils#HighlightRange(range, highlights) abort
+"{{{
+"colum is 0-based, but highlight's colum is 1-based, so we add 1.
+"line is 1-based
+"ensure cursor in buffer you want to highlight before you call this function.
+
+  let l:start_line = a:range['start']['line']
+  let l:end_line = a:range['end']['line']
+  let l:line_gap = l:end_line - l:start_line
+  let l:MAX_COL_SIZE = 10000
+
+  let l:hl_id_list = []
+  if l:line_gap == 0
+    let l:length = a:range['end']['colum'] - a:range['start']['colum']
+    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+          \l:start_line, a:range['start']['colum'] + 1, l:length
+          \]]))
+  else
+    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+          \l:start_line, a:range['start']['colum'] + 1, l:MAX_COL_SIZE
+          \]]))
+    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+          \l:end_line, 1, a:range['end']['colum'] + 1
+          \]]))
+    let i = 1
+    while i < l:line_gap
+      call add(l:hl_id_list, matchaddpos(a:highlights, [[
+            \l:start_line + i
+            \]]))
+      let i += 1
+    endw
+  endif
+
+  return l:hl_id_list
+"}}}
+endfunction
