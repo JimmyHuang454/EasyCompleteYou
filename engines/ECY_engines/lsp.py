@@ -20,7 +20,7 @@ class Operate(object):
                  languageId='',
                  workspaceFolders=None,
                  use_completion_cache=False,
-                 use_completion_cache_position=False,
+                 use_completion_cache_position=True,
                  initializationOptions=None):
 
         self.engine_name = name
