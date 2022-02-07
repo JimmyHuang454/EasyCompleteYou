@@ -10,7 +10,7 @@ fun! ECY#semantic_tokens#Init() abort
 "}}}
 endf
 
-fun! s:RenderBuffer() abort
+fun! ECY#semantic_tokens#RenderBuffer() abort
 "{{{
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
   if !has_key(g:ECY_semantic_tokens_info, l:buffer_path) || 
@@ -21,7 +21,7 @@ fun! s:RenderBuffer() abort
   let l:start = line('w0') - 5
   let l:end = line('w$') + 5
 
-  for item in g:ECY_semantic_tokens_info[l:buffer_path]
+  for item in g:ECY_semantic_tokens_info[l:buffer_path]['data']
     if l:start > item['line'] || item['line'] > l:end
       continue
     endif
@@ -29,8 +29,7 @@ fun! s:RenderBuffer() abort
     let l:range = {'start': { 
           \'line': l:line, 'colum': item['start_colum'] },
           \'end' : { 'line': l:line, 'colum': item['end_colum']}}
-    let l:color = 'ECY_semantic_tokens_' . item['color']
-    call ECY#utils#HighlightRange(l:range, l:color)
+    call ECY#utils#HighlightRange(l:range, item['color'])
   endfor
 "}}}
 endf
@@ -45,41 +44,10 @@ fun! ECY#semantic_tokens#Clear() abort
 "}}}
 endf
 
-fun! ECY#semantic_tokens#Do(context) abort
+fun! ECY#semantic_tokens#Update(context) abort
 "{{{
   let l:path = a:context['path']
   let g:ECY_semantic_tokens_info[l:path] = a:context
-  call s:RenderBuffer()
-"}}}
-endf
-
-fun! ECY#semantic_tokens#ShowCmd()
-"{{{ show all
-  let l:buffer_path = ECY#utils#GetCurrentBufferPath()
-  if !has_key(g:ECY_semantic_tokens_info, l:buffer_path) || 
-        \!ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_enable_semantic_tokens
-    return
-  endif
-
-  let s:show = ''
-  let l:res = g:ECY_semantic_tokens_info[l:buffer_path]['res']
-  let i = 1
-  let l:uri = ''
-  for item in l:res
-    let l:command = 'NoName'
-    if has_key(item, 'command')
-      let l:command = item['command']['title']
-    endif
-
-    let s:show .= printf("%s. %s \n", string(i), l:command)
-    let i += 1
-  endfor
-  echo s:show
-  let l:index = str2nr(input('Index: '))
-  if l:index > len(l:res) || l:index == 0
-    call ECY#utils#echo('Quited')
-    return -1
-  endif
-  return l:index
+  call ECY#semantic_tokens#RenderBuffer()
 "}}}
 endf

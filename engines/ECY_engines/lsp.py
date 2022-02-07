@@ -966,9 +966,10 @@ class Operate(object):
                 if is_defined:
                     res.append({
                         'line': line_count,
-                        'startChar': colum,
-                        'length': data[j + 2],
+                        'start_colum': colum,
+                        'end_colum': data[j + 2] + colum,
                         'tokenType': tokenType,
+                        'color': color_item[1],
                         'tokenModifiers': tokenModifiers,
                     })
                     break
@@ -980,7 +981,8 @@ class Operate(object):
             return
 
         params = context['params']
-        uri = self._lsp.PathToUri(params['buffer_path'])
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
 
         previousResultId = None
         if uri in self.semantic_info and self.is_support_delta:
@@ -1006,7 +1008,8 @@ class Operate(object):
 
         if send_type == 'full':
             self.semantic_info[uri] = res
-            logger.debug(self._build_semantic(res['data']))
+            temp = {'data': self._build_semantic(res['data']), 'path': path}
+            rpc.DoCall('ECY#semantic_tokens#Update', [temp])
 
     def DoCodeAction(self, context):
         params = context['params']
