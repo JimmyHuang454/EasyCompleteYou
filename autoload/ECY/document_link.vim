@@ -30,7 +30,7 @@ fun! ECY#document_link#RenderBuffer(buffer_path) abort
     let l:range = {'start': { 
           \'line': l:temp['start']['line'] + 1, 'colum': l:temp['start']['character'] },
           \'end' : { 'line': l:temp['end']['line'] + 1, 'colum': l:temp['end']['character']}}
-    call ECY#diagnostics#HighlightRange(l:range, 'ECY_document_link_style')
+    call ECY#utils#HighlightRange(l:range, 'ECY_document_link_style')
   endfor
 "}}}
 endf

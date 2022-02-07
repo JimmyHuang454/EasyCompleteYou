@@ -18,6 +18,30 @@ fun! s:RenderBuffer() abort
     return
   endif
 
+  let l:start = line('w0') - 5
+  let l:end = line('w$') + 5
+
+  for item in g:ECY_semantic_tokens_info[l:buffer_path]
+    if l:start > item['line'] || item['line'] > l:end
+      continue
+    endif
+    let l:line = item['line'] + 1
+    let l:range = {'start': { 
+          \'line': l:line, 'colum': item['start_colum'] },
+          \'end' : { 'line': l:line, 'colum': item['end_colum']}}
+    let l:color = 'ECY_semantic_tokens_' . item['color']
+    call ECY#utils#HighlightRange(l:range, l:color)
+  endfor
+"}}}
+endf
+
+fun! ECY#semantic_tokens#Clear() abort
+"{{{
+  for l:match in getmatches()
+    if l:match['group'] =~# '^ECY_semantic_tokens'
+        call matchdelete(l:match['id'])
+    endif
+  endfor
 "}}}
 endf
 

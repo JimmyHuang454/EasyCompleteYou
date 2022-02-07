@@ -321,57 +321,15 @@ function! s:ShowDiagnosis_all(index_list) abort
 "}}}
 endfunction
 
-function! s:CalculatePosition(line, col, end_line, end_col) abort
-"{{{
-  " this was copy from ALE
-    let l:MAX_POS_VALUES = 8
-    let l:MAX_COL_SIZE = 1073741824 " pow(2, 30)
-    if a:line >= a:end_line
-        " For single lines, just return the one position.
-        return [[[a:line, a:col, a:end_col - a:col + 1]]]
-    endif
-
-    " Get positions from the first line at the first column, up to a large
-    " integer for highlighting up to the end of the line, followed by
-    " the lines in-between, for highlighting entire lines, and
-    " a highlight for the last line, up to the end column.
-    let l:all_positions =
-    \   [[a:line, a:col, l:MAX_COL_SIZE]]
-    \   + range(a:line + 1, a:end_line - 1)
-    \   + [[a:end_line, 1, a:end_col]]
-
-    return map(
-    \   range(0, len(l:all_positions) - 1, l:MAX_POS_VALUES),
-    \   'l:all_positions[v:val : v:val + l:MAX_POS_VALUES - 1]',
-    \)
-"}}}
-endfunction
-
-function! ECY#diagnostics#HighlightRange(range, highlights) abort
-"{{{ return a list of `matchaddpos` e.g. [match_point1, match_point2]
-"a:range = {'start': { 'line': 5, 'colum': 23 },'end' : { 'line': 6, 'colum': 0 } }
-"
-"colum is 0-based, but highlight's colum is 1-based, so we add 1.
-"ensure cursor in buffer you want to highlight before you call this function.
-
-  " map like a loop
-  call map(s:CalculatePosition(a:range['start']['line'],
-          \a:range['start']['colum'] + 1,
-          \a:range['end']['line'],
-          \a:range['end']['colum'] + 1),
-        \'matchaddpos(a:highlights, v:val)')
-"}}}
-endfunction
-
 function! ECY#diagnostics#CleanAllSignHighlight() abort
 "{{{ should be called after text had been changed.
   if !g:ECY_enable_diagnostics
     return
   endif
   for l:match in getmatches()
-      if l:match['group'] =~# '^ECY_diagnostics'
-          call matchdelete(l:match['id'])
-      endif
+    if l:match['group'] =~# '^ECY_diagnostics'
+        call matchdelete(l:match['id'])
+    endif
   endfor
 "}}}
 endfunction
@@ -396,7 +354,7 @@ function! s:PlaceSignAndHighlight(position, diagnostics, items, style, path,
   catch 
   endtry
   if a:current_buffer_path == a:path
-    call ECY#diagnostics#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
+    call ECY#utils#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
   endif
 "}}}
 endfunction
