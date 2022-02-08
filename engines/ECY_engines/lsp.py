@@ -1006,9 +1006,17 @@ class Operate(object):
         if res is None:
             return
 
+        is_full = False
         if send_type == 'full':
-            self.semantic_info[uri] = res
+            is_full = True
+        elif send_type == 'full_dalta':
+            if 'edits' not in res:
+                is_full = True
+
+        if is_full:
             temp = {'data': self._build_semantic(res['data']), 'path': path}
+            res['builded_cache'] = temp
+            self.semantic_info[uri] = res
             rpc.DoCall('ECY#semantic_tokens#Update', [temp])
 
     def DoCodeAction(self, context):
