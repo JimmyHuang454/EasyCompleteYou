@@ -21,7 +21,7 @@ fun! s:BufEnter() abort
 endf
 
 fun! s:CursorMoved() abort
-  " call ECY#semantic_tokens#RenderBuffer()
+  call ECY#semantic_tokens#RenderBuffer()
 endf
 
 fun! s:InsertLeave() abort
@@ -38,13 +38,13 @@ fun! ECY#semantic_tokens#RenderBuffer() abort
     return
   endif
 
+  call ECY#semantic_tokens#Clear() " will init 'hl' key
+
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
   if !has_key(g:ECY_semantic_tokens_info, l:buffer_path) || 
         \!ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_enable_semantic_tokens
     return
   endif
-
-  call ECY#semantic_tokens#Clear() " will init 'hl' key
 
   let l:start = line('w0') - 5
   let l:end = line('w$') + 5
@@ -78,7 +78,9 @@ fun! ECY#semantic_tokens#Clear() abort
     endif
   endfor
 
-  let g:ECY_semantic_tokens_info[l:current_path]['hl'] = []
+  if has_key(g:ECY_semantic_tokens_info, l:current_path)
+    let g:ECY_semantic_tokens_info[l:current_path]['hl'] = []
+  endif
 "}}}
 endf
 
