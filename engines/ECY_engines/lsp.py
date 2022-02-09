@@ -376,6 +376,7 @@ class Operate(object):
         if params['change_mode'] == 'n':  # normal mode
             self.GetCodeLens(context)
             self.DocumentLink(context)
+            self.semanticTokens(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -603,6 +604,7 @@ class Operate(object):
         self.completion_isInCompleted = False
         self.GetCodeLens(context)
         self.DocumentLink(context)
+        self.semanticTokens(context)
 
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
@@ -985,8 +987,9 @@ class Operate(object):
         uri = self._lsp.PathToUri(path)
 
         previousResultId = None
-        if uri in self.semantic_info and self.is_support_delta:
-            send_type = 'full_dalta'
+        if uri in self.semantic_info and self.is_support_delta and False:
+            # TODO: delta not support yet
+            send_type = 'full_delta'
             previousResultId = self.semantic_info[uri]['resultId']
         elif self.is_support_range:
             send_type = 'range'
@@ -1009,7 +1012,7 @@ class Operate(object):
         is_full = False
         if send_type == 'full':
             is_full = True
-        elif send_type == 'full_dalta':
+        elif send_type == 'full_delta':
             if 'edits' not in res:
                 is_full = True
 

@@ -504,7 +504,7 @@ class LSP(conec.Operate):
         params = {'textDocument': self.TextDocumentIdentifier(uri)}
         if ranges == 'full':
             event = 'textDocument/semanticTokens/full'
-        elif ranges == 'full_dalta':
+        elif ranges == 'full_delta':
             # previousResultId can not be None
             params['previousResultId'] = previousResultId
             event = 'textDocument/semanticTokens/full/delta'

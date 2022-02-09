@@ -7,21 +7,49 @@ fun! ECY#semantic_tokens#Init() abort
         \ECY#engine_config#GetEngineConfig('ECY', 'semantic_tokens.disable_in_insert_mode')
 
   let g:ECY_semantic_tokens_info = {}
+
+  augroup ECY_Diagnosis
+    autocmd CursorMoved * call s:CursorMoved()
+    autocmd BufEnter * call s:BufEnter()
+    autocmd InsertLeave * call s:InsertLeave()
+  augroup END
 "}}}
+endf
+
+fun! s:BufEnter() abort
+  call ECY#semantic_tokens#RenderBuffer()
+endf
+
+fun! s:CursorMoved() abort
+  " call ECY#semantic_tokens#RenderBuffer()
+endf
+
+fun! s:InsertLeave() abort
+  if !g:ECY_disable_semantic_tokens_in_insert_mode
+    return
+  endif
+
+  call ECY#semantic_tokens#RenderBuffer()
 endf
 
 fun! ECY#semantic_tokens#RenderBuffer() abort
 "{{{
+  if g:ECY_disable_semantic_tokens_in_insert_mode && mode() == 'i'
+    return
+  endif
+
   let l:buffer_path = ECY#utils#GetCurrentBufferPath()
   if !has_key(g:ECY_semantic_tokens_info, l:buffer_path) || 
         \!ECY2_main#IsWorkAtCurrentBuffer() || !g:ECY_enable_semantic_tokens
     return
   endif
 
+  call ECY#semantic_tokens#Clear() " will init 'hl' key
+
   let l:start = line('w0') - 5
   let l:end = line('w$') + 5
 
-  for item in g:ECY_semantic_tokens_info[l:buffer_path]['data']
+  for item in g:ECY_semantic_tokens_info[l:buffer_path]['res']['data']
     if l:start > item['line'] || item['line'] > l:end
       continue
     endif
@@ -29,25 +57,39 @@ fun! ECY#semantic_tokens#RenderBuffer() abort
     let l:range = {'start': { 
           \'line': l:line, 'colum': item['start_colum'] },
           \'end' : { 'line': l:line, 'colum': item['end_colum']}}
-    call ECY#utils#HighlightRange(l:range, item['color'])
+    call extend(g:ECY_semantic_tokens_info[l:buffer_path]['hl'], 
+          \ECY#utils#HighlightRange(l:range, item['color']))
   endfor
 "}}}
 endf
 
 fun! ECY#semantic_tokens#Clear() abort
 "{{{
-  for l:match in getmatches()
-    if l:match['group'] =~# '^ECY_semantic_tokens'
-        call matchdelete(l:match['id'])
+  let l:current_path = ECY#utils#GetCurrentBufferPath()
+
+  for path in keys(g:ECY_semantic_tokens_info)
+    if has_key(g:ECY_semantic_tokens_info[path], 'hl')
+      for hl_id in g:ECY_semantic_tokens_info[path]['hl']
+        try
+          call matchdelete(hl_id)
+        catch 
+        endtry
+      endfor
     endif
   endfor
+
+  let g:ECY_semantic_tokens_info[l:current_path]['hl'] = []
 "}}}
 endf
 
 fun! ECY#semantic_tokens#Update(context) abort
 "{{{
   let l:path = a:context['path']
-  let g:ECY_semantic_tokens_info[l:path] = a:context
+  if !has_key(g:ECY_semantic_tokens_info, l:path)
+    let g:ECY_semantic_tokens_info[l:path] = {}
+  endif
+
+  let g:ECY_semantic_tokens_info[l:path]['res'] = a:context
   call ECY#semantic_tokens#RenderBuffer()
 "}}}
 endf

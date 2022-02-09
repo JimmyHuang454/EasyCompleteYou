@@ -152,7 +152,7 @@ CAPABILITY = {
             "requests": {
                 "range": True,
                 "full": {
-                    'delta': True
+                    'delta': False
                 }
             },
             "tokenTypes": [],
