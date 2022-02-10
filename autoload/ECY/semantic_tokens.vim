@@ -68,12 +68,13 @@ fun! ECY#semantic_tokens#Clear() abort
   let l:current_path = ECY#utils#GetCurrentBufferPath()
 
   for path in keys(g:ECY_semantic_tokens_info)
+    if !g:is_vim && path != l:current_path
+      continue
+    endif
+
     if has_key(g:ECY_semantic_tokens_info[path], 'hl')
       for hl_id in g:ECY_semantic_tokens_info[path]['hl']
-        try
-          call matchdelete(hl_id)
-        catch 
-        endtry
+        call ECY#utils#MatchDelete(hl_id)
       endfor
     endif
   endfor

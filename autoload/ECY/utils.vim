@@ -609,6 +609,61 @@ function! ECY#utils#AskWindowsStyle()
 "}}}
 endfunction
 
+function! ECY#utils#MatchAdd(hl_name, pos) abort
+"{{{ 1-based.
+  if g:is_vim
+    let l:hl_id = matchaddpos(a:hl_name, a:pos)
+  else
+    " matchaddpos also works at nvim, but it's slow. So ...
+    let l:hl_id = nvim_create_namespace('')
+    let l:buffer_id = bufnr('')
+    for item in a:pos
+      if type(item) == v:t_number
+        call nvim_buf_add_highlight(l:buffer_id,
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \0,
+              \-1,
+              \)
+      elseif len(item) == 2
+        call nvim_buf_add_highlight(l:buffer_id,
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \item[1] - 1,
+              \item[1],
+              \)
+      elseif len(item) == 3
+        call nvim_buf_add_highlight(l:buffer_id,
+              \l:hl_id,
+              \a:hl_name,
+              \item[0] - 1,
+              \item[1] - 1,
+              \item[1] + item[2] - 1,
+              \)
+      endif
+    endfor
+  endif
+
+  return l:hl_id
+"}}}
+endfunction
+
+function! ECY#utils#MatchDelete(hl_id) abort
+"{{{
+  if g:is_vim
+    try
+      call matchdelete(a:hl_id)
+    catch 
+    endtry
+  else
+    let l:buffer_id = bufnr('')
+    call nvim_buf_clear_namespace(l:buffer_id, a:hl_id, 0, -1)
+  endif
+"}}}
+endfunction
+
 function! ECY#utils#HighlightRange(range, highlights) abort
 "{{{
 "colum is 0-based, but highlight's colum is 1-based, so we add 1.
@@ -623,19 +678,19 @@ function! ECY#utils#HighlightRange(range, highlights) abort
   let l:hl_id_list = []
   if l:line_gap == 0
     let l:length = a:range['end']['colum'] - a:range['start']['colum']
-    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
           \l:start_line, a:range['start']['colum'] + 1, l:length
           \]]))
   else
-    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
           \l:start_line, a:range['start']['colum'] + 1, l:MAX_COL_SIZE
           \]]))
-    call add(l:hl_id_list, matchaddpos(a:highlights, [[
+    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
           \l:end_line, 1, a:range['end']['colum'] + 1
           \]]))
     let i = 1
     while i < l:line_gap
-      call add(l:hl_id_list, matchaddpos(a:highlights, [[
+      call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
             \l:start_line + i
             \]]))
       let i += 1

@@ -42,10 +42,11 @@ function ECY#diagnostics#Init() abort
 
   let s:supports_sign_groups = has('nvim-0.4.2') || exists('*sign_define')
   let s:supports_sign_groups = v:false
-  let s:sign_id_dict                           = {}
-  let s:current_diagnostics                    = {}
-  let g:ECY_diagnostics_items_all              = []
+  let s:sign_id_dict = {}
   let s:showing_winid = -1
+  let g:ECY_diagnostics_hl = {}
+  let s:current_diagnostics = {}
+  let g:ECY_diagnostics_items_all = []
   let g:ECY_diagnostics_items_with_engine_name = {'nothing': []}
   " user don't want to update diagnostics in insert mode, but engine had
   " returned diagnostics, so we cache it and update after user leave insert
@@ -326,11 +327,20 @@ function! ECY#diagnostics#CleanAllSignHighlight() abort
   if !g:ECY_enable_diagnostics
     return
   endif
-  for l:match in getmatches()
-    if l:match['group'] =~# '^ECY_diagnostics'
-        call matchdelete(l:match['id'])
+
+  let l:current_path = ECY#utils#GetCurrentBufferPath()
+
+  for path in keys(g:ECY_diagnostics_hl)
+    if !g:is_vim && path != l:current_path
+      continue
     endif
+
+    for hl_id in g:ECY_diagnostics_hl[path]
+      call ECY#utils#MatchDelete(hl_id)
+    endfor
   endfor
+
+  let g:ECY_diagnostics_hl[l:current_path] = []
 "}}}
 endfunction
 
@@ -347,14 +357,12 @@ function! s:PlaceSignAndHighlight(position, diagnostics, items, style, path,
   let l:group_name = a:engine_name
   try
     call s:PlaceSign(a:engine_name, l:style, a:path, a:position['line'])
-    " call sign_place(0,
-    "        \l:group_name,
-    "        \l:style, a:path,
-    "        \{'lnum' : a:position['line']})
   catch 
   endtry
+
   if a:current_buffer_path == a:path
-    call ECY#utils#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
+    let l:temp = ECY#utils#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
+    call extend(g:ECY_diagnostics_hl[a:path], l:temp)
   endif
 "}}}
 endfunction
