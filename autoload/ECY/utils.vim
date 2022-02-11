@@ -1,8 +1,16 @@
-" for echo
 let s:show_msg_windows_nr = -1
 let s:show_msg_windows_text_list = []
 let s:show_msg_time = 5
 let s:show_msg_timer_id = -1
+let g:hl_list = {}
+let s:vim_mapped_type = {}
+let s:vim_textprop_id = 0
+let s:hl_range_id = 0
+let s:MAX_COL_SIZE = 10000
+
+augroup ECY_utils
+  autocmd BufEnter * call s:BufEnter()
+augroup END
 
 function! g:ShowMsg_cb(id, key) abort
   "{{{
@@ -612,7 +620,22 @@ endfunction
 function! ECY#utils#MatchAdd(hl_name, pos) abort
 "{{{ 1-based.
   if g:is_vim
-    let l:hl_id = matchaddpos(a:hl_name, a:pos)
+    let s:vim_textprop_id += 1
+    let l:hl_id = s:vim_textprop_id
+    let l:type = printf('ECY_%s', a:hl_name)
+    if !has_key(s:vim_mapped_type, l:type) 
+      call prop_type_add(l:type, {'highlight': a:hl_name})
+      let s:vim_mapped_type[l:type] = 1
+    endif
+    for item in a:pos
+      if type(item) == v:t_number
+        call prop_add(item, 1, {'length': s:MAX_COL_SIZE, 'type': l:type, 'id': l:hl_id})
+      elseif len(item) == 2
+        call prop_add(item[0], item[1], {'length': 1, 'type': l:type, 'id': l:hl_id})
+      elseif len(item) == 3
+        call prop_add(item[0], item[1], {'length': item[2], 'type': l:type, 'id': l:hl_id})
+      endif
+    endfor
   else
     " matchaddpos also works at nvim, but it's slow. So ...
     let l:hl_id = nvim_create_namespace('')
@@ -653,10 +676,7 @@ endfunction
 function! ECY#utils#MatchDelete(hl_id) abort
 "{{{
   if g:is_vim
-    try
-      call matchdelete(a:hl_id)
-    catch 
-    endtry
+    call prop_remove({'id': a:hl_id})
   else
     let l:buffer_id = bufnr('')
     call nvim_buf_clear_namespace(l:buffer_id, a:hl_id, 0, -1)
@@ -664,7 +684,7 @@ function! ECY#utils#MatchDelete(hl_id) abort
 "}}}
 endfunction
 
-function! ECY#utils#HighlightRange(range, highlights) abort
+function! s:HighlightRange(range, highlights) abort
 "{{{
 "colum is 0-based, but highlight's colum is 1-based, so we add 1.
 "line is 1-based
@@ -673,7 +693,6 @@ function! ECY#utils#HighlightRange(range, highlights) abort
   let l:start_line = a:range['start']['line']
   let l:end_line = a:range['end']['line']
   let l:line_gap = l:end_line - l:start_line
-  let l:MAX_COL_SIZE = 10000
 
   let l:hl_id_list = []
   if l:line_gap == 0
@@ -683,7 +702,7 @@ function! ECY#utils#HighlightRange(range, highlights) abort
           \]]))
   else
     call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
-          \l:start_line, a:range['start']['colum'] + 1, l:MAX_COL_SIZE
+          \l:start_line, a:range['start']['colum'] + 1, s:MAX_COL_SIZE
           \]]))
     call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
           \l:end_line, 1, a:range['end']['colum'] + 1
@@ -696,7 +715,88 @@ function! ECY#utils#HighlightRange(range, highlights) abort
       let i += 1
     endw
   endif
-
   return l:hl_id_list
+"}}}
+endfunction
+
+function! ECY#utils#HighlightRange(range, highlights) abort
+"{{{
+  let s:hl_range_id += 1
+  let l:is_current_buffer = 1
+  let l:range = a:range
+
+  let l:current_path = ECY#utils#GetCurrentBufferPath()
+  if has_key(l:range, 'path')
+    if l:current_path != l:range['path']
+      let l:is_current_buffer = 0
+    endif
+  else
+    let l:range['path'] = l:current_path
+  endif
+
+  let l:hl_id_list = []
+  if l:is_current_buffer
+    let l:hl_id_list = s:HighlightRange(l:range, a:highlights)
+  endif
+
+  let l:res = {}
+  let l:res['range'] = l:range
+  let l:res['hl_id'] = l:hl_id_list
+  let l:res['highlight'] = a:highlights
+  let l:res['is_deleted'] = 0
+  let l:res['is_highlighted'] = l:is_current_buffer
+
+  let g:hl_list[s:hl_range_id] = l:res
+
+  return s:hl_range_id
+"}}}
+endfunction
+
+function! ECY#utils#UnHighlightRange(hl_id) abort
+"{{{
+  if !has_key(g:hl_list, a:hl_id)
+    return
+  endif
+
+  let l:is_current_buffer = 1
+  if has_key(g:hl_list[a:hl_id], 'path')
+    let l:current_path = ECY#utils#GetCurrentBufferPath()
+    if l:current_path != g:hl_list[a:hl_id]['path']
+      let l:is_current_buffer = 0
+    endif
+  endif
+
+  if g:hl_list[a:hl_id]['is_highlighted'] && l:is_current_buffer
+    for item in g:hl_list[a:hl_id]['hl_id']
+      call ECY#utils#MatchDelete(item)
+    endfor
+  endif
+
+  if l:is_current_buffer
+    unlet g:hl_list[a:hl_id]
+  else
+    let g:hl_list[a:hl_id]['is_deleted'] = 1
+  endif
+"}}}
+endfunction
+
+function! s:BufEnter() abort
+"{{{
+  let l:current_path = ECY#utils#GetCurrentBufferPath()
+  for item in keys(g:hl_list)
+    if g:hl_list[item]['range']['path'] != l:current_path
+      continue
+    endif
+
+    if g:hl_list[item]['is_deleted']
+      for hl_id in g:hl_list[item]['hl_id']
+        call ECY#utils#MatchDelete(hl_id)
+      endfor
+      unlet g:hl_list[item]
+    elseif !g:hl_list[item]['is_highlighted']
+      let g:hl_list[item]['hl_id'] = s:HighlightRange(g:hl_list[item]['range'])
+      let g:hl_list[item]['is_highlighted'] = 1
+    endif
+  endfor
 "}}}
 endfunction

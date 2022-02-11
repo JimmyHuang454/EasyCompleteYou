@@ -57,7 +57,7 @@ fun! ECY#semantic_tokens#RenderBuffer() abort
     let l:range = {'start': { 
           \'line': l:line, 'colum': item['start_colum'] },
           \'end' : { 'line': l:line, 'colum': item['end_colum']}}
-    call extend(g:ECY_semantic_tokens_info[l:buffer_path]['hl'], 
+    call add(g:ECY_semantic_tokens_info[l:buffer_path]['hl'], 
           \ECY#utils#HighlightRange(l:range, item['color']))
   endfor
 "}}}

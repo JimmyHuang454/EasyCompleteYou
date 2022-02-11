@@ -331,12 +331,12 @@ function! ECY#diagnostics#CleanAllSignHighlight() abort
   let l:current_path = ECY#utils#GetCurrentBufferPath()
 
   for path in keys(g:ECY_diagnostics_hl)
-    if !g:is_vim && path != l:current_path
+    if path != l:current_path
       continue
     endif
 
     for hl_id in g:ECY_diagnostics_hl[path]
-      call ECY#utils#MatchDelete(hl_id)
+      call ECY#utils#UnHighlightRange(hl_id)
     endfor
   endfor
 
@@ -362,7 +362,7 @@ function! s:PlaceSignAndHighlight(position, diagnostics, items, style, path,
 
   if a:current_buffer_path == a:path
     let l:temp = ECY#utils#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
-    call extend(g:ECY_diagnostics_hl[a:path], l:temp)
+    call add(g:ECY_diagnostics_hl[a:path], l:temp)
   endif
 "}}}
 endfunction
