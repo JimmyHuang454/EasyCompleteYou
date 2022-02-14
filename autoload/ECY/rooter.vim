@@ -2,51 +2,60 @@
 "
 " Copyright 2010-2020 Andrew Stewart, <boss@airbladesoftware.com>
 " Released under the MIT licence.
+"
+function! ECY#rooter#init()
+"{{{
+  let g:loaded_rooter = 1
 
-if exists('g:loaded_rooter') || &cp
-  " finish
-endif
-let g:loaded_rooter = 1
+  let s:nomodeline = (v:version > 703 || (v:version == 703 && has('patch442'))) ? '<nomodeline>' : ''
 
-let s:nomodeline = (v:version > 703 || (v:version == 703 && has('patch442'))) ? '<nomodeline>' : ''
+  if !exists('g:rooter_manual_only')
+    let g:rooter_manual_only = 0
+  endif
 
-if !exists('g:rooter_manual_only')
-  let g:rooter_manual_only = 0
-endif
+  if exists('+autochdir') && &autochdir && !g:rooter_manual_only
+    set noautochdir
+  endif
 
-if exists('+autochdir') && &autochdir && !g:rooter_manual_only
-  set noautochdir
-endif
+  if exists('g:rooter_use_lcd')
+    echoerr 'vim-rooter: please replace g:rooter_use_lcd=1 with g:rooter_cd_cmd="lcd"'
+    let g:rooter_cd_cmd = 'lcd'
+  endif
 
-if exists('g:rooter_use_lcd')
-  echoerr 'vim-rooter: please replace g:rooter_use_lcd=1 with g:rooter_cd_cmd="lcd"'
-  let g:rooter_cd_cmd = 'lcd'
-endif
+  if !exists('g:rooter_cd_cmd')
+    let g:rooter_cd_cmd = 'cd'
+  endif
 
-if !exists('g:rooter_cd_cmd')
-  let g:rooter_cd_cmd = 'cd'
-endif
+  if !exists('g:rooter_patterns')
+    let g:rooter_patterns = ['.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', '.root']
+  endif
 
-if !exists('g:rooter_patterns')
-  let g:rooter_patterns = ['.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', '.root']
-endif
+  if !exists('g:rooter_targets')
+    let g:rooter_targets = '/,*'
+  endif
 
-if !exists('g:rooter_targets')
-  let g:rooter_targets = '/,*'
-endif
+  if !exists('g:rooter_change_directory_for_non_project_files')
+    let g:rooter_change_directory_for_non_project_files = ''
+  endif
 
-if !exists('g:rooter_change_directory_for_non_project_files')
-  let g:rooter_change_directory_for_non_project_files = ''
-endif
+  if !exists('g:rooter_silent_chdir')
+    let g:rooter_silent_chdir = 0
+  endif
 
-if !exists('g:rooter_silent_chdir')
-  let g:rooter_silent_chdir = 0
-endif
+  if !exists('g:rooter_resolve_links')
+    let g:rooter_resolve_links = 0
+  endif
 
-if !exists('g:rooter_resolve_links')
-  let g:rooter_resolve_links = 0
-endif
+  command! -bar Rooter call <SID>rooter()
+  command! -bar RooterToggle call <SID>toggle()
 
+  augroup rooter
+    autocmd!
+    autocmd VimEnter,BufReadPost,BufEnter * nested if !g:rooter_manual_only | Rooter | endif
+    autocmd BufWritePost * nested if !g:rooter_manual_only | call setbufvar('%', 'rootDir', '') | Rooter | endif
+  augroup END
+"}}}
+endfunction
 
 " For third-parties.  Not used by plugin.
 function! FindRootDirectory()
@@ -56,18 +65,6 @@ endfunction
 function! ECY#rooter#GetCurrentBufferWorkSpace()
   return s:root()
 endfunction
-
-
-command! -bar Rooter call <SID>rooter()
-command! -bar RooterToggle call <SID>toggle()
-
-
-augroup rooter
-  autocmd!
-  autocmd VimEnter,BufReadPost,BufEnter * nested if !g:rooter_manual_only | Rooter | endif
-  autocmd BufWritePost * nested if !g:rooter_manual_only | call setbufvar('%', 'rootDir', '') | Rooter | endif
-augroup END
-
 
 function! s:rooter()
   if !s:activate() | return | endif
