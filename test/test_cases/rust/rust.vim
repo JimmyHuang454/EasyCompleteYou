@@ -1,4 +1,3 @@
-"XXXX
 let g:ECY_is_debug = 1
 let g:repo_root = fnamemodify(expand('<sfile>'), ':h:h:h:h')
 let g:ECY_debug_log_file_path = expand('<sfile>') . '.ECY_log'
