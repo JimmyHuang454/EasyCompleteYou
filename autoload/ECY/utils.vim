@@ -39,6 +39,16 @@ endfunction
 
 fun! ECY#utils#echo(msg)
   "{{{
+  if type(a:msg) == 3
+    let l:temp = join(a:msg, '|')
+  else
+    let l:temp = a:msg
+  endif
+  echohl WarningMsg |
+        \ echomsg l:temp |
+        \ echohl None
+  "TODO
+  return
   if g:has_floating_windows_support == 'vim'
     "{{{
     let s:show_msg_time = 10
