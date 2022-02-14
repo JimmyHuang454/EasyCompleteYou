@@ -49,7 +49,7 @@ endif
 
 
 " For third-parties.  Not used by plugin.
-function! FindRootDirectory()
+function! ECY#rooter#GetCurrentBufferWorkSpace()
   return s:root()
 endfunction
 

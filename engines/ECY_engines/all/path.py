@@ -16,7 +16,7 @@ class Operate(object):
         self._update_root()
 
     def _update_root(self, context=None):
-        self.root_path = rpc.DoCall('FindRootDirectory')
+        self.root_path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
         self.root_path = self.root_path.replace('\\', '/')
         if context is None:
             return

@@ -37,7 +37,7 @@ class Operate(object):
 
         # in favour of `rootUri`.
         if rootPath is None:
-            self.rootPath = rpc.DoCall('FindRootDirectory')
+            self.rootPath = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
         else:
             self.rootPath = rootPath
 
@@ -364,7 +364,7 @@ class Operate(object):
                     'workspaceFolders']:
             return
 
-        path = rpc.DoCall('FindRootDirectory')
+        path = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
         if path not in self.workspace_cache and path != '':
             self.workspace_cache.append(path)
             add_workspace = {'uri': self._lsp.PathToUri(path), 'name': path}
