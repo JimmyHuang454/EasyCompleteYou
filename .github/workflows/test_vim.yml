@@ -1,4 +1,4 @@
-name: ECY vim test
+name: vim
 on: [push, pull_request]
 
 jobs:
@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         # vim has no stable tag.
-        vim_version: ["nightly", "v8.2.0008", "v8.1.1491"]
+        vim_version: ["nightly", "v8.2.0008", "v8.1.1578", "v8.2.1419"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout myself

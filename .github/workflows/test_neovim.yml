@@ -1,4 +1,4 @@
-name: ECY neovim test
+name: neovim
 on: [push, pull_request]
 
 jobs:
