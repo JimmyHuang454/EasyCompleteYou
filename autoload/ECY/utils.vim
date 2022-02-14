@@ -7,6 +7,7 @@ let s:vim_mapped_type = {}
 let s:vim_textprop_id = 0
 let s:hl_range_id = 0
 let s:MAX_COL_SIZE = 10000
+let s:use_textprop = 0
 
 augroup ECY_utils
   autocmd BufEnter * call s:BufEnter()
@@ -630,22 +631,29 @@ endfunction
 function! ECY#utils#MatchAdd(hl_name, pos) abort
 "{{{ 1-based.
   if g:is_vim
-    let s:vim_textprop_id += 1
-    let l:hl_id = s:vim_textprop_id
-    let l:type = printf('ECY_%s', a:hl_name)
-    if !has_key(s:vim_mapped_type, l:type) 
-      call prop_type_add(l:type, {'highlight': a:hl_name})
-      let s:vim_mapped_type[l:type] = 1
-    endif
-    for item in a:pos
-      if type(item) == v:t_number
-        call prop_add(item, 1, {'length': s:MAX_COL_SIZE, 'type': l:type, 'id': l:hl_id})
-      elseif len(item) == 2
-        call prop_add(item[0], item[1], {'length': 1, 'type': l:type, 'id': l:hl_id})
-      elseif len(item) == 3
-        call prop_add(item[0], item[1], {'length': item[2], 'type': l:type, 'id': l:hl_id})
+    if s:use_textprop
+      let s:vim_textprop_id += 1
+      let l:hl_id = s:vim_textprop_id
+      let l:type = printf('ECY_%s', a:hl_name)
+      if !has_key(s:vim_mapped_type, l:type) 
+        call prop_type_add(l:type, {'highlight': a:hl_name})
+        let s:vim_mapped_type[l:type] = 1
       endif
-    endfor
+      for item in a:pos
+        try
+          if type(item) == v:t_number
+            call prop_add(item, 1, {'length': s:MAX_COL_SIZE, 'type': l:type, 'id': l:hl_id})
+          elseif len(item) == 2
+            call prop_add(item[0], item[1], {'length': 1, 'type': l:type, 'id': l:hl_id})
+          elseif len(item) == 3
+            call prop_add(item[0], item[1], {'length': item[2], 'type': l:type, 'id': l:hl_id})
+          endif
+        catch 
+        endtry
+      endfor
+    else
+      let l:hl_id = matchaddpos(a:hl_name, a:pos)
+    endif
   else
     " matchaddpos also works at nvim, but it's slow. So ...
     let l:hl_id = nvim_create_namespace('')
@@ -686,7 +694,14 @@ endfunction
 function! ECY#utils#MatchDelete(hl_id) abort
 "{{{
   if g:is_vim
-    call prop_remove({'id': a:hl_id})
+    if s:use_textprop
+      call prop_remove({'id': a:hl_id})
+    else
+      try
+        call matchdelete(a:hl_id)
+      catch 
+      endtry
+    endif
   else
     let l:buffer_id = bufnr('')
     call nvim_buf_clear_namespace(l:buffer_id, a:hl_id, 0, -1)
@@ -725,6 +740,7 @@ function! s:HighlightRange(range, highlights) abort
       let i += 1
     endw
   endif
+
   return l:hl_id_list
 "}}}
 endfunction
@@ -793,20 +809,32 @@ endfunction
 function! s:BufEnter() abort
 "{{{
   let l:current_path = ECY#utils#GetCurrentBufferPath()
+
   for item in keys(g:hl_list)
+    if g:hl_list[item]['range']['path'] != l:current_path || !g:hl_list[item]['is_deleted']
+      continue
+    endif
+    for hl_id in g:hl_list[item]['hl_id']
+      call ECY#utils#MatchDelete(hl_id)
+    endfor
+    unlet g:hl_list[item]
+  endfor
+
+  if !g:is_vim 
+    return
+  endif
+
+  for item in keys(g:hl_list)
+    for hl_id in g:hl_list[item]['hl_id']
+      call ECY#utils#MatchDelete(hl_id)
+    endfor
+    " let g:hl_list[item]['hl_id'] = []
+
     if g:hl_list[item]['range']['path'] != l:current_path
       continue
     endif
 
-    if g:hl_list[item]['is_deleted']
-      for hl_id in g:hl_list[item]['hl_id']
-        call ECY#utils#MatchDelete(hl_id)
-      endfor
-      unlet g:hl_list[item]
-    elseif !g:hl_list[item]['is_highlighted']
-      let g:hl_list[item]['hl_id'] = s:HighlightRange(g:hl_list[item]['range'])
-      let g:hl_list[item]['is_highlighted'] = 1
-    endif
+    let g:hl_list[item]['hl_id'] = s:HighlightRange(g:hl_list[item]['range'], g:hl_list[item]['highlight'])
   endfor
 "}}}
 endfunction
