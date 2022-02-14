@@ -28,7 +28,7 @@ if !exists('g:rooter_cd_cmd')
 endif
 
 if !exists('g:rooter_patterns')
-  let g:rooter_patterns = ['.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', '.root']
+  let g:rooter_patterns = ['.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', '.root']
 endif
 
 if !exists('g:rooter_targets')
@@ -85,10 +85,14 @@ endfunction
 
 " Returns true if we should change to the buffer's root directory, false otherwise.
 function! s:activate()
-  if !empty(&buftype) | return 0 | endif
+  " Directory browser plugins (e.g. vim-dirvish, NERDTree) tend to
+  " set a nofile buftype when you open a directory.
+  if &buftype != '' && &buftype != 'nofile' | return 0 | endif
 
   let patterns = split(g:rooter_targets, ',')
   let fn = expand('%:p', 1)
+
+  if fn =~ 'NERD_tree_\d\+$' | let fn = b:NERDTree.root.path.str().'/' | endif
 
   " directory
   if empty(fn) || fn[-1:] == '/'
@@ -166,7 +170,11 @@ endfunction
 " dir        - full path to a directory
 " identifier - a file name or a directory name; may be a glob
 function! s:has(dir, identifier)
-  return !empty(globpath(a:dir, a:identifier, 1))
+  " We do not want a:dir to be treated as a glob so escape any wildcards.
+  " If this approach is problematic (e.g. on Windows), an alternative
+  " might be to change directory to a:dir, call globpath() with just
+  " a:identifier, then restore the working directory.
+  return !empty(globpath(escape(a:dir, '?*[]'), a:identifier, 1))
 endfunction
 
 
@@ -199,6 +207,7 @@ endfunction
 " Returns full path of directory of current file name (which may be a directory).
 function! s:current()
   let fn = expand('%:p', 1)
+  if fn =~ 'NERD_tree_\d\+$' | let fn = b:NERDTree.root.path.str().'/' | endif
   if empty(fn) | return getcwd() | endif  " opening vim without a file
   if g:rooter_resolve_links | let fn = resolve(fn) | endif
   return fnamemodify(fn, ':h')
@@ -240,8 +249,3 @@ endfunction
 
 
 " vim:set ft=vim sw=2 sts=2 et:
-
-" For third-parties.  Not used by plugin.
-function! ECY#rooter#GetCurrentBufferWorkSpace()
-  return FindRootDirectory()
-endfunction
