@@ -3,6 +3,9 @@ function! ECY#preview_windows#Init() abort
 "{{{ 
   let s:preview_windows_nr = -1
 
+  let g:ECY_preview_windows_enabled = 
+        \ECY#engine_config#GetEngineConfig('ECY', 'preview_windows.enable')
+
   let g:ECY_PreviewWindows_style = 
         \get(g:,'ECY_PreviewWindows_style','append')
 
@@ -15,7 +18,8 @@ function! ECY#preview_windows#Show(msg) abort
 "{{{ won't be triggered when there are no floating windows features.
   if !ECY#completion#IsMenuOpen() || 
         \g:ECY_use_floating_windows_to_be_popup_windows == v:false || 
-        \mode() != 'i'
+        \mode() != 'i' ||
+        \!g:ECY_preview_windows_enabled
     return
   endif
   call ECY#preview_windows#Close()
@@ -31,6 +35,10 @@ endfunction
 
 function! ECY#preview_windows#Open() abort
 "{{{ won't be triggered when there are no floating windows features.
+  if !g:ECY_preview_windows_enabled
+    return
+  endif
+
   if g:has_floating_windows_support == 'vim'
     let l:selecting_item_nr = 
           \g:ECY_current_popup_windows_info['selecting_item']
