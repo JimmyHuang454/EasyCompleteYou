@@ -17,6 +17,8 @@ function! s:T2() abort
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())
     let &ft = 'rust'
+    exe "Rooter"
+    call Expect(tr(ECY#rooter#GetCurrentBufferWorkSpace(), '\', '/'), fnamemodify(expand('<sfile>'), ':h') . '/hello_test')
 endfunction
 
 function! s:T3() abort
