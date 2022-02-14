@@ -4,7 +4,7 @@
 " Released under the MIT licence.
 
 if exists('g:loaded_rooter') || &cp
-  finish
+  " finish
 endif
 let g:loaded_rooter = 1
 
@@ -49,6 +49,10 @@ endif
 
 
 " For third-parties.  Not used by plugin.
+function! FindRootDirectory()
+  return s:root()
+endfunction
+
 function! ECY#rooter#GetCurrentBufferWorkSpace()
   return s:root()
 endfunction
