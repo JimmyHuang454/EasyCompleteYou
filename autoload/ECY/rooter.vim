@@ -27,7 +27,15 @@ function! ECY#rooter#init()
   endif
 
   if !exists('g:rooter_patterns')
-    let g:rooter_patterns = ['.git', '_darcs', '.hg', '.bzr', '.svn', 'Makefile', 'package.json', '.root']
+    let g:rooter_patterns = ['.git',
+          \'_darcs',
+          \'.hg',
+          \'.bzr',
+          \'.svn',
+          \'Makefile',
+          \'package.json',
+          \'.root',
+          \'Cargo.toml']
   endif
 
   if !exists('g:rooter_targets')
