@@ -88,26 +88,6 @@ function! s:Goto(types, is_preview) abort
 "}}}
 endfunction
 
-function! g:ECYGotoMenu() abort
-"{{{
-  let content = [
-        \ ["&Definition\t", "call ECY2_main#Goto('', 'GotoDefinition', 0)"],
-        \ ["De&claration\t", "call ECY2_main#Goto('', 'GotoDeclaration', 0)"],
-        \ ["&Implementation\t", "call ECY2_main#Goto('', 'Implementation', 0)"],
-        \ ["&TypeDefinition\t", "call ECY2_main#Goto('', 'TypeDefinition', 0)"],
-        \ ['-'],
-        \ ["Definition Preview\t", "call ECY2_main#Goto('', 'GotoDefinition', 1)"],
-        \ ["Declaration Preview\t", "call ECY2_main#Goto('', 'GotoDeclaration', 1)"],
-        \ ["Implementation Preview\t", "call ECY2_main#Goto('', 'Implementation', 1)"],
-        \ ["TypeDefinition Preview\t", "call ECY2_main#Goto('', 'TypeDefinition', 1)"],
-        \ ]
-  " set cursor to the last position
-  let opts = {'index': g:quickui#context#cursor, 
-        \'title': ECY#switch_engine#GetBufferEngineName()}
-  call quickui#context#open(content, opts)
-"}}}
-endfunction
-
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 

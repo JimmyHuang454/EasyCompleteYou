@@ -63,6 +63,4 @@ scriptencoding utf-8
 
 call AddRTP(g:repo_root)
 call SoPath(printf('%s/plugin/easycompleteyou2.vim', g:repo_root))
-call SoPath(printf('%s/plugin/quickui.vim', g:repo_root))
-
 call SoPath(printf('%s/test/test_frame.vim', g:repo_root))

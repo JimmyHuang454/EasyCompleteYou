@@ -134,6 +134,8 @@ fun! s:Preview() abort
     let l:start = l:seleted['range']['start']
 
     let l:opts = {'syntax': &syn, 'title': l:path}
+    " TODO
+    return
     let l:win_id = quickui#preview#open(l:path, l:opts)
     call quickui#utils#set_firstline(l:win_id, l:start['line'] + 1)
   endif
