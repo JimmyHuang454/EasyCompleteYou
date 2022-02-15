@@ -13,6 +13,13 @@ void assignment() {
   char c = 0;
 }
 
-int *ret_ptr() {
-  return 0;
-}
+int *ret_ptr() { return 0; }
+
+/* #define ABC 1 */
+
+#ifdef ABC
+int abc;
+#else
+int abcd;
+#endif
+

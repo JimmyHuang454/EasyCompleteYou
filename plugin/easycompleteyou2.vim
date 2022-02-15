@@ -108,25 +108,6 @@ function! g:ECYGotoMenu() abort
 "}}}
 endfunction
 
-function! s:Menu() abort
-"{{{
-  let content = [
-        \ ["&Hover\t", 'ECYHover' ],
-        \ ["&Format\t", 'ECYFormat'],
-        \ ["&Rename\t", 'ECYRename' ],
-        \ ["&Symbol\t", 'ECYSymbol' ],
-        \ ["&FoldLine\t", 'ECYFoldLine'],
-        \ ["&DocSymbol\t", 'ECYDocSymbol' ],
-        \ ["&Goto\t", 'call g:ECYGotoMenu()'],
-        \ ["S&eleteRange\t", 'ECYSeleteRange'],
-        \ ]
-  " set cursor to the last position
-  let opts = {'index': g:quickui#context#cursor, 
-        \'title': ECY#switch_engine#GetBufferEngineName()}
-  call quickui#context#open(content, opts)
-"}}}
-endfunction
-
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 
@@ -138,7 +119,6 @@ vmap ae <ESC>:ECYSeleteRangeParent<CR>
 vmap ar <ESC>:ECYSeleteRangeParent<CR>
 vmap at <ESC>:ECYSeleteRangeChild<CR>
 
-command! -nargs=* ECY                  call s:Menu()
 command! -nargs=* ECYGoto              call s:Goto(<q-args>, 0)
 command! -nargs=* ECYGotoP             call s:Goto(<q-args>, 1)
 command! -nargs=0 ECYHover             call ECY2_main#Hover()

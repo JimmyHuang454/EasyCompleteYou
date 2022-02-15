@@ -60,7 +60,7 @@
     "engine_name": "ECY_engines.json.json"
   }, {
     "file_type": ["lua"],
-    "disabled": true,
+    "disabled": false,
     "engine_name": "ECY_engines.lua.lua"
   }, {
     "file_type": ["all"],
