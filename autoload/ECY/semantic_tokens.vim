@@ -67,29 +67,27 @@ fun! ECY#semantic_tokens#Clear() abort
 "{{{
   let l:current_path = ECY#utils#GetCurrentBufferPath()
 
-  for path in keys(g:ECY_semantic_tokens_info)
-    if !g:is_vim && path != l:current_path
-      continue
-    endif
+  if !has_key(g:ECY_semantic_tokens_info, l:current_path)
+    return
+  endif
 
-    if has_key(g:ECY_semantic_tokens_info[path], 'hl')
-      for hl_id in g:ECY_semantic_tokens_info[path]['hl']
-        call ECY#utils#MatchDelete(hl_id)
-      endfor
-    endif
+  for item in g:ECY_semantic_tokens_info[l:current_path]['hl']
+    call ECY#utils#UnHighlightRange(item)
   endfor
 
-  if has_key(g:ECY_semantic_tokens_info, l:current_path)
-    let g:ECY_semantic_tokens_info[l:current_path]['hl'] = []
-  endif
+  let g:ECY_semantic_tokens_info[l:current_path]['hl'] = []
 "}}}
 endf
 
 fun! ECY#semantic_tokens#Update(context) abort
 "{{{
+  if !g:ECY_enable_semantic_tokens
+    return
+  endif
+
   let l:path = a:context['path']
   if !has_key(g:ECY_semantic_tokens_info, l:path)
-    let g:ECY_semantic_tokens_info[l:path] = {}
+    let g:ECY_semantic_tokens_info[l:path] = {'hl': []}
   endif
 
   let g:ECY_semantic_tokens_info[l:path]['res'] = a:context

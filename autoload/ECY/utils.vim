@@ -820,7 +820,7 @@ function! s:BufEnter() abort
     unlet g:hl_list[item]
   endfor
 
-  if !g:is_vim 
+  if !g:is_vim || s:use_textprop
     return
   endif
 
