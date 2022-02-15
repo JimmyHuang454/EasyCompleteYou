@@ -89,6 +89,10 @@ function! s:EW._open(text_list, opts) abort
     throw "Expect list or str."
   endif
 
+  if self['is_term'] || self['is_input']
+    return
+  endif
+
   let l:text_list = a:text_list
   if type(a:text_list) == v:t_string
     let l:text_list = split(a:text_list, "\n")
@@ -115,7 +119,7 @@ function! s:EW._open(text_list, opts) abort
   endif
   let self['anchor'] = l:anchor
 
-  if has_key(a:opts, 'hide')
+  if has_key(a:opts, 'hide') && a:opts['hide']
     let self['is_hided'] = 1
   else
     let self['is_hided'] = 0
@@ -301,6 +305,65 @@ function! s:EW._open(text_list, opts) abort
 "}}}
 endfunction
 
+function! s:EW._input() abort
+"{{{
+  if !self['is_input']
+    return
+  endif
+
+  let self['is_input'] = 1
+  let KEYS = "abcdefghijklmnopqrstuvwxyz"
+  let KEYS .= "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  let KEYS .= "0123456789"
+  let KEYS .= "~!@#$%^&*()_+\{\}|:\"\<\>\?"
+  let KEYS .= "[]\;',./ "
+
+  let l:key_map = self['key_map']
+
+  let i = 0
+  while i < len(KEYS)
+    let item = KEYS[i]
+    if !has_key(l:key_map, item)
+      let l:key_map[item] = {'is_input_value': 1}
+    endif
+    let i += 1
+  endw
+
+  call self._set_text('|')
+  while 1
+    redraw
+    let l:char_nr = getchar()
+    let l:char = nr2char(l:char_nr)
+    if  l:char_nr == "\<BS>"
+      let l:char = "\<BS>"
+    endif
+
+    if l:char == "\<ESC>" || l:char == "\<C-c>"
+      break
+    endif
+
+    if has_key(l:key_map, l:char) && has_key(l:key_map[l:char], 'is_input_value')
+      let self['input_value'] .= l:char
+    elseif l:char == "\<BS>"
+      let l:value_len = len(self['input_value'])
+      if l:value_len > 1
+        let self['input_value'] = self['input_value'][0 : l:value_len - 2]
+      else
+        let self['input_value'] = ''
+      endif
+    elseif l:char == "\<C-u>"
+      let self['input_value'] = ''
+    endif
+    call self._set_text(self['input_value'] . '|')
+  endw
+  call self._close()
+"}}}
+endfunction
+
+function! s:EW._open_term(opts) abort
+  let self['is_term'] = 1
+endfunction
+
 function! s:EW._hide() abort
 "{{{
   if !self['is_created'] || self['is_hided']
@@ -464,7 +527,7 @@ function! s:EW._set_text(text_list) abort
 
   let l:text_list = a:text_list
   if type(l:text_list) == v:t_string
-    let l:text_list = split(l:text_list)
+    let l:text_list = split(l:text_list, "\n")
   endif
 
   if type(l:text_list) != v:t_list
@@ -1057,6 +1120,23 @@ function! easy_windows#new() abort
   let l:obj['EW_id'] = s:windows_id
   let l:obj['highlight'] = {}
   let l:obj['is_created'] = 0
+  let l:obj['is_term'] = 0
+  let l:obj['is_input'] = 0
+  return l:obj
+endfunction
+
+function! easy_windows#new_input(opts) abort
+  let l:obj = easy_windows#new()
+  call l:obj._open('', a:opts)
+
+  let l:obj['is_input'] = 1
+  let l:obj['input_value'] = ''
+  if has_key(a:opts, 'key_map')
+    let l:obj['key_map'] = a:opts['key_map']
+  else
+    let l:obj['key_map'] = {}
+  endif
+
   return l:obj
 endfunction
 
