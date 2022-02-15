@@ -318,7 +318,6 @@ class Operate(object):
     def DocumentLink(self, context):
         if 'documentLinkProvider' not in self.capabilities or not self.enabled_document_link:
             return
-        rpc.DoCall('ECY#document_link#ClearAll')
         params = context['params']
         path = params['buffer_path']
         uri = self._lsp.PathToUri(path)

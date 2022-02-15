@@ -14,12 +14,3 @@ void assignment() {
 }
 
 int *ret_ptr() { return 0; }
-
-/* #define ABC 1 */
-
-#ifdef ABC
-int abc;
-#else
-int abcd;
-#endif
-

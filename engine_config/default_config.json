@@ -122,6 +122,11 @@
       "type": "boolean",
       "des": [""]
     },
+    "document_link.highlight_style": {
+      "default_value": "ECY_document_link_style",
+      "type": "string",
+      "des": [""]
+    },
     "goto.unload_buffer_after_goto": {
       "default_value": true,
       "type": "boolean",

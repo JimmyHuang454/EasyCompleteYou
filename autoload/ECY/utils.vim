@@ -7,7 +7,7 @@ let s:vim_mapped_type = {}
 let s:vim_textprop_id = 0
 let s:hl_range_id = 0
 let s:MAX_COL_SIZE = 10000
-let s:use_textprop = 0
+let s:use_textprop = 1
 
 augroup ECY_utils
   autocmd BufEnter * call s:BufEnter()
@@ -628,25 +628,36 @@ function! ECY#utils#AskWindowsStyle()
 "}}}
 endfunction
 
+function! s:VimAddType(hl_name)
+"{{{
+  let s:vim_textprop_id += 1
+  let l:hl_id = s:vim_textprop_id
+  let l:type = printf('ECY_%s', a:hl_name)
+  if !has_key(s:vim_mapped_type, l:type) 
+    call prop_type_add(l:type, {'highlight': a:hl_name})
+    let s:vim_mapped_type[l:type] = 1
+  endif
+  return {'hl_id': l:hl_id, 'type': l:type}
+"}}}
+endfunction
+
 function! ECY#utils#MatchAdd(hl_name, pos) abort
 "{{{ 1-based.
   if g:is_vim
     if s:use_textprop
-      let s:vim_textprop_id += 1
-      let l:hl_id = s:vim_textprop_id
-      let l:type = printf('ECY_%s', a:hl_name)
-      if !has_key(s:vim_mapped_type, l:type) 
-        call prop_type_add(l:type, {'highlight': a:hl_name})
-        let s:vim_mapped_type[l:type] = 1
-      endif
+      let l:type_info = s:VimAddType(a:hl_name)
+      let l:hl_id = l:type_info['hl_id']
       for item in a:pos
         try
           if type(item) == v:t_number
-            call prop_add(item, 1, {'length': s:MAX_COL_SIZE, 'type': l:type, 'id': l:hl_id})
+            call prop_add(item, 1, {'length': s:MAX_COL_SIZE, 
+                  \'type': l:type_info['type'], 'id': l:hl_id})
           elseif len(item) == 2
-            call prop_add(item[0], item[1], {'length': 1, 'type': l:type, 'id': l:hl_id})
+            call prop_add(item[0], item[1], {'length': 1,
+                  \'type': l:type_info['type'], 'id': l:hl_id})
           elseif len(item) == 3
-            call prop_add(item[0], item[1], {'length': item[2], 'type': l:type, 'id': l:hl_id})
+            call prop_add(item[0], item[1], {'length': item[2],
+                  \'type': l:type_info['type'], 'id': l:hl_id})
           endif
         catch 
         endtry
@@ -720,25 +731,40 @@ function! s:HighlightRange(range, highlights) abort
   let l:line_gap = l:end_line - l:start_line
 
   let l:hl_id_list = []
-  if l:line_gap == 0
-    let l:length = a:range['end']['colum'] - a:range['start']['colum']
-    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
-          \l:start_line, a:range['start']['colum'] + 1, l:length
-          \]]))
+
+  if g:is_vim && s:use_textprop
+    let l:type_info = s:VimAddType(a:highlights)
+    let l:hl_id = l:type_info['hl_id']
+    try
+      call prop_add(a:range['start']['line'], a:range['start']['colum'] + 1, {
+            \'end_lnum': a:range['end']['line'], 
+            \'end_col': a:range['end']['colum'] + 1, 
+            \'type': l:type_info['type'], 
+            \'id': l:hl_id})
+    catch 
+    endtry
+    let l:hl_id_list = [l:hl_id]
   else
-    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
-          \l:start_line, a:range['start']['colum'] + 1, s:MAX_COL_SIZE
-          \]]))
-    call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
-          \l:end_line, 1, a:range['end']['colum'] + 1
-          \]]))
-    let i = 1
-    while i < l:line_gap
+    if l:line_gap == 0
+      let l:length = a:range['end']['colum'] - a:range['start']['colum']
       call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
-            \l:start_line + i
+            \l:start_line, a:range['start']['colum'] + 1, l:length
             \]]))
-      let i += 1
-    endw
+    else
+      call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
+            \l:start_line, a:range['start']['colum'] + 1, s:MAX_COL_SIZE
+            \]]))
+      call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
+            \l:end_line, 1, a:range['end']['colum'] + 1
+            \]]))
+      let i = 1
+      while i < l:line_gap
+        call add(l:hl_id_list, ECY#utils#MatchAdd(a:highlights, [[
+              \l:start_line + i
+              \]]))
+        let i += 1
+      endw
+    endif
   endif
 
   return l:hl_id_list
