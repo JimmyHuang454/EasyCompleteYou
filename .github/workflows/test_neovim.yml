@@ -35,8 +35,6 @@ jobs:
       - name: ls
         run: |
           ls
-          pip3 install jedi_language_server
-          jedi-language-server --help
 
       - name: Install Neovim
         uses: rhysd/action-setup-vim@v1
@@ -48,9 +46,13 @@ jobs:
       - name: Run unit tests(Windows)
         if: runner.os == 'Windows'
         run: |
+          pip3 install jedi_language_server
+          jedi-language-server --help
           python ./ECY/test/ECY_test.py --is_neovim "true" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
         run: |
+          sudo pip3 install jedi_language_server
+          jedi-language-server --help
           sudo python ./ECY/test/ECY_test.py --is_neovim "true" --vim_exe "${{ steps.vim.outputs.executable }}"
