@@ -353,6 +353,11 @@ function! s:EW._input() abort
       endif
     elseif l:char == "\<C-u>"
       let self['input_value'] = ''
+    elseif has_key(l:key_map, l:char) && has_key(l:key_map[l:char], 'callback')
+      let l:res = l:key_map[l:char]['callback']()
+      if l:res == 1
+        break
+      endif
     endif
     call self._set_text(self['input_value'] . '|')
   endw

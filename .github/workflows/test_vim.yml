@@ -30,9 +30,14 @@ jobs:
           repository: honza/vim-snippets
           path: snippets
 
+      - name: Install Python
+        uses: actions/setup-python@v1
+
       - name: ls
         run: |
           ls
+          pip3 install jedi_language_server
+          jedi-language-server --help
 
       - name: Install Vim
         uses: rhysd/action-setup-vim@v1
@@ -41,23 +46,14 @@ jobs:
           neovim: false
           version: ${{ matrix.vim_version }}
 
-      ####################
-      #  Install Python  #
-      ####################
-      - name: Install Python
-        uses: actions/setup-python@v1
-
       - name: Run unit tests(Windows)
         if: runner.os == 'Windows'
         run: |
-          pip3 install jedi_language_server
-          jedi-language-server --help
           python ./ECY/test/ECY_test.py --is_neovim "false" --vim_exe "${{ steps.vim.outputs.executable }}"
 
       - name: Run unit tests(Linux and macOS)
         if: runner.os != 'Windows'
         run: |
-          sudo pip3 install jedi_language_server
           sudo python ./ECY/test/ECY_test.py --is_neovim "false" --vim_exe "${{ steps.vim.outputs.executable }}"
 
 
