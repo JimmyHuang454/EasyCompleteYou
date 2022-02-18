@@ -156,6 +156,11 @@
       "default_value": "<Tab>",
       "type": "boolean",
       "des": [""]
+    },
+    "ls_timeout": {
+      "default_value": 3,
+      "type": "int",
+      "des": ["second"]
     }
   },
   "ECY_engines.cpp.clangd.clangd": {

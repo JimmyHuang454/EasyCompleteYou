@@ -30,12 +30,6 @@ let g:is_vim = !has('nvim')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if exists('g:loaded_ECY2')
   finish
-elseif v:version < 800
-  echohl WarningMsg |
-        \ echomsg "ECY unavailable: requires Vim 8.0+." |
-        \ echohl None
-  call s:restore_cpo()
-  finish
 elseif &encoding !~? 'utf-\?8'
   echohl WarningMsg |
         \ echomsg "ECY unavailable: requires UTF-8 encoding. " .
@@ -43,18 +37,11 @@ elseif &encoding !~? 'utf-\?8'
         \ echohl None
   call s:restore_cpo()
   finish
-elseif ( g:is_vim && !has('patch-8.1.1491') ) || 
+elseif ( g:is_vim && !has('patch-8.1.1578') ) || 
       \ (!g:is_vim && !has('nvim-0.5.0'))
   echohl WarningMsg |
         \ echomsg "ECY unavailable: requires NeoVim >= 0.5.0 ".
-        \ "or Vim 8.1.1491+." |
-        \ echohl None
-  call s:restore_cpo()
-  finish
-elseif !exists( '*json_decode' )
-  echohl WarningMsg |
-        \ echomsg "ECY unavailable: requires with function of json_decode. ".
-        \ "You should build Vim with this feature." |
+        \ "or Vim >= 8.2." |
         \ echohl None
   call s:restore_cpo()
   finish

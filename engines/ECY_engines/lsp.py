@@ -29,7 +29,7 @@ class Operate(object):
         self.starting_cmd_argv = starting_cmd_argv
         self.GetStartCMD()
 
-        self._lsp = language_server_protocol.LSP(timeout=40)
+        self._lsp = language_server_protocol.LSP(timeout=self._get_timeout())
         self.use_completion_cache = use_completion_cache
         self.use_completion_cache_position = use_completion_cache_position
 
@@ -144,6 +144,14 @@ class Operate(object):
         if self.engine_format_setting == None:
             self.engine_format_setting = utils.GetEngineConfig(
                 'GLOBAL_SETTING', 'lsp_formatting')
+
+    def _get_timeout(self):
+        self.lsp_timeout = utils.GetEngineConfig(self.engine_name,
+                                                 'lsp_timeout')
+        if self.lsp_timeout == None:
+            self.lsp_timeout = utils.GetEngineConfig('ECY', 'lsp_timeout')
+
+        return self.lsp_timeout
 
     def _init_semantic(self):
         if 'semanticTokensProvider' not in self.capabilities:
