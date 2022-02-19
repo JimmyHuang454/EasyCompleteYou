@@ -706,7 +706,7 @@ function! ECY#utils#MatchDelete(hl_id) abort
 "{{{
   if g:is_vim
     if s:use_textprop
-      call prop_remove({'id': a:hl_id})
+      call prop_remove({'id': a:hl_id, 'all': v:true})
     else
       try
         call matchdelete(a:hl_id)
