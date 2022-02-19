@@ -7,7 +7,7 @@ let s:vim_mapped_type = {}
 let s:vim_textprop_id = 0
 let s:hl_range_id = 0
 let s:MAX_COL_SIZE = 10000
-let s:use_textprop = 1
+let s:use_textprop = 0
 
 augroup ECY_utils
   autocmd BufEnter * call s:BufEnter()

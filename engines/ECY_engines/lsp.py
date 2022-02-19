@@ -579,12 +579,12 @@ class Operate(object):
             to_show.append(line)
             i += 1
 
-        to_show.append('--------')
+        document = []
 
         selecting_signature = res['signatures'][activeSignature]
 
         if 'documentation' in selecting_signature:
-            to_show.extend(
+            document.extend(
                 self._format_markupContent(
                     selecting_signature['documentation']))
 
@@ -598,8 +598,11 @@ class Operate(object):
             selecting_parameters = selecting_signature['parameters'][
                 active_param]
             if 'documentation' in selecting_parameters:
-                to_show.extend(selecting_parameters['documentation'])
+                document.extend(selecting_parameters['documentation'])
 
+        if len(document) != 0:
+            to_show.append('--------')
+            to_show.extend(document)
         res['to_show'] = to_show
         res['activeSignature'] = activeSignature
 
