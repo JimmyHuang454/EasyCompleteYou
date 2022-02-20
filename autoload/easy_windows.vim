@@ -49,9 +49,9 @@ endfunction
 " title - Text to be displayed above the first item.
 " wrap - TRUE to make the lines wrap.
 " firstline - First buffer line to display.
-" highlight - TRUE to make the lines wrap.
+" color - TRUE to make the lines wrap.
 " borderchars - List with characters, defining the character to use for the top/right/bottom/left border.
-" borderhighlight - List of highlight group names to use for the border.
+" borderhighlight - List of color group names to use for the border.
 " zindex - Priority for the popup, default 50.
 " duration - Time in milliseconds after which the popup will close.
 " number - Time in milliseconds after which the popup will close.
@@ -102,41 +102,17 @@ function! s:EW._open(text_list, opts) abort
   let l:real_opts = {}
   let self['real_opts'] = l:real_opts
 
-  let l:x = has_key(a:opts, 'x') ? a:opts['x'] : 1
-  let l:y = has_key(a:opts, 'y') ? a:opts['y'] : 1
-  let self['x'] = l:x
-  let self['y'] = l:y
-
-  let l:width = has_key(a:opts, 'width') ? a:opts['width'] : 10
-  let l:height = has_key(a:opts, 'height') ? a:opts['height'] : 10
-  let self['width'] = l:width
-  let self['height'] = l:height
-
-  if has_key(a:opts, 'anchor')
-    let l:anchor = a:opts['anchor']
-  else
-    let l:anchor = 'NW'
-  endif
-  let self['anchor'] = l:anchor
-
-  if has_key(a:opts, 'hide') && a:opts['hide']
-    let self['is_hided'] = 1
-  else
-    let self['is_hided'] = 0
-  endif
-
-  if has_key(a:opts, 'use_border') && a:opts['use_border']
-    let self['use_border'] = 1
-  else
-    let self['use_border'] = 0
-  endif
-
+  let self['x'] = has_key(a:opts, 'x') ? a:opts['x'] : 1
+  let self['y'] = has_key(a:opts, 'y') ? a:opts['y'] : 1
+  let self['width'] = has_key(a:opts, 'width') ? a:opts['width'] : 10
+  let self['height'] = has_key(a:opts, 'height') ? a:opts['height'] : 10
+  let self['color'] = has_key(a:opts, 'color') ? a:opts['color'] : 'WildMenu'
+  let self['anchor'] = has_key(a:opts, 'anchor') ? a:opts['anchor'] : 'NW'
+  let self['is_hided'] = has_key(a:opts, 'is_hided') ? a:opts['is_hided'] : 0
+  let self['use_border'] = has_key(a:opts, 'use_border') ? a:opts['use_border'] : 0
   if self['use_border']
-    if has_key(a:opts, 'border_char')
-      let self['border_char'] = a:opts['border_char']
-    else
-      let self['border_char'] = ['│', '┌', '─', '┐', '└', '─', '┘', '│']
-    endif
+    let self['border_char'] = 
+          \has_key(a:opts, 'border_char') ? a:opts['border_char'] : ['│', '┌', '─', '┐', '└', '─', '┘', '│']
   endif
 
   if g:is_vim
@@ -147,25 +123,26 @@ function! s:EW._open(text_list, opts) abort
       let self['title'] = a:opts['title']
     endif
 
-    if l:anchor == 'NW'
+    if self['anchor'] == 'NW'
       let l:real_opts['pos'] = 'topleft'
-    elseif l:anchor == 'NE'
+    elseif self['anchor'] == 'NE'
       let l:real_opts['pos'] = 'topright'
-    elseif l:anchor == 'SW'
+    elseif self['anchor'] == 'SW'
       let l:real_opts['pos'] = 'botleft'
-    elseif l:anchor == 'SE'
+    elseif self['anchor'] == 'SE'
       let l:real_opts['pos'] = 'botright'
     endif
 
     let l:real_opts['fixed'] = 1
     let l:real_opts['hide'] = self['is_hided'] ? 1 : 0
     let l:real_opts['posinvert'] = 0
-    let l:real_opts['col'] = l:x
-    let l:real_opts['line'] = l:y
-    let l:real_opts['minwidth'] = l:width
-    let l:real_opts['maxwidth'] = l:width
-    let l:real_opts['minheight'] = l:height
-    let l:real_opts['maxheight'] = l:height
+    let l:real_opts['col'] = self['x']
+    let l:real_opts['line'] = self['y']
+    let l:real_opts['minwidth'] = self['width']
+    let l:real_opts['maxwidth'] = self['width']
+    let l:real_opts['minheight'] = self['height']
+    let l:real_opts['maxheight'] = self['height']
+    let l:real_opts['highlight'] = self['color']
 
     if self['use_border']
       let l:real_opts['border'] = []
@@ -187,17 +164,17 @@ function! s:EW._open(text_list, opts) abort
 "}}}
   else
 "{{{
-    if l:anchor == 'NE'
-      let l:x += 1
-    elseif l:anchor == 'SW'
-      let l:y += 1
-    elseif l:anchor == 'SE'
-      let l:x += 1
-      let l:y += 1
+    if self['anchor'] == 'NE'
+      let self['x'] += 1
+    elseif self['anchor'] == 'SW'
+      let self['y'] += 1
+    elseif self['anchor'] == 'SE'
+      let self['x'] += 1
+      let self['y'] += 1
     endif
 
-    let l:x -= 1
-    let l:y -= 1
+    let self['x'] -= 1
+    let self['y'] -= 1
 
     let l:bufnr = nvim_create_buf(v:false, v:true)
     call setbufvar(l:bufnr, '&buftype', 'nofile')
@@ -208,11 +185,11 @@ function! s:EW._open(text_list, opts) abort
     call nvim_buf_set_lines(l:bufnr, 0, -1, v:true, l:text_list)
     let self['nvim_buf_id'] = l:bufnr
 
-    let l:real_opts['anchor'] = l:anchor
-    let l:real_opts['col'] = l:x
-    let l:real_opts['row'] = l:y
-    let l:real_opts['width'] = l:width
-    let l:real_opts['height'] = l:height
+    let l:real_opts['anchor'] = self['anchor']
+    let l:real_opts['col'] = self['x']
+    let l:real_opts['row'] = self['y']
+    let l:real_opts['width'] = self['width']
+    let l:real_opts['height'] = self['height']
 
     let l:real_opts['relative'] = 'editor'
     let l:real_opts['style'] = 'minimal'
@@ -1044,7 +1021,7 @@ endfunction
 
 function! easy_windows#hightlight(EW_id, hl_name, pos) abort
   let l:hl_id = matchaddpos(a:hl_name, a:pos)
-  let g:EW_info[a:EW_id]['highlight'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
+  let g:EW_info[a:EW_id]['hi_list'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
 endfunction
 
 function! s:EW._add_match(hl_name, pos) abort
@@ -1089,7 +1066,7 @@ function! s:EW._add_match(hl_name, pos) abort
               \)
       endif
     endfor
-    let self['highlight'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
+    let self['hi_list'][l:hl_id] = {'hl_name': a:hl_name, 'hl_id': l:hl_id}
   endif
 
 "}}}
@@ -1101,7 +1078,7 @@ function! s:EW._delete_match(hl_name) abort
     return
   endif
   
-  let l:hl = g:EW_info[self['EW_id']]['highlight']
+  let l:hl = g:EW_info[self['EW_id']]['hi_list']
 
   for item in keys(l:hl)
     if l:hl[item]['hl_name'] != a:hl_name
@@ -1123,7 +1100,7 @@ function! easy_windows#new() abort
   let l:obj = deepcopy(s:EW)
   let g:EW_info[s:windows_id] = l:obj
   let l:obj['EW_id'] = s:windows_id
-  let l:obj['highlight'] = {}
+  let l:obj['hi_list'] = {}
   let l:obj['is_created'] = 0
   let l:obj['is_term'] = 0
   let l:obj['is_input'] = 0
