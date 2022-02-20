@@ -142,7 +142,6 @@ function! s:EW._open(text_list, opts) abort
     let l:real_opts['maxwidth'] = self['width']
     let l:real_opts['minheight'] = self['height']
     let l:real_opts['maxheight'] = self['height']
-    let l:real_opts['highlight'] = self['color']
 
     if self['use_border']
       let l:real_opts['border'] = []
@@ -225,6 +224,7 @@ function! s:EW._open(text_list, opts) abort
   let self['is_created'] = 1
   let self['text_list'] = l:text_list
   let self['showing_cursor'] = line('.')
+  call self._set_wincolor(self['color'])
 
   if has_key(a:opts, 'exit_cb')
     let self['exit_cb'] = a:opts['exit_cb']
@@ -272,6 +272,10 @@ function! s:EW._open(text_list, opts) abort
   if has_key(a:opts, 'created_cb')
     let self['created_cb'] = a:opts['created_cb']
     call self['created_cb']()
+  endif
+
+  if has_key(a:opts, 'duration')
+    call self._set_duration(a:opts['duration'])
   endif
 
   if has_key(a:opts, 'at_cursor') && a:opts['at_cursor']
@@ -608,6 +612,21 @@ function! s:EW._unset_number() abort
   call self._exe_cmd('setl nonumber', 0)
 
   let self['is_set_number'] = 0
+"}}}
+endfunction
+
+function! s:EW._set_wincolor(color) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  if g:is_vim
+    call self._exe_cmd(printf('let &wincolor="%s"', a:color), 0)
+  else
+    call nvim_win_set_option(self['winid'], 'winhl', printf('Normal:%s', a:color))
+  endif
+  let self['color'] = a:color
 "}}}
 endfunction
 
