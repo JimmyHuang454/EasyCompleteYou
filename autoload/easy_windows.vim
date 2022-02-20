@@ -104,6 +104,7 @@ function! s:EW._open(text_list, opts) abort
 
   let self['x'] = has_key(a:opts, 'x') ? a:opts['x'] : 1
   let self['y'] = has_key(a:opts, 'y') ? a:opts['y'] : 1
+  let self['title'] = has_key(a:opts, 'title') ? a:opts['title'] : ''
   let self['width'] = has_key(a:opts, 'width') ? a:opts['width'] : 10
   let self['height'] = has_key(a:opts, 'height') ? a:opts['height'] : 10
   let self['color'] = has_key(a:opts, 'color') ? a:opts['color'] : 'Pmenu'
@@ -117,12 +118,6 @@ function! s:EW._open(text_list, opts) abort
 
   if g:is_vim
 "{{{
-    let self['title'] = ''
-    if has_key(a:opts, 'title')
-      let l:real_opts['title'] = a:opts['title']
-      let self['title'] = a:opts['title']
-    endif
-
     if self['anchor'] == 'NW'
       let l:real_opts['pos'] = 'topleft'
     elseif self['anchor'] == 'NE'
@@ -142,6 +137,7 @@ function! s:EW._open(text_list, opts) abort
     let l:real_opts['maxwidth'] = self['width']
     let l:real_opts['minheight'] = self['height']
     let l:real_opts['maxheight'] = self['height']
+    let l:real_opts['title'] = self['title']
 
     if self['use_border']
       let l:real_opts['border'] = []
