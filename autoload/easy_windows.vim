@@ -106,7 +106,7 @@ function! s:EW._open(text_list, opts) abort
   let self['y'] = has_key(a:opts, 'y') ? a:opts['y'] : 1
   let self['width'] = has_key(a:opts, 'width') ? a:opts['width'] : 10
   let self['height'] = has_key(a:opts, 'height') ? a:opts['height'] : 10
-  let self['color'] = has_key(a:opts, 'color') ? a:opts['color'] : 'WildMenu'
+  let self['color'] = has_key(a:opts, 'color') ? a:opts['color'] : 'Pmenu'
   let self['anchor'] = has_key(a:opts, 'anchor') ? a:opts['anchor'] : 'NW'
   let self['is_hided'] = has_key(a:opts, 'is_hided') ? a:opts['is_hided'] : 0
   let self['use_border'] = has_key(a:opts, 'use_border') ? a:opts['use_border'] : 0
