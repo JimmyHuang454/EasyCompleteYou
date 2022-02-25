@@ -20,7 +20,7 @@ class Operate(object):
                  languageId='',
                  workspaceFolders=None,
                  use_completion_cache=False,
-                 use_completion_cache_position=True,
+                 use_completion_cache_position=False,
                  initializationOptions=None):
 
         self.engine_name = name
@@ -333,7 +333,7 @@ class Operate(object):
         res = res['result']
 
         if 'error' in res:
-            self._show_msg(res['error']['message'])
+            # self._show_msg(res['error']['message'])
             return
 
         if res is None:

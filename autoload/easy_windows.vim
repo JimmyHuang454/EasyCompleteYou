@@ -282,6 +282,12 @@ function! s:EW._open(text_list, opts) abort
 "}}}
 endfunction
 
+function! s:EW._input_cb() abort
+  if has_key(self, 'input_cb')
+    call self['input_cb']()
+  endif
+endfunction
+
 function! s:EW._input() abort
 "{{{
   if !self['is_input']
@@ -337,6 +343,7 @@ function! s:EW._input() abort
       endif
     endif
     call self._set_text(self['input_value'] . '|')
+    call self._input_cb()
   endw
   call self._close()
 "}}}
@@ -849,6 +856,18 @@ function! s:EW._set_duration(milliseconds) abort
 "}}}
 endfunction
 
+function! s:EW._set_title(title) abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  if g:is_vim
+    call self.__set_opts('title', a:title)
+  endif
+"}}}
+endfunction
+
 function! s:EW._set_firstline(line) abort
 "{{{
   if !self['is_created']
@@ -1128,12 +1147,10 @@ function! easy_windows#new_input(opts) abort
 
   let l:obj['is_input'] = 1
   let l:obj['input_value'] = ''
-  if has_key(a:opts, 'key_map')
-    let l:obj['key_map'] = a:opts['key_map']
-  else
-    let l:obj['key_map'] = {}
+  let l:obj['key_map'] = has_key(a:opts, 'key_map') ? a:opts['key_map'] : {}
+  if has_key(a:opts, 'input_cb')
+    let l:obj['input_cb'] = a:opts['input_cb']
   endif
-
   return l:obj
 endfunction
 

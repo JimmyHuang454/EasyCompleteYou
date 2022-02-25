@@ -7,7 +7,7 @@ let s:vim_mapped_type = {}
 let s:vim_textprop_id = 0
 let s:hl_range_id = 0
 let s:MAX_COL_SIZE = 10000
-let s:use_textprop = 0
+let s:use_textprop = 1
 
 augroup ECY_utils
   autocmd BufEnter * call s:BufEnter()
@@ -663,7 +663,7 @@ function! ECY#utils#MatchAdd(hl_name, pos) abort
         endtry
       endfor
     else
-      let l:hl_id = matchaddpos(a:hl_name, a:pos)
+      let l:hl_id = matchaddpos(a:hl_name, a:pos, 1, -1, {'window': bufwinid(bufnr(''))})
     endif
   else
     " matchaddpos also works at nvim, but it's slow. So ...
@@ -846,6 +846,7 @@ function! s:BufEnter() abort
     unlet g:hl_list[item]
   endfor
 
+  return
   if !g:is_vim || s:use_textprop
     return
   endif

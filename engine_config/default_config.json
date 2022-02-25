@@ -113,7 +113,7 @@
       "des": [""]
     },
     "document_link.enable": {
-      "default_value": true,
+      "default_value": false,
       "type": "boolean",
       "des": [""]
     },
