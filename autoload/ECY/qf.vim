@@ -1,7 +1,6 @@
 fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
-  let g:ECY_qf_layout = [float2nr(&columns * 0.6), float2nr(&lines * 0.6)]
-  let g:ECY_qf_layout = [10, 10]
+  let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
   let s:res_list = []
 endf
 
@@ -110,6 +109,7 @@ endf
 
 fun! s:InputClose() abort
   call s:qf_res._close()
+  return 1
 endf
 
 fun! ECY#qf#Open(lists, key_map) abort
@@ -118,25 +118,23 @@ fun! ECY#qf#Open(lists, key_map) abort
   call s:qf_res._open([], {'at_cursor': 0, 
         \'width': g:ECY_qf_layout[0],
         \'height': g:ECY_qf_layout[1],
-        \'use_border': 1})
+        \'x': 1,
+        \'y': 2,
+        \'use_border': 0})
 
   let s:res_list = a:lists
   call s:RenderRes(s:res_list)
-  call s:qf_res._center_horizontal()
-  call s:qf_res._center_vertical()
-  let s:qf_input = easy_windows#new_input({'x': s:qf_res._get_x(), 'y': s:qf_res._get_y() - 3, 
+  let s:qf_input = easy_windows#new_input({'x': 1, 'y': 1, 
         \'height': 1,
-        \'width': 20,
-        \'anchor': 'NW', 
+        \'width': &columns,
         \'input_cb': function('s:UpdateRes'), 
         \'exit_cb': function('s:InputClose'),
-        \'use_border': 1})
+        \'key_map': a:key_map,
+        \'use_border': 0})
   call s:qf_input._input()
 "}}}
 endf
 
-" echo ECY#qf#FuzzyMatch([{'abbr': 'test'}, {'abbr': 'ebct'}], 't', 'abbr')
-
 " call ECY#qf#Init()
-" call ECY#qf#Open([{'abbr': 'test'}, {'abbr': 'ebct'}], {})
+" call ECY#qf#Open([{'abbr': 'test'}, {'abbr': 'ebct'}], {"\<C-j>": {'callback': function('s:InputClose')}})
 

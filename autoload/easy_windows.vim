@@ -249,7 +249,7 @@ function! s:EW._open(text_list, opts) abort
   if has_key(a:opts, 'zindex')
     call self._set_zindex(a:opts['zindex'])
   else
-    call self._set_zindex(50)
+    call self._set_zindex(500)
   endif
 
   " call self._exe_cmd('setl scrolloff=0', 0)
@@ -312,7 +312,15 @@ function! s:EW._input() abort
     let i += 1
   endw
 
-  call self._set_text('|')
+	let [t_ve, guicursor] = [&t_ve, &guicursor]
+
+  set t_ve=
+  if guicursor != ''
+    set guicursor=a:NONE
+  en
+  if !self['cmd_line']
+    call self._set_text('|')
+  endif
   while 1
     redraw
     let l:char_nr = getchar()
@@ -342,10 +350,16 @@ function! s:EW._input() abort
         break
       endif
     endif
-    call self._set_text(self['input_value'] . '|')
+    if self['cmd_line']
+      echo self['input_value']
+    else
+      call self._set_text(self['input_value'] . '|')
+    endif
     call self._input_cb()
   endw
   call self._close()
+  let &t_ve = t_ve
+  let &guicursor = guicursor
 "}}}
 endfunction
 
@@ -1143,7 +1157,11 @@ endfunction
 
 function! easy_windows#new_input(opts) abort
   let l:obj = easy_windows#new()
-  call l:obj._open('', a:opts)
+  let l:obj['cmd_line'] = has_key(a:opts, 'cmd_line') ? a:opts['cmd_line'] : 0
+
+  if !l:obj['cmd_line']
+    call l:obj._open('', a:opts)
+  endif
 
   let l:obj['is_input'] = 1
   let l:obj['input_value'] = ''
