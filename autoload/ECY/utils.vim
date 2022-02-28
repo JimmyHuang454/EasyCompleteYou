@@ -632,11 +632,9 @@ function! s:VimAddType(hl_name)
 "{{{
   let s:vim_textprop_id += 1
   let l:hl_id = s:vim_textprop_id
-  let l:type = printf('ECY_%s', a:hl_name)
-  if !has_key(s:vim_mapped_type, l:type) 
-    call prop_type_add(l:type, {'highlight': a:hl_name})
-    let s:vim_mapped_type[l:type] = 1
-  endif
+  let l:type = printf('ECY_%s', a:hl_name . string(l:hl_id))
+  call prop_type_add(l:type, {'highlight': a:hl_name})
+  let s:vim_mapped_type[l:hl_id] = l:type
   return {'hl_id': l:hl_id, 'type': l:type}
 "}}}
 endfunction
@@ -707,6 +705,10 @@ function! ECY#utils#MatchDelete(hl_id) abort
   if g:is_vim
     if s:use_textprop
       call prop_remove({'id': a:hl_id, 'all': v:true})
+      if has_key(s:vim_mapped_type, a:hl_id)
+        call prop_type_delete(s:vim_mapped_type[a:hl_id])
+        unlet s:vim_mapped_type[a:hl_id]
+      endif
     else
       try
         call matchdelete(a:hl_id)
