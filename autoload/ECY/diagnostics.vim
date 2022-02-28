@@ -438,7 +438,7 @@ endfunction
 function! ECY#diagnostics#FlushCurrentBufferUI() abort
 "{{{
 
-  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() != 'n'
+  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() == 'i'
     " don't want to update diagnostics in insert mode
     return
   endif
@@ -578,7 +578,7 @@ function! s:UpdateSignEvent(timer_id) abort
     call s:StopUpdateTimer()
     return
   endif
-  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() != 'n'
+  if g:ECY_is_update_diagnostics_in_insert_mode == v:false && mode() == 'i'
     return
   endif
   let l:start = line('w0')
