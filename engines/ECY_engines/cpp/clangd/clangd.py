@@ -75,7 +75,7 @@ class Operate(lsp.Operate):
         })
 
     def OnCompletion(self, context):
-        context = super().OnCompletion(context)
+        context = super()._to_LSP_format(context)
         if context is None:
             return  # server not supports.
 

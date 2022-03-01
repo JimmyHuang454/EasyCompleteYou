@@ -35,8 +35,3 @@ class Operate(lsp.Operate):
                              starting_cmd_argv='--stdio',
                              refresh_regex=r'[\w+\#\&]',
                              initializationOptions=initializationOptions)
-
-    def OnCompletion(self, context):
-        context = super().OnCompletion(context)
-        context = super()._to_ECY_format(context)
-        return context

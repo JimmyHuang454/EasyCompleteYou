@@ -12,10 +12,5 @@ class Operate(lsp.Operate):
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):
-        super().OnCompletion(context)
+        super().OnBufferEnter(context)
         self.snip.OnBufferEnter(context)
-
-    def OnCompletion(self, context):
-        context = super().OnCompletion(context)
-        context = super()._to_ECY_format(context)
-        return context
