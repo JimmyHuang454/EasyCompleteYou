@@ -653,7 +653,6 @@ class Operate(object):
             'kind': '',
             'menu': '',
             'info': '',
-            'user_data': ''
         }
 
         document = []
@@ -673,6 +672,9 @@ class Operate(object):
         rpc.DoCall('ECY#preview_windows#Show', [results_format])
 
     def OnCompletion(self, context):
+        return self._to_ECY_format(self._to_LSP_format(context))
+
+    def _to_LSP_format(self, context):
         if 'completionProvider' not in self.capabilities:
             return
 
@@ -753,22 +755,6 @@ class Operate(object):
             self.results_list = res
             self.completion_isInCompleted = False
 
-        for item in self.results_list:
-            # TODO
-            break
-            if 'textEdit' in item:
-                ranges = item['textEdit']['range']
-                item['completion_text_edit'] = {
-                    'newText': item['textEdit']['newText'],
-                    'start': {
-                        'line': ranges['start']['line'],
-                        'colum': ranges['start']['character']
-                    },
-                    'end': {
-                        'line': ranges['end']['line'],
-                        'colum': ranges['end']['character']
-                    }
-                }
         context['show_list'] = self.results_list  # update
         return context
 
@@ -778,14 +764,7 @@ class Operate(object):
 
         show_list = []
         for item in context['show_list']:
-            results_format = {
-                'abbr': '',
-                'word': '',
-                'kind': '',
-                'menu': '',
-                'info': '',
-                'user_data': ''
-            }
+            results_format = {}
 
             item_name = item['label']
             results_format['abbr'] = item_name
@@ -837,9 +816,21 @@ class Operate(object):
                     self._format_markupContent(item['documentation']))
             results_format['info'] = '\n'.join(document)
 
-            if 'completion_text_edit' in item and False:
-                results_format['completion_text_edit'] = item[
-                    'completion_text_edit']
+            if 'textEdit' in item:
+                ranges = item['textEdit']['range']
+                temp = {
+                    'newText': item['textEdit']['newText'],
+                    'start': {
+                        'line': ranges['start']['line'],
+                        'colum': ranges['start']['character']
+                    },
+                    'end': {
+                        'line': ranges['end']['line'],
+                        'colum': ranges['end']['character']
+                    }
+                }
+
+                results_format['completion_text_edit'] = temp
                 results_format['word'] = item['textEdit']['newText']
 
             show_list.append(results_format)

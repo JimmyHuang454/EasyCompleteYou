@@ -331,11 +331,7 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
 
 
-  let l:start_colum += 1
-
-  call complete(l:start_colum, [l:to_complete])
-  return
-
+  let g:abcd = l:info
   if has_key(l:info, 'completion_text_edit')
     call s:CompleteLine(bufnr(''), 
           \l:info['completion_text_edit']['start'], 
