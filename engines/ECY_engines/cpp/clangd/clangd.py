@@ -86,7 +86,6 @@ class Operate(lsp.Operate):
         for item in ECY_context['show_list']:
             original_data = lsp_context['show_list'][i]
 
-            item_name = 'Unkonw'
             if 'filterText' in original_data:
                 item_name = original_data['filterText']
             else:
@@ -94,6 +93,19 @@ class Operate(lsp.Operate):
 
             item['abbr'] = item_name
             item['word'] = item_name
+            item['kind'] = self._lsp.GetKindNameByNumber(original_data['kind'])
+            if 'snippet' in item:
+                del item['snippet']
+
+            insertTextFormat = 0
+            if 'insertTextFormat' in original_data:
+                insertTextFormat = original_data['insertTextFormat']
+                if insertTextFormat == 2:
+                    temp = original_data['insertText']
+                    if '$' in temp or '(' in temp or '{' in temp:
+                        temp = temp.replace('{\\}', '\{\}')
+                        item['snippet'] = temp
+                        item['kind'] += '~'
 
             i += 1
 
