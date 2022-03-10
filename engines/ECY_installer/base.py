@@ -1,7 +1,7 @@
 from ECY_installer import pypi_tools
-from termcolor import colored
 from urllib.request import urlretrieve
 
+from termcolor import colored
 from tqdm import tqdm
 from colorama import init
 

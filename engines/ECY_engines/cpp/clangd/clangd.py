@@ -1,3 +1,5 @@
+import copy
+
 from ECY_engines import lsp
 from ECY.debug import logger
 from ECY import utils
@@ -75,79 +77,24 @@ class Operate(lsp.Operate):
         })
 
     def OnCompletion(self, context):
-        context = super()._to_LSP_format(context)
-        if context is None:
+        lsp_context = super()._to_LSP_format(context)
+        if lsp_context is None:
             return  # server not supports.
 
-        show_list = []
-        for item in context['show_list']:
-            results_format = {
-                'abbr': '',
-                'word': '',
-                'kind': '',
-                'menu': '',
-                'info': '',
-                'user_data': ''
-            }
+        ECY_context = super()._to_ECY_format(copy.deepcopy(lsp_context))
+        i = 0
+        for item in ECY_context['show_list']:
+            original_data = lsp_context['show_list'][i]
 
-            results_format['kind'] = self._lsp.GetKindNameByNumber(
-                item['kind'])
-
-            if 'filterText' in item:
-                item_name = item['filterText']
+            item_name = 'Unkonw'
+            if 'filterText' in original_data:
+                item_name = original_data['filterText']
             else:
-                item_name = item['label']
+                item_name = original_data['label']
 
-            if results_format['kind'] == 'File':
-                name_len = len(item_name)
-                if item_name[name_len - 1] in ['>', '"'] and name_len >= 2:
-                    item_name = item_name[:name_len - 1]
+            item['abbr'] = item_name
+            item['word'] = item_name
 
-            results_format['abbr'] = item_name
-            results_format['word'] = item_name
+            i += 1
 
-            detail = []
-            if 'detail' in item:
-                detail = item['detail'].split('\n')
-                if len(detail) == 2:
-                    results_format['menu'] = detail[1]
-                else:
-                    results_format['menu'] = item['detail']
-
-            document = []
-            if 'label' in item:
-                temp = item['label']
-                if temp[0] == ' ':
-                    temp = temp[1:]
-                if results_format['kind'] == 'Function':
-                    temp = detail[0] + ' ' + temp
-                document.append(temp)
-                document.append('')
-
-            insertTextFormat = 0
-            if 'insertTextFormat' in item:
-                insertTextFormat = item['insertTextFormat']
-                if insertTextFormat == 2:
-                    temp = item['insertText']
-                    if '$' in temp or '(' in temp or '{' in temp:
-                        temp = temp.replace('{\\}', '\{\}')
-                        results_format['snippet'] = temp
-                        results_format['kind'] += '~'
-
-            if 'completion_text_edit' in item and False:
-                results_format['completion_text_edit'] = item[
-                    'completion_text_edit']
-                results_format['word'] = item['textEdit']['newText']
-
-            if 'documentation' in item:
-                if type(item['documentation']) is str:
-                    temp = item['documentation'].split('\n')
-                elif type(item['documentation']) is dict:
-                    temp = item['documentation']['value'].split('\n')
-
-                document.extend(temp)
-
-            results_format['info'] = '\n'.join(document)
-            show_list.append(results_format)
-        context['show_list'] = show_list
-        return context
+        return ECY_context
