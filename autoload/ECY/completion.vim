@@ -279,6 +279,11 @@ function! s:CompleteLine(bufnr, start, end, content) abort
 "}}}
 endfunction
 
+function! s:CompleteLine2(bufnr, start, end, content) abort
+  call cursor(line('.'), a:end['colum'] + 1)
+  call complete(a:start['colum'] + 1,[a:content])
+endfunction
+
 function! s:SelectItems_vim(next_or_pre) abort
 "{{{
   if a:next_or_pre == 0
@@ -331,9 +336,8 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
 
 
-  let g:abcd = l:info
   if has_key(l:info, 'completion_text_edit')
-    call s:CompleteLine(bufnr(''), 
+    call s:CompleteLine2(bufnr(''), 
           \l:info['completion_text_edit']['start'], 
           \l:info['completion_text_edit']['end'],
           \l:to_complete)
