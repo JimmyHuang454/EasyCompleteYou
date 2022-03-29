@@ -1,8 +1,32 @@
+" TODO
+"
 fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
-  let s:res_list = []
+  let g:ECY_qf_res = []
+  let g:ECY_qf_key_map = { "<cr>": function('s:Open_current_buffer') }
 endf
+
+function! s:Open_current_buffer(index) abort
+"{{{
+  if a:index >= len(g:ECY_qf_res)
+    return
+  endif
+  let l:res = g:ECY_qf_res[a:index]
+
+  if !has_key(l:res, 'path')
+    return
+  endif
+
+  if has_key(l:res, 'position')
+    call ECY#utils#OpenFileAndMove(l:res['position']['line'],
+          \l:res['position']['colum'], 
+          \l:res['path'], '')
+  else
+    call ECY#utils#OpenFile(l:res['path'], '')
+  endif
+"}}}
+endfunction
 
 fun! s:FindFirstChar(strs, char) abort
   let i = 0
@@ -69,7 +93,7 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
 endfunction
 
 fun! s:UpdateRes() abort
-  let l:res = ECY#qf#FuzzyMatch(s:res_list, s:qf_input['input_value'], 'abbr')
+  let l:res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
   call s:RenderRes(l:res)
 endf
 
@@ -107,7 +131,7 @@ fun! s:RenderRes(res) abort
 "}}}
 endf
 
-fun! s:InputClose() abort
+fun! ECY#qf#Close() abort
   call s:qf_res._close()
   return 1
 endf
@@ -122,8 +146,8 @@ fun! ECY#qf#Open(lists, key_map) abort
         \'y': 2,
         \'use_border': 0})
 
-  let s:res_list = a:lists
-  call s:RenderRes(s:res_list)
+  let g:ECY_qf_res = a:lists
+  call s:RenderRes(g:ECY_qf_res)
   let s:qf_input = easy_windows#new_input({'x': 1, 'y': 1, 
         \'height': 1,
         \'width': &columns,
@@ -135,6 +159,14 @@ fun! ECY#qf#Open(lists, key_map) abort
 "}}}
 endf
 
-" call ECY#qf#Init()
-" call ECY#qf#Open([{'abbr': 'test'}, {'abbr': 'ebct'}], {"\<C-j>": {'callback': function('s:InputClose')}})
+fun! ECY#qf#OpenExtern(lists, key_map) abort
+  let g:ECY_qf_res = a:lists
+  if exists('g:loaded_clap')
+    exe "Clap ECY"
+  elseif exists('g:leaderf_loaded')
+    exe "Leaderf ECY"
+  endif
+endf
 
+call ECY#qf#Init()
+call ECY#qf#OpenExtern([{'abbr': 'test'}, {'abbr': 'ebct'}], {"\<C-j>": {'callback': function('ECY#qf#Close')}})

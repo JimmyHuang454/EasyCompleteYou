@@ -62,6 +62,7 @@ fun! s:NewClient()
       \ })
   call ECY#rpc#rpc_event#Init()
 
+  call ECY#qf#Init()
   call ECY#rooter#init()
   call ECY#code_lens#Init()
   call ECY#semantic_tokens#Init()
