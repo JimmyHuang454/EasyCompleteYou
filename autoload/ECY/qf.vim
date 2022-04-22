@@ -4,7 +4,27 @@ fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
   let g:ECY_qf_res = []
-  let g:ECY_qf_key_map = { "<cr>": function('s:Open_current_buffer') }
+  let s:fz_res = []
+  let g:ECY_qf_map = {
+        \'open#current_buffer': "<Cr>", 
+        \'open#new_tab': "<C-t>",
+        \'open#vertically': "<C-v>",
+        \'open#horizontally': "<C-x>",
+        \'select#next': "\<C-j>",
+        \'select#prev': "<C-k>",
+        \}
+
+  let g:ECY_qf_map_fuc = {
+        \'open#current_buffer': function('s:Open_current_buffer') ,
+        \'open#new_tab': function('s:Open_current_buffer'),
+        \'open#vertically': function('s:Open_current_buffer'),
+        \'open#horizontally': function('s:Open_current_buffer'),
+        \'select#next': function('s:NextItem'),
+        \'select#prev': function('s:Open_current_buffer'),
+        \}
+
+  let s:selecting_item_index = 0
+  let s:MAX_TO_SHOW = 18
 endf
 
 function! s:Open_current_buffer(index) abort
@@ -93,29 +113,41 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
 endfunction
 
 fun! s:UpdateRes() abort
-  let l:res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
-  call s:RenderRes(l:res)
+  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
+  call s:RenderRes(s:fz_res)
 endf
 
-fun! s:RenderRes(res) abort
+fun! s:NextItem() abort
+  let s:selecting_item_index += 1
+  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
+  call s:RenderRes(s:fz_res)
+endf
+
+fun! s:RenderRes(fz_res) abort
 "{{{
-  let l:MAX_TO_SHOW = 18
   let l:MATCH_HL = 'ECY_floating_windows_normal_matched'
   let l:to_show = []
+  if len(a:fz_res) <= s:selecting_item_index
+    let s:selecting_item_index = 0
+  endif
   let i = 0
   call s:qf_res._delete_match(l:MATCH_HL)
-  for item in a:res
-    if i == l:MAX_TO_SHOW
+  for item in a:fz_res
+    if i == s:MAX_TO_SHOW
       break
     endif
-    call add(l:to_show, item['abbr'])
+    let l:prev_mark = '  '
+    if i == s:selecting_item_index
+      let l:prev_mark = '> '
+    endif
+    call add(l:to_show, l:prev_mark . item['abbr'])
     let i += 1
   endfor
   call s:qf_res._set_text(l:to_show)
 
   let i = 0
-  for item in a:res
-    if i == l:MAX_TO_SHOW
+  for item in a:fz_res
+    if i == s:MAX_TO_SHOW
       break
     endif
 
@@ -124,7 +156,7 @@ fun! s:RenderRes(res) abort
     endif
     
     for pos in item['match_pos']
-      call s:qf_res._add_match(l:MATCH_HL, [[i + 1, pos + 1]])
+      call s:qf_res._add_match(l:MATCH_HL, [[i + 1, pos + 3]])
     endfor
     let i += 1
   endfor
@@ -138,6 +170,7 @@ endf
 
 fun! ECY#qf#Open(lists, key_map) abort
 "{{{
+  let s:selecting_item_index = 0
   let s:qf_res = easy_windows#new()
   call s:qf_res._open([], {'at_cursor': 0, 
         \'width': g:ECY_qf_layout[0],
@@ -147,26 +180,34 @@ fun! ECY#qf#Open(lists, key_map) abort
         \'use_border': 0})
 
   let g:ECY_qf_res = a:lists
+  let s:fz_res = g:ECY_qf_res
   call s:RenderRes(g:ECY_qf_res)
+
+  let l:temp_map = {}
+  for item in keys(g:ECY_qf_map)
+    let l:temp = {'is_input_value': 0, 'callback': ''}
+    if has_key(a:key_map, item)
+      let l:temp['callback'] = a:key_map[item]
+    else
+      let l:temp['callback'] = g:ECY_qf_map_fuc[item]
+    endif
+    let l:temp_map[g:ECY_qf_map[item]] = l:temp
+  endfor
+
   let s:qf_input = easy_windows#new_input({'x': 1, 'y': 1, 
         \'height': 1,
-        \'width': &columns,
+        \'width': g:ECY_qf_layout[0],
         \'input_cb': function('s:UpdateRes'), 
-        \'exit_cb': function('s:InputClose'),
-        \'key_map': a:key_map,
+        \'exit_cb': function('ECY#qf#Close'),
+        \'key_map': l:temp_map,
         \'use_border': 0})
   call s:qf_input._input()
 "}}}
 endf
 
-fun! ECY#qf#OpenExtern(lists, key_map) abort
-  let g:ECY_qf_res = a:lists
-  if exists('g:loaded_clap')
-    exe "Clap ECY"
-  elseif exists('g:leaderf_loaded')
-    exe "Leaderf ECY"
-  endif
+fun! ECY#qf#Test() abort
+  let l:map = {}
+  call ECY#qf#Open([{'abbr': 'test'}, {'abbr': 'ebct'}], {})
 endf
 
 call ECY#qf#Init()
-call ECY#qf#OpenExtern([{'abbr': 'test'}, {'abbr': 'ebct'}], {"\<C-j>": {'callback': function('ECY#qf#Close')}})
