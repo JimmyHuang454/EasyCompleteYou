@@ -5,22 +5,22 @@ fun! ECY#qf#Init()
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
   let g:ECY_qf_res = []
   let s:fz_res = []
-  let g:ECY_qf_map = {
-        \'open#current_buffer': "<Cr>", 
-        \'open#new_tab': "<C-t>",
-        \'open#vertically': "<C-v>",
-        \'open#horizontally': "<C-x>",
+  let g:ECY_action_map = {
+        \'open#current_buffer': "\<Cr>", 
+        \'open#new_tab': "\<C-t>",
+        \'open#vertically': "\<C-v>",
+        \'open#horizontally': "\<C-x>",
         \'select#next': "\<C-j>",
-        \'select#prev': "<C-k>",
+        \'select#prev': "\<C-k>",
         \}
 
-  let g:ECY_qf_map_fuc = {
+  let g:ECY_action_fuc = {
         \'open#current_buffer': function('s:Open_current_buffer') ,
         \'open#new_tab': function('s:Open_current_buffer'),
         \'open#vertically': function('s:Open_current_buffer'),
         \'open#horizontally': function('s:Open_current_buffer'),
         \'select#next': function('s:NextItem'),
-        \'select#prev': function('s:Open_current_buffer'),
+        \'select#prev': function('s:PrevItem'),
         \}
 
   let s:selecting_item_index = 0
@@ -120,14 +120,18 @@ endf
 fun! s:NextItem() abort
   let s:selecting_item_index += 1
   let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
-  call s:RenderRes(s:fz_res)
+endf
+
+fun! s:PrevItem() abort
+  let s:selecting_item_index -= 1
+  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
 endf
 
 fun! s:RenderRes(fz_res) abort
 "{{{
   let l:MATCH_HL = 'ECY_floating_windows_normal_matched'
   let l:to_show = []
-  if len(a:fz_res) <= s:selecting_item_index
+  if len(a:fz_res) <= s:selecting_item_index || s:selecting_item_index < 0
     let s:selecting_item_index = 0
   endif
   let i = 0
@@ -184,14 +188,14 @@ fun! ECY#qf#Open(lists, key_map) abort
   call s:RenderRes(g:ECY_qf_res)
 
   let l:temp_map = {}
-  for item in keys(g:ECY_qf_map)
-    let l:temp = {'is_input_value': 0, 'callback': ''}
+  for item in keys(g:ECY_action_map)
+    let l:temp = {}
     if has_key(a:key_map, item)
       let l:temp['callback'] = a:key_map[item]
     else
-      let l:temp['callback'] = g:ECY_qf_map_fuc[item]
+      let l:temp['callback'] = g:ECY_action_fuc[item]
     endif
-    let l:temp_map[g:ECY_qf_map[item]] = l:temp
+    let l:temp_map[g:ECY_action_map[item]] = l:temp
   endfor
 
   let s:qf_input = easy_windows#new_input({'x': 1, 'y': 1, 
