@@ -15,36 +15,40 @@ fun! ECY#qf#Init()
         \}
 
   let g:ECY_action_fuc = {
-        \'open#current_buffer': function('s:Open_current_buffer') ,
-        \'open#new_tab': function('s:Open_current_buffer'),
-        \'open#vertically': function('s:Open_current_buffer'),
-        \'open#horizontally': function('s:Open_current_buffer'),
-        \'select#next': function('s:NextItem'),
-        \'select#prev': function('s:PrevItem'),
+        \'open#current_buffer': function('s:Gerneral', [function('s:Open_current_buffer')]),
+        \'open#new_tab': function('s:Gerneral', [function('s:Open_current_buffer')]),
+        \'open#vertically': function('s:Gerneral', [function('s:Open_current_buffer')]),
+        \'open#horizontally': function('s:Gerneral', [function('s:Open_current_buffer')]),
+        \'select#next': function('s:Gerneral', [function('s:NextItem')]),
+        \'select#prev': function('s:Gerneral', [function('s:PrevItem')]),
         \}
 
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 18
 endf
 
-function! s:Open_current_buffer(index) abort
+function! s:Gerneral(CB) abort
 "{{{
-  if a:index >= len(g:ECY_qf_res)
-    return
+  let l:res = {}
+  if s:selecting_item_index <= len(s:fz_res)
+    let l:res = s:fz_res[s:selecting_item_index]
   endif
-  let l:res = g:ECY_qf_res[a:index]
+  return a:CB(l:res)
+"}}}
+endfunction
 
-  if !has_key(l:res, 'path')
-    return
+function! s:Open_current_buffer(res) abort
+"{{{
+  if has_key(a:res, 'path')
+    if has_key(a:res, 'position')
+      call ECY#utils#OpenFileAndMove(a:res['position']['line'],
+            \a:res['position']['colum'], 
+            \a:res['path'], '')
+    else
+      call ECY#utils#OpenFile(a:res['path'], '')
+    endif
   endif
-
-  if has_key(l:res, 'position')
-    call ECY#utils#OpenFileAndMove(l:res['position']['line'],
-          \l:res['position']['colum'], 
-          \l:res['path'], '')
-  else
-    call ECY#utils#OpenFile(l:res['path'], '')
-  endif
+  return 1
 "}}}
 endfunction
 
@@ -117,12 +121,12 @@ fun! s:UpdateRes() abort
   call s:RenderRes(s:fz_res)
 endf
 
-fun! s:NextItem() abort
+fun! s:NextItem(...) abort
   let s:selecting_item_index += 1
   let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
 endf
 
-fun! s:PrevItem() abort
+fun! s:PrevItem(...) abort
   let s:selecting_item_index -= 1
   let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
 endf
@@ -211,7 +215,7 @@ endf
 
 fun! ECY#qf#Test() abort
   let l:map = {}
-  call ECY#qf#Open([{'abbr': 'test'}, {'abbr': 'ebct'}], {})
+  call ECY#qf#Open([{'abbr': 'test', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/autoload/easy_windows.vim'}, {'abbr': 'ebct'}], {})
 endf
 
 call ECY#qf#Init()
