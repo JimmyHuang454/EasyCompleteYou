@@ -1,5 +1,3 @@
-" TODO
-"
 fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
@@ -16,9 +14,9 @@ fun! ECY#qf#Init()
 
   let g:ECY_action_fuc = {
         \'open#current_buffer': function('s:Gerneral', [function('s:Open_current_buffer')]),
-        \'open#new_tab': function('s:Gerneral', [function('s:Open_current_buffer')]),
-        \'open#vertically': function('s:Gerneral', [function('s:Open_current_buffer')]),
-        \'open#horizontally': function('s:Gerneral', [function('s:Open_current_buffer')]),
+        \'open#new_tab': function('s:Gerneral', [function('s:Open_new_tab')]),
+        \'open#vertically': function('s:Gerneral', [function('s:Open_vertically')]),
+        \'open#horizontally': function('s:Gerneral', [function('s:Open_horizontally')]),
         \'select#next': function('s:Gerneral', [function('s:NextItem')]),
         \'select#prev': function('s:Gerneral', [function('s:PrevItem')]),
         \}
@@ -37,21 +35,59 @@ function! s:Gerneral(CB) abort
 "}}}
 endfunction
 
-function! s:Open_current_buffer(res) abort
+"{{{actions
+function! s:Open(res, windows_style) abort
 "{{{
   if has_key(a:res, 'path')
     if has_key(a:res, 'position')
       call ECY#utils#OpenFileAndMove(a:res['position']['line'],
             \a:res['position']['colum'], 
-            \a:res['path'], '')
+            \a:res['path'], a:windows_style)
     else
-      call ECY#utils#OpenFile(a:res['path'], '')
+      call ECY#utils#OpenFile(a:res['path'], a:windows_style)
     endif
   endif
   return 1
 "}}}
 endfunction
 
+function! s:Open_current_buffer(res) abort
+"{{{
+  return s:Open(a:res, '')
+"}}}
+endfunction
+
+function! s:Open_vertically(res) abort
+"{{{
+  return s:Open(a:res, 'v')
+"}}}
+endfunction
+
+function! s:Open_horizontally(res) abort
+"{{{
+  return s:Open(a:res, 'h')
+"}}}
+endfunction
+
+function! s:Open_new_tab(res) abort
+"{{{
+  return s:Open(a:res, 't')
+"}}}
+endfunction
+
+fun! s:NextItem(...) abort
+  let s:selecting_item_index += 1
+  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
+endf
+
+fun! s:PrevItem(...) abort
+  let s:selecting_item_index -= 1
+  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
+endf
+
+"}}}
+
+"{{{FuzzyMatch
 fun! s:FindFirstChar(strs, char) abort
   let i = 0
   while i < len(a:strs)
@@ -114,21 +150,11 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
   endfor
   return sort(l:res, function('s:SortCompare'))
 "}}}
-endfunction
+endfunction"}}}
 
 fun! s:UpdateRes() abort
   let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
   call s:RenderRes(s:fz_res)
-endf
-
-fun! s:NextItem(...) abort
-  let s:selecting_item_index += 1
-  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
-endf
-
-fun! s:PrevItem(...) abort
-  let s:selecting_item_index -= 1
-  let s:selecting_item_index %= (s:MAX_TO_SHOW - 1)
 endf
 
 fun! s:RenderRes(fz_res) abort
