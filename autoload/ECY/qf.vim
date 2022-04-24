@@ -1,6 +1,6 @@
 fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
-  let g:ECY_qf_layout = [float2nr(&columns * 0.5), float2nr(&lines * 0.6)]
+  let g:ECY_qf_layout = [float2nr(&columns * 0.5), &lines]
   let g:ECY_qf_res = []
   let s:fz_res = []
   let g:ECY_action_map = {
@@ -23,15 +23,23 @@ fun! ECY#qf#Init()
 
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 18
+
+  let s:qf_preview = easy_windows#new()
 endf
+
+function! s:GetRes() abort
+"{{{
+  let l:res = {}
+  if s:selecting_item_index < len(s:fz_res)
+    let l:res = s:fz_res[s:selecting_item_index]
+  endif
+  return l:res
+"}}}
+endfunction
 
 function! s:Gerneral(CB) abort
 "{{{
-  let l:res = {}
-  if s:selecting_item_index <= len(s:fz_res)
-    let l:res = s:fz_res[s:selecting_item_index]
-  endif
-  return a:CB(l:res)
+  return a:CB(s:GetRes())
 "}}}
 endfunction
 
@@ -155,6 +163,30 @@ endfunction"}}}
 fun! s:UpdateRes() abort
   let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
   call s:RenderRes(s:fz_res)
+  call s:UpdatePreview()
+endf
+
+fun! s:UpdatePreview() abort
+"{{{
+  let l:res = s:GetRes()
+  call s:qf_preview._close()
+  if l:res != {} && has_key(l:res, 'path')
+    let l:path = l:res['path']
+    let l:content = ECY#utils#GetPathContent(l:path)
+    if l:content == []
+      return
+    endif
+
+    let s:qf_preview = easy_windows#new()
+    call s:qf_preview._open(l:content, {'x': g:ECY_qf_layout[0] + 1, 'y': 1, 
+          \'height': g:ECY_qf_layout[1],
+          \'width': g:ECY_qf_layout[0] - 3,
+          \'use_border': 1})
+    if has_key(l:res, 'position')
+      call s:qf_preview._set_firstline(l:res['position']['line'])
+    endif
+  endif
+"}}}
 endf
 
 fun! s:RenderRes(fz_res) abort
@@ -199,6 +231,7 @@ endf
 
 fun! ECY#qf#Close() abort
   call s:qf_res._close()
+  call s:qf_preview._close()
   return 1
 endf
 

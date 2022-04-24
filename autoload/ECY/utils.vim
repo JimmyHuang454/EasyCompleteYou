@@ -171,6 +171,16 @@ function ECY#utils#GetBufferContent(buffer_nr) abort " return list
   "}}}
 endfunction
 
+function ECY#utils#GetPathContent(file_path) abort " return list
+  "{{{
+  let l:buffer_nr = bufnr(a:file_path)
+  if l:buffer_nr == -1 " not in buffer
+    return []
+  endif
+  return ECY#utils#GetBufferContent(l:buffer_nr)
+  "}}}
+endfunction
+
 function ECY#utils#DefineColor(name, color) abort
   "{{{
   if hlexists(a:name) 
