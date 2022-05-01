@@ -10,7 +10,11 @@ let s:ECY = {}
 function! s:ECY.sink(selected) abort
   let l:splitted = split(a:selected, " ")
   let l:splitted = l:splitted[len(l:splitted) - 1]
-  call g:ECY_qf_key_map["<cr>"](l:splitted)
+  let l:res = g:ECY_qf_res[l:splitted]
+  if has_key(g:clap, 'open_action')
+    execute g:clap.open_action
+  endif
+  call ECY#qf#OpenBuffer(l:res, '')
 endfunction
 
 
@@ -25,4 +29,10 @@ function! s:ECY.source() abort
 endfunction
 
 let s:ECY.syntax = 'clap_lines'
+let s:ECY.support_open_action = v:true
+let s:ECY.action = {
+      \ 'OpenInNew&Tab': { -> clap#selection#try_open('ctrl-t') },
+      \ 'Open&Vertically': { -> clap#selection#try_open('ctrl-v') },
+      \ }
+
 let g:clap#provider#ECY# = s:ECY

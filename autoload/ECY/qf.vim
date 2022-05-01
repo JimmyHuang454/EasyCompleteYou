@@ -2,6 +2,7 @@ fun! ECY#qf#Init()
   let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), &lines]
   let g:ECY_qf_res = []
+  let g:ECY_qf_res_external = []
   let s:fz_res = []
   let g:ECY_action_map = {
         \'open#current_buffer': "\<Cr>", 
@@ -44,7 +45,7 @@ function! s:Gerneral(CB) abort
 endfunction
 
 "{{{actions
-function! s:Open(res, windows_style) abort
+function! ECY#qf#OpenBuffer(res, windows_style) abort
 "{{{
   if has_key(a:res, 'path')
     if has_key(a:res, 'position')
@@ -61,25 +62,25 @@ endfunction
 
 function! s:Open_current_buffer(res) abort
 "{{{
-  return s:Open(a:res, '')
+  return ECY#qf#OpenBuffer(a:res, '')
 "}}}
 endfunction
 
 function! s:Open_vertically(res) abort
 "{{{
-  return s:Open(a:res, 'v')
+  return ECY#qf#OpenBuffer(a:res, 'v')
 "}}}
 endfunction
 
 function! s:Open_horizontally(res) abort
 "{{{
-  return s:Open(a:res, 'h')
+  return ECY#qf#OpenBuffer(a:res, 'h')
 "}}}
 endfunction
 
 function! s:Open_new_tab(res) abort
 "{{{
-  return s:Open(a:res, 't')
+  return ECY#qf#OpenBuffer(a:res, 't')
 "}}}
 endfunction
 
@@ -272,9 +273,16 @@ fun! ECY#qf#Open(lists, key_map) abort
 "}}}
 endf
 
+fun! ECY#qf#OpenExternal(lists, opts) abort
+  let g:ECY_qf_res = a:lists
+  if exists('g:loaded_clap')
+    execute "Clap ECY"
+  endif
+endf
+
 fun! ECY#qf#Test() abort
   let l:map = {}
-  call ECY#qf#Open([{'abbr': 'test', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/autoload/easy_windows.vim'}, {'abbr': 'ebct'}], {})
+  call ECY#qf#OpenExternal([{'abbr': 'test', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/autoload/easy_windows.vim'}, {'abbr': 'ebct', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/after/plugin/clap.vim'}], {})
 endf
 
 call ECY#qf#Init()
