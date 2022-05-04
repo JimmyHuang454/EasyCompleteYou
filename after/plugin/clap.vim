@@ -11,10 +11,21 @@ function! s:ECY.sink(selected) abort
   let l:splitted = split(a:selected, " ")
   let l:splitted = l:splitted[len(l:splitted) - 1]
   let l:res = g:ECY_qf_res[l:splitted]
+
+  let l:action = ''
   if has_key(g:clap, 'open_action')
-    execute g:clap.open_action
+    let l:action = g:clap.open_action
   endif
-  call ECY#qf#OpenBuffer(l:res, '')
+
+  let l:Fuc = g:ECY_action_fuc['open#current_buffer']
+  if l:action == 'tab split'
+    let l:Fuc = g:ECY_action_fuc['open#new_tab']
+  elseif l:action == 'vsplit'
+    let l:Fuc = g:ECY_action_fuc['open#vertically']
+  elseif l:action == 'split'
+    let l:Fuc = g:ECY_action_fuc['open#horizontally']
+  endif
+  call l:Fuc(l:res)
 endfunction
 
 

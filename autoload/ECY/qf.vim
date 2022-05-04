@@ -14,12 +14,12 @@ fun! ECY#qf#Init()
         \}
 
   let g:ECY_action_fuc = {
-        \'open#current_buffer': function('s:Gerneral', [function('s:Open_current_buffer')]),
-        \'open#new_tab': function('s:Gerneral', [function('s:Open_new_tab')]),
-        \'open#vertically': function('s:Gerneral', [function('s:Open_vertically')]),
-        \'open#horizontally': function('s:Gerneral', [function('s:Open_horizontally')]),
-        \'select#next': function('s:Gerneral', [function('s:NextItem')]),
-        \'select#prev': function('s:Gerneral', [function('s:PrevItem')]),
+        \'open#current_buffer': function('s:Open_current_buffer'),
+        \'open#new_tab': function('s:Open_new_tab'),
+        \'open#vertically': function('s:Open_vertically'),
+        \'open#horizontally': function('s:Open_horizontally'),
+        \'select#next': function('s:NextItem'),
+        \'select#prev': function('s:PrevItem'),
         \}
 
   let s:selecting_item_index = 0
@@ -236,7 +236,7 @@ fun! ECY#qf#Close() abort
   return 1
 endf
 
-fun! ECY#qf#Open(lists, key_map) abort
+fun! ECY#qf#Open(lists, opts) abort
 "{{{
   let s:selecting_item_index = 0
   let s:qf_res = easy_windows#new()
@@ -254,10 +254,10 @@ fun! ECY#qf#Open(lists, key_map) abort
   let l:temp_map = {}
   for item in keys(g:ECY_action_map)
     let l:temp = {}
-    if has_key(a:key_map, item)
-      let l:temp['callback'] = a:key_map[item]
+    if has_key(a:opts, 'key_map') && has_key(a:opts['key_map'], item)
+      let l:temp['callback'] = function('s:Gerneral', [a:opts['key_map'][item]])
     else
-      let l:temp['callback'] = g:ECY_action_fuc[item]
+      let l:temp['callback'] = function('s:Gerneral', [g:ECY_action_fuc[item]])
     endif
     let l:temp_map[g:ECY_action_map[item]] = l:temp
   endfor
@@ -275,8 +275,12 @@ endf
 
 fun! ECY#qf#OpenExternal(lists, opts) abort
   let g:ECY_qf_res = a:lists
-  if exists('g:loaded_clap')
+  if exists('g:leaderf_loaded')
+    call g:LeaderfECY_Start()
+  elseif exists('g:loaded_clap')
     execute "Clap ECY"
+  else
+    call ECY#qf#Open(g:ECY_qf_res, a:opts)
   endif
 endf
 
