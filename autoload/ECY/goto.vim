@@ -53,8 +53,22 @@ endf
 
 fun! ECY#goto#Open(res) abort
   let s:res = a:res
-  call s:Open()
+  call s:OpenQF()
 endf
+
+fun! s:OpenQF() abort
+  let l:res = []
+  for item in s:res
+    let l:temp = item['path']
+    if has_key(item, 'range')
+      let l:temp .= printf(' [L-%s, C-%s]', 
+            \item['range']['start']['line'], item['range']['start']['character'])
+    endif
+    let item['abbr'] = l:temp
+  endfor
+  call ECY#qf#OpenExternal(s:res, {})
+endf
+
 
 fun! ECY#goto#Preview(res) abort
   let s:res = a:res

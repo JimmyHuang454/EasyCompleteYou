@@ -41,11 +41,6 @@ function! g:LeaderfECY_Maps()
     nnoremap <buffer> <silent> q             :exec g:Lf_py "ECY_leaderf_selecting.quit()"<CR>
     nnoremap <buffer> <silent> i             :exec g:Lf_py "ECY_leaderf_selecting.input()"<CR>
     nnoremap <buffer> <silent> <F1>          :exec g:Lf_py "ECY_leaderf_selecting.toggleHelp()"<CR>
-    if has_key(g:Lf_NormalMap, "Marks")
-        for i in g:Lf_NormalMap["Marks"]
-            exec 'nnoremap <buffer> <silent> '.i[0].' '.i[1]
-        endfor
-    endif
 "}}}
 endfunction
 
@@ -68,10 +63,9 @@ function! g:LeaderfECY_Event(line, event, index, modes) abort
     let l:Fuc = g:ECY_action_fuc['open#new_tab']
   elseif a:modes == 'v'
     let l:Fuc = g:ECY_action_fuc['open#vertically']
-  elseif a:modes == 'h'
-    let l:Fuc = g:ECY_action_fuc['open#horizontally']
+  " elseif a:modes == 'h'
+  "   let l:Fuc = g:ECY_action_fuc['open#horizontally']
   endif
-
   call l:Fuc(l:res)
 "}}}
 endfunction

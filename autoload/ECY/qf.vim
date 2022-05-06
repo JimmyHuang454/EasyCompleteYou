@@ -48,12 +48,18 @@ endfunction
 function! ECY#qf#OpenBuffer(res, windows_style) abort
 "{{{
   if has_key(a:res, 'path')
-    if has_key(a:res, 'position')
-      call ECY#utils#OpenFileAndMove(a:res['position']['line'],
-            \a:res['position']['colum'], 
-            \a:res['path'], a:windows_style)
-    else
+    let l:pos = {}
+    if has_key(a:res, 'range')
+      let l:pos['line'] = a:res['range']['start']['line'] + 1
+      let l:pos['colum'] = a:res['range']['start']['character']
+    elseif has_key(a:res, 'position')
+    endif
+    if l:pos == {}
       call ECY#utils#OpenFile(a:res['path'], a:windows_style)
+    else
+      call ECY#utils#OpenFileAndMove(l:pos['line'],
+            \l:pos['colum'], 
+            \a:res['path'], a:windows_style)
     endif
   endif
   return 1
@@ -273,7 +279,7 @@ fun! ECY#qf#Open(lists, opts) abort
 "}}}
 endf
 
-fun! ECY#qf#OpenExternal(lists, opts) abort
+function! s:Open_cb(lists, opts, timer_id) abort
   let g:ECY_qf_res = a:lists
   if exists('g:leaderf_loaded')
     call g:LeaderfECY_Start()
@@ -282,6 +288,10 @@ fun! ECY#qf#OpenExternal(lists, opts) abort
   else
     call ECY#qf#Open(g:ECY_qf_res, a:opts)
   endif
+endfunction
+
+fun! ECY#qf#OpenExternal(lists, opts) abort
+  call timer_start(1, function('s:Open_cb', [a:lists, a:opts]))
 endf
 
 fun! ECY#qf#Test() abort
