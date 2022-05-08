@@ -26,7 +26,10 @@ CAPABILITY = {
             "dynamicRegistration": False
         },
         "workspaceFolders": True,
-        "configuration": False
+        "configuration": False,
+        "semanticTokens": {
+            'refreshSupport': True
+        }
     },
     "textDocument": {
         "synchronization": {

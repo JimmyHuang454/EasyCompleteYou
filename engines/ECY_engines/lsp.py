@@ -890,6 +890,16 @@ class Operate(object):
             except Exception as e:
                 logger.exception(e)
 
+    def _handle_sematic_refresh(self):
+        while True:
+            try:
+                jobs = self._lsp.GetRequestOrNotification(
+                    'workspace/semanticTokens/refresh')
+                # TODO: update in client side.
+                self._lsp._build_response(None, jobs['id'])
+            except Exception as e:
+                logger.exception(e)
+
     def _get_diagnosis(self):
         while True:
             try:
@@ -979,6 +989,17 @@ class Operate(object):
             i += 1
         return res
 
+    def _build_delta_sematic(self, original_res, edit_token):
+        for item in edit_token:
+            if item['deleteCount'] != 0:
+                start = item['start'] + 1
+                original_res = original_res[:start] + original_res[
+                    start + item['deleteCount']:]
+            if 'data' in item:
+                original_res = original_res[:start] + item[
+                    'data'] + original_res[start:]
+        return original_res
+
     def semanticTokens(self, context):
         if 'semanticTokensProvider' not in self.capabilities or self.semantic_color == []:
             return
@@ -988,11 +1009,11 @@ class Operate(object):
         uri = self._lsp.PathToUri(path)
 
         previousResultId = None
-        if uri in self.semantic_info and self.is_support_delta and False:
-            # TODO: delta not support yet
+        if uri in self.semantic_info and self.is_support_delta:
             send_type = 'full_delta'
             previousResultId = self.semantic_info[uri]['resultId']
-        elif self.is_support_range:
+        elif self.is_support_range and False:
+            # TODO: range not support yet
             send_type = 'range'
         elif self.is_support_full:
             send_type = 'full'
@@ -1003,25 +1024,23 @@ class Operate(object):
             uri, send_type, previousResultId=previousResultId).GetResponse()
 
         if 'error' in res:
-            self._show_msg(res['error']['message'])
+            # self._show_msg(res['error']['message'])
             return
 
         res = res['result']
         if res is None:
             return
 
-        is_full = False
-        if send_type == 'full':
-            is_full = True
-        elif send_type == 'full_delta':
-            if 'edits' not in res:
-                is_full = True
-
-        if is_full:
-            temp = {'data': self._build_semantic(res['data']), 'path': path}
-            res['builded_cache'] = temp
+        original_data = []
+        if send_type == 'full_delta' and 'edits' in res:
+            self.semantic_info[uri]['data'] = self._build_delta_sematic(
+                self.semantic_info[uri]['data'], res['edits'])
+        else:
             self.semantic_info[uri] = res
-            rpc.DoCall('ECY#semantic_tokens#Update', [temp])
+
+        original_data = self._build_semantic(self.semantic_info[uri]['data'])
+        to_vim = {'data': original_data, 'path': path}
+        rpc.DoCall('ECY#semantic_tokens#Update', [to_vim])
 
     def DoCodeAction(self, context):
         params = context['params']

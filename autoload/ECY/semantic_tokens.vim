@@ -25,10 +25,6 @@ fun! s:CursorMoved() abort
 endf
 
 fun! s:InsertLeave() abort
-  if !g:ECY_disable_semantic_tokens_in_insert_mode
-    return
-  endif
-
   call ECY#semantic_tokens#RenderBuffer()
 endf
 
