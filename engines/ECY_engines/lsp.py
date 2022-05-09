@@ -122,6 +122,8 @@ class Operate(object):
         threading.Thread(target=self._handle_edit, daemon=True).start()
         threading.Thread(target=self._get_workspace_config,
                          daemon=True).start()
+        threading.Thread(target=self._handle_sematic_refresh,
+                         daemon=True).start()
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
@@ -895,7 +897,7 @@ class Operate(object):
             try:
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
-                # TODO: update in client side.
+                rpc.DoCall('ECY#semantic_tokens#Do') # update
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:
                 logger.exception(e)

@@ -90,3 +90,16 @@ fun! ECY#semantic_tokens#Update(context) abort
   call ECY#semantic_tokens#RenderBuffer()
 "}}}
 endf
+
+fun! ECY#semantic_tokens#Do() abort
+"{{{ normal and insert mode
+  if !ECY2_main#IsWorkAtCurrentBuffer()
+    return
+  endif
+
+  let l:params = {'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
+                \}
+  call ECY#rpc#rpc_event#call({'event_name': 'semanticTokens', 'params': l:params})
+"}}}
+endf
