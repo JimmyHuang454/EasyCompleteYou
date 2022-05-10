@@ -8,6 +8,10 @@ fun! ECY#semantic_tokens#Init() abort
 
   let g:ECY_semantic_tokens_info = {}
 
+  if !g:ECY_enable_semantic_tokens
+    return
+  endif
+
   augroup ECY_Diagnosis
     autocmd CursorMoved * call s:CursorMoved()
     autocmd BufEnter * call s:BufEnter()

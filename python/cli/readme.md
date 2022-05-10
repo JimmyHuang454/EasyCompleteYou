@@ -1,3 +1,5 @@
+2022-05-10 20:00
+
 1. Build [ECY](https://github.com/JimmyHuang454/EasyCompleteYou) into executable file with [pyinstaller](https://github.com/pyinstaller/pyinstaller).
 
 2. Build [python LS](https://github.com/pappasam/jedi-language-server) into executable file with [pyinstaller](https://github.com/pyinstaller/pyinstaller).
