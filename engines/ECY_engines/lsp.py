@@ -124,10 +124,8 @@ class Operate(object):
         threading.Thread(target=self._handle_edit, daemon=True).start()
         threading.Thread(target=self._get_workspace_config,
                          daemon=True).start()
-
-        if self.is_support_full:
-            threading.Thread(target=self._handle_sematic_refresh,
-                             daemon=True).start()
+        threading.Thread(target=self._handle_sematic_refresh,
+                         daemon=True).start()
 
         self.signature_help_triggerCharacters = []
         if 'signatureHelpProvider' in self.capabilities:
@@ -161,21 +159,17 @@ class Operate(object):
         self.is_support_full = False
         self.is_support_delta = False
         self.is_support_range = False
-
-        if 'semanticTokensProvider' not in self.capabilities:
-            return
-
         self.semantic_color = utils.GetEngineConfig(self.engine_name,
                                                     'semantic_color')
         self.enabel_semantic_color = utils.GetEngineConfig(
             'ECY', 'semantic_tokens.enable')
-
         # self.semantic_color = self.semantic_color.reverse()
         logger.debug(self.semantic_color)
-
         if type(self.semantic_color) is not list:
             self.semantic_color = []
 
+        if 'semanticTokensProvider' not in self.capabilities:
+            return
         semanticTokensProvider = self.capabilities['semanticTokensProvider']
 
         if 'full' in semanticTokensProvider:
@@ -900,7 +894,7 @@ class Operate(object):
             try:
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
-                if self.enabel_semantic_color:
+                if self.enabel_semantic_color and self.is_support_full:
                     rpc.DoCall('ECY#semantic_tokens#Do')  # update
                 logger.debug(jobs)
                 self._lsp._build_response(None, jobs['id'])
