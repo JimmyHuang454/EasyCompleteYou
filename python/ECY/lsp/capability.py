@@ -28,7 +28,7 @@ CAPABILITY = {
         "workspaceFolders": True,
         "configuration": False,
         "semanticTokens": {
-            'refreshSupport': True
+            'refreshSupport': False
         }
     },
     "textDocument": {

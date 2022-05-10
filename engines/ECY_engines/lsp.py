@@ -303,7 +303,6 @@ class Operate(object):
         if uri not in self._did_open_list:
             self._lsp.didopen(uri, self.languageId, text, version=version)
             self._did_open_list[uri] = {'buffer_id': version}
-            # self.semanticTokens(context)
         else:
             self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
@@ -391,7 +390,6 @@ class Operate(object):
         if params['change_mode'] == 'n':  # normal mode
             self.GetCodeLens(context)
             self.DocumentLink(context)
-            # self.semanticTokens(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -622,7 +620,6 @@ class Operate(object):
         self.completion_isInCompleted = False
         self.GetCodeLens(context)
         self.DocumentLink(context)
-        # self.semanticTokens(context)
 
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
@@ -1017,7 +1014,7 @@ class Operate(object):
         return original_res
 
     def semanticTokens(self, context):
-        if not self.is_support_full or self.semantic_color == []:
+        if not self.is_support_full or self.semantic_color == [] or not self.enabel_semantic_color:
             return
 
         params = context['params']
