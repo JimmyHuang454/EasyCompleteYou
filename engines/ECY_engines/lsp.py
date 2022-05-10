@@ -297,6 +297,7 @@ class Operate(object):
         if uri not in self._did_open_list:
             self._lsp.didopen(uri, self.languageId, text, version=version)
             self._did_open_list[uri] = {'buffer_id': version}
+            self.semanticTokens(context)
         else:
             self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
@@ -308,7 +309,6 @@ class Operate(object):
         self._change_workspace_folder(context)
         self.GetCodeLens(context)
         self.DocumentLink(context)
-        self.semanticTokens(context)
 
     def OnSave(self, context):
         if 'textDocumentSync' not in self.capabilities:
@@ -898,6 +898,7 @@ class Operate(object):
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
                 rpc.DoCall('ECY#semantic_tokens#Do') # update
+                logger.debug(jobs)
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:
                 logger.exception(e)
@@ -1011,7 +1012,8 @@ class Operate(object):
         uri = self._lsp.PathToUri(path)
 
         previousResultId = None
-        if uri in self.semantic_info and self.is_support_delta:
+        if uri in self.semantic_info and self.is_support_delta and False:
+            # FIXME: wrong while parsing delta
             send_type = 'full_delta'
             previousResultId = self.semantic_info[uri]['resultId']
         elif self.is_support_range and False:
@@ -1037,10 +1039,13 @@ class Operate(object):
         if send_type == 'full_delta' and 'edits' in res:
             self.semantic_info[uri]['data'] = self._build_delta_sematic(
                 self.semantic_info[uri]['data'], res['edits'])
+            if 'resultId' in res:
+                self.semantic_info[uri]['resultId'] = res['resultId']
         else:
             self.semantic_info[uri] = res
 
         original_data = self._build_semantic(self.semantic_info[uri]['data'])
+        logger.debug(original_data)
         to_vim = {'data': original_data, 'path': path}
         rpc.DoCall('ECY#semantic_tokens#Update', [to_vim])
 
