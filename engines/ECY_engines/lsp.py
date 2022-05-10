@@ -162,6 +162,7 @@ class Operate(object):
         self.semantic_color = utils.GetEngineConfig(self.engine_name,
                                                     'semantic_color')
 
+        # self.semantic_color = self.semantic_color.reverse()
         logger.debug(self.semantic_color)
 
         if type(self.semantic_color) is not list:
@@ -297,7 +298,7 @@ class Operate(object):
         if uri not in self._did_open_list:
             self._lsp.didopen(uri, self.languageId, text, version=version)
             self._did_open_list[uri] = {'buffer_id': version}
-            self.semanticTokens(context)
+            # self.semanticTokens(context)
         else:
             self._lsp.didchange(uri, text, version=version)
             self._did_open_list[uri]['buffer_id'] = version
@@ -385,7 +386,7 @@ class Operate(object):
         if params['change_mode'] == 'n':  # normal mode
             self.GetCodeLens(context)
             self.DocumentLink(context)
-            self.semanticTokens(context)
+            # self.semanticTokens(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -616,7 +617,7 @@ class Operate(object):
         self.completion_isInCompleted = False
         self.GetCodeLens(context)
         self.DocumentLink(context)
-        self.semanticTokens(context)
+        # self.semanticTokens(context)
 
     def OnItemSeleted(self, context):
         if 'completionProvider' not in self.capabilities or \
@@ -897,7 +898,7 @@ class Operate(object):
             try:
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
-                rpc.DoCall('ECY#semantic_tokens#Do') # update
+                rpc.DoCall('ECY#semantic_tokens#Do')  # update
                 logger.debug(jobs)
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:
@@ -958,6 +959,7 @@ class Operate(object):
         i = 0
         colum_count = 0
         line_count = 0
+        not_defined_res = []
         while i < item:
             j = i * 5
             line = data[j]
@@ -972,6 +974,16 @@ class Operate(object):
             tokenType = self._build_token_type(data[j + 3])
             tokenModifiers = self._build_token_modifiers(data[j + 4])
 
+            temp = {
+                'line': line_count,
+                'start_colum': colum,
+                'end_colum': data[j + 2] + colum,
+                'tokenType': tokenType,
+                'color': '',
+                'tokenModifiers': tokenModifiers,
+            }
+
+            not_defined_res.append(temp)
             for color_item in self.semantic_color:
                 is_defined = True
                 for color in color_item[0]:
@@ -980,16 +992,11 @@ class Operate(object):
                         break
 
                 if is_defined:
-                    res.append({
-                        'line': line_count,
-                        'start_colum': colum,
-                        'end_colum': data[j + 2] + colum,
-                        'tokenType': tokenType,
-                        'color': color_item[1],
-                        'tokenModifiers': tokenModifiers,
-                    })
+                    temp['color'] = color_item[1]
+                    res.append(temp)
                     break
             i += 1
+        logger.debug(not_defined_res)
         return res
 
     def _build_delta_sematic(self, original_res, edit_token):
@@ -1045,7 +1052,6 @@ class Operate(object):
             self.semantic_info[uri] = res
 
         original_data = self._build_semantic(self.semantic_info[uri]['data'])
-        logger.debug(original_data)
         to_vim = {'data': original_data, 'path': path}
         rpc.DoCall('ECY#semantic_tokens#Update', [to_vim])
 
