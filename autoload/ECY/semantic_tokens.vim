@@ -3,6 +3,7 @@ fun! ECY#semantic_tokens#Init() abort
   let g:ECY_enable_semantic_tokens = 
         \ECY#engine_config#GetEngineConfig('ECY', 'semantic_tokens.enable')
 
+  let g:ECY_enable_semantic_tokens = 0
   let g:ECY_disable_semantic_tokens_in_insert_mode = 
         \ECY#engine_config#GetEngineConfig('ECY', 'semantic_tokens.disable_in_insert_mode')
 
