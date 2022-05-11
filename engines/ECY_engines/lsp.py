@@ -895,7 +895,8 @@ class Operate(object):
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
                 if self.enabel_semantic_color and self.is_support_full:
-                    rpc.DoCall('ECY#semantic_tokens#Do')  # update
+                    rpc.DoCall('ECY#semantic_tokens#AddRefreshID')
+                    rpc.DoCall('ECY#semantic_tokens#Refresh')
                 logger.debug(jobs)
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:

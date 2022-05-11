@@ -133,7 +133,7 @@
       "des": [""]
     },
     "semantic_tokens.enable": {
-      "default_value": false,
+      "default_value": true,
       "type": "boolean",
       "des": [""]
     },
