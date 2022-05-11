@@ -13,6 +13,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
+    call OutputLine(string(g:ECY_installer_config))
     call ECY#utils#OpenFileAndMove(11, 13, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())

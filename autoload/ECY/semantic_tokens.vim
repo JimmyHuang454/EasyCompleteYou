@@ -24,6 +24,7 @@ endf
 
 fun! s:BufEnter() abort
   call ECY#semantic_tokens#RenderBuffer()
+  call ECY#semantic_tokens#Refresh()
 endf
 
 fun! s:CursorMoved() abort
@@ -32,6 +33,7 @@ endf
 
 fun! s:InsertLeave() abort
   call ECY#semantic_tokens#RenderBuffer()
+  call ECY#semantic_tokens#Refresh()
 endf
 
 fun! ECY#semantic_tokens#RenderBuffer() abort
