@@ -15,6 +15,7 @@
   }, {
     "file_type": ["python"],
     "disabled": false,
+    "installer_path": "ECY_installer.installer.pyright",
     "engine_name": "ECY_engines.python.pyright.pyright"
   }, {
     "file_type": ["python"],
