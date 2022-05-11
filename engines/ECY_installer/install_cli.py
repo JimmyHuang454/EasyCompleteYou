@@ -45,14 +45,14 @@ def NewArchieve(installer_name: str) -> str:
     return res
 
 
-def Update(installer_name, info):
-    CONFIG_INFO[installer_name] = info
+def Update(engine_name, info):
+    CONFIG_INFO[engine_name] = info
     with open(CONFIG_FILE_PATH, 'w') as f:
         f.write(json.dumps(CONFIG_INFO))
         f.close()
 
 
-def Install(installer_name):
+def Install(installer_name, engine_name):
     current_os = GetCurrentOS()
     fuc = current_os
     try:
@@ -63,12 +63,12 @@ def Install(installer_name):
         return
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        res = fuc({'save_dir': NewArchieve(installer_name)})
-        Update(installer_name, res)
-        base.PrintGreen("Finished. Installed ", installer_name)
+        res = fuc({'save_dir': NewArchieve(engine_name)})
+        Update(engine_name, res)
+        base.PrintGreen("Finished. Installed ", engine_name)
 
 
-def UnInstall(installer_name):
+def UnInstall(installer_name, engine_name):
     current_os = GetCurrentOS()
     fuc = "Clean" + current_os
     try:
@@ -79,5 +79,5 @@ def UnInstall(installer_name):
         return
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        fuc({'save_dir': NewArchieve(installer_name)})
-        base.PrintGreen("Finished. Uninstalled ", installer_name)
+        fuc({'save_dir': NewArchieve(engine_name)})
+        base.PrintGreen("Finished. Uninstalled ", engine_name)

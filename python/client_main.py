@@ -26,6 +26,7 @@ parser.add_argument('--ci', action='store_true', help='for CI')
 parser.add_argument('--log_path', help='the file of log to output.')
 parser.add_argument('--sources_dir', help='Where the sources_dir is.')
 parser.add_argument('--install', help='install + engine_name')
+parser.add_argument('--engine_name', help='engine_name to install')
 parser.add_argument('--uninstall', help='uninstall + engine_name')
 g_args = parser.parse_args()
 
@@ -65,9 +66,9 @@ def main():
     if IS_INSTALL:
         from ECY_installer import install_cli
         if g_args.install is not None:
-            install_cli.Install(g_args.install)
+            install_cli.Install(g_args.install, g_args.engine_name)
         else:
-            install_cli.UnInstall(g_args.install)
+            install_cli.UnInstall(g_args.install, g_args.engine_name)
     else:
         rpc.BlindEvent(engines.Mannager())
         rpc.Daemon()
