@@ -1,24 +1,7 @@
 import os
 import sys
 import json
-
-from ECY_installer.installer import clangd
-from ECY_installer.installer import jedi_ls
-from ECY_installer.installer import html
-from ECY_installer.installer import pyright
-from ECY_installer.installer import json as lsp_json
-from ECY_installer.installer import vls
-from ECY_installer.installer import rust_analyzer
-
-USABLE_INSTALLER = {
-    'ECY_engines.cpp.clangd.clangd': clangd.Install(),
-    'ECY_engines.html.html': html.Install(),
-    'ECY_engines.python.pyright.pyright': pyright.Install(),
-    'ECY_engines.html.vls': vls.Install(),
-    'ECY_engines.json.json': lsp_json.Install(),
-    'ECY_engines.rust.rust_analyzer': rust_analyzer.Install(),
-    'ECY_engines.python.jedi_ls.jedi_ls': jedi_ls.Install()
-}
+import importlib
 
 from ECY_installer import base
 
@@ -62,29 +45,39 @@ def NewArchieve(installer_name: str) -> str:
     return res
 
 
-def Update(server_name, info):
-    CONFIG_INFO[server_name] = info
+def Update(installer_name, info):
+    CONFIG_INFO[installer_name] = info
     with open(CONFIG_FILE_PATH, 'w') as f:
         f.write(json.dumps(CONFIG_INFO))
         f.close()
 
 
-def Install(server_name):
+def Install(installer_name):
     current_os = GetCurrentOS()
-    obj = USABLE_INSTALLER[server_name]
     fuc = current_os
+    try:
+        obj = importlib.import_module(installer_name)
+        obj = obj.Install()
+    except Exception as e:
+        print(e)
+        return
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        res = fuc({'save_dir': NewArchieve(server_name)})
-        Update(server_name, res)
-        base.PrintGreen("Finished. Installed ", server_name)
+        res = fuc({'save_dir': NewArchieve(installer_name)})
+        Update(installer_name, res)
+        base.PrintGreen("Finished. Installed ", installer_name)
 
 
-def UnInstall(server_name):
+def UnInstall(installer_name):
     current_os = GetCurrentOS()
-    obj = USABLE_INSTALLER[server_name]
     fuc = "Clean" + current_os
+    try:
+        obj = importlib.import_module(installer_name)
+        obj = obj.Install()
+    except Exception as e:
+        print(e)
+        return
     if hasattr(obj, fuc):
         fuc = getattr(obj, fuc)
-        fuc({'save_dir': NewArchieve(server_name)})
-        base.PrintGreen("Finished. Uninstalled ", server_name)
+        fuc({'save_dir': NewArchieve(installer_name)})
+        base.PrintGreen("Finished. Uninstalled ", installer_name)

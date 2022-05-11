@@ -86,18 +86,32 @@ fun! ECY2_main#ReStart(...) abort
 "}}}
 endf
 
-fun! ECY2_main#InstallLS(server_name) abort
+fun! s:GetInstallerName(engine_name) abort
 "{{{
+  let l:installer_name = ''
+  let l:info = ECY#switch_engine#GetEngineInfo(a:engine_name)
+
+  if has_key(l:info, 'installer_path')
+    let l:installer_name = l:info['installer_path']
+  endif
+
+  return l:installer_name
+"}}}
+endf
+
+fun! ECY2_main#InstallLS(engine_name) abort
+"{{{
+
   call ECY#utils#TermStart(printf('%s --install "%s" --sources_dir "%s"',
-        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir), 
+        \ g:ECY_client_main_path, s:GetInstallerName(a:engine_name), g:ECY_source_folder_dir), 
         \{'exit_cb': function('ECY#engine_config#LoadInstallerInfo')})
 "}}}
 endf
 
-fun! ECY2_main#UnInstallLS(server_name) abort
+fun! ECY2_main#UnInstallLS(engine_name) abort
 "{{{
   call ECY#utils#TermStart(printf('%s --uninstall "%s" --sources_dir "%s"',
-        \ g:ECY_client_main_path, a:server_name, g:ECY_source_folder_dir),
+        \ g:ECY_client_main_path, s:GetInstallerName(a:engine_name), g:ECY_source_folder_dir),
         \{'exit_cb': function('ECY#engine_config#LoadInstallerInfo')})
 "}}}
 endf

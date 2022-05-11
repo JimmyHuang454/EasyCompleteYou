@@ -83,7 +83,10 @@ class Install(object):
     def CheckmacOS(self, context: dict) -> dict:
         return {}
 
-    def CheckmacOS(self, context: dict) -> dict:
+    def CheckWindows(self, context: dict) -> dict:
+        return {}
+
+    def CheckLinux(self, context: dict) -> dict:
         return {}
 
     def Readme(self, context: dict) -> str:

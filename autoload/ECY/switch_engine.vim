@@ -126,6 +126,17 @@ fun! ECY#switch_engine#MapEngine(opts)
 "}}}
 endf
 
+fun! ECY#switch_engine#GetEngineInfo(engine_name)
+"{{{
+  for item in g:ECY_all_buildin_engine
+    if item['engine_name'] == a:engine_name
+      return item
+    endif
+  endfor
+  return {}
+"}}}
+endf
+
 fun! ECY#switch_engine#Init()
   "{{{
 
