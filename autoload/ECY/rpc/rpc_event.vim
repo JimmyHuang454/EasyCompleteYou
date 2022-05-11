@@ -29,7 +29,7 @@ fun! ECY#rpc#rpc_event#call(context)
   if has_key(a:context, 'engine_name')
     let l:engine_name = a:context['engine_name']
   else
-    let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+    let l:engine_name = ECY#engine#GetBufferEngineName()
   endif
   call ECY#rpc#rpc_main#RPCEventsAll(l:send_msg, l:engine_name)
 
@@ -165,7 +165,7 @@ endf
 
 fun! ECY#rpc#rpc_event#OnCompletion()
 "{{{
-  if ECY#switch_engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
+  if ECY#engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
     call ECY#vim_lsp#main#Request()
     return
   endif

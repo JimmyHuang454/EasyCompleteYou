@@ -73,11 +73,11 @@ function! s:ChooseSource_cb() abort
 "}}}
 endfunction
 
-fun! ECY#switch_engine#Do()
+fun! ECY#engine#Do()
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call ECY#switch_engine#InitDefaultEngine(l:file_type)
-  let s:last_engine = ECY#switch_engine#GetBufferEngineName()
+  call ECY#engine#InitDefaultEngine(l:file_type)
+  let s:last_engine = ECY#engine#GetBufferEngineName()
 
   " TODO
   call s:ChooseSource_Echoing()
@@ -85,9 +85,9 @@ fun! ECY#switch_engine#Do()
   "}}}
 endf
 
-fun! ECY#switch_engine#Set(file_type, engine_name)
+fun! ECY#engine#Set(file_type, engine_name)
   "{{{
-  call ECY#switch_engine#InitDefaultEngine(a:file_type)
+  call ECY#engine#InitDefaultEngine(a:file_type)
   let g:ECY_file_type_info2[a:file_type]['filetype_using'] = a:engine_name
   "}}}
 endf
@@ -107,16 +107,16 @@ fun! s:InsertLeave()
 "}}}
 endf
 
-fun! ECY#switch_engine#MapEngine(opts)
+fun! ECY#engine#MapEngine(opts)
 "{{{
   let l:cmd = printf(
-        \'inoremap <expr> %s ECY#switch_engine#UseSpecifyEngineOnce("%s")',
+        \'inoremap <expr> %s ECY#engine#UseSpecifyEngineOnce("%s")',
         \a:opts['mapping'],
         \a:opts['engine'])
 
   if has_key(a:opts, 'input')
     let l:cmd = printf(
-          \'inoremap <expr> %s ECY#switch_engine#UseSpecifyEngineOnce("%s", "%s")',
+          \'inoremap <expr> %s ECY#engine#UseSpecifyEngineOnce("%s", "%s")',
           \a:opts['mapping'],
           \a:opts['engine'],
           \a:opts['input'])
@@ -126,7 +126,7 @@ fun! ECY#switch_engine#MapEngine(opts)
 "}}}
 endf
 
-fun! ECY#switch_engine#GetEngineInfo(engine_name)
+fun! ECY#engine#GetEngineInfo(engine_name)
 "{{{
   for item in g:ECY_all_buildin_engine
     if item['engine_name'] == a:engine_name
@@ -137,7 +137,7 @@ fun! ECY#switch_engine#GetEngineInfo(engine_name)
 "}}}
 endf
 
-fun! ECY#switch_engine#Init()
+fun! ECY#engine#Init()
   "{{{
 
   call s:InitUsableEngine()
@@ -151,17 +151,17 @@ fun! ECY#switch_engine#Init()
   let g:ECY_use_path
         \= get(g:,'ECY_use_path',"/")
 
-  call ECY#switch_engine#MapEngine({
+  call ECY#engine#MapEngine({
         \'engine': 'ECY_engines.snippet.ultisnips.ultisnips', 
         \'mapping': g:ECY_use_snippet})
 
-  call ECY#switch_engine#MapEngine({
+  call ECY#engine#MapEngine({
         \'engine': 'ECY_engines.all.path', 
         \'input': '/', 
         \'mapping': g:ECY_use_path})
 
   exe 'nmap ' . g:ECY_show_switching_source_popup .
-        \ ' :call ECY#switch_engine#Do()<CR>'
+        \ ' :call ECY#engine#Do()<CR>'
 
   let g:ECY_file_type_using_path = g:ECY_base_dir.'/ECY_file_type_using.txt'
 
@@ -222,7 +222,7 @@ fun! s:VimLeave()
   "}}}
 endf
 
-fun! ECY#switch_engine#InitDefaultEngine(file_type)
+fun! ECY#engine#InitDefaultEngine(file_type)
   "{{{
   if !has_key(g:ECY_file_type_using, a:file_type)
     let g:ECY_file_type_using[a:file_type] = g:ECY_default_engine
@@ -243,18 +243,18 @@ fun! ECY#switch_engine#InitDefaultEngine(file_type)
   "}}}
 endf
 
-fun! ECY#switch_engine#GetBufferEngineName()
+fun! ECY#engine#GetBufferEngineName()
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call ECY#switch_engine#InitDefaultEngine(l:file_type)
+  call ECY#engine#InitDefaultEngine(l:file_type)
   return g:ECY_file_type_info2[l:file_type]['filetype_using']
   "}}}
 endf
 
-function! ECY#switch_engine#UseSpecifyEngineOnce(engine_name, ...) abort
+function! ECY#engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  let l:current_engine_name = ECY#switch_engine#GetBufferEngineName()
+  let l:current_engine_name = ECY#engine#GetBufferEngineName()
   if g:ECY_file_type_info2[l:file_type]['filetype_using'] != a:engine_name
     if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
       let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name

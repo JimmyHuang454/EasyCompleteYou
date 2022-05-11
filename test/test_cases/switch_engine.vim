@@ -8,7 +8,7 @@ exe printf('so %s/test/startup.vim', g:repo_root)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:T1() abort
     new
-    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY.engines.default_engine')
+    call Expect(ECY#engine#GetBufferEngineName(), 'ECY.engines.default_engine')
     call Type("\<Tab>")
 endfunction
 
@@ -17,7 +17,7 @@ function! s:T2() abort
 endfunction
 
 function! s:T3() abort
-    call Expect(ECY#switch_engine#GetBufferEngineName(), 'ECY_engines.snippet.ultisnips.ultisnips')
+    call Expect(ECY#engine#GetBufferEngineName(), 'ECY_engines.snippet.ultisnips.ultisnips')
 endfunction
 
 function! s:T4() abort

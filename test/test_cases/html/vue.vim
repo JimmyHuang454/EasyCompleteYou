@@ -8,7 +8,7 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.vue'
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
-    call ECY#switch_engine#Set('vue', 'ECY_engines.html.vls')
+    call ECY#engine#Set('vue', 'ECY_engines.html.vls')
     call ECY2_main#InstallLS('ECY_engines.html.vls')
 endfunction
 

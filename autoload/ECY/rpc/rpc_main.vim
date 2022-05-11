@@ -70,7 +70,7 @@ fun! s:NewClient()
   call ECY#goto#Init()
   call ECY#selete_range#Init()
   call ECY#preview_windows#Init()
-  call ECY#switch_engine#Init()
+  call ECY#engine#Init()
   call ECY#diagnostics#Init()
   call ECY#document_link#Init()
 "}}}

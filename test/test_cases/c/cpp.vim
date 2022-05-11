@@ -8,7 +8,7 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.cpp'
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
-    call ECY#switch_engine#Set('cpp', 'ECY_engines.cpp.clangd.clangd')
+    call ECY#engine#Set('cpp', 'ECY_engines.cpp.clangd.clangd')
     call ECY2_main#InstallLS('ECY_engines.cpp.clangd.clangd')
 endfunction
 

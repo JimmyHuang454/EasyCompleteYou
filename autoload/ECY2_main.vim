@@ -25,7 +25,7 @@ endf
 fun! s:GetEngineName(input) abort
 "{{{
   if len(a:input) == 0
-    return ECY#switch_engine#GetBufferEngineName()
+    return ECY#engine#GetBufferEngineName()
   endif
   return a:input[0]
 "}}}
@@ -89,7 +89,7 @@ endf
 fun! s:GetInstallerName(engine_name) abort
 "{{{
   let l:installer_name = ''
-  let l:info = ECY#switch_engine#GetEngineInfo(a:engine_name)
+  let l:info = ECY#engine#GetEngineInfo(a:engine_name)
 
   if has_key(l:info, 'installer_path')
     let l:installer_name = l:info['installer_path']
@@ -287,7 +287,7 @@ fun! ECY2_main#Goto(engine_name, event_name, is_preview) abort
 "{{{
   let l:engine_name = a:engine_name
   if l:engine_name == ''
-    let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+    let l:engine_name = ECY#engine#GetBufferEngineName()
   endif
 
   let l:params = {
@@ -347,7 +347,7 @@ fun! ECY2_main#IsWorkAtCurrentBuffer() abort
     return b:ECY_is_work_at_current_buffer
   endif
 
-  if ECY#switch_engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
+  if ECY#engine#GetBufferEngineName() == 'ECY_engines.vim_lsp.vim_lsp'
     return v:false
   endif
 

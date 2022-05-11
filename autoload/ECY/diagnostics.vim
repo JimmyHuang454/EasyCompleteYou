@@ -84,7 +84,7 @@ python3 <<endpython
 import vim
 
 def CalculateScreenSign(start, end):
-  engine_name = vim.eval('ECY#switch_engine#GetBufferEngineName()')
+  engine_name = vim.eval('ECY#engine#GetBufferEngineName()')
   lists = "g:ECY_diagnostics_items_with_engine_name['" + engine_name + "']"
   lists = vim.eval(lists)
   file_path = vim.eval('ECY#utils#GetCurrentBufferPath()')
@@ -101,7 +101,7 @@ endfunction
 
 function s:CalculateScreenSign(start, end) abort
 "{{{
-  let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+  let l:engine_name = ECY#engine#GetBufferEngineName()
   let l:list = g:ECY_diagnostics_items_with_engine_name[l:engine_name]
   let l:file_path = ECY#utils#GetCurrentBufferPath()
   let l:res = []
@@ -137,7 +137,7 @@ function! ECY#diagnostics#ShowCurrentLineDiagnosis(is_triggered_by_event) abort
 endfunction
 
 function! ECY#diagnostics#CurrentBufferErrorAndWarningCounts() abort
-  let l:current_engine = ECY#switch_engine#GetBufferEngineName()
+  let l:current_engine = ECY#engine#GetBufferEngineName()
   if !has_key(g:ECY_diagnostics_items_with_engine_name, l:current_engine)
     return 0
   endif
@@ -443,7 +443,7 @@ function! ECY#diagnostics#FlushCurrentBufferUI() abort
     return
   endif
 
-  let l:engine_name = ECY#switch_engine#GetBufferEngineName()
+  let l:engine_name = ECY#engine#GetBufferEngineName()
 
   if v:false
     call ECY#diagnostics#PartlyPlaceSign(a:msg)
@@ -590,7 +590,7 @@ function! s:UpdateSignEvent(timer_id) abort
     let s:windows_end = l:end
     let s:windows_nr = l:windows_nr
     call s:PartlyPlaceSign_timer_cb(s:windows_start, s:windows_end,
-          \ECY#switch_engine#GetBufferEngineName())
+          \ECY#engine#GetBufferEngineName())
   endif
 "}}}
 endfunction

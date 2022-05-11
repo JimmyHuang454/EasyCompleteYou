@@ -9,7 +9,7 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/test.html'
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
-    call ECY#switch_engine#Set('html', 'ECY_engines.html.lsp.html_lsp')
+    call ECY#engine#Set('html', 'ECY_engines.html.lsp.html_lsp')
     call ECY2_main#InstallLS('ECY_engines.html.lsp.html_lsp')
 endfunction
 

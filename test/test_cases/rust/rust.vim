@@ -9,7 +9,7 @@ let g:test_cpp = fnamemodify(expand('<sfile>'), ':h') . '/hello_test/src/main.rs
 
 function! s:T1() abort
     call OutputLine(g:test_cpp)
-    call ECY#switch_engine#Set('rust', 'ECY_engines.rust.rust_analyzer')
+    call ECY#engine#Set('rust', 'ECY_engines.rust.rust_analyzer')
     call ECY2_main#InstallLS('ECY_engines.rust.rust_analyzer')
 endfunction
 
