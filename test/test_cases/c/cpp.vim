@@ -41,7 +41,7 @@ function! s:T7() abort
 endfunction
 
 function! s:T8() abort
-    " call Expect(getline(19), '  test_abbr.type_1')
+    call Expect(getline(19), '  test_abbr.type_1')
 endfunction
 
 call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 40000},
@@ -49,7 +49,7 @@ call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 40000},
             \{'fuc': function('s:T3'), 'delay': 20000},
             \{'fuc': function('s:T4')},
             \{'fuc': function('s:T5')},
-            \{'fuc': function('s:T6')},
+            \{'fuc': function('s:T6'), 'delay': 20000},
             \{'fuc': function('s:T7')},
             \{'fuc': function('s:T8')},
             \]})
