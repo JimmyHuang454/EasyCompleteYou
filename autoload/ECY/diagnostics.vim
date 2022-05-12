@@ -550,25 +550,29 @@ function! ECY#diagnostics#Toggle() abort
 "}}}
 endfunction
 
-function! ECY#diagnostics#ShowSelecting() abort
-"{{{ show all
-  call s:InitDiagnosisLists()
-  call ECY#utility#StartLeaderfSelecting(g:ECY_diagnostics_items_all, 'ECY#diagnostics#Selecting_cb')
-"}}}
-endfunction
-
-function! ECY#diagnostics#Selecting_cb(line, event, index, nodes) abort
+function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
 "{{{
- let l:data = g:ECY_diagnostics_items_all
-  let l:data  = l:data[a:index]
-  if a:event == 'acceptSelection' || a:event == 'previewResult'
-    let l:position = l:data['position']['range']['start']
-    let l:path = l:data['file_path']
-    call ECY#utils#MoveToBuffer(l:position['line'], 
-          \l:position['colum'], 
-          \l:path, 
-          \'current buffer')
+  let l:res = []
+  let l:current_engine = ECY#engine#GetBufferEngineName()
+
+  let l:temp = []
+  if a:is_current_engine && has_key(g:ECY_diagnostics_items_with_engine_name, l:current_engine)
+    let l:temp = g:ECY_diagnostics_items_with_engine_name[l:current_engine]
+  else
+    for item in keys(g:ECY_diagnostics_items_with_engine_name)
+      call extend(l:temp, g:ECY_diagnostics_items_with_engine_name[item])
+    endfor
   endif
+
+  for item in l:temp
+    let l:msg = join(item['diagnostics'], " ")
+    let l:kind = item['kind'] == 1 ? 'Error' : 'Warn'
+    let l:pos = item['position']['range']
+    let l:pos = printf("[L-%s, C-%s]", l:pos['start']['line'], l:pos['start']['colum'])
+    call add(l:res, {'abbr': [l:pos, l:kind, l:msg]})
+  endfor
+
+  call ECY#qf#Open(l:res, {})
 "}}}
 endfunction
 
