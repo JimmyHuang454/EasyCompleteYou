@@ -1341,7 +1341,32 @@ class Operate(object):
         }
 
         res = self._lsp.references(position, uri).GetResponse()
-        self._on_selete(res, uri)
+
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+        res = res['result']
+        if res is None:
+            res = []
+
+        if res == []:
+            self._show_not_support_msg('Empty Result.')
+
+        to_show = []
+        for item in res:
+            path = self._lsp.UriToPath(item['uri'])
+            range = item['range']
+            show_range = "[L-%s, C-%s]" % (range['start']['line'],
+                                           range['start']['character'])
+            to_show.append({
+                'abbr': [
+                    path,
+                    show_range
+                ],
+                'path': path,
+                'range': range
+            })
+        rpc.DoCall('ECY#qf#Open', [to_show, {}])
 
     def GetCodeLens(self, context):
         if 'codeLensProvider' not in self.capabilities or not self.enabled_code_lens:
