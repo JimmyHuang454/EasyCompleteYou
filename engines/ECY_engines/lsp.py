@@ -1170,6 +1170,7 @@ class Operate(object):
                 'file_path': file_path,
                 'kind': kind,
                 'diagnostics': diagnosis,
+                'range': ranges,
                 'position': position
             }
             results_list.append(temp)
@@ -1359,10 +1360,7 @@ class Operate(object):
             show_range = "[L-%s, C-%s]" % (range['start']['line'],
                                            range['start']['character'])
             to_show.append({
-                'abbr': [
-                    path,
-                    show_range
-                ],
+                'abbr': [path, show_range],
                 'path': path,
                 'range': range
             })

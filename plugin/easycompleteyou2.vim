@@ -94,6 +94,7 @@ function! s:AllCommand() abort
         \'ECYSeleteRangeParent': {'des': 'Provide by LS.'},
         \'ECYFindReference': {'des': 'Provide by LS.'},
         \'ECYDiagnostics': {'des': 'Provide by LS.'},
+        \'ECYDiagnosticsAll': {'des': 'Provide by LS.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
@@ -133,7 +134,8 @@ command! -nargs=0 ECYSeleteRangeChild  call ECY#selete_range#Child()
 command! -nargs=0 ECYFoldLine          call ECY2_main#FoldingRangeCurrentLine()
 command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
 command! -nargs=0 ECYFindReference     call ECY2_main#FindReferences()
-command! -nargs=0 ECYDiagnostics       call ECY#diagnostics#ShowSelecting(0)
+command! -nargs=0 ECYDiagnosticsAll    call ECY#diagnostics#ShowSelecting(0)
+command! -nargs=0 ECYDiagnostics       call ECY#diagnostics#ShowSelecting(1)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
