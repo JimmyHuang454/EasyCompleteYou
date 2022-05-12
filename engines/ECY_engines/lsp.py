@@ -496,13 +496,55 @@ class Operate(object):
         if res is None:
             res = []
 
+        res = self._build_seleting_symbol(res, uri)
+
         if res == []:
             self._show_not_support_msg('Empty Result.')
 
+        rpc.DoCall('ECY#qf#OpenExternal', [res, {}])
+
+    def _build_seleting_symbol(self, symbols, uri):
         to_show = []
-        for item in res:
-            to_show.append({'abbr': '%s' % (item['a'])})
-        self._on_selete(res, uri=uri)
+        for item in symbols:
+            deprecated = ''
+            if ('deprecated' in item and item['deprecated']) or 'tags' in item:
+                deprecated = 'deprecated'
+            if 'location' in item:
+                containerName = ''
+                if 'containerName' in item:
+                    containerName = item['containerName']
+                temp = {
+                    'abbr': [
+                        item['name'],
+                        self._lsp.GetSymbolsKindByNumber(item['kind']),
+                        deprecated, containerName
+                    ],
+                    'path':
+                    self._lsp.UriToPath(item['location']['uri']),
+                    'range':
+                    item['location']['range']
+                }
+            else:
+                detail = ''
+                if 'detail' in item:
+                    # detail = item['detail']
+                    pass
+                temp = {
+                    'abbr': [
+                        item['name'],
+                        self._lsp.GetSymbolsKindByNumber(item['kind']),
+                        deprecated, detail
+                    ],
+                    'range':
+                    item['range'],
+                    'path':
+                    self._lsp.UriToPath(uri)
+                }
+            to_show.append(temp)
+            if 'children' in item:
+                to_show.extend(
+                    self._build_seleting_symbol(item['children'], uri))
+        return to_show
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
