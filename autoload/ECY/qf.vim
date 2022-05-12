@@ -13,7 +13,7 @@ fun! ECY#qf#Init()
         \'select#prev': "\<C-k>",
         \}
 
-  let g:ECY_action_fuc = {
+  let s:default_action_fuc = {
         \'open#current_buffer': function('s:Open_current_buffer'),
         \'open#new_tab': function('s:Open_new_tab'),
         \'open#vertically': function('s:Open_vertically'),
@@ -21,6 +21,8 @@ fun! ECY#qf#Init()
         \'select#next': function('s:NextItem'),
         \'select#prev': function('s:PrevItem'),
         \}
+
+  let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
 
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 18
@@ -242,7 +244,7 @@ fun! ECY#qf#Close() abort
   return 1
 endf
 
-fun! ECY#qf#Open(lists, opts) abort
+fun! s:ECYQF(lists, opts) abort
 "{{{
   let s:selecting_item_index = 0
   let s:qf_res = easy_windows#new()
@@ -280,23 +282,28 @@ fun! ECY#qf#Open(lists, opts) abort
 endf
 
 function! s:Open_cb(lists, opts, timer_id) abort
+"{{{
   let g:ECY_qf_res = a:lists
+
+  let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
+  if has_key(a:opts, 'action')
+    for item in keys(a:opts['action'])
+      let g:ECY_action_fuc[item] = a:opts['action'][item]
+    endfor
+  endif
+
   if exists('g:leaderf_loaded')
     call g:LeaderfECY_Start()
   elseif exists('g:loaded_clap')
     execute "Clap ECY"
   else
-    call ECY#qf#Open(g:ECY_qf_res, a:opts)
+    call s:ECYQF(g:ECY_qf_res, a:opts)
   endif
+"}}}
 endfunction
 
-fun! ECY#qf#OpenExternal(lists, opts) abort
+fun! ECY#qf#Open(lists, opts) abort
   call timer_start(1, function('s:Open_cb', [a:lists, a:opts]))
-endf
-
-fun! ECY#qf#Test() abort
-  let l:map = {}
-  call ECY#qf#OpenExternal([{'abbr': 'test', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/autoload/easy_windows.vim'}, {'abbr': 'ebct', 'path': 'C:/Users/qwer/Desktop/vimrc/myproject/ECY/RPC/EasyCompleteYou2/after/plugin/clap.vim'}], {})
 endf
 
 call ECY#qf#Init()

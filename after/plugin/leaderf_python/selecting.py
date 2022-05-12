@@ -51,7 +51,7 @@ class ECYDiagnosisExplorer(Explorer):
                     diff += 1
                     temp.append(item['abbr'][j] + (" " * diff))
                     j += 1
-                res.append("".join(temp) + " " + str(i))
+                res.append("".join(temp) + str(i))
                 i += 1
         return res
 

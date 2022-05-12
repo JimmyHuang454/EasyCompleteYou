@@ -75,6 +75,32 @@ function! s:Goto(types, is_preview) abort
 "}}}
 endfunction
 
+"{{{
+function! s:DoCommand(res) abort
+  if a:res != {}
+    exe a:res['cmd']
+  endif
+  return 1
+endfunction
+
+function! s:AllCommand() abort
+  let g:ECY_cmd_list = {
+        \'ECYHover': {'des': 'Provide by LS.'},
+        \'ECYFormat': {'des': 'Provide by LS.'},
+        \'ECYRename': {'des': 'Provide by LS.'},
+        \'ECYSymbol': {'des': 'Provide by LS.'},
+        \'ECYDocSymbol': {'des': 'Provide by LS.'},
+        \'ECYSeleteRange': {'des': 'Provide by LS.'},
+        \'ECYSeleteRangeParent': {'des': 'Provide by LS.'},
+        \}
+  let l:res = []
+  for item in keys(g:ECY_cmd_list)
+    call add(l:res, {'abbr': [item, item['des']], 'cmd': item})
+  endfor
+  call ECY#qf#Open(l:res, {'action': {'open#current_buffer': function('s:DoCommand')}})
+endfunction
+"}}}
+
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
 nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
 
@@ -86,6 +112,7 @@ vmap ae <ESC>:ECYSeleteRangeParent<CR>
 vmap ar <ESC>:ECYSeleteRangeParent<CR>
 vmap at <ESC>:ECYSeleteRangeChild<CR>
 
+command! -nargs=0 ECY                  call s:AllCommand()
 command! -nargs=* ECYGoto              call s:Goto(<q-args>, 0)
 command! -nargs=* ECYGotoP             call s:Goto(<q-args>, 1)
 command! -nargs=0 ECYHover             call ECY2_main#Hover()

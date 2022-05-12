@@ -283,5 +283,5 @@ fun! ECY#engine#Show()
           \'engine_name': item['engine_name']})
   endfor
 
-  call ECY#qf#OpenExternal(l:to_show, {})
+  call ECY#qf#Open(l:to_show, {})
 endf

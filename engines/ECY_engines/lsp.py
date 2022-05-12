@@ -444,51 +444,13 @@ class Operate(object):
         if 'workspaceSymbolProvider' not in self.capabilities:
             self._show_not_support_msg('OnWorkSpaceSymbol')
             return
-        res = self._lsp.workspaceSymbos().GetResponse()  # not works in clangd
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
-        res = res['result']
-        if res is None:
-            res = []
-        self._on_selete(res, show_all=True)
-
-    def _prepare_item(self, res, uri=None, show_all=False):
-        res2 = []
-        for item in res:
-            item['kind'] = self._lsp.GetSymbolsKindByNumber(item['kind'])
-            item['abbr'] = item['name']
-            if 'location' in item:
-                item['path'] = self._lsp.UriToPath(item['location']['uri'])
-            else:
-                item['path'] = self._lsp.UriToPath(uri)
-            child = []
-            if 'children' in item and len(item['children']) != 0:
-                item['abbr'] = item['abbr'] + '/'
-                child = self._prepare_item(item['children'],
-                                           uri=uri,
-                                           show_all=show_all)
-            elif not show_all:
-                continue
-            res2.append(item)
-            res2.extend(child)
-        return res2
-
-    def _on_selete(self, res, uri=None, show_all=False):
-        res = self._prepare_item(res, uri=uri, show_all=show_all)
-        if res == []:
-            self._show_msg("Response empty.")
-        else:
-            rpc.DoCall('ECY#selete#Do', [res])
-
-    def OnDocumentSymbol(self, context):
-        if 'documentSymbolProvider' not in self.capabilities:
-            self._show_not_support_msg('OnDocumentSymbol')
-            return
         params = context['params']
         uri = params['buffer_path']
         uri = self._lsp.PathToUri(uri)
-        res = self._lsp.documentSymbos(uri).GetResponse()
+        res = self._lsp.workspaceSymbos().GetResponse()  # not works in clangd
+        self._on_selete(res, uri)
+
+    def _on_selete(self, res, uri):
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -501,7 +463,17 @@ class Operate(object):
         if res == []:
             self._show_not_support_msg('Empty Result.')
 
-        rpc.DoCall('ECY#qf#OpenExternal', [res, {}])
+        rpc.DoCall('ECY#qf#Open', [res, {}])
+
+    def OnDocumentSymbol(self, context):
+        if 'documentSymbolProvider' not in self.capabilities:
+            self._show_not_support_msg('OnDocumentSymbol')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        res = self._lsp.documentSymbos(uri).GetResponse()
+        self._on_selete(res, uri)
 
     def _build_seleting_symbol(self, symbols, uri):
         to_show = []
@@ -509,6 +481,7 @@ class Operate(object):
             deprecated = ''
             if ('deprecated' in item and item['deprecated']) or 'tags' in item:
                 deprecated = 'deprecated'
+
             if 'location' in item:
                 containerName = ''
                 if 'containerName' in item:
@@ -520,20 +493,16 @@ class Operate(object):
                         deprecated, containerName
                     ],
                     'path':
-                    self._lsp.UriToPath(item['location']['uri']),
-                    'range':
-                    item['location']['range']
+                    self._lsp.UriToPath(item['location']['uri'])
                 }
+                if 'range' in item['location']:
+                    temp['range'] = item['location']['range']
             else:
-                detail = ''
-                if 'detail' in item:
-                    # detail = item['detail']
-                    pass
                 temp = {
                     'abbr': [
                         item['name'],
                         self._lsp.GetSymbolsKindByNumber(item['kind']),
-                        deprecated, detail
+                        deprecated
                     ],
                     'range':
                     item['range'],
@@ -1372,7 +1341,7 @@ class Operate(object):
         }
 
         res = self._lsp.references(position, uri).GetResponse()
-        self._goto_response(res)
+        self._on_selete(res, uri)
 
     def GetCodeLens(self, context):
         if 'codeLensProvider' not in self.capabilities or not self.enabled_code_lens:

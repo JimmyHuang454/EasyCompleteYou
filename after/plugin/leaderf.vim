@@ -56,8 +56,6 @@ function! g:LeaderfECY_Event(line, event, index, modes) abort
     let l:res = g:ECY_qf_res[a:index]
   endif
 
-  let g:abc1 = a:modes
-
   let l:Fuc = g:ECY_action_fuc['open#current_buffer']
   if a:modes == 't'
     let l:Fuc = g:ECY_action_fuc['open#new_tab']

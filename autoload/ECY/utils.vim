@@ -531,7 +531,7 @@ function! ECY#utils#OpenFileAndMove(line, colum, file_path, style) abort
   " a:colum is 0-based
   " a:line is 1-based
   let l:buffer_nr = ECY#utils#OpenFile(a:file_path, a:style)
-  if a:line > 0 && a:colum > 0
+  if a:line > 0 && a:colum >= 0
     call cursor(a:line, a:colum + 1)
     silent! redraw
   endif

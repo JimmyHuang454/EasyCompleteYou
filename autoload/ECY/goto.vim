@@ -66,7 +66,7 @@ fun! s:OpenQF() abort
     endif
     let item['abbr'] = l:temp
   endfor
-  call ECY#qf#OpenExternal(s:res, {})
+  call ECY#qf#Open(s:res, {})
 endf
 
 
