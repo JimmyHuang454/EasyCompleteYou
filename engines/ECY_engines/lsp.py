@@ -495,6 +495,13 @@ class Operate(object):
         res = res['result']
         if res is None:
             res = []
+
+        if res == []:
+            self._show_not_support_msg('Empty Result.')
+
+        to_show = []
+        for item in res:
+            to_show.append({'abbr': '%s' % (item['a'])})
         self._on_selete(res, uri=uri)
 
     def OnTypeFormatting(self, context):

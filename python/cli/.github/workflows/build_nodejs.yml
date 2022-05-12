@@ -8,6 +8,7 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, 'pypi')"
     steps:
       - name: Checkout myself
         uses: actions/checkout@v2

@@ -21,11 +21,38 @@ class ECYDiagnosisExplorer(Explorer):
         # return a list
         self.items_data = lfEval("g:ECY_qf_res")
         res = []
+        abbr_len = {}
         i = 0
         for item in self.items_data:
             if 'abbr' in item:
-                res.append(item['abbr'] + " " + str(i))
+                if type(item['abbr']) is str:
+                    res.append(item['abbr'] + " " + str(i))
+                elif type(item['abbr']) is list:
+                    j = 0
+                    for abbr_item in item['abbr']:
+                        temp_len = len(abbr_item)
+                        if j not in abbr_len:
+                            abbr_len[j] = temp_len
+
+                        if temp_len > abbr_len[j]:
+                            abbr_len[j] = temp_len
+                        j += 1
             i += 1
+
+        if abbr_len != {}:
+            i = 0
+            for item in self.items_data:
+                temp = []
+                j = 0
+                for abbr_item in item['abbr']:
+                    if j not in abbr_len:
+                        continue
+                    diff = abbr_len[j] - len(item['abbr'][j])
+                    diff += 1
+                    temp.append(item['abbr'][j] + (" " * diff))
+                    j += 1
+                res.append("".join(temp) + " " + str(i))
+                i += 1
         return res
 
     def getStlCategory(self):

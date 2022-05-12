@@ -273,13 +273,13 @@ endfunction
 fun! ECY#engine#Show()
   let l:to_show = []
   for item in g:ECY_all_buildin_engine
-    let l:has_installer = has_key(item, 'installer_path') ? 'installer' : ''
-    let l:is_installed = has_key(item, 'installer_path') ? '√' : '×'
+    let l:has_installer = has_key(item, 'installer_path') ? '!' : '~'
+    let l:is_installed = has_key(item, 'installer_path') ? '√' : '-'
     if has_key(item, 'disabled') && item['disabled']
       continue
     endif
     call add(l:to_show, {'abbr': 
-          \printf("%s  %s  %s", l:is_installed, item['engine_name'], l:has_installer),
+          \[l:is_installed, item['engine_name'], l:has_installer],
           \'engine_name': item['engine_name']})
   endfor
 

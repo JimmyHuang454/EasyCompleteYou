@@ -36,6 +36,13 @@ jobs:
           out-file-path: "rust_analyzer"
           fileName: "*"
 
+      - uses: robinraju/release-downloader@v1.2
+        with:
+          repository: "sumneko/lua-language-server"
+          latest: true
+          out-file-path: "lua"
+          fileName: "*"
+
       - name: Build pypi
         env:
           PYPI: ${{ secrets.PYPI }}

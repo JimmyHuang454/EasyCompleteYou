@@ -92,17 +92,18 @@ DoCMD('python -m pip install --upgrade twine')
 ############
 for dirs, _, files in os.walk(BASE_DIR + '/clangd'):
     for item in files:
-        temp = item.split('-')
-        if temp[0] != 'clangd':
+        if item.find('clangd') == -1 or item.find('indexing') != -1:
             continue
         handling_files = dirs + '/' + item
         output_path = BASE_DIR + '/exes/'
-        if temp[1] == 'linux':
+        if item.find('linux') != -1:
             output_path += 'ECY_clangd_Linux.zip'
-        if temp[1] == 'windows':
+        elif item.find('windows') != -1:
             output_path += 'ECY_clangd_Windows.zip'
-        if temp[1] == 'mac':
+        elif item.find('mac') != -1:
             output_path += 'ECY_clangd_macOS.zip'
+        else:
+            continue
         os.rename(handling_files, output_path)
         print(output_path)
 
@@ -120,6 +121,31 @@ os.rename(handling_files, output_path)
 handling_files = BASE_DIR + '/rust_analyzer/rust-analyzer-x86_64-unknown-linux-gnu.gz'
 output_path = BASE_DIR + '/exes/ECY_RustAnalyzer_Linux.exe.gz'
 os.rename(handling_files, output_path)
+
+#########
+#  lua  #
+#########
+for dirs, _, files in os.walk(BASE_DIR + '/lua'):
+    for item in files:
+        if item.find('lua') == -1:
+            continue
+        handling_files = dirs + '/' + item
+        output_path = BASE_DIR + '/exes/'
+        if item.find('linux') != -1 and item.find('x64') != -1:
+            output_path += 'ECY_lua_Linux'
+        elif item.find('win') != -1 and item.find('x64') != -1:
+            output_path += 'ECY_lua_Windows'
+        elif item.find('darwin') != -1 and item.find('x64') != -1:
+            output_path += 'ECY_lua_macOS'
+        else:
+            continue
+
+        if item.endswith('gz'):
+            output_path += '.tar.gz'
+        if item.endswith('zip'):
+            output_path += '.zip'
+        os.rename(handling_files, output_path)
+        print(output_path)
 
 
 def UnGz(file_name: str) -> str:
