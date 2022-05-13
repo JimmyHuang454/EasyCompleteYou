@@ -291,19 +291,6 @@ fun! ECY2_main#ClangdSwitchHeader(...) abort
 "}}}
 endf
 
-fun! ECY2_main#PrepareCallHierarchy() abort
-"{{{
-  let l:params = {
-                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_line': ECY#utils#GetCurrentLine(), 
-                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'PrepareCallHierarchy', 'params': l:params})
-"}}}
-endf
-
 fun! ECY2_main#Goto(engine_name, event_name, is_preview) abort
 "{{{
   let l:engine_name = a:engine_name

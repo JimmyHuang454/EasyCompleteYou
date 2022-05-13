@@ -80,6 +80,7 @@ class Operate(object):
         self.current_seleted_item = {}
         self.code_action_cache = None
         self.workspace_edit_undo = None
+        self.hierarchy_res = []
 
         self._start_server()
         self._get_format_config()
@@ -475,7 +476,7 @@ class Operate(object):
         res = self._lsp.documentSymbos(uri).GetResponse()
         self._on_selete(res, uri)
 
-    def _build_seleting_symbol(self, symbols, uri):
+    def _build_seleting_symbol(self, symbols, uri):  # {{{
         to_show = []
         for item in symbols:
             deprecated = ''
@@ -513,7 +514,7 @@ class Operate(object):
             if 'children' in item:
                 to_show.extend(
                     self._build_seleting_symbol(item['children'], uri))
-        return to_show
+        return to_show  # }}}
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
@@ -555,7 +556,7 @@ class Operate(object):
         self._do_action(res)
         self._show_msg('Formatted.')
 
-    def _signature_help(self, res):
+    def _signature_help(self, res):  # {{{
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -625,7 +626,7 @@ class Operate(object):
         res['activeSignature'] = activeSignature
 
         if len(res) != 0:
-            rpc.DoCall('ECY#signature_help#Show', [res])
+            rpc.DoCall('ECY#signature_help#Show', [res])  # }}}
 
     def OnInsertLeave(self, context):
         self.completion_position_cache = {}
@@ -633,7 +634,7 @@ class Operate(object):
         self.GetCodeLens(context)
         self.DocumentLink(context)
 
-    def OnItemSeleted(self, context):
+    def OnItemSeleted(self, context):  # {{{
         if 'completionProvider' not in self.capabilities or \
                 'resolveProvider' not in self.capabilities['completionProvider'] \
                 or self.capabilities['completionProvider']['resolveProvider'] is False:
@@ -652,9 +653,9 @@ class Operate(object):
         self._lsp.completionItem_resolve(
             self.current_seleted_item).GetResponse(
                 callback=self._on_item_seleted_cb,
-                callback_additional_data=self.current_seleted_item)
+                callback_additional_data=self.current_seleted_item)  # }}}
 
-    def _on_item_seleted_cb(self, res):
+    def _on_item_seleted_cb(self, res):  # {{{
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -686,12 +687,12 @@ class Operate(object):
         results_format['menu'] = detail
         results_format['info'] = document
 
-        rpc.DoCall('ECY#preview_windows#Show', [results_format])
+        rpc.DoCall('ECY#preview_windows#Show', [results_format])  # }}}
 
     def OnCompletion(self, context):
         return self._to_ECY_format(self._to_LSP_format(context))
 
-    def _to_LSP_format(self, context):
+    def _to_LSP_format(self, context):  # {{{
         if 'completionProvider' not in self.capabilities:
             return
 
@@ -773,9 +774,9 @@ class Operate(object):
             self.completion_isInCompleted = False
 
         context['show_list'] = self.results_list  # update
-        return context
+        return context  # }}}
 
-    def _to_ECY_format(self, context):
+    def _to_ECY_format(self, context):  # {{{
         if context is None:
             return  # server not supports.
 
@@ -853,7 +854,7 @@ class Operate(object):
             show_list.append(results_format)
         context['origin_list'] = context['show_list']
         context['show_list'] = show_list
-        return context
+        return context  # }}}
 
     def ExecuteCommand(self, context):
         if 'executeCommandProvider' not in self.capabilities:
@@ -969,7 +970,7 @@ class Operate(object):
 
         return tokenType_list[tokenType]
 
-    def _build_semantic(self, data):
+    def _build_semantic(self, data):  # {{{
         res = []
         item = len(data) / 5
         i = 0
@@ -1013,7 +1014,7 @@ class Operate(object):
                     break
             i += 1
         logger.debug(not_defined_res)
-        return res
+        return res  # }}}
 
     def _build_delta_sematic(self, original_res, edit_token):
         for item in edit_token:
@@ -1101,7 +1102,7 @@ class Operate(object):
 
         return context
 
-    def _diagnosis_analysis(self, params):
+    def _diagnosis_analysis(self, params):  # {{{
         results_list = []
         file_path = self._lsp.UriToPath(params['uri'])
         if file_path == '':
@@ -1174,9 +1175,9 @@ class Operate(object):
                 'position': position
             }
             results_list.append(temp)
-        return results_list
+        return results_list  # }}}
 
-    def _goto_response(self, res, is_preview=False):
+    def _goto_response(self, res, is_preview=False):  # {{{
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -1261,7 +1262,7 @@ class Operate(object):
 
         res = self._lsp.declaration(position, uri).GetResponse()
 
-        self._goto_response(res, params['is_preview'])
+        self._goto_response(res, params['is_preview'])  # }}}
 
     def OnHover(self, context):
         if 'hoverProvider' not in self.capabilities:
@@ -1294,7 +1295,7 @@ class Operate(object):
             return
         rpc.DoCall('ECY#hover#Open', [content])
 
-    def _format_markupContent(self, content):
+    def _format_markupContent(self, content):  # {{{
         """return list
         """
         if content is None:
@@ -1326,9 +1327,9 @@ class Operate(object):
         to_show.extend(document)
         if to_show == [""]:
             return []
-        return to_show
+        return to_show  # }}}
 
-    def FindReferences(self, context):
+    def FindReferences(self, context):  # {{{
         if 'referencesProvider' not in self.capabilities:
             self._show_not_support_msg('FindReferences')
             return
@@ -1366,7 +1367,10 @@ class Operate(object):
             })
         rpc.DoCall('ECY#qf#Open', [to_show, {}])
 
-    def GetCodeLens(self, context):
+
+# }}}
+
+    def GetCodeLens(self, context):  # {{{
         if 'codeLensProvider' not in self.capabilities or not self.enabled_code_lens:
             return
         params = context['params']
@@ -1380,9 +1384,47 @@ class Operate(object):
         res = res['result']
 
         res = {'res': res, 'path': path}
-        rpc.DoCall('ECY#code_lens#Do', [res])
+        rpc.DoCall('ECY#code_lens#Do', [res])  # }}}
 
-    def PrepareCallHierarchy(self, context):
+    def _build_hierarchy(self, res):  # {{{
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
+            res = []
+
+        self.hierarchy_res = res  # cache it
+
+        to_show = []
+        i = 0
+        for item in res:
+            info = item
+            if 'from' in item:
+                info = item['from']
+            elif 'to' in item:
+                info = item['to']
+
+            detail = ''
+            if 'detail' in info:
+                detail = info['detail']
+            to_show.append({
+                'abbr': [
+                    info['name'],
+                    self._lsp.GetSymbolsKindByNumber(info['kind']), detail
+                ],
+                'path':
+                self._lsp.UriToPath(info['uri']),
+                'range':
+                info['range'],
+                'item_index':
+                i
+            })
+            i += 1
+        rpc.DoCall('ECY#hierarchy#Start_res', [to_show])  # }}}
+
+    def PrepareCallHierarchy(self, context):  # {{{
         params = context['params']
         if 'callHierarchyProvider' not in self.capabilities:
             self._show_not_support_msg('PrepareCallHierarchy')
@@ -1395,11 +1437,27 @@ class Operate(object):
             'character': start_position['colum']
         }
         res = self._lsp.prepareCallHierarchy(position, uri).GetResponse()
-        if 'error' in res:
-            self._show_msg(res['error']['message'])
-            return
+        self._build_hierarchy(res)  # }}}
 
-    def _rename_callabck(self, context):
+    def IncomingCalls(self, context):  # {{{
+        params = context['params']
+        item_index = params['item_index']
+        if item_index >= len(self.hierarchy_res):
+            return
+        item_index = self.hierarchy_res[item_index]
+        res = self._lsp.IncomingCallHierarchy(item_index).GetResponse()
+        self._build_hierarchy(res)  # }}}
+
+    def OutgoingCalls(self, context):  # {{{
+        params = context['params']
+        item_index = params['item_index']
+        if item_index >= len(self.hierarchy_res):
+            return
+        item_index = self.hierarchy_res[item_index]
+        res = self._lsp.OutgoingCallHierarchy(item_index).GetResponse()
+        self._build_hierarchy(res)  # }}}
+
+    def _rename_callabck(self, context):  # {{{
         if 'rename_id' not in context or context[
                 'rename_id'] not in self.rename_info:
             return
@@ -1408,9 +1466,9 @@ class Operate(object):
             pass  # return
         else:
             rpc.DoCall('ECY#code_action#ApplyEdit', [rename_info['res']])
-        del self.rename_info[context['rename_id']]
+        del self.rename_info[context['rename_id']]  # }}}
 
-    def Rename(self, context):
+    def Rename(self, context):  # {{{
         if 'renameProvider' not in self.capabilities:
             self._show_not_support_msg('Rename')
             return
@@ -1446,4 +1504,4 @@ class Operate(object):
         self.rename_info[self.rename_id] = rename_info
         del self.rename_info[self.rename_id]  # for now
         res = workspace_edit.WorkspaceEdit(res)
-        self._do_action(res)
+        self._do_action(res)  # }}}

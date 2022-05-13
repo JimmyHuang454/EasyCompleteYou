@@ -83,6 +83,7 @@ function! s:AllCommand() abort
         \'ECYGotoImplementation': {'des': 'Provide by LS.'},
         \'ECYGotoDeclaration': {'des': 'Provide by LS.'},
         \'ECYGotoTypeDefinition': {'des': 'Provide by LS.'},
+        \'ECYCallHierarchy': {'des': 'Provide by LS.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
@@ -126,6 +127,7 @@ command! -nargs=0 ECYFold               call ECY2_main#FoldingRange()
 command! -nargs=0 ECYFindReference      call ECY2_main#FindReferences()
 command! -nargs=0 ECYDiagnosticsAll     call ECY#diagnostics#ShowSelecting(0)
 command! -nargs=0 ECYDiagnostics        call ECY#diagnostics#ShowSelecting(1)
+command! -nargs=0 ECYCallHierarchy      call ECY#hierarchy#Start()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "

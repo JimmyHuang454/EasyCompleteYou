@@ -405,11 +405,7 @@ class LSP(conec.Operate):
         return self._build_send(params, 'textDocument/formatting')
 
     def codeLens(self, uri):
-        params = {
-            'textDocument': {
-                'uri': uri
-            }
-        }
+        params = {'textDocument': {'uri': uri}}
         return self._build_send(params, 'textDocument/codeLens')
 
     def onTypeFormatting(self,
@@ -534,11 +530,7 @@ class LSP(conec.Operate):
             params['context'] = context
         return self._build_send(params, 'textDocument/signatureHelp')
 
-    def references(self,
-                   position,
-                   uri,
-                   includeDeclaration=True,
-                   query=""):
+    def references(self, position, uri, includeDeclaration=True, query=""):
         params = {
             'textDocument': {
                 'uri': uri
@@ -569,6 +561,14 @@ class LSP(conec.Operate):
     def prepareCallHierarchy(self, position, uri):
         params = {'textDocument': {'uri': uri}, 'position': position}
         return self._build_send(params, 'textDocument/prepareCallHierarchy')
+
+    def IncomingCallHierarchy(self, CallHierarchyItem):
+        params = {'item': CallHierarchyItem}
+        return self._build_send(params, 'callHierarchy/incomingCalls')
+
+    def OutgoingCallHierarchy(self, CallHierarchyItem):
+        params = {'item': CallHierarchyItem}
+        return self._build_send(params, 'callHierarchy/outgoingCalls')
 
     def documentLink(self, uri):
         params = {'textDocument': {'uri': uri}}
