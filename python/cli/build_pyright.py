@@ -1,8 +1,13 @@
+import json
+
 with open('./node_modules/pyright/package.json', 'r') as f:
     content = f.read()
-    content = content.replace('"index.js"', '"langserver.index.js"')
+    content = json.loads(content)
     f.close()
 
+content['bin']['pyright'] = 'langserver.index.js'
+content['pkg'] = {"assets": ["dist/*"]}
+
 with open('./node_modules/pyright/package.json', 'w') as f:
-    f.write(content)
+    f.write(json.dumps(content))
     f.close()
