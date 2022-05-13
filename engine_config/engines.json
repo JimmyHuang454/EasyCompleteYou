@@ -66,6 +66,7 @@
   }, {
     "file_type": ["lua"],
     "disabled": false,
+    "installer_path": "ECY_installer.installer.lua",
     "engine_name": "ECY_engines.lua.lua"
   }, {
     "file_type": ["all"],

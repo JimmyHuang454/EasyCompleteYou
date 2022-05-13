@@ -59,22 +59,6 @@ let g:ECY_client_main_path = g:ECY_python_script_folder_dir . '/client_main.py'
 let g:ECY_source_folder_dir = g:ECY_base_dir . '/engines'
 let g:ECY_client_main_path = printf("%s/ECY_%s.exe", g:ECY_python_script_folder_dir, g:os)
 
-function! s:Goto(types, is_preview) abort
-"{{{
-  if a:types == 'definitions' || a:types == 'definition'
-    call ECY2_main#Goto('', 'GotoDefinition', a:is_preview)
-  elseif a:types == 'declaration'
-    call ECY2_main#Goto('', 'GotoDeclaration', a:is_preview)
-  elseif a:types == 'implementation'
-    call ECY2_main#Goto('', 'GotoImplementation', a:is_preview)
-  elseif a:types == 'typeDefinition' || a:types == 'type_definition'
-    call ECY2_main#Goto('', 'GotoTypeDefinition', a:is_preview)
-  else
-    echo a:types
-  endif
-"}}}
-endfunction
-
 "{{{
 function! s:DoCommand(res) abort
   if a:res != {}
@@ -95,10 +79,14 @@ function! s:AllCommand() abort
         \'ECYFindReference': {'des': 'Provide by LS.'},
         \'ECYDiagnostics': {'des': 'Provide by LS.'},
         \'ECYDiagnosticsAll': {'des': 'Provide by LS.'},
+        \'ECYGotoDefinition': {'des': 'Provide by LS.'},
+        \'ECYGotoImplementation': {'des': 'Provide by LS.'},
+        \'ECYGotoDeclaration': {'des': 'Provide by LS.'},
+        \'ECYGotoTypeDefinition': {'des': 'Provide by LS.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
-    call add(l:res, {'abbr': [item, item['des']], 'cmd': item})
+    call add(l:res, {'abbr': [item], 'cmd': item})
   endfor
   call ECY#qf#Open(l:res, {'action': {'open#current_buffer': function('s:DoCommand')}})
 endfunction
@@ -115,27 +103,29 @@ vmap ae <ESC>:ECYSeleteRangeParent<CR>
 vmap ar <ESC>:ECYSeleteRangeParent<CR>
 vmap at <ESC>:ECYSeleteRangeChild<CR>
 
-command! -nargs=0 ECY                  call s:AllCommand()
-command! -nargs=* ECYGoto              call s:Goto(<q-args>, 0)
-command! -nargs=* ECYGotoP             call s:Goto(<q-args>, 1)
-command! -nargs=0 ECYHover             call ECY2_main#Hover()
-command! -nargs=0 ECYFormat            call ECY2_main#Format()
-command! -nargs=0 ECYRename            call ECY2_main#Rename()
-command! -nargs=0 ECYReStart           call ECY2_main#ReStart()
-command! -nargs=* ECYInstallLS         call ECY2_main#InstallLS(<q-args>)
-command! -nargs=* ECYUnInstallLS       call ECY2_main#UnInstallLS(<q-args>)
-command! -nargs=0 ECYDocSymbol         call ECY2_main#GetDocumentSymbol()
-command! -nargs=0 ECYDocSymbols        call ECY2_main#GetDocumentSymbol()
-command! -nargs=0 ECYSymbol            call ECY2_main#GetWorkSpaceSymbol()
-command! -nargs=0 ECYSymbols           call ECY2_main#GetWorkSpaceSymbol()
-command! -nargs=0 ECYSeleteRange       call ECY2_main#SeleteRange()
-command! -nargs=0 ECYSeleteRangeParent call ECY#selete_range#Parent()
-command! -nargs=0 ECYSeleteRangeChild  call ECY#selete_range#Child()
-command! -nargs=0 ECYFoldLine          call ECY2_main#FoldingRangeCurrentLine()
-command! -nargs=0 ECYFold              call ECY2_main#FoldingRange()
-command! -nargs=0 ECYFindReference     call ECY2_main#FindReferences()
-command! -nargs=0 ECYDiagnosticsAll    call ECY#diagnostics#ShowSelecting(0)
-command! -nargs=0 ECYDiagnostics       call ECY#diagnostics#ShowSelecting(1)
+command! -nargs=0 ECY                   call s:AllCommand()
+command! -nargs=* ECYGotoDefinition     call ECY2_main#Goto('', 'GotoDefinition', 0)
+command! -nargs=* ECYGotoDeclaration    call ECY2_main#Goto('', 'GotoDeclaration', 0)
+command! -nargs=* ECYGotoImplementation call ECY2_main#Goto('', 'GotoImplementation', 0)
+command! -nargs=* ECYGotoTypeDefinition call ECY2_main#Goto('', 'GotoTypeDefinition', 0)
+command! -nargs=0 ECYHover              call ECY2_main#Hover()
+command! -nargs=0 ECYFormat             call ECY2_main#Format()
+command! -nargs=0 ECYRename             call ECY2_main#Rename()
+command! -nargs=0 ECYReStart            call ECY2_main#ReStart()
+command! -nargs=* ECYInstallLS          call ECY2_main#InstallLS(<q-args>)
+command! -nargs=* ECYUnInstallLS        call ECY2_main#UnInstallLS(<q-args>)
+command! -nargs=0 ECYDocSymbol          call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYDocSymbols         call ECY2_main#GetDocumentSymbol()
+command! -nargs=0 ECYSymbol             call ECY2_main#GetWorkSpaceSymbol()
+command! -nargs=0 ECYSymbols            call ECY2_main#GetWorkSpaceSymbol()
+command! -nargs=0 ECYSeleteRange        call ECY2_main#SeleteRange()
+command! -nargs=0 ECYSeleteRangeParent  call ECY#selete_range#Parent()
+command! -nargs=0 ECYSeleteRangeChild   call ECY#selete_range#Child()
+command! -nargs=0 ECYFoldLine           call ECY2_main#FoldingRangeCurrentLine()
+command! -nargs=0 ECYFold               call ECY2_main#FoldingRange()
+command! -nargs=0 ECYFindReference      call ECY2_main#FindReferences()
+command! -nargs=0 ECYDiagnosticsAll     call ECY#diagnostics#ShowSelecting(0)
+command! -nargs=0 ECYDiagnostics        call ECY#diagnostics#ShowSelecting(1)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "

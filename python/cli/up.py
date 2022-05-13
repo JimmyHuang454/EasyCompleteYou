@@ -5,6 +5,7 @@ import shutil
 import time
 import zipfile
 import gzip
+import tarfile
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 BASE_DIR = BASE_DIR.replace('\\', '/')
@@ -133,19 +134,25 @@ for dirs, _, files in os.walk(BASE_DIR + '/lua'):
         output_path = BASE_DIR + '/exes/'
         if item.find('linux') != -1 and item.find('x64') != -1:
             output_path += 'ECY_lua_Linux'
-        elif item.find('win') != -1 and item.find('x64') != -1:
+        elif item.find('win32') != -1 and item.find('x64') != -1:
             output_path += 'ECY_lua_Windows'
         elif item.find('darwin') != -1 and item.find('x64') != -1:
             output_path += 'ECY_lua_macOS'
         else:
             continue
 
-        if item.endswith('gz'):
+        if item.endswith('.tar.gz'):
             output_path += '.tar.gz'
-        if item.endswith('zip'):
+        if item.endswith('.zip'):
             output_path += '.zip'
         os.rename(handling_files, output_path)
         print(output_path)
+
+
+def UnTarGz(file_path: str, output_dir: str) -> str:
+    temp = tarfile.open(file_path)
+    temp.extractall(output_dir)
+    temp.close()
 
 
 def UnGz(file_name: str) -> str:
@@ -166,15 +173,14 @@ for dirs, _, files in os.walk(BASE_DIR + '/exes'):
         server_name = temp[1]
         platform = temp[2].split('.')[0]
 
-        print(server_name)
-        print(server_name)
-
         arch = NewArchieve(platform, server_name)
 
         handling_files = dirs + '/' + item
         output_dir = arch + '/ECY_exe'
         if zipfile.is_zipfile(handling_files):
             zipfile.ZipFile(handling_files).extractall(output_dir)
+        elif handling_files.endswith('.tar.gz'):
+            UnTarGz(handling_files, output_dir)
         elif handling_files.endswith('.gz'):
             MoveFile(UnGz(handling_files), output_dir)
         else:
