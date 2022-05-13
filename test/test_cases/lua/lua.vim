@@ -13,7 +13,7 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call ECY#utils#OpenFileAndMove(14, 13, g:test_cpp, 'h')
+    call ECY#utils#OpenFileAndMove(14, 12, g:test_cpp, 'h')
     call OutputLine(ECY#utils#GetCurrentBufferContent())
     call OutputLine(ECY#utils#GetCurrentLine())
     let &ft = 'lua'
