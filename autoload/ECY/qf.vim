@@ -1,4 +1,5 @@
 fun! ECY#qf#Init()
+"{{{
   let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), &lines]
   let g:ECY_qf_res = []
@@ -28,6 +29,7 @@ fun! ECY#qf#Init()
   let s:MAX_TO_SHOW = 18
 
   let s:qf_preview = easy_windows#new()
+"}}}
 endf
 
 function! s:GetRes() abort
@@ -131,7 +133,11 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
       continue
     endif
 
-    let l:abbr = item['abbr']
+    let l:abbr = ''
+    for item2 in item['abbr']
+      let l:abbr .= item2['value'] . ' '
+    endfor
+
     let l:abbr_len = len(l:abbr)
     if l:abbr_len < len(a:patten) || l:abbr_len == 0
       continue
@@ -169,8 +175,8 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
 "}}}
 endfunction"}}}
 
-fun! s:UpdateRes() abort
-  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:qf_input['input_value'], 'abbr')
+fun! s:UpdateRes(input_value) abort
+  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, a:input_value, 'abbr')
   call s:RenderRes(s:fz_res)
   call s:UpdatePreview()
 endf
@@ -200,13 +206,40 @@ endf
 
 fun! s:RenderRes(fz_res) abort
 "{{{
-  let l:MATCH_HL = 'ECY_floating_windows_normal_matched'
+  let l:MATCH_HL = 'Search'
   let l:to_show = []
   if len(a:fz_res) <= s:selecting_item_index || s:selecting_item_index < 0
     let s:selecting_item_index = 0
   endif
-  let i = 0
   call s:qf_res._delete_match(l:MATCH_HL)
+  call s:qf_res._delete_match('Error')
+
+  let l:max_len = {}
+
+  let i = 0
+  for item in a:fz_res
+    if i == s:MAX_TO_SHOW
+      break
+    endif
+
+    let j = 0
+    for item2 in item['abbr']
+      let l:value_len = len(item2['value'])
+      if !has_key(l:max_len, j)
+        let l:max_len[j] = l:value_len
+      endif
+
+      if l:max_len[j] < l:value_len
+        let l:max_len[j] = l:value_len
+      endif
+
+      let j += 1
+    endfor
+
+    let i += 1
+  endfor
+
+  let i = 0
   for item in a:fz_res
     if i == s:MAX_TO_SHOW
       break
@@ -215,7 +248,21 @@ fun! s:RenderRes(fz_res) abort
     if i == s:selecting_item_index
       let l:prev_mark = '> '
     endif
-    call add(l:to_show, l:prev_mark . item['abbr'])
+
+    let l:temp = ''
+    let j = 0
+    for item2 in item['abbr']
+      let l:diff = l:max_len[j] - len(item2['value']) + 1
+      let l:temp .= item2['value']
+      let k = 0
+      while k < l:diff
+        let l:temp .= ' '
+        let k += 1
+      endw
+      let j += 1
+    endfor
+
+    call add(l:to_show, l:prev_mark . l:temp)
     let i += 1
   endfor
   call s:qf_res._set_text(l:to_show)
@@ -235,6 +282,11 @@ fun! s:RenderRes(fz_res) abort
     endfor
     let i += 1
   endfor
+
+  if len(a:fz_res) == 0
+    call s:qf_res._set_text(['Empty Result.'])
+    call s:qf_res._add_match('Error', [[1]])
+  endif
 "}}}
 endf
 
@@ -244,15 +296,64 @@ fun! ECY#qf#Close() abort
   return 1
 endf
 
+function! Input(opts) abort
+"{{{
+   let l:input = ''
+   let l:key_map = has_key(a:opts, 'key_map') ? a:opts['key_map'] : {}
+
+   while 1
+      redraw
+      echohl Constant
+      echon '>> '
+      echohl Normal
+      echon l:input
+
+      let l:char_nr = getchar()
+      let l:char = nr2char(l:char_nr)
+      if  l:char_nr == "\<BS>"
+         let l:char = "\<BS>"
+      endif
+
+      if l:char == "\<BS>"
+         let l:value_len = len(l:input)
+         if l:value_len > 1
+           let l:input = l:input[0 : l:value_len - 2]
+         else
+           let l:input = ''
+         endif
+      elseif l:char == "\<C-u>"
+         let l:input = ''
+      elseif has_key(l:key_map, l:char) && has_key(l:key_map[l:char], 'callback')
+         let l:res = l:key_map[l:char]['callback']()
+         if l:res == 1
+           break
+         endif
+      elseif l:char == "\<ESC>"
+         break
+      else
+         let l:input .= l:char
+      endif
+
+      if has_key(a:opts, 'input_cb')
+         call a:opts['input_cb'](l:input)
+      endif
+   endw
+
+   if has_key(a:opts, 'exit_cb')
+      call a:opts['exit_cb']()
+   endif
+"}}}
+endfunction
+
 fun! s:ECYQF(lists, opts) abort
 "{{{
   let s:selecting_item_index = 0
   let s:qf_res = easy_windows#new()
   call s:qf_res._open([], {'at_cursor': 0, 
-        \'width': g:ECY_qf_layout[0],
-        \'height': g:ECY_qf_layout[1],
+        \'width': &columns,
+        \'height': 10,
         \'x': 1,
-        \'y': 2,
+        \'y': &lines - 10,
         \'use_border': 0})
 
   let g:ECY_qf_res = a:lists
@@ -270,14 +371,10 @@ fun! s:ECYQF(lists, opts) abort
     let l:temp_map[g:ECY_action_map[item]] = l:temp
   endfor
 
-  let s:qf_input = easy_windows#new_input({'x': 1, 'y': 1, 
-        \'height': 1,
-        \'width': g:ECY_qf_layout[0],
-        \'input_cb': function('s:UpdateRes'), 
+  call Input({'input_cb': function('s:UpdateRes'), 
         \'exit_cb': function('ECY#qf#Close'),
         \'key_map': l:temp_map,
         \'use_border': 0})
-  call s:qf_input._input()
 "}}}
 endf
 
@@ -293,7 +390,8 @@ function! s:Open_cb(lists, opts, timer_id) abort
   endif
 
   if exists('g:leaderf_loaded')
-    call g:LeaderfECY_Start()
+    call s:ECYQF(g:ECY_qf_res, a:opts)
+    " call g:LeaderfECY_Start()
   elseif exists('g:loaded_clap')
     execute "Clap ECY"
   else
