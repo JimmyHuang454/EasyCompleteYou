@@ -273,13 +273,30 @@ fun! s:RenderRes(fz_res) abort
       break
     endif
 
-    if !has_key(item, 'match_pos')
-      continue
+    let l:start_pos = {}
+    let j = 0
+    for item2 in item['abbr']
+      if !has_key(l:start_pos, j)
+        let k = 0
+        let l:temp = 0
+        while k < j
+          let l:temp += l:max_len[k] + 1
+          let k += 1
+        endw
+        let l:start_pos[j] = l:temp
+      endif
+      if has_key(item2, 'hl')
+        call s:qf_res._add_match(item2['hl'], [[i + 1, l:start_pos[j] + 3, len(item2['value'])]])
+      endif
+      let j += 1
+    endfor
+
+    if has_key(item, 'match_pos')
+      for pos in item['match_pos']
+        call s:qf_res._add_match(l:MATCH_HL, [[i + 1, pos + 3]])
+      endfor
     endif
     
-    for pos in item['match_pos']
-      call s:qf_res._add_match(l:MATCH_HL, [[i + 1, pos + 3]])
-    endfor
     let i += 1
   endfor
 
