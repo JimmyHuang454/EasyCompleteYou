@@ -204,6 +204,24 @@ function! IsInList(item, list) abort
   "}}}
 endfunction
 
+function ECY#utils#IsUpperChar(char) abort
+  "{{{
+  if toupper(a:char) == a:char
+    return 1
+  endif
+  return 0
+  "}}}
+endfunction
+
+function ECY#utils#IsLowerChar(char) abort
+  "{{{
+  if tolower(a:char) == a:char
+    return 1
+  endif
+  return 0
+  "}}}
+endfunction
+
 function! ECY#utils#MoveToBuffer(line, colum, file_path, windows_to_show) abort
   "{{{ move cursor to windows, in normal mode
   " a:colum is 0-based

@@ -500,11 +500,14 @@ class Operate(object):
                     temp['range'] = item['location']['range']
             else:
                 temp = {
-                    'abbr': [
-                        item['name'],
-                        self._lsp.GetSymbolsKindByNumber(item['kind']),
-                        deprecated
-                    ],
+                    'abbr': [{
+                        'value': item['name']
+                    }, {
+                        'value':
+                        self._lsp.GetSymbolsKindByNumber(item['kind'])
+                    }, {
+                        'value': deprecated
+                    }],
                     'range':
                     item['range'],
                     'path':

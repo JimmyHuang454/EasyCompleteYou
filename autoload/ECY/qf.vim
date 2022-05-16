@@ -28,6 +28,7 @@ fun! ECY#qf#Init()
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 18
   let s:input_value = ''
+  let s:added_hl = []
 
   let s:qf_preview = easy_windows#new()
 "}}}
@@ -129,15 +130,16 @@ endfunc
 function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
 "{{{
   let l:res = []
+  let l:patten = tolower(a:patten)
   for item in a:items
     if !has_key(item, a:filter_item)
       continue
     endif
 
-    let l:abbr = item[a:filter_item]
+    let l:abbr = tolower(item[a:filter_item])
 
     let l:abbr_len = len(l:abbr)
-    if l:abbr_len < len(a:patten) || l:abbr_len == 0
+    if l:abbr_len < len(l:patten) || l:abbr_len == 0
       continue
     endif
 
@@ -146,12 +148,12 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
     let l:goal = 0
     let l:match_pos = []
     let l:is_matched = v:true
-    while i < len(a:patten)
+    while i < len(l:patten)
       if j == l:abbr_len
         let l:is_matched = v:false
         break
       endif
-      let l:temp = s:FindFirstChar(l:abbr[j:], a:patten[i])
+      let l:temp = s:FindFirstChar(l:abbr[j:], l:patten[i])
       if l:temp == -1
         let l:is_matched = v:false
         break
@@ -177,7 +179,7 @@ fun! s:UpdateRes(input_value) abort
   let s:input_value = a:input_value
   let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:input_value, 'abbr_all')
   call s:RenderRes(s:fz_res)
-  call s:UpdatePreview()
+  " call s:UpdatePreview()
 endf
 
 fun! s:UpdatePreview() abort
@@ -212,6 +214,11 @@ fun! s:RenderRes(fz_res) abort
   endif
   call s:qf_res._delete_match(l:MATCH_HL)
   call s:qf_res._delete_match('Error')
+  for item in s:added_hl
+    call s:qf_res._delete_match(item)
+  endfor
+
+  let s:added_hl = []
 
   let l:max_len = {}
 
@@ -268,9 +275,12 @@ fun! s:RenderRes(fz_res) abort
     call add(l:to_show_res, item)
     let i += 1
   endfor
-  call s:qf_res._set_text(l:to_show)
 
-  call ECY#qf#FuzzyMatch(l:to_show_res, s:input_value, 'abbr_all2')
+  if s:input_value != ''
+    call ECY#qf#FuzzyMatch(l:to_show_res, s:input_value, 'abbr_all2')
+  endif
+
+  call s:qf_res._set_text(l:to_show)
 
   let i = 0
   for item in l:to_show_res
@@ -288,6 +298,9 @@ fun! s:RenderRes(fz_res) abort
       endif
       if has_key(item2, 'hl')
         call s:qf_res._add_match(item2['hl'], [[i + 1, l:start_pos[j] + 3, len(item2['value'])]])
+        if !IsInList(item2['hl'], s:added_hl)
+          call add(s:added_hl, item2['hl'])
+        endif
       endif
       let j += 1
     endfor
@@ -311,10 +324,12 @@ endf
 fun! ECY#qf#Close() abort
   call s:qf_res._close()
   call s:qf_preview._close()
+  let s:input_value = ''
+  let s:added_hl = []
   return 1
 endf
 
-function! Input(opts) abort
+function! s:Input(opts) abort
 "{{{
    let l:input = ''
    let l:key_map = has_key(a:opts, 'key_map') ? a:opts['key_map'] : {}
@@ -365,6 +380,9 @@ endfunction
 
 fun! s:ECYQF(lists, opts) abort
 "{{{
+  let s:input_value = ''
+  let s:added_hl = []
+
   let s:selecting_item_index = 0
   let s:qf_res = easy_windows#new()
   call s:qf_res._open([], {'at_cursor': 0, 
@@ -386,7 +404,7 @@ fun! s:ECYQF(lists, opts) abort
 
   let s:fz_res = g:ECY_qf_res
 
-  call s:RenderRes(g:ECY_qf_res)
+  call s:UpdateRes('')
 
   let l:temp_map = {}
   for item in keys(g:ECY_action_map)
@@ -399,7 +417,9 @@ fun! s:ECYQF(lists, opts) abort
     let l:temp_map[g:ECY_action_map[item]] = l:temp
   endfor
 
-  call Input({'input_cb': function('s:UpdateRes'), 
+
+
+  call s:Input({'input_cb': function('s:UpdateRes'), 
         \'exit_cb': function('ECY#qf#Close'),
         \'key_map': l:temp_map,
         \'use_border': 0})

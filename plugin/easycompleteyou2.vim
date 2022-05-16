@@ -87,7 +87,7 @@ function! s:AllCommand() abort
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
-    call add(l:res, {'abbr': [item], 'cmd': item})
+    call add(l:res, {'abbr': [{'value': item}], 'cmd': item})
   endfor
   call ECY#qf#Open(l:res, {'action': {'open#current_buffer': function('s:DoCommand')}})
 endfunction
