@@ -437,14 +437,7 @@ function! s:Open_cb(lists, opts, timer_id) abort
     endfor
   endif
 
-  if exists('g:leaderf_loaded')
-    call s:ECYQF(g:ECY_qf_res, a:opts)
-    " call g:LeaderfECY_Start()
-  elseif exists('g:loaded_clap')
-    execute "Clap ECY"
-  else
-    call s:ECYQF(g:ECY_qf_res, a:opts)
-  endif
+  call s:ECYQF(g:ECY_qf_res, a:opts)
 "}}}
 endfunction
 

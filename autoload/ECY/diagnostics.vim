@@ -569,7 +569,10 @@ function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
     let l:kind = item['kind'] == 1 ? 'Error' : 'Warn'
     let l:pos = item['position']['range']
     let l:pos = printf("[L-%s, C-%s]", l:pos['start']['line'], l:pos['start']['colum'])
-    call add(l:res, {'abbr': [l:pos, l:kind, l:msg], 'path': item['file_path'], 'range': item['range']})
+    let l:kind_color = item['kind'] == 1 ? 'ErrorMsg' : 'WarningMsg'
+    call add(l:res, {'abbr': [
+          \{'value': l:kind, 'hl': l:kind_color}, {'value': l:msg}, {'value': l:pos}], 
+          \'path': item['file_path'], 'range': item['range']})
   endfor
 
   call ECY#qf#Open(l:res, {})
