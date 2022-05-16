@@ -483,36 +483,29 @@ class Operate(object):
             if ('deprecated' in item and item['deprecated']) or 'tags' in item:
                 deprecated = 'deprecated'
 
+            temp = {
+                'abbr': [{
+                    'value': item['name']
+                }, {
+                    'value':
+                    self._lsp.GetSymbolsKindByNumber(item['kind'])
+                }, {
+                    'value': deprecated
+                }],
+                'path':
+                self._lsp.UriToPath(uri)
+            }
             if 'location' in item:
                 containerName = ''
                 if 'containerName' in item:
                     containerName = item['containerName']
-                temp = {
-                    'abbr': [
-                        item['name'],
-                        self._lsp.GetSymbolsKindByNumber(item['kind']),
-                        deprecated, containerName
-                    ],
-                    'path':
-                    self._lsp.UriToPath(item['location']['uri'])
-                }
+                temp['abbr'].append({'value': containerName})
                 if 'range' in item['location']:
                     temp['range'] = item['location']['range']
+                temp['path'] = self._lsp.UriToPath(item['location']['uri'])
             else:
-                temp = {
-                    'abbr': [{
-                        'value': item['name']
-                    }, {
-                        'value':
-                        self._lsp.GetSymbolsKindByNumber(item['kind'])
-                    }, {
-                        'value': deprecated
-                    }],
-                    'range':
-                    item['range'],
-                    'path':
-                    self._lsp.UriToPath(uri)
-                }
+                temp['range'] = item['range']
+
             to_show.append(temp)
             if 'children' in item:
                 to_show.extend(
