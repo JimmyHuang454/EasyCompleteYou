@@ -571,7 +571,7 @@ function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
     let l:pos = printf("[L-%s, C-%s]", l:pos['start']['line'], l:pos['start']['colum'])
     let l:kind_color = item['kind'] == 1 ? 'ErrorMsg' : 'WarningMsg'
     call add(l:res, {'abbr': [
-          \{'value': l:kind, 'hl': l:kind_color}, {'value': l:msg}, {'value': l:pos}], 
+          \{'value': l:kind, 'hl': l:kind_color}, {'value': l:msg}, {'value': l:pos, 'hl': 'LineNr'}], 
           \'path': item['file_path'], 'range': item['range']})
   endfor
 

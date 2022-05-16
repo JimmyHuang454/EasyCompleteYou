@@ -274,12 +274,15 @@ fun! ECY#engine#Show()
   let l:to_show = []
   for item in g:ECY_all_buildin_engine
     let l:has_installer = has_key(item, 'installer_path') ? '!' : '~'
-    let l:is_installed = has_key(item, 'installer_path') ? '√' : '-'
+    let l:is_installed = has_key(item, 'installer_path') ? 'Y' : 'N'
+    let l:is_install_color = has_key(item, 'installer_path') ? 'Todo' : 'Error'
     if has_key(item, 'disabled') && item['disabled']
       continue
     endif
     call add(l:to_show, {'abbr': 
-          \[l:is_installed, item['engine_name'], l:has_installer],
+          \[{'value': l:is_installed, 'hl': l:is_install_color}, 
+          \{'value': item['engine_name']}, 
+          \],
           \'engine_name': item['engine_name']})
   endfor
 
