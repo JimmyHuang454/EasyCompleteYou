@@ -27,6 +27,7 @@ fun! ECY#qf#Init()
 
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 18
+  let s:input_value = ''
 
   let s:qf_preview = easy_windows#new()
 "}}}
@@ -133,10 +134,7 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
       continue
     endif
 
-    let l:abbr = ''
-    for item2 in item['abbr']
-      let l:abbr .= item2['value'] . ' '
-    endfor
+    let l:abbr = item[a:filter_item]
 
     let l:abbr_len = len(l:abbr)
     if l:abbr_len < len(a:patten) || l:abbr_len == 0
@@ -176,7 +174,8 @@ function! ECY#qf#FuzzyMatch(items, patten, filter_item) abort
 endfunction"}}}
 
 fun! s:UpdateRes(input_value) abort
-  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, a:input_value, 'abbr')
+  let s:input_value = a:input_value
+  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:input_value, 'abbr_all')
   call s:RenderRes(s:fz_res)
   call s:UpdatePreview()
 endf
@@ -239,6 +238,7 @@ fun! s:RenderRes(fz_res) abort
     let i += 1
   endfor
 
+  let l:to_show_res = []
   let i = 0
   for item in a:fz_res
     if i == s:MAX_TO_SHOW
@@ -262,17 +262,18 @@ fun! s:RenderRes(fz_res) abort
       let j += 1
     endfor
 
+    let item['abbr_all2'] = l:temp
+
     call add(l:to_show, l:prev_mark . l:temp)
+    call add(l:to_show_res, item)
     let i += 1
   endfor
   call s:qf_res._set_text(l:to_show)
 
-  let i = 0
-  for item in a:fz_res
-    if i == s:MAX_TO_SHOW
-      break
-    endif
+  call ECY#qf#FuzzyMatch(l:to_show_res, s:input_value, 'abbr_all2')
 
+  let i = 0
+  for item in l:to_show_res
     let l:start_pos = {}
     let j = 0
     for item2 in item['abbr']
@@ -374,7 +375,17 @@ fun! s:ECYQF(lists, opts) abort
         \'use_border': 0})
 
   let g:ECY_qf_res = a:lists
+
+  for item in g:ECY_qf_res
+    let l:abbr = ''
+    for item2 in item['abbr']
+      let l:abbr .= item2['value']
+    endfor
+    let item['abbr_all'] = l:abbr
+  endfor
+
   let s:fz_res = g:ECY_qf_res
+
   call s:RenderRes(g:ECY_qf_res)
 
   let l:temp_map = {}
