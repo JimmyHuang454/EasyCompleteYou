@@ -1420,12 +1420,13 @@ class Operate(object):
             detail = ''
             if 'detail' in info:
                 detail = info['detail']
-            kind = self._build_symbol_kind_item(item)
+            kind = self._build_symbol_kind_item(info)
             to_show.append({
                 'abbr': [{
                     'value': info['name']
                 }, kind, {
-                    'value': detail
+                    'value': detail,
+                    'hl': 'Comment'
                 }],
                 'path':
                 self._lsp.UriToPath(info['uri']),
@@ -1452,21 +1453,24 @@ class Operate(object):
         res = self._lsp.prepareCallHierarchy(position, uri).GetResponse()
         self._build_hierarchy(res)  # }}}
 
-    def IncomingCalls(self, context):  # {{{
-        params = context['params']
+    def _get_hierarachy_item(self, params):  # {{{
         item_index = params['item_index']
         if item_index >= len(self.hierarchy_res):
-            return
+            return {}
         item_index = self.hierarchy_res[item_index]
+        if 'from' in item_index:
+            item_index = item_index['from']
+        elif 'to' in item_index:
+            item_index = item_index['to']
+        return item_index  # }}}
+
+    def IncomingCalls(self, context):  # {{{
+        item_index = self._get_hierarachy_item(context['params'])
         res = self._lsp.IncomingCallHierarchy(item_index).GetResponse()
         self._build_hierarchy(res)  # }}}
 
     def OutgoingCalls(self, context):  # {{{
-        params = context['params']
-        item_index = params['item_index']
-        if item_index >= len(self.hierarchy_res):
-            return
-        item_index = self.hierarchy_res[item_index]
+        item_index = self._get_hierarachy_item(context['params'])
         res = self._lsp.OutgoingCallHierarchy(item_index).GetResponse()
         self._build_hierarchy(res)  # }}}
 

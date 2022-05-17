@@ -38,7 +38,6 @@ function! ECY#hierarchy#Start_res(res) abort
 "{{{
   let l:action = {
         \'open#vertically': function('s:Incoming'), 
-        \'open#new_tab': function('s:Incoming'), 
         \'open#horizontally': function('s:Outgoing')}
 
   call ECY#qf#Open(a:res, {'action': l:action})

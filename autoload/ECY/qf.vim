@@ -11,6 +11,8 @@ fun! ECY#qf#Init()
         \'open#horizontally': "\<C-x>",
         \'select#next': "\<C-j>",
         \'select#prev': "\<C-k>",
+        \'res#up': "\<C-h>",
+        \'res#down': "\<C-l>",
         \}
 
   let s:default_action_fuc = {
@@ -20,6 +22,8 @@ fun! ECY#qf#Init()
         \'open#horizontally': function('s:Open_horizontally'),
         \'select#next': function('s:NextItem'),
         \'select#prev': function('s:PrevItem'),
+        \'res#up': function('s:NextItem'),
+        \'res#down': function('s:PrevItem'),
         \}
 
   let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
