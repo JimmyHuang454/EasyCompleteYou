@@ -34,10 +34,18 @@ function! s:Outgoing(res) abort
 "}}}
 endfunction
 
+function! s:Prev(res) abort
+"{{{
+  call ECY#rpc#rpc_event#call({'event_name': 'RollUpHierarchy', 'params': {}})
+  return 1
+"}}}
+endfunction
+
 function! ECY#hierarchy#Start_res(res) abort
 "{{{
   let l:action = {
         \'open#vertically': function('s:Incoming'), 
+        \'res#up': function('s:Prev'), 
         \'open#horizontally': function('s:Outgoing')}
 
   call ECY#qf#Open(a:res, {'action': l:action})

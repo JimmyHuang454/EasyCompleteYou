@@ -82,7 +82,8 @@ class Operate(object):
         self.current_seleted_item = {}
         self.code_action_cache = None
         self.workspace_edit_undo = None
-        self.hierarchy_res = []
+        self.hierarchy_res_current = []
+        self.hierarchy_res_previous = []
 
         self._start_server()
         self._get_format_config()
@@ -1406,7 +1407,8 @@ class Operate(object):
         if res is None:
             res = []
 
-        self.hierarchy_res = res  # cache it
+        self.hierarchy_res_previous.append(res)
+        self.hierarchy_res_current = res  # cache it
 
         to_show = []
         i = 0
@@ -1438,6 +1440,14 @@ class Operate(object):
             i += 1
         rpc.DoCall('ECY#hierarchy#Start_res', [to_show])  # }}}
 
+    def RollUpHierarchy(self, context):  # {{{
+        if len(self.hierarchy_res_previous) > 1:
+            self.hierarchy_res_previous.pop()  # pop current res
+        if len(self.hierarchy_res_previous) != 0:
+            self._build_hierarchy(
+                {'result': self.hierarchy_res_previous.pop()})
+        # }}}
+
     def PrepareCallHierarchy(self, context):  # {{{
         params = context['params']
         if 'callHierarchyProvider' not in self.capabilities:
@@ -1450,14 +1460,15 @@ class Operate(object):
             'line': start_position['line'],
             'character': start_position['colum']
         }
+        self.hierarchy_res_previous = []  # clear res buffer
         res = self._lsp.prepareCallHierarchy(position, uri).GetResponse()
         self._build_hierarchy(res)  # }}}
 
     def _get_hierarachy_item(self, params):  # {{{
         item_index = params['item_index']
-        if item_index >= len(self.hierarchy_res):
+        if item_index >= len(self.hierarchy_res_current):
             return {}
-        item_index = self.hierarchy_res[item_index]
+        item_index = self.hierarchy_res_current[item_index]
         if 'from' in item_index:
             item_index = item_index['from']
         elif 'to' in item_index:
