@@ -69,6 +69,8 @@ class Operate(object):
 
         self.enabled_code_lens = rpc.GetVaribal('g:ECY_enable_code_lens')
 
+        self.symbols_color = utils.GetEngineConfig('ECY', 'symbols_color')
+
         self._did_open_list = {}
         self._diagnosis_cache = []
         self.results_list = []
@@ -483,17 +485,19 @@ class Operate(object):
             if ('deprecated' in item and item['deprecated']) or 'tags' in item:
                 deprecated = 'deprecated'
 
+            kind = self._lsp.GetSymbolsKindByNumber(item['kind'])
+            if kind in self.symbols_color:
+                kind = {'value': kind, 'hl': self.symbols_color[kind]}
+            else:
+                kind = {'value': kind}
+
             temp = {
                 'abbr': [{
                     'value': item['name']
-                }, {
-                    'value':
-                    self._lsp.GetSymbolsKindByNumber(item['kind'])
-                }, {
+                }, kind, {
                     'value': deprecated
                 }],
-                'path':
-                self._lsp.UriToPath(uri)
+                'path': self._lsp.UriToPath(uri)
             }
             if 'location' in item:
                 containerName = ''
@@ -1357,9 +1361,16 @@ class Operate(object):
             show_range = "[L-%s, C-%s]" % (range['start']['line'],
                                            range['start']['character'])
             to_show.append({
-                'abbr': [path, show_range],
-                'path': path,
-                'range': range
+                'abbr': [{
+                    'value': path
+                }, {
+                    'value': show_range,
+                    'hl': 'LineNr'
+                }],
+                'path':
+                path,
+                'range':
+                range
             })
         rpc.DoCall('ECY#qf#Open', [to_show, {}])
 

@@ -26,7 +26,7 @@ fun! ECY#qf#Init()
   let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
 
   let s:selecting_item_index = 0
-  let s:MAX_TO_SHOW = 18
+  let s:MAX_TO_SHOW = 15
   let s:input_value = ''
   let s:added_hl = []
 
@@ -336,6 +336,8 @@ function! s:Input(opts) abort
 
    while 1
       redraw
+      echohl Title
+      echon printf("[%s/%s] ", len(s:fz_res), len(g:ECY_qf_res))
       echohl Constant
       echon '>> '
       echohl Normal
@@ -387,9 +389,9 @@ fun! s:ECYQF(lists, opts) abort
   let s:qf_res = easy_windows#new()
   call s:qf_res._open([], {'at_cursor': 0, 
         \'width': &columns,
-        \'height': 10,
+        \'height': s:MAX_TO_SHOW,
         \'x': 1,
-        \'y': &lines - 10,
+        \'y': &lines - s:MAX_TO_SHOW,
         \'use_border': 0})
 
   let g:ECY_qf_res = a:lists

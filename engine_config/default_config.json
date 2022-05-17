@@ -161,6 +161,36 @@
       "default_value": 3,
       "type": "int",
       "des": ["second"]
+    },
+    "symbols_color.Variable": {
+      "default_value": "String",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.Method": {
+      "default_value": "Function",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.Module": {
+      "default_value": "Function",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.String": {
+      "default_value": "String",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.Property": {
+      "default_value": "Identifier",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.Function": {
+      "default_value": "Function",
+      "type": "string",
+      "des": [""]
     }
   },
   "ECY_engines.cpp.clangd.clangd": {
