@@ -60,11 +60,12 @@ fun! s:OpenQF() abort
   let l:res = []
   for item in s:res
     let l:temp = item['path']
+    let l:pos = ''
     if has_key(item, 'range')
-      let l:temp .= printf(' [L-%s, C-%s]', 
+      let l:pos .= printf(' [L-%s, C-%s]', 
             \item['range']['start']['line'], item['range']['start']['character'])
     endif
-    let item['abbr'] = l:temp
+    let item['abbr'] = [{'value': item['path']}, {'value': l:pos, 'hl': 'LineNr'}]
   endfor
   call ECY#qf#Open(s:res, {})
 endf

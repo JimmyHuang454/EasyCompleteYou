@@ -1,6 +1,5 @@
 fun! ECY#qf#Init()
 "{{{
-  let g:ECY_qf_layout_style = 'button'
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), &lines]
   let g:ECY_qf_res = []
   let g:ECY_qf_res_external = []
@@ -8,7 +7,7 @@ fun! ECY#qf#Init()
   let g:ECY_action_map = {
         \'open#current_buffer': "\<Cr>", 
         \'open#new_tab': "\<C-t>",
-        \'open#vertically': "\<C-v>",
+        \'open#vertically': "\<C-s>",
         \'open#horizontally': "\<C-x>",
         \'select#next': "\<C-j>",
         \'select#prev': "\<C-k>",

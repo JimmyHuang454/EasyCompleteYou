@@ -478,6 +478,14 @@ class Operate(object):
         res = self._lsp.documentSymbos(uri).GetResponse()
         self._on_selete(res, uri)
 
+    def _build_symbol_kind_item(self, item):
+        value = ''
+        if 'kind' in item:
+            value = self._lsp.GetSymbolsKindByNumber(item['kind'])
+        if value != '' and value in self.symbols_color:
+            return {'value': value, 'hl': self.symbols_color[value]}
+        return {'value': value}
+
     def _build_seleting_symbol(self, symbols, uri):  # {{{
         to_show = []
         for item in symbols:
@@ -485,11 +493,7 @@ class Operate(object):
             if ('deprecated' in item and item['deprecated']) or 'tags' in item:
                 deprecated = 'deprecated'
 
-            kind = self._lsp.GetSymbolsKindByNumber(item['kind'])
-            if kind in self.symbols_color:
-                kind = {'value': kind, 'hl': self.symbols_color[kind]}
-            else:
-                kind = {'value': kind}
+            kind = self._build_symbol_kind_item(item)
 
             temp = {
                 'abbr': [{
@@ -1416,11 +1420,13 @@ class Operate(object):
             detail = ''
             if 'detail' in info:
                 detail = info['detail']
+            kind = self._build_symbol_kind_item(item)
             to_show.append({
-                'abbr': [
-                    info['name'],
-                    self._lsp.GetSymbolsKindByNumber(info['kind']), detail
-                ],
+                'abbr': [{
+                    'value': info['name']
+                }, kind, {
+                    'value': detail
+                }],
                 'path':
                 self._lsp.UriToPath(info['uri']),
                 'range':
