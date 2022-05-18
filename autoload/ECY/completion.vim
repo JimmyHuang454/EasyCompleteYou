@@ -39,9 +39,11 @@ fun! s:DoCompletion_vim(context)
 
   let l:to_show = []
   let l:max_len_of_showing_item = 1
+  let l:gap = []
   for value in l:items_info
     let l:showing = value['abbr'].value['kind']
     call add(l:to_show, l:showing)
+    call add(l:gap, [len(value['abbr']), len(value['kind'])])
     if len(l:showing) > l:max_len_of_showing_item
       let l:max_len_of_showing_item = len(l:showing)
     endif
@@ -78,6 +80,11 @@ fun! s:DoCompletion_vim(context)
     for point in item['match_point']
       call s:popup_obj._add_match('ECY_floating_windows_normal_matched', [[l:i + 1, point + 1]])
     endfor
+
+    if has_key(g:ECY_symbols_color, item['kind'])
+      call s:popup_obj._add_match(g:ECY_symbols_color[item['kind']], 
+            \[[l:i + 1, l:gap[i][0] + 1, l:gap[i][1]]])
+    endif
     let i += 1
   endfor
 
@@ -460,6 +467,19 @@ fun! ECY#completion#Init()
 
   let g:ECY_use_floating_windows_to_be_popup_windows = 
         \ECY#engine_config#GetEngineConfig('ECY', 'use_floating_windows_to_be_popup_windows')
+
+  let g:ECY_symbols_color_original
+        \= ECY#engine_config#GetEngineConfig('ECY', 'symbols_color')
+
+  let g:ECY_symbols_color = {}
+
+  for item in keys(g:ECY_symbols_color_original)
+    let l:value = g:ECY_symbols_color_original[item]
+    if hlexists(l:value)
+      let g:ECY_symbols_color[item] = l:value
+      let g:ECY_symbols_color[item . '~'] = l:value
+    endif
+  endfor
 
   if !g:is_vim && exists('*nvim_win_set_config')
     let g:has_floating_windows_support = 'neovim'

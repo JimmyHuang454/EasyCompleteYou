@@ -31,7 +31,7 @@ function! s:T5() abort
     call Expect(getline(14), '  print(self.breadth)')
 endfunction
 
-call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 30000},
+call test_frame#Add({'event':[{'fuc': function('s:T1'), 'delay': 40000},
             \{'fuc': function('s:T2')},
             \{'fuc': function('s:T3')},
             \{'fuc': function('s:T4')},

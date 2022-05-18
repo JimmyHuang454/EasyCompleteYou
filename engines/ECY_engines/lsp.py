@@ -70,7 +70,7 @@ class Operate(object):
 
         self.enabled_code_lens = rpc.GetVaribal('g:ECY_enable_code_lens')
 
-        self.symbols_color = utils.GetEngineConfig('ECY', 'symbols_color')
+        self.symbols_color = rpc.GetVaribal('g:ECY_symbols_color')
 
         self._did_open_list = {}
         self._diagnosis_cache = []
