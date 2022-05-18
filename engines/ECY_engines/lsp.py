@@ -870,7 +870,7 @@ class Operate(object):
         cmd_list = self.capabilities['executeCommandProvider']['commands']
 
         if cmd_name not in cmd_list:
-            self._show_msg("'%s' not found.\n %s" % (cmd_name, str(cmd_list)))
+            self._show_msg("'%s' not found." % (cmd_name))
             return
         cmd_params = params['cmd_params']
         self._lsp.executeCommand(cmd_name, arguments=cmd_params)
