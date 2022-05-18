@@ -112,6 +112,7 @@ command! -nargs=* ECYGotoImplementation call ECY2_main#Goto('', 'GotoImplementat
 command! -nargs=* ECYGotoTypeDefinition call ECY2_main#Goto('', 'GotoTypeDefinition', 0)
 command! -nargs=0 ECYHover              call ECY2_main#Hover()
 command! -nargs=0 ECYFormat             call ECY2_main#Format()
+command! -nargs=0 ECYRangeFormat        call ECY2_main#RangeFormat()
 command! -nargs=0 ECYRename             call ECY2_main#Rename()
 command! -nargs=0 ECYReStart            call ECY2_main#ReStart()
 command! -nargs=* ECYInstallLS          call ECY2_main#InstallLS(<q-args>)

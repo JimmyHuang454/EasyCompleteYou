@@ -397,24 +397,20 @@ class LSP(conec.Operate):
         }
         return opts
 
-    def formatting(self, uri, opts):
+    def formatting(self, uri, opts, ranges=None):
         params = {
             'textDocument': self.TextDocumentIdentifier(uri),
             'options': opts
         }
+        if ranges is not None:
+            params['range'] = ranges
         return self._build_send(params, 'textDocument/formatting')
 
     def codeLens(self, uri):
         params = {'textDocument': {'uri': uri}}
         return self._build_send(params, 'textDocument/codeLens')
 
-    def onTypeFormatting(self,
-                         uri,
-                         line,
-                         colum,
-                         ch,
-                         opts,
-                         path_type='uri'):
+    def onTypeFormatting(self, uri, line, colum, ch, opts, path_type='uri'):
         params = self.TextDocumentPositionParams(uri,
                                                  line,
                                                  colum,

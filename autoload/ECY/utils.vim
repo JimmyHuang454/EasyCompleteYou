@@ -315,7 +315,7 @@ function! ECY#utils#GetValue(dicts, key, default_value) abort
 endfunction
 
 function! ECY#utils#GetSelectRange() abort 
-  "{{{
+  "{{{ return LSP range
   let l:start_pos = getpos("'<")[1 : 2]
   let l:end_pos = getpos("'>")[1 : 2]
   let l:end_pos[1] += 1 " To exclusive
@@ -367,10 +367,9 @@ endfunction
 
 function! ECY#utils#VimPostionToLSPPosition(expr, pos) abort
   "{{{
-  return {
-        \   'line': a:pos[0] - 1,
-        \   'character': s:to_char(a:expr, a:pos[0], a:pos[1])
-        \ }
+  return {'line': a:pos[0] - 1,
+        \'character': s:to_char(a:expr, a:pos[0], a:pos[1])
+        \}
   "}}}
 endfunction
 

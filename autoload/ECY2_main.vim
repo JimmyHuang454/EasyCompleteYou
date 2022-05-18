@@ -158,6 +158,22 @@ fun! ECY2_main#Format(...) abort
 "}}}
 endf
 
+fun! ECY2_main#RangeFormat(...) abort
+"{{{
+  let l:engine_name = s:GetEngineName(a:000)
+  let l:params = {
+                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+                \'buffer_line': ECY#utils#GetCurrentLine(), 
+                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
+                \'range': ECY#utils#GetSelectRange(), 
+                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
+                \}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'Format', 'params': l:params, 
+        \'engine_name': l:engine_name})
+"}}}
+endf
+
 fun! ECY2_main#GetWorkSpaceSymbol(...) abort
 "{{{
   let l:engine_name = s:GetEngineName(a:000)

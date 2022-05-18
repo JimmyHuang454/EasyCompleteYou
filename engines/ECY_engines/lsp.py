@@ -10,19 +10,19 @@ from ECY import rpc
 
 
 class Operate(object):
-
-    def __init__(self,# {{{
-                 name,
-                 starting_cmd=None,
-                 starting_cmd_argv=None,
-                 refresh_regex=r'[\w+]',
-                 rootUri=None,
-                 rootPath=None,
-                 languageId='',
-                 workspaceFolders=None,
-                 use_completion_cache=False,
-                 use_completion_cache_position=False,
-                 initializationOptions=None):
+    def __init__(
+            self,  # {{{
+            name,
+            starting_cmd=None,
+            starting_cmd_argv=None,
+            refresh_regex=r'[\w+]',
+            rootUri=None,
+            rootPath=None,
+            languageId='',
+            workspaceFolders=None,
+            use_completion_cache=False,
+            use_completion_cache_position=False,
+            initializationOptions=None):
 
         self.engine_name = name
 
@@ -87,7 +87,7 @@ class Operate(object):
         self.hierarchy_res_previous = []
 
         self._start_server()
-        self._get_format_config()# }}}
+        self._get_format_config()  # }}}
 
     def GetStartCMD(self):
         if self.starting_cmd is None:
@@ -108,7 +108,7 @@ class Operate(object):
         else:
             logger.debug('using user setting cmd')
 
-    def _start_server(self):# {{{
+    def _start_server(self):  # {{{
         self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)
 
         res = self._lsp.initialize(
@@ -143,7 +143,7 @@ class Operate(object):
                 self.signature_help_triggerCharacters.extend(
                     temp['retriggerCharacters'])
 
-        self._lsp.initialized()# }}}
+        self._lsp.initialized()  # }}}
 
     def _get_format_config(self):
         self.engine_format_setting = utils.GetEngineConfig(
@@ -160,7 +160,7 @@ class Operate(object):
 
         return self.lsp_timeout
 
-    def _init_semantic(self):# {{{
+    def _init_semantic(self):  # {{{
         self.is_support_full = False
         self.is_support_delta = False
         self.is_support_range = False
@@ -194,7 +194,8 @@ class Operate(object):
         if type(semanticTokensProvider['full']) is not dict:
             return
         if 'delta' in semanticTokensProvider['full']:
-            self.is_support_delta = semanticTokensProvider['full']['delta']# }}}
+            self.is_support_delta = semanticTokensProvider['full'][
+                'delta']  # }}}
 
     def _handle_edit(self):
         while True:
@@ -522,7 +523,8 @@ class Operate(object):
                     self._build_seleting_symbol(item['children'], uri))
         return to_show  # }}}
 
-    def OnTypeFormatting(self, context):
+    def OnTypeFormatting(self, context):  # {{{
+        # TODO
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
             # self._show_not_support_msg('OnTypeFormatting')
             return
@@ -539,16 +541,25 @@ class Operate(object):
         if res is None:
             return
         res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
-        self._do_action(res)
+        self._do_action(res)  # }}}
 
-    def Format(self, context):
+    def Format(self, context):  # {{{
         if 'documentFormattingProvider' not in self.capabilities:
             self._show_not_support_msg('Format')
             return
         params = context['params']
         uri = self._lsp.PathToUri(params['buffer_path'])
+        ranges = None
+        if 'range' in params:
+            if 'documentRangeFormattingProvider' in self.capabilities:
+                ranges = params['range']
+            else:
+                self._show_not_support_msg('RangeFormat')
+
+        logger.debug(params)
         res = self._lsp.formatting(uri,
-                                   self.engine_format_setting).GetResponse()
+                                   self.engine_format_setting,
+                                   ranges=ranges).GetResponse()
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
@@ -559,7 +570,7 @@ class Operate(object):
             return
         res = workspace_edit.WorkspaceEdit({'changes': {uri: res}})
         self._do_action(res)
-        self._show_msg('Formatted.')
+        self._show_msg('Formatted.')  # }}}
 
     def _signature_help(self, res):  # {{{
         if 'error' in res:
