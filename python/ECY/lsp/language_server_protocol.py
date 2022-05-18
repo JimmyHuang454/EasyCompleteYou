@@ -412,14 +412,14 @@ class LSP(conec.Operate):
                          uri,
                          line,
                          colum,
-                         strings,
+                         ch,
                          opts,
                          path_type='uri'):
         params = self.TextDocumentPositionParams(uri,
                                                  line,
                                                  colum,
                                                  path_type=path_type)
-        params['ch'] = strings
+        params['ch'] = ch
         params['options'] = opts
         return self._build_send(params, 'textDocument/onTypeFormatting')
 

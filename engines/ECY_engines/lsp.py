@@ -10,7 +10,8 @@ from ECY import rpc
 
 
 class Operate(object):
-    def __init__(self,
+
+    def __init__(self,# {{{
                  name,
                  starting_cmd=None,
                  starting_cmd_argv=None,
@@ -86,7 +87,7 @@ class Operate(object):
         self.hierarchy_res_previous = []
 
         self._start_server()
-        self._get_format_config()
+        self._get_format_config()# }}}
 
     def GetStartCMD(self):
         if self.starting_cmd is None:
@@ -107,7 +108,7 @@ class Operate(object):
         else:
             logger.debug('using user setting cmd')
 
-    def _start_server(self):
+    def _start_server(self):# {{{
         self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)
 
         res = self._lsp.initialize(
@@ -142,7 +143,7 @@ class Operate(object):
                 self.signature_help_triggerCharacters.extend(
                     temp['retriggerCharacters'])
 
-        self._lsp.initialized()
+        self._lsp.initialized()# }}}
 
     def _get_format_config(self):
         self.engine_format_setting = utils.GetEngineConfig(
@@ -159,7 +160,7 @@ class Operate(object):
 
         return self.lsp_timeout
 
-    def _init_semantic(self):
+    def _init_semantic(self):# {{{
         self.is_support_full = False
         self.is_support_delta = False
         self.is_support_range = False
@@ -193,7 +194,7 @@ class Operate(object):
         if type(semanticTokensProvider['full']) is not dict:
             return
         if 'delta' in semanticTokensProvider['full']:
-            self.is_support_delta = semanticTokensProvider['full']['delta']
+            self.is_support_delta = semanticTokensProvider['full']['delta']# }}}
 
     def _handle_edit(self):
         while True:
@@ -523,17 +524,16 @@ class Operate(object):
 
     def OnTypeFormatting(self, context):
         if 'documentOnTypeFormattingProvider' not in self.capabilities:
-            self._show_not_support_msg('OnTypeFormatting')
+            # self._show_not_support_msg('OnTypeFormatting')
             return
         params = context['params']
-        uri = params['buffer_path']
-        uri = self._lsp.PathToUri(uri)
+        uri = self._lsp.PathToUri(params['buffer_path'])
         start_position = params['buffer_position']
         res = self._lsp.onTypeFormatting(
             uri, start_position['line'], start_position['colum'], '\n',
             self.engine_format_setting).GetResponse()
         if 'error' in res:
-            self._show_msg(res['error']['message'])
+            # self._show_msg(res['error']['message'])
             return
         res = res['result']
         if res is None:

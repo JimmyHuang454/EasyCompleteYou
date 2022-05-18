@@ -31,27 +31,28 @@ fun! s:GetEngineName(input) abort
 "}}}
 endf
 
-fun! ECY2_main#ExecuteCommand(engine_name, cmd_name, cmd_params) abort
+fun! ECY2_main#ExecuteCommand(opts) abort
 "{{{
 
-  if type(a:cmd_params) != v:t_list
-    call ECY#utils#echo("params should be a list.")
+  if has_key(a:opts, 'engine_name')
+    let l:engine_name = a:opts['engine_name']
+  else
+    let l:engine_name = ECY#engine#GetBufferEngineName()
+  endif
+
+  if !has_key(a:opts, 'cmd_name')
     return
   endif
 
-  let l:params = {
-                \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
-                \'buffer_line': ECY#utils#GetCurrentLine(), 
-                \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
-                \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
-                \'cmd_params': a:cmd_params,
-                \'cmd_name': a:cmd_name,
-                \'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange()
-                \}
+  let l:params = {'cmd_params': a:opts['cmd_name']}
+
+  if has_key(a:opts, 'cmd_params')
+    let l:params['cmd_params'] = a:opts['cmd_params']
+  endif
 
   call ECY#rpc#rpc_event#call({'event_name': 'ExecuteCommand', 
         \'params': l:params,
-        \'engine_name': a:engine_name})
+        \'engine_name': l:engine_name})
 "}}}
 endf
 
