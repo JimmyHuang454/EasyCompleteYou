@@ -89,7 +89,7 @@ class Operate(object):
         self._start_server()
         self._get_format_config()  # }}}
 
-    def GetStartCMD(self):
+    def GetStartCMD(self):# {{{
         if self.starting_cmd is None:
             self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
 
@@ -106,7 +106,7 @@ class Operate(object):
                     raise ValueError("missing cmd.")
                 logger.debug('using cmd2')
         else:
-            logger.debug('using user setting cmd')
+            logger.debug('using user setting cmd')# }}}
 
     def _start_server(self):  # {{{
         self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)

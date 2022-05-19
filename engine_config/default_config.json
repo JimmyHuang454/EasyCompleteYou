@@ -167,6 +167,16 @@
       "type": "string",
       "des": [""]
     },
+    "symbols_color.ID": {
+      "default_value": "Normal",
+      "type": "string",
+      "des": [""]
+    },
+    "symbols_color.Snippet": {
+      "default_value": "Normal",
+      "type": "string",
+      "des": [""]
+    },
     "symbols_color.Method": {
       "default_value": "Function",
       "type": "string",
@@ -199,6 +209,26 @@
     },
     "symbols_color.Function": {
       "default_value": "Function",
+      "type": "string",
+      "des": [""]
+    },
+    "menu.color.background": {
+      "default_value": "Pmenu",
+      "type": "string",
+      "des": [""]
+    },
+    "menu.color.seleted": {
+      "default_value": "PmenuSel",
+      "type": "string",
+      "des": [""]
+    },
+    "menu.color.seleted_matched": {
+      "default_value": "PmenuSel",
+      "type": "string",
+      "des": [""]
+    },
+    "menu.color.matched": {
+      "default_value": "Search",
       "type": "string",
       "des": [""]
     }

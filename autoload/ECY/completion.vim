@@ -54,7 +54,10 @@ fun! s:DoCompletion_vim(context)
   let l:col = strwidth(l:fliter_words)
   let l:col  = easy_windows#get_cursor_screen_x() - l:col
   let l:line  = easy_windows#get_cursor_screen_y() + 1
-  let l:opts = {'y': l:line, 'x': l:col, 'width': l:max_len_of_showing_item, 'height': len(l:to_show)}
+  let l:opts = {'y': l:line, 'x': l:col, 
+        \'color': g:ECY_floating_windows_background_color,
+        \'width': l:max_len_of_showing_item, 
+        \'height': len(l:to_show)}
 
   let s:popup_windows_nr = s:popup_obj._open(l:to_show, l:opts)
 
@@ -78,7 +81,7 @@ fun! s:DoCompletion_vim(context)
   let i = 0
   for item in l:items_info
     for point in item['match_point']
-      call s:popup_obj._add_match('ECY_floating_windows_normal_matched', [[l:i + 1, point + 1]])
+      call s:popup_obj._add_match(g:ECY_floating_windows_normal_matched, [[l:i + 1, point + 1]])
     endfor
 
     if has_key(g:ECY_symbols_color, item['kind'])
@@ -310,8 +313,8 @@ function! s:SelectItems_vim(next_or_pre) abort
   endif
   let g:ECY_current_popup_windows_info['selecting_item'] = l:next_item
 
-  call s:popup_obj._delete_match('ECY_floating_windows_seleted')
-  call s:popup_obj._delete_match('ECY_floating_windows_seleted_matched')
+  call s:popup_obj._delete_match(g:ECY_floating_windows_seleted)
+  " call s:popup_obj._delete_match(g:ECY_floating_windows_seleted_matched)
 
   if l:next_item == 0
     let l:to_complete = g:ECY_current_popup_windows_info['keyword_cache']
@@ -321,9 +324,9 @@ function! s:SelectItems_vim(next_or_pre) abort
     let l:to_complete = l:items_info[l:next_item - 1]['word']
     let l:info = l:items_info[l:next_item - 1]
 
-    call s:popup_obj._add_match('ECY_floating_windows_seleted', [l:next_item])
+    call s:popup_obj._add_match(g:ECY_floating_windows_seleted, [l:next_item])
     for item in l:info['match_point']
-      call s:popup_obj._add_match('ECY_floating_windows_seleted_matched', [[l:next_item, item + 1]])
+      call s:popup_obj._add_match(g:ECY_floating_windows_seleted_matched, [[l:next_item, item + 1]])
     endfor
   endif
 
@@ -356,8 +359,6 @@ function! s:SelectItems_vim(next_or_pre) abort
     " mapping, then the s:isSelecting in ECY_main.vim can not be reset.
     call complete(l:start_colum + 1,[l:to_complete])
   endif
-
-
 "}}}
 endfunction
 
@@ -475,9 +476,17 @@ fun! ECY#completion#Init()
 
   for item in keys(g:ECY_symbols_color_original)
     let l:value = g:ECY_symbols_color_original[item]
+    if item == 'ID'
+      let l:key = '[ID]'
+    elseif item == 'Snippet'
+      let l:key = '[Snippet]'
+    else
+      let l:key = item
+    endif
+
     if hlexists(l:value)
-      let g:ECY_symbols_color[item] = l:value
-      let g:ECY_symbols_color[item . '~'] = l:value
+      let g:ECY_symbols_color[l:key] = l:value
+      let g:ECY_symbols_color[l:key . '~'] = l:value
     endif
   endfor
 
@@ -495,9 +504,20 @@ fun! ECY#completion#Init()
   let g:popup_windows_is_selecting = v:false
 
   call ECY#utils#DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596 ctermfg=red	  ctermbg=darkBlue')
-  call ECY#utils#DefineColor('ECY_floating_windows_normal', 'guifg=#839496	ctermfg=white	ctermbg=darkBlue')
   call ECY#utils#DefineColor('ECY_floating_windows_seleted_matched', 'guibg=#586e75	ctermfg=red	ctermbg=Blue')
   call ECY#utils#DefineColor('ECY_floating_windows_seleted', 'guibg=#586e75	ctermfg=white	ctermbg=Blue')
+
+  let g:ECY_floating_windows_normal_matched
+        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.matched')
+
+  let g:ECY_floating_windows_seleted
+        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.seleted')
+
+  let g:ECY_floating_windows_seleted_matched
+        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.seleted_matched')
+
+  let g:ECY_floating_windows_background_color
+        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.background')
 
   augroup ECY_completion
     autocmd!
