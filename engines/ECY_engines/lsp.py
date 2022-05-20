@@ -650,6 +650,9 @@ class Operate(object):
         self.GetCodeLens(context)
         self.DocumentLink(context)
 
+    def AfterCompletion(self, context):
+        pass
+
     def OnItemSeleted(self, context):  # {{{
         if 'completionProvider' not in self.capabilities or \
                 'resolveProvider' not in self.capabilities['completionProvider'] \

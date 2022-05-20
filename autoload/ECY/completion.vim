@@ -98,50 +98,49 @@ endf
 function! ECY#completion#ExpandSnippet() abort
 "{{{ this function will not tirgger when there are no UltiSnips plugin.
   
-  if ECY#completion#IsMenuOpen() 
-    call ECY#completion#Close('force_to_close')
-    " we can see that we require every item of completion must contain full
-    " infos which is a dict with all key.
-    if g:has_floating_windows_support == 'vim' && 
-          \g:ECY_use_floating_windows_to_be_popup_windows
-      let l:selecting_item_nr = 
-            \g:ECY_current_popup_windows_info['selecting_item']
-      if l:selecting_item_nr != 0
-        let l:item_info = 
-              \g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
-        let l:user_data_index    = l:selecting_item_nr - 1
-        let l:item_kind          = l:item_info['kind']
-        let l:item_name_selected = l:item_info['word']
-      endif
-    elseif g:has_floating_windows_support == 'neovim' && 
-          \g:ECY_use_floating_windows_to_be_popup_windows
-      " TODO
-    else
-      let l:item_kind          = v:completed_item['kind']
-      let l:user_data_index    = v:completed_item['user_data']
-      let l:item_name_selected = v:completed_item['word']
-    endif
-
-    " the user_data_index is a number that can index the g:ECY_completion_data which is
-    " a dict to get more than just a string msg.
-    try
-      " maybe, some item have no snippet. so we try.
-      let l:snippet   = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]['snippet']
-      call UltiSnips#Anon(l:snippet,l:item_name_selected,'have no desriction','w')
-      return ''
-    catch
-    endtry
-
-    try
-      if l:item_kind == '[Snippet]'
-        call UltiSnips#ExpandSnippet() 
-        return ''
-      endif
-    catch
-    endtry
+  if !ECY#completion#IsMenuOpen() 
+    call ECY#utils#SendKeys(g:ECY_expand_snippets_key)
+    return ''
   endif
 
-  call ECY#utils#SendKeys(g:ECY_expand_snippets_key)
+  if g:has_floating_windows_support == 'vim' && g:ECY_use_floating_windows_to_be_popup_windows
+    let l:selecting_item_nr = g:ECY_current_popup_windows_info['selecting_item']
+
+    if l:selecting_item_nr == 0
+      let l:item_info = {}
+    else
+      let l:item_info = g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
+    endif
+  else
+    let l:item_info = {}
+    if has_key(v:completed_item, 'user_data')
+      let l:user_data_index = v:completed_item['user_data']
+      let l:item_info = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]
+    endif
+  endif
+
+  call ECY#completion#Close('force_to_close')
+
+  " maybe, some item have no snippet. so we try.
+  if has_key(l:item_info, 'snippet')
+    try
+      call UltiSnips#Anon(l:item_info['snippet'], l:item_info['word'], 'have no desriction', 'w')
+    catch 
+    endtry
+  elseif has_key(l:item_info, 'kind') && l:item_info['kind'] == '[Snippet]'
+    try
+      call UltiSnips#ExpandSnippet() 
+    catch 
+    endtry
+  else
+    call ECY#utils#SendKeys(g:ECY_expand_snippets_key)
+  endif
+
+  if has_key(l:item_info, 'ECY_item_index')
+    call ECY#rpc#rpc_event#call(
+          \{'event_name': 'AfterCompletion', 'params': {'ECY_item_index': l:item_info['ECY_item_index']}})
+  endif
+
   return ''
 "}}}
 endfunction
