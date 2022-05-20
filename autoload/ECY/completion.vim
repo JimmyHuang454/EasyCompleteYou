@@ -503,10 +503,6 @@ fun! ECY#completion#Init()
   let s:popup_windows_nr = -1
   let g:popup_windows_is_selecting = v:false
 
-  call ECY#utils#DefineColor('ECY_floating_windows_normal_matched', 'guifg=#945596 ctermfg=red	  ctermbg=darkBlue')
-  call ECY#utils#DefineColor('ECY_floating_windows_seleted_matched', 'guibg=#586e75	ctermfg=red	ctermbg=Blue')
-  call ECY#utils#DefineColor('ECY_floating_windows_seleted', 'guibg=#586e75	ctermfg=white	ctermbg=Blue')
-
   let g:ECY_floating_windows_normal_matched
         \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.matched')
 
