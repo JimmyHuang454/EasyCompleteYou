@@ -107,27 +107,42 @@ function! ECY#completion#ExpandSnippet() abort
     let l:selecting_item_nr = g:ECY_current_popup_windows_info['selecting_item']
 
     if l:selecting_item_nr == 0
-      let l:item_info = {}
+      let s:item_info = {}
     else
-      let l:item_info = g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
+      let s:item_info = g:ECY_current_popup_windows_info['items_info'][l:selecting_item_nr - 1]
     endif
   else
-    let l:item_info = {}
+    let s:item_info = {}
     if has_key(v:completed_item, 'user_data')
       let l:user_data_index = v:completed_item['user_data']
-      let l:item_info = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]
+      let s:item_info = g:ECY_current_popup_windows_info['items_info'][l:user_data_index]
     endif
   endif
 
   call ECY#completion#Close('force_to_close')
 
-  " maybe, some item have no snippet. so we try.
-  if has_key(l:item_info, 'snippet')
+  if has_key(s:item_info, 'ECY_item_index') && v:false
+    call ECY#rpc#rpc_event#call(
+          \{'event_name': 'AfterCompletion', 'params': {
+            \'ECY_item_index': s:item_info['ECY_item_index'],
+            \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
+            \}})
+  else
+    call ECY#completion#ExpandSnippet2()
+  endif
+  return ''
+"}}}
+endfunction
+
+function! ECY#completion#ExpandSnippet2() abort
+"{{{ this function will not tirgger when there are no UltiSnips plugin.
+  
+  if has_key(s:item_info, 'snippet')
     try
-      call UltiSnips#Anon(l:item_info['snippet'], l:item_info['word'], 'have no desriction', 'w')
+      call UltiSnips#Anon(s:item_info['snippet'], s:item_info['word'], 'have no desriction', 'w')
     catch 
     endtry
-  elseif has_key(l:item_info, 'kind') && l:item_info['kind'] == '[Snippet]'
+  elseif has_key(s:item_info, 'kind') && s:item_info['kind'] == '[Snippet]'
     try
       call UltiSnips#ExpandSnippet() 
     catch 
@@ -135,13 +150,6 @@ function! ECY#completion#ExpandSnippet() abort
   else
     call ECY#utils#SendKeys(g:ECY_expand_snippets_key)
   endif
-
-  if has_key(l:item_info, 'ECY_item_index')
-    call ECY#rpc#rpc_event#call(
-          \{'event_name': 'AfterCompletion', 'params': {'ECY_item_index': l:item_info['ECY_item_index']}})
-  endif
-
-  return ''
 "}}}
 endfunction
 

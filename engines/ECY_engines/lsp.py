@@ -89,7 +89,7 @@ class Operate(object):
         self._start_server()
         self._get_format_config()  # }}}
 
-    def GetStartCMD(self):# {{{
+    def GetStartCMD(self):  # {{{
         if self.starting_cmd is None:
             self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
 
@@ -106,7 +106,7 @@ class Operate(object):
                     raise ValueError("missing cmd.")
                 logger.debug('using cmd2')
         else:
-            logger.debug('using user setting cmd')# }}}
+            logger.debug('using user setting cmd')  # }}}
 
     def _start_server(self):  # {{{
         self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)
@@ -651,7 +651,22 @@ class Operate(object):
         self.DocumentLink(context)
 
     def AfterCompletion(self, context):
-        pass
+        ECY_item_index = context['params']['ECY_item_index']
+
+        if (len(self.results_list) - 1) < ECY_item_index:
+            logger.debug('OnItemSeleted wrong')
+            return
+
+        uri = self._lsp.PathToUri(context['params']['buffer_path'])
+        self.current_seleted_item = self.results_list[ECY_item_index]
+        if 'additionalTextEdits' in self.current_seleted_item:
+            res = workspace_edit.WorkspaceEdit({
+                'changes': {
+                    uri: self.current_seleted_item['additionalTextEdits']
+                }
+            })
+            self._do_action(res)
+        rpc.DoCall('ECY#completion#ExpandSnippet2')
 
     def OnItemSeleted(self, context):  # {{{
         if 'completionProvider' not in self.capabilities or \
