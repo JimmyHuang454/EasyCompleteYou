@@ -341,7 +341,7 @@ fun! s:RenderRes() abort
       call s:qf_res_top_line._set_text(l:kind_line)
 
       let i = 0
-      let l:temp = 0
+      let l:temp = 1
       for item in g:ECY_qf_res['item']
         if has_key(item, 'hl')
           let l:hl = item['hl']
@@ -350,12 +350,12 @@ fun! s:RenderRes() abort
           let l:hl = g:ECY_colum_color[l:hl]
         endif
 
-        call s:qf_res_top_line._add_match(
-              \l:hl, [[1, l:temp, len(item['value'])]])
-        let l:temp = len(item['value'])
+        let l:value_len = len(item['value'])
         if i == 0
-          let l:temp += 3
+          let l:value_len += 2
         endif
+        call s:qf_res_top_line._add_match(l:hl, [[1, l:temp, l:value_len]])
+        let l:temp += l:value_len
         let i += 1
       endfor
     endif
