@@ -301,7 +301,7 @@ fun! s:RenderRes(fz_res) abort
       endif
       if has_key(item2, 'hl')
         call s:qf_res._add_match(item2['hl'], [[i + 1, l:start_pos[j] + 3, len(item2['value'])]])
-        if !IsInList(item2['hl'], s:added_hl)
+        if !ECY#utils#IsInList(item2['hl'], s:added_hl)
           call add(s:added_hl, item2['hl'])
         endif
       endif

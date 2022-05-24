@@ -191,7 +191,7 @@ function ECY#utils#DefineColor(name, color) abort
   "}}}
 endfunction
 
-function! IsInList(item, list) abort
+function! ECY#utils#IsInList(item, list) abort
   "{{{
   let i = 0
   while i < len(a:list)

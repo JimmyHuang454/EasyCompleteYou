@@ -234,7 +234,7 @@ fun! ECY#engine#InitDefaultEngine(file_type)
           \'filetype_using': g:ECY_file_type_using[a:file_type]
           \}
     for item in g:ECY_all_buildin_engine
-      if !IsInList(a:file_type, item['file_type']) && !IsInList('all', item['file_type'])
+      if !ECY#utils#IsInList(a:file_type, item['file_type']) && !ECY#utils#IsInList('all', item['file_type'])
         continue
       endif
       call add(g:ECY_file_type_info2[a:file_type]['available_sources'], item['engine_name'])
