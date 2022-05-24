@@ -586,6 +586,16 @@ function! s:EW._get_text_line(linenr) abort
 "}}}
 endfunction
 
+function! s:EW._get_text() abort
+"{{{
+  if !self['is_created']
+    return
+  endif
+
+  return self['text_list']
+"}}}
+endfunction
+
 function! s:EW._set_syntax(syntax_name) abort
 "{{{
   if !self['is_created']

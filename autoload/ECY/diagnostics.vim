@@ -579,6 +579,15 @@ function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
 "}}}
 endfunction
 
+function! ECY#diagnostics#CopyCurrentLine() abort
+"{{{
+  if exists('s:popup_obj')
+    return s:popup_obj._get_text()
+  endif
+  return ''
+"}}}
+endfunction
+
 function! s:UpdateSignEvent(timer_id) abort 
 "{{{
   if !g:ECY_enable_diagnostics
