@@ -8,7 +8,7 @@
   }, {
     "file_type": ["c", "cpp", "cuda"],
     "installer_path": "ECY_installer.installer.clangd",
-    "engine_name": "ECY_engines.cpp.clangd.clangd"
+    "engine_name": "ECY_engines.cpp.clangd"
   }, {
     "file_type": ["latex", "tex"],
     "engine_name": "ECY_engines.tex.texlab.texlab"
@@ -16,14 +16,14 @@
     "file_type": ["python"],
     "disabled": false,
     "installer_path": "ECY_installer.installer.pyright",
-    "engine_name": "ECY_engines.python.pyright.pyright"
+    "engine_name": "ECY_engines.python.pyright"
   }, {
     "file_type": ["python"],
     "installer_path": "ECY_installer.installer.jedi_ls",
-    "engine_name": "ECY_engines.python.jedi_ls.jedi_ls"
+    "engine_name": "ECY_engines.python.jedi_ls"
   }, {
     "file_type": ["go"],
-    "engine_name": "ECY_engines.golang.gopls.gopls"
+    "engine_name": "ECY_engines.golang.gopls"
   }, {
     "file_type": ["all"],
     "disabled": true,

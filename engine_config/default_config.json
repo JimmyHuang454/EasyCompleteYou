@@ -188,7 +188,7 @@
       "des": [""]
     }
   },
-  "ECY_engines.cpp.clangd.clangd": {
+  "ECY_engines.cpp.clangd": {
     "cmd": {
       "default_value": "",
       "type": "string",
@@ -352,7 +352,7 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.python.pyright.pyright": {
+  "ECY_engines.python.pyright": {
     "cmd": {
       "default_value": "",
       "type": "string",
@@ -396,7 +396,7 @@
       "des": ["LS init opts"]
     }
   },
-  "ECY_engines.golang.gopls.gopls": {
+  "ECY_engines.golang.gopls": {
     "cmd": {
       "default_value": "",
       "type": "string",
@@ -420,7 +420,7 @@
       "des": ["cmd to start rust_analyzer."]
     }
   },
-  "ECY_engines.python.jedi_ls.jedi_ls": {
+  "ECY_engines.python.jedi_ls": {
     "cmd": {
       "default_value": "",
       "type": "string",
