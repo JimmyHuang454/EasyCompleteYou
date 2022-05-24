@@ -186,6 +186,11 @@
       "default_value": "Keyword",
       "type": "string",
       "des": [""]
+    },
+    "qf.colum_color": {
+      "default_value": ["DiffAdd", "DiffChange"],
+      "type": "list",
+      "des": [""]
     }
   },
   "ECY_engines.cpp.clangd": {

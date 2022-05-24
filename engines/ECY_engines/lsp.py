@@ -469,7 +469,14 @@ class Operate(object):
         if res == []:
             self._show_not_support_msg('Empty Result.')
 
-        rpc.DoCall('ECY#qf#Open', [res, {}])
+        item_kind = [{
+            'value': 'Name',
+        }, {
+            'value': 'Kind',
+        }, {
+            'value': 'Deprecated?',
+        }]
+        rpc.DoCall('ECY#qf#Open', [{'list': res, 'item': item_kind}, {}])
 
     def OnDocumentSymbol(self, context):
         if 'documentSymbolProvider' not in self.capabilities:
@@ -510,7 +517,7 @@ class Operate(object):
                 containerName = ''
                 if 'containerName' in item:
                     containerName = item['containerName']
-                temp['abbr'].append({'value': containerName})
+                # temp['abbr'].append({'value': containerName})
                 if 'range' in item['location']:
                     temp['range'] = item['location']['range']
                 temp['path'] = self._lsp.UriToPath(item['location']['uri'])
@@ -1406,7 +1413,15 @@ class Operate(object):
                 'range':
                 range
             })
-        rpc.DoCall('ECY#qf#Open', [to_show, {}])
+        rpc.DoCall('ECY#qf#Open',
+                   [{
+                       'list': to_show,
+                       'item': [{
+                           'value': 'Path'
+                       }, {
+                           'value': 'Position'
+                       }]
+                   }, {}])
 
 
 # }}}

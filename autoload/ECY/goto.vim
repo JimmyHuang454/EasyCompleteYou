@@ -67,7 +67,7 @@ fun! s:OpenQF() abort
     endif
     let item['abbr'] = [{'value': item['path']}, {'value': l:pos, 'hl': 'LineNr'}]
   endfor
-  call ECY#qf#Open(s:res, {})
+  call ECY#qf#Open({'list': s:res, 'item': [{'value': 'Path'}, {'value': 'Position'}]}, {})
 endf
 
 

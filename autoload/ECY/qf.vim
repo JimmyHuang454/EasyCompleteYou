@@ -1,7 +1,7 @@
 fun! ECY#qf#Init()
 "{{{
   let g:ECY_qf_layout = [float2nr(&columns * 0.5), &lines]
-  let g:ECY_qf_res = []
+  let g:ECY_qf_res = {}
   let g:ECY_qf_res_external = []
   let s:fz_res = []
   let g:ECY_action_map = {
@@ -25,6 +25,9 @@ fun! ECY#qf#Init()
         \'res#up': function('s:NextItem'),
         \'res#down': function('s:PrevItem'),
         \}
+
+  let g:ECY_colum_color
+        \= ECY#engine_config#GetEngineConfig('ECY', 'qf.colum_color')
 
   let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
 
@@ -180,9 +183,8 @@ endfunction"}}}
 
 fun! s:UpdateRes(input_value) abort
   let s:input_value = a:input_value
-  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res, s:input_value, 'abbr_all')
-  call s:RenderRes(s:fz_res)
-  " call s:UpdatePreview()
+  let s:fz_res = ECY#qf#FuzzyMatch(g:ECY_qf_res['list'], s:input_value, 'abbr_all')
+  call s:RenderRes()
 endf
 
 fun! s:UpdatePreview() abort
@@ -208,11 +210,11 @@ fun! s:UpdatePreview() abort
 "}}}
 endf
 
-fun! s:RenderRes(fz_res) abort
+fun! s:RenderRes() abort
 "{{{
   let l:MATCH_HL = 'Search'
   let l:to_show = []
-  if len(a:fz_res) <= s:selecting_item_index || s:selecting_item_index < 0
+  if len(s:fz_res) <= s:selecting_item_index || s:selecting_item_index < 0
     let s:selecting_item_index = 0
   endif
   call s:qf_res._delete_match(l:MATCH_HL)
@@ -226,7 +228,7 @@ fun! s:RenderRes(fz_res) abort
   let l:max_len = {}
 
   let i = 0
-  for item in a:fz_res
+  for item in s:fz_res
     if i == s:MAX_TO_SHOW
       break
     endif
@@ -250,7 +252,7 @@ fun! s:RenderRes(fz_res) abort
 
   let l:to_show_res = []
   let i = 0
-  for item in a:fz_res
+  for item in s:fz_res
     if i == s:MAX_TO_SHOW
       break
     endif
@@ -317,9 +319,46 @@ fun! s:RenderRes(fz_res) abort
     let i += 1
   endfor
 
-  if len(a:fz_res) == 0
+  if len(s:fz_res) == 0
     call s:qf_res._set_text(['Empty Result.'])
     call s:qf_res._add_match('Error', [[1]])
+  else
+    if has_key(g:ECY_qf_res, 'item')
+      let i = 0
+      let l:kind_line = '  '
+      for item in g:ECY_qf_res['item']
+        if has_key(l:max_len, i)
+          let l:diff = l:max_len[i] - len(item['value']) + 1
+          let k = 0
+          while k < l:diff
+            let item['value'] .= ' '
+            let k += 1
+          endw
+          let l:kind_line .= item['value']
+        endif
+        let i += 1
+      endfor
+      call s:qf_res_top_line._set_text(l:kind_line)
+
+      let i = 0
+      let l:temp = 0
+      for item in g:ECY_qf_res['item']
+        if has_key(item, 'hl')
+          let l:hl = item['hl']
+        else
+          let l:hl = i % len(g:ECY_colum_color)
+          let l:hl = g:ECY_colum_color[l:hl]
+        endif
+
+        call s:qf_res_top_line._add_match(
+              \l:hl, [[1, l:temp, len(item['value'])]])
+        let l:temp = len(item['value'])
+        if i == 0
+          let l:temp += 3
+        endif
+        let i += 1
+      endfor
+    endif
   endif
 "}}}
 endf
@@ -327,6 +366,7 @@ endf
 fun! ECY#qf#Close() abort
   call s:qf_res._close()
   call s:qf_preview._close()
+  call s:qf_res_top_line._close()
   let s:input_value = ''
   let s:added_hl = []
   return 1
@@ -340,7 +380,7 @@ function! s:Input(opts) abort
    while 1
       redraw
       echohl Title
-      echon printf("[%s/%s] ", len(s:fz_res), len(g:ECY_qf_res))
+      echon printf("[%s/%s] ", len(s:fz_res), len(g:ECY_qf_res['list']))
       echohl Constant
       echon '>> '
       echohl Normal
@@ -389,17 +429,31 @@ fun! s:ECYQF(lists, opts) abort
   let s:added_hl = []
 
   let s:selecting_item_index = 0
+
+  let l:position_y = &lines - s:MAX_TO_SHOW
+  let s:qf_res_top_line = easy_windows#new()
+  call s:qf_res_top_line._open([], {'at_cursor': 0, 
+        \'width': &columns,
+        \'height': 1,
+        \'x': 1,
+        \'y': l:position_y - 1,
+        \'use_border': 0})
+
   let s:qf_res = easy_windows#new()
   call s:qf_res._open([], {'at_cursor': 0, 
         \'width': &columns,
         \'height': s:MAX_TO_SHOW,
         \'x': 1,
-        \'y': &lines - s:MAX_TO_SHOW,
+        \'y': l:position_y,
         \'use_border': 0})
 
-  let g:ECY_qf_res = a:lists
+  if type(a:lists) == v:t_list
+    let g:ECY_qf_res = {'list': a:lists}
+  else
+    let g:ECY_qf_res = a:lists
+  endif
 
-  for item in g:ECY_qf_res
+  for item in g:ECY_qf_res['list']
     let l:abbr = ''
     for item2 in item['abbr']
       let l:abbr .= item2['value']
@@ -407,7 +461,7 @@ fun! s:ECYQF(lists, opts) abort
     let item['abbr_all'] = l:abbr
   endfor
 
-  let s:fz_res = g:ECY_qf_res
+  let s:fz_res = g:ECY_qf_res['list']
 
   call s:UpdateRes('')
 
@@ -422,8 +476,6 @@ fun! s:ECYQF(lists, opts) abort
     let l:temp_map[g:ECY_action_map[item]] = l:temp
   endfor
 
-
-
   call s:Input({'input_cb': function('s:UpdateRes'), 
         \'exit_cb': function('ECY#qf#Close'),
         \'key_map': l:temp_map,
@@ -433,8 +485,6 @@ endf
 
 function! s:Open_cb(lists, opts, timer_id) abort
 "{{{
-  let g:ECY_qf_res = a:lists
-
   let g:ECY_action_fuc = deepcopy(s:default_action_fuc)
   if has_key(a:opts, 'action')
     for item in keys(a:opts['action'])
@@ -442,7 +492,7 @@ function! s:Open_cb(lists, opts, timer_id) abort
     endfor
   endif
 
-  call s:ECYQF(g:ECY_qf_res, a:opts)
+  call s:ECYQF(a:lists, a:opts)
 "}}}
 endfunction
 
