@@ -167,22 +167,27 @@
       "type": "string",
       "des": [""]
     },
-    "menu.color.background": {
+    "symbols_color.Class": {
+      "default_value": "Special",
+      "type": "string",
+      "des": [""]
+    },
+    "completion.color.background": {
       "default_value": "Pmenu",
       "type": "string",
       "des": [""]
     },
-    "menu.color.seleted": {
+    "completion.color.seleted": {
       "default_value": "PmenuSel",
       "type": "string",
       "des": [""]
     },
-    "menu.color.seleted_matched": {
+    "completion.color.seleted_matched": {
       "default_value": "PmenuSel",
       "type": "string",
       "des": [""]
     },
-    "menu.color.matched": {
+    "completion.color.matched": {
       "default_value": "Keyword",
       "type": "string",
       "des": [""]
