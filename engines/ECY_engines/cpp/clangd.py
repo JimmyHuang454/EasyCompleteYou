@@ -110,3 +110,19 @@ class Operate(lsp.Operate):
             i += 1
 
         return ECY_context
+
+    def _handle_file_status(self):
+        # clangd 8+
+        while 1:
+            try:
+                response = self._lsp.GetRequestOrNotification(
+                    'textDocument/clangd.fileStatus')
+                res_path = response['params']['uri']
+                res_path = self._lsp.UriToPath(res_path)
+                current_buffer_path = rpc.DoCall(
+                    'ECY#utils#GetCurrentBufferPath')
+                if res_path == current_buffer_path:
+                    self._show_msg(response['params']['state'])
+            except:
+                pass
+

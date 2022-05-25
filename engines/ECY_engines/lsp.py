@@ -236,21 +236,6 @@ class Operate(object):
                 del res[item]['undo_text']
         rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
-    def _handle_file_status(self):
-        # clangd 8+
-        while 1:
-            try:
-                response = self._lsp.GetRequestOrNotification(
-                    'textDocument/clangd.fileStatus')
-                res_path = response['params']['uri']
-                res_path = self._lsp.UriToPath(res_path)
-                current_buffer_path = rpc.DoCall(
-                    'ECY#utils#GetCurrentBufferPath')
-                if res_path == current_buffer_path:
-                    self._show_msg(response['params']['state'])
-            except:
-                pass
-
     def _show_msg(self, msg):
         if type(msg) is str:
             msg = msg.split('\n')
@@ -390,6 +375,7 @@ class Operate(object):
         if params['change_mode'] == 'n':  # normal mode
             self.GetCodeLens(context)
             self.DocumentLink(context)
+            self.semanticTokens(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -954,10 +940,7 @@ class Operate(object):
             try:
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
-                if self.enabel_semantic_color and self.is_support_full:
-                    rpc.DoCall('ECY#semantic_tokens#AddRefreshID')
-                    rpc.DoCall('ECY#semantic_tokens#Refresh')
-                logger.debug(jobs)
+                rpc.DoCall('ECY#semantic_tokens#Do')
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:
                 logger.exception(e)
