@@ -1482,7 +1482,17 @@ class Operate(object):
                 i
             })
             i += 1
-        rpc.DoCall('ECY#hierarchy#Start_res', [to_show])  # }}}
+        rpc.DoCall('ECY#hierarchy#Start_res', [{
+            'list':
+            to_show,
+            'item': [{
+                'value': 'Name'
+            }, {
+                'value': 'Kind'
+            }, {
+                'value': 'Detail'
+            }]
+        }])  # }}}
 
     def RollUpHierarchy(self, context):  # {{{
         if len(self.hierarchy_res_previous) > 1:
