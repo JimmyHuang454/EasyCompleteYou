@@ -34,7 +34,6 @@ fun! ECY#qf#Init()
   let s:selecting_item_index = 0
   let s:MAX_TO_SHOW = 15
   let s:input_value = ''
-  let s:added_hl = []
 
   let s:qf_preview = easy_windows#new()
 "}}}
@@ -217,13 +216,8 @@ fun! s:RenderRes() abort
   if len(s:fz_res) <= s:selecting_item_index || s:selecting_item_index < 0
     let s:selecting_item_index = 0
   endif
-  call s:qf_res._delete_match(l:MATCH_HL)
-  call s:qf_res._delete_match('Error')
-  for item in s:added_hl
-    call s:qf_res._delete_match(item)
-  endfor
 
-  let s:added_hl = []
+  call s:qf_res._clear_match()
 
   let l:max_len = {}
 
@@ -303,9 +297,6 @@ fun! s:RenderRes() abort
       endif
       if has_key(item2, 'hl')
         call s:qf_res._add_match(item2['hl'], [[i + 1, l:start_pos[j] + 3, len(item2['value'])]])
-        if !ECY#utils#IsInList(item2['hl'], s:added_hl)
-          call add(s:added_hl, item2['hl'])
-        endif
       endif
       let j += 1
     endfor
@@ -323,42 +314,45 @@ fun! s:RenderRes() abort
     call s:qf_res._set_text(['Empty Result.'])
     call s:qf_res._add_match('Error', [[1]])
   else
-    if has_key(g:ECY_qf_res, 'item')
-      let i = 0
-      let l:kind_line = '  '
-      for item in g:ECY_qf_res['item']
-        if has_key(l:max_len, i)
-          let l:diff = l:max_len[i] - len(item['value']) + 1
-          let k = 0
-          while k < l:diff
-            let item['value'] .= ' '
-            let k += 1
-          endw
-          let l:kind_line .= item['value']
-        endif
-        let i += 1
-      endfor
-      call s:qf_res_top_line._set_text(l:kind_line)
-
-      let i = 0
-      let l:temp = 1
-      for item in g:ECY_qf_res['item']
-        if has_key(item, 'hl')
-          let l:hl = item['hl']
-        else
-          let l:hl = i % len(g:ECY_colum_color)
-          let l:hl = g:ECY_colum_color[l:hl]
-        endif
-
-        let l:value_len = len(item['value'])
-        if i == 0
-          let l:value_len += 2
-        endif
-        call s:qf_res_top_line._add_match(l:hl, [[1, l:temp, l:value_len]])
-        let l:temp += l:value_len
-        let i += 1
-      endfor
+    if !has_key(g:ECY_qf_res, 'item')
+      return
     endif
+
+    let i = 0
+    let l:kind_line = '  '
+    for item in g:ECY_qf_res['item']
+      let item['value2'] = item['value']
+      if has_key(l:max_len, i)
+        let l:diff = l:max_len[i] - len(item['value2']) + 1
+        let k = 0
+        while k < l:diff
+          let item['value2'] .= ' '
+          let k += 1
+        endw
+        let l:kind_line .= item['value2']
+      endif
+      let i += 1
+    endfor
+    call s:qf_res_top_line._set_text(l:kind_line)
+
+    let i = 0
+    let l:temp = 1
+    for item in g:ECY_qf_res['item']
+      if has_key(item, 'hl')
+        let l:hl = item['hl']
+      else
+        let l:hl = i % len(g:ECY_colum_color)
+        let l:hl = g:ECY_colum_color[l:hl]
+      endif
+
+      let l:value_len = len(item['value2'])
+      if i == 0
+        let l:value_len += 2
+      endif
+      call s:qf_res_top_line._add_match(l:hl, [[1, l:temp, l:value_len]])
+      let l:temp += l:value_len
+      let i += 1
+    endfor
   endif
 "}}}
 endf
@@ -368,7 +362,6 @@ fun! ECY#qf#Close() abort
   call s:qf_preview._close()
   call s:qf_res_top_line._close()
   let s:input_value = ''
-  let s:added_hl = []
   return 1
 endf
 
@@ -426,7 +419,6 @@ endfunction
 fun! s:ECYQF(lists, opts) abort
 "{{{
   let s:input_value = ''
-  let s:added_hl = []
 
   let s:selecting_item_index = 0
 

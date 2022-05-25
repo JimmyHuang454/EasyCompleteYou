@@ -1130,6 +1130,21 @@ function! s:EW._add_match(hl_name, pos) abort
 "}}}
 endfunction
 
+function! s:EW._clear_match() abort
+"{{{
+  let l:hl = g:EW_info[self['EW_id']]['hi_list']
+  for item in keys(l:hl)
+    let l:hl_id = l:hl[item]['hl_id']
+    if g:is_vim
+      call self._exe_cmd(printf('call matchdelete(%s)', l:hl_id), 0)
+    else
+      call nvim_buf_clear_namespace(self['nvim_buf_id'], l:hl_id, 0, -1)
+    endif
+    unlet l:hl[item]
+  endfor
+"}}}
+endfunction
+
 function! s:EW._delete_match(hl_name) abort
 "{{{
   if !self['is_created']

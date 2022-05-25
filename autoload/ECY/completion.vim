@@ -321,7 +321,7 @@ function! s:SelectItems_vim(next_or_pre) abort
   let g:ECY_current_popup_windows_info['selecting_item'] = l:next_item
 
   call s:popup_obj._delete_match(g:ECY_floating_windows_seleted)
-  " call s:popup_obj._delete_match(g:ECY_floating_windows_seleted_matched)
+  " call s:popup_obj._clear_match()
 
   if l:next_item == 0
     let l:to_complete = g:ECY_current_popup_windows_info['keyword_cache']
