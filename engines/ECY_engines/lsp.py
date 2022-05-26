@@ -1570,3 +1570,52 @@ class Operate(object):
         del self.rename_info[self.rename_id]  # for now
         res = workspace_edit.WorkspaceEdit(res)
         self._do_action(res)  # }}}
+
+    def Moniker(self, context):  # {{{
+        if 'monikerProvider' not in self.capabilities:
+            self._show_not_support_msg('Moniker')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        res = self._lsp.Moniker(uri, start_position['line'],
+                                start_position['colum']).GetResponse()
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
+            res = []
+
+        to_show = []
+        for item in res:
+            kind = ''
+            if 'kind' in item:
+                kind = item['kind']
+            to_show.append({
+                'abbr': [{
+                    'value': item['scheme']
+                }, {
+                    'value': item['identifier']
+                }, {
+                    'value': item['unique']
+                }, {
+                    'value': kind
+                }]
+            })
+        rpc.DoCall('ECY#qf#Open', [{
+            'list':
+            to_show,
+            'item': [{
+                'value': 'Scheme'
+            }, {
+                'value': 'Identifier'
+            }, {
+                'value': 'Unique'
+            }, {
+                'value': 'Kind'
+            }]
+        }, {}])
+        # }}}

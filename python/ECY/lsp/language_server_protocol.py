@@ -419,6 +419,13 @@ class LSP(conec.Operate):
         params['options'] = opts
         return self._build_send(params, 'textDocument/onTypeFormatting')
 
+    def Moniker(self, uri, line, colum, path_type='uri'):
+        params = self.TextDocumentPositionParams(uri,
+                                                 line,
+                                                 colum,
+                                                 path_type=path_type)
+        return self._build_send(params, 'textDocument/moniker')
+
     def Range(self, start_position, end_position):
         return {'start': start_position, 'end': end_position}
 

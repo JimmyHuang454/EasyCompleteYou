@@ -575,7 +575,11 @@ function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
           \'path': item['file_path'], 'range': item['range']})
   endfor
 
-  call ECY#qf#Open(l:res, {})
+  call ECY#qf#Open({'list': l:res, 'item': [
+        \{'value': 'Kind'},
+        \{'value': 'Info'},
+        \{'value': 'Position'},
+        \]}, {})
 "}}}
 endfunction
 
