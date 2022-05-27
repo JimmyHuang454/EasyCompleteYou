@@ -65,6 +65,7 @@
     "engine_name": "ECY_engines.yaml.yaml"
   }, {
     "file_type": ["json"],
+    "disabled": true,
     "engine_name": "ECY_engines.json.json"
   }, {
     "file_type": ["lua"],
@@ -77,7 +78,7 @@
     "engine_name": "ECY_engines.all.spell"
   }, {
     "file_type": ["all"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.all.efm"
   }, {
     "file_type": ["all"],
