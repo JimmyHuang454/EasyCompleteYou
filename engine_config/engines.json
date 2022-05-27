@@ -11,6 +11,7 @@
     "engine_name": "ECY_engines.cpp.clangd"
   }, {
     "file_type": ["latex", "tex"],
+    "disabled": true,
     "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
     "file_type": ["python"],
@@ -34,6 +35,7 @@
     "engine_name": "ECY_engines.all.fzf.fzf"
   }, {
     "file_type": ["rust"],
+    "disabled": true,
     "engine_name": "ECY_engines.rust.rust_analyzer"
   }, {
     "file_type": ["all"],
@@ -44,6 +46,7 @@
     "engine_name": "ECY_engines.pygment.pygment"
   }, {
     "file_type": ["javascript", "typescript"],
+    "disabled": true,
     "engine_name": "ECY_engines.javascript.theia.theia"
   }, {
     "file_type": ["html", "xhtml", "vue"],
@@ -51,7 +54,7 @@
     "engine_name": "ECY_engines.html.html"
   }, {
     "file_type": ["vim"],
-    "engine_name": "ECY_engines.viml.vim_ts.vim"
+    "engine_name": "ECY_engines.viml.vimlsp"
   }, {
     "file_type": ["vue"],
     "installer_path": "ECY_installer.installer.vls",

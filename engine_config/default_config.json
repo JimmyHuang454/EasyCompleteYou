@@ -524,7 +524,7 @@
       "des": ["cmd to start theia."]
     }
   },
-  "ECY_engines.viml.vim_ts.vim": {
+  "ECY_engines.viml.vimlsp": {
     "cmd": {
       "default_value": "",
       "type": "string",
