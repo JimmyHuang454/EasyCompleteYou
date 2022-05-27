@@ -85,6 +85,7 @@ function! s:AllCommand() abort
         \'ECYGotoTypeDefinition': {'des': 'Provide by LS.'},
         \'ECYCallHierarchy': {'des': 'Provide by LS.'},
         \'ECYInstallerList': {'des': 'Install LS.'},
+        \'ECYSwitchEngine': {'des': 'Switch LS.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
@@ -136,6 +137,7 @@ command! -nargs=0 ECYDiagnosticsAll     call ECY#diagnostics#ShowSelecting(0)
 command! -nargs=0 ECYDiagnostics        call ECY#diagnostics#ShowSelecting(1)
 command! -nargs=0 ECYCallHierarchy      call ECY#hierarchy#Start()
 command! -nargs=0 ECYInstallerList      call ECY#engine#Show()
+command! -nargs=0 ECYSwitchEngine       call ECY#engine#Do()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
