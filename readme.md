@@ -26,14 +26,14 @@ For user in China:
 ### Available Engines
 
 | Name                       | Programming Language | Installer | Link |
-| -------------------------- | :------------------: | --------: | ---: | --- |
-| ECY.engines.default_engine |         all          |         - |    - | -   |
-| ECY_engines.cpp.clangd     |        C/C++         |       Yes |    - | -   |
-| ECY_engines.python.jedi_ls |       Python3        |       Yes |    - | -   |
-| ECY_engines.golang.gopls   |        golang        |       Yes |    - | -   |
-| ECY_engines.html.html      |         html         |       Yes |    - | -   |
-| ECY_engines.viml.vimlsp    |         viml         |       Yes |    - | -   |
-| ECY_engines.html.vls       |         vue          |       Yes |    - | -   |
+| -------------------------- | :------------------: | --------: |  --- |
+| ECY.engines.default_engine |         all          |         - |  -   |
+| ECY_engines.cpp.clangd     |        C/C++         |       Yes |  -   |
+| ECY_engines.python.jedi_ls |       Python3        |       Yes |  -   |
+| ECY_engines.golang.gopls   |        golang        |       Yes |  -   |
+| ECY_engines.html.html      |         html         |       Yes |  -   |
+| ECY_engines.viml.vimlsp    |         viml         |       Yes |  -   |
+| ECY_engines.html.vls       |         vue          |       Yes |  -   |
 
 ### Config
 
