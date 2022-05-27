@@ -45,32 +45,32 @@
     "completion.enable": {
       "default_value": true,
       "type": "boolean",
-      "des": [""]
+      "des": ["Enable completion."]
     },
     "completion.triggering_length": {
       "default_value": 1,
       "type": "int",
-      "des": [""]
+      "des": ["Minmun string length to trigger completion menu."]
     },
     "completion.expand_snippets_key": {
       "default_value": "<CR>",
       "type": "string",
-      "des": [""]
+      "des": ["Key to trigger snippet if exists."]
     },
     "completion.select_item": {
       "default_value": ["<tab>", "<s-tab>"],
       "type": "list",
-      "des": [""]
+      "des": ["Seleting."]
     },
     "diagnostics.update_diagnostics_in_insert_mode": {
       "default_value": false,
       "type": "boolean",
-      "des": [""]
+      "des": ["Is update diagnostics in insert mode?"]
     },
     "diagnostics.key_to_show_current_line_diagnostics": {
       "default_value": "H",
       "type": "string",
-      "des": [""]
+      "des": ["Show info."]
     },
     "diagnostics.key_to_show_next_diagnostics": {
       "default_value": "[j",
