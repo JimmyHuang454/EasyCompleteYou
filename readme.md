@@ -65,8 +65,8 @@ let g:ECY_config = {
 | - | :-: | -: | - |
 |completion.enable|boolean|True|Enable completion.|
 |completion.triggering_length|int|1|Minmun string length to trigger completion menu.|
-|completion.expand_snippets_key|string|<CR>|Key to trigger snippet if exists.|
-|completion.select_item|list|['<tab>', '<s-tab>']|Seleting.|
+|completion.expand_snippets_key|string|\<CR\>|Key to trigger snippet if exists.|
+|completion.select_item|list|['\<tab\>', '\<s-tab\>']|Seleting.|
 |diagnostics.update_diagnostics_in_insert_mode|boolean|False|Is update diagnostics in insert mode?|
 |diagnostics.key_to_show_current_line_diagnostics|string|H|Show info.|
 |diagnostics.key_to_show_next_diagnostics|string|[j|-|
@@ -85,7 +85,7 @@ let g:ECY_config = {
 |semantic_tokens.disable_in_insert_mode|boolean|True|-|
 |signature_help.enable|boolean|True|-|
 |preview_windows.enable|boolean|True|-|
-|show_switching_engine_popup|boolean|<Tab>|-|
+|show_switching_engine_popup|boolean|\<Tab\>|-|
 |ls_timeout|int|3|second|
 |symbols_color.Keyword|string|Keyword|-|
 |symbols_color.Class|string|Special|-|
@@ -99,14 +99,14 @@ let g:ECY_config = {
 
 |ECY_engines.cpp.clangd| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start clangd.|
+|cmd|string|-|cmd to start clangd.|
 |cmd2|string|clangd|cmd to start clangd.|
 |use_completion_cache|boolean|False|Is use completion cache?|
 |all_scopes_completion|boolean|False|If set to true, code completion will include index symbols that are not defined in the scopes (e.g. namespaces) visible from the code completion point. Such completions can insert scope qualifiers.|
 |background_index|boolean|True|Index project code in the background and persist index on disk.|
-|clang_format_fallback_style|string||clang-format style to apply by default when no .clang-format file is found.|
-|pch_storage|string||Storing PCHs in memory increases memory usages, but may improve performance.|
-|query_dirver|string||-|
+|clang_format_fallback_style|string|-|clang-format style to apply by default when no .clang-format file is found.|
+|pch_storage|string|-|Storing PCHs in memory increases memory usages, but may improve performance.|
+|query_dirver|string|-|-|
 |initializationOptions.fallbackFlags|list|[]|LS init opts|
 |initializationOptions.compilationDatabasePath|string|None|LS init opts|
 |semantic_color|list|[[['comment'], 'Comment'], [['class', 'classScope', 'declaration'], 'SpellRare'], [['class', 'globalScope'], 'SpellLocal']]|-|
@@ -115,28 +115,28 @@ let g:ECY_config = {
 
 |ECY_engines.html.vls| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start vls.|
+|cmd|string|-|cmd to start vls.|
 |cmd2|string|vls|cmd to start vls.|
 
 
 
 |ECY_engines.yaml.yaml| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start yaml.|
+|cmd|string|-|cmd to start yaml.|
 |cmd2|string|yaml-language-server|cmd to start yaml.|
 
 
 
 |ECY_engines.json.json| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start json.|
+|cmd|string|-|cmd to start json.|
 |cmd2|string|vscode-json-languageserver|cmd to start json.|
 
 
 
 |ECY_engines.lua.lua| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start lua-language-server.|
+|cmd|string|-|cmd to start lua-language-server.|
 |cmd2|string|lua-language-server|cmd to start lua-language-server.|
 |Lua.configuration.completion.enable|boolean|True|cmd to start lua-language-server.|
 
@@ -144,14 +144,14 @@ let g:ECY_config = {
 
 |ECY_engines.html.html| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start html_lsp.|
+|cmd|string|-|cmd to start html_lsp.|
 |cmd2|string|html-languageserver|cmd to start html_lsp.|
 
 
 
 |ECY_engines.all.efm| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start efm.|
+|cmd|string|-|cmd to start efm.|
 |cmd2|string|efm|cmd to start efm.|
 |initializationOptions.documentFormatting|boolean|True|LS init opts|
 |initializationOptions.hover|boolean|True|LS init opts|
@@ -162,7 +162,7 @@ let g:ECY_config = {
 
 |ECY_engines.python.pyright| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start pyright.|
+|cmd|string|-|cmd to start pyright.|
 |cmd2|string|pyright-langserver|cmd to start pyright.|
 |include_path|list|[]|included path while parsing.|
 
@@ -170,31 +170,31 @@ let g:ECY_config = {
 
 |ECY_engines.tag.tagls| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start tagls.|
+|cmd|string|-|cmd to start tagls.|
 |cmd2|string|python -m tagls|cmd to start tagls.|
 |initializationOptions.register_official_methods|list|[]|LS init opts|
 |initializationOptions.gtags_provider|string|leaderf|LS init opts|
-|initializationOptions.cache_dir|string||LS init opts|
+|initializationOptions.cache_dir|string|-|LS init opts|
 
 
 
 |ECY_engines.golang.gopls| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start gopls.|
+|cmd|string|-|cmd to start gopls.|
 |cmd2|string|gopls|cmd to start gopls.|
 
 
 
 |ECY_engines.rust.rust_analyzer| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start rust_analyzer.|
+|cmd|string|-|cmd to start rust_analyzer.|
 |cmd2|string|rust-analyzer|cmd to start rust_analyzer.|
 
 
 
 |ECY_engines.python.jedi_ls| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start pyls.|
+|cmd|string|-|cmd to start pyls.|
 |cmd2|string|jedi-language-server|cmd to start pyls.|
 |initializationOptions.codeAction.nameExtractVariable|list|jls_extract_var|LS init opts|
 |initializationOptions.codeAction.nameExtractFunction|string|jls_extract_var|LS init opts|
@@ -215,13 +215,13 @@ let g:ECY_config = {
 
 |ECY_engines.javascript.theia.theia| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start theia.|
+|cmd|string|-|cmd to start theia.|
 |cmd2|string|typescript-language-server --stdio|cmd to start theia.|
 
 
 
 |ECY_engines.viml.vimlsp| Type  | Default Value | Des |
 | - | :-: | -: | - |
-|cmd|string||cmd to start vim LS.|
+|cmd|string|-|cmd to start vim LS.|
 |cmd2|string|vim-language-server|cmd to start vim LS.|
 
