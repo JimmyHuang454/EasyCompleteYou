@@ -4,8 +4,22 @@ with open('./default_config.json', 'r') as f:
     content = f.read()
     content = json.loads(content)
 
+with open('./engines.json', 'r') as f:
+    engine_list = f.read()
+    engine_list = json.loads(engine_list)
+
+def IsDisabled(engine_name):
+    for item in engine_list['engines_list']:
+        if item['engine_name'] == engine_name:
+            if 'disabled' in item and item['disabled']:
+                return True
+            return False
+    return False
+
 res = []
 for item in content:
+    if IsDisabled(item):
+        continue
     temp = "|%s| Type  | Default Value | Des |\n" % item
     temp += "| - | :-: | -: | - |\n"
     for item2 in content[item]:

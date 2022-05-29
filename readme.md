@@ -120,20 +120,6 @@ let g:ECY_config = {
 
 
 
-|ECY_engines.yaml.yaml| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start yaml.|
-|cmd2|string|yaml-language-server|cmd to start yaml.|
-
-
-
-|ECY_engines.json.json| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start json.|
-|cmd2|string|vscode-json-languageserver|cmd to start json.|
-
-
-
 |ECY_engines.lua.lua| Type  | Default Value | Des |
 | - | :-: | -: | - |
 |cmd|string|-|cmd to start lua-language-server.|
@@ -149,17 +135,6 @@ let g:ECY_config = {
 
 
 
-|ECY_engines.all.efm| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start efm.|
-|cmd2|string|efm|cmd to start efm.|
-|initializationOptions.documentFormatting|boolean|True|LS init opts|
-|initializationOptions.hover|boolean|True|LS init opts|
-|initializationOptions.documentSymbol|boolean|True|LS init opts|
-|initializationOptions.codeAction|boolean|True|LS init opts|
-
-
-
 |ECY_engines.python.pyright| Type  | Default Value | Des |
 | - | :-: | -: | - |
 |cmd|string|-|cmd to start pyright.|
@@ -168,27 +143,10 @@ let g:ECY_config = {
 
 
 
-|ECY_engines.tag.tagls| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start tagls.|
-|cmd2|string|python -m tagls|cmd to start tagls.|
-|initializationOptions.register_official_methods|list|[]|LS init opts|
-|initializationOptions.gtags_provider|string|leaderf|LS init opts|
-|initializationOptions.cache_dir|string|-|LS init opts|
-
-
-
 |ECY_engines.golang.gopls| Type  | Default Value | Des |
 | - | :-: | -: | - |
 |cmd|string|-|cmd to start gopls.|
 |cmd2|string|gopls|cmd to start gopls.|
-
-
-
-|ECY_engines.rust.rust_analyzer| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start rust_analyzer.|
-|cmd2|string|rust-analyzer|cmd to start rust_analyzer.|
 
 
 
@@ -210,13 +168,6 @@ let g:ECY_config = {
 |initializationOptions.workspace.extraPaths|list|[]|LS init opts|
 |initializationOptions.workspace.symbols.ignoreFolders|list|['.nox', '.tox', '.venv', '__pycache__', 'venv']|LS init opts|
 |initializationOptions.workspace.symbols.maxSymbols|int|20|LS init opts|
-
-
-
-|ECY_engines.javascript.theia.theia| Type  | Default Value | Des |
-| - | :-: | -: | - |
-|cmd|string|-|cmd to start theia.|
-|cmd2|string|typescript-language-server --stdio|cmd to start theia.|
 
 
 
