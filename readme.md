@@ -23,6 +23,10 @@ For user in China:
 
 > Plug 'https://gitee.com/Jimmy_Huang/EasyCompleteYou2'
 
+### Usage
+
+You can use `:ECY` to list all commands. Finally, you should selete an engine that works at current filetype by `:ECYSwitchEngine`
+
 ### Available Engines
 
 | Name                       | Programming Language | Installer | Link                                                                     |
