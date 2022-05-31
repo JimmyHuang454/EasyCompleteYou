@@ -32,6 +32,7 @@ jobs:
       - name: Install pyinstaller
         run: |
           python3 --version
+          pip3 install tree_sitter
           pip3 install pyinstaller
           pip3 install pygments
           pip3 install tqdm

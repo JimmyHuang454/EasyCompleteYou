@@ -535,5 +535,27 @@
       "type": "string",
       "des": ["cmd to start vim LS."]
     }
+  },
+  "ECY_engines.all.tree_sitter": {
+    "highlight.python.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["Enable highlight in python."]
+    },
+    "highlight.python.color": {
+      "default_value": [
+        [
+          ["comment"], "Comment"
+        ],
+        [
+          ["class", "classScope", "declaration"], "SpellRare"
+        ],
+        [
+          ["class", "globalScope"], "SpellLocal"
+        ]
+      ],
+      "type": "list",
+      "des": [""]
+    }
   }
 }
