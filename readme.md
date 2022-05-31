@@ -25,7 +25,7 @@ For user in China:
 
 ### Usage
 
-You can use `:ECY` to list all commands. Finally, you should selete an engine that works at current filetype by `:ECYSwitchEngine`
+You can use `:ECY` to list all commands. Finally, you should selete an engine that works at current filetype by `:ECYSwitchEngine`. Optionally, you need to install [ultisnips](https://github.com/SirVer/ultisnips) to enable Snippet feature.
 
 ### Available Engines
 
