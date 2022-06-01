@@ -86,6 +86,9 @@ function! s:AllCommand() abort
         \'ECYCallHierarchy': {'des': 'Provide by LS.'},
         \'ECYInstallerList': {'des': 'Install LS.'},
         \'ECYSwitchEngine': {'des': 'Switch LS.'},
+        \'ECYNextDiagnostics': {'des': 'goto next diagnostics.'},
+        \'ECYCurrentLineDiagnostics': {'des': 'show current line diagnostics.'},
+        \'codeAction': {'des': 'Do codeAction.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
@@ -100,7 +103,7 @@ endfunction
 "}}}
 
 vmap <C-h> <ESC>:call ECY2_main#DoCodeAction({'range_type': 'selected_range'})<CR>
-nmap <C-h> :call ECY2_main#DoCodeAction({'range_type': 'current_line'})<CR>
+nmap <C-h> :ECYCodeAction<CR>
 
 nmap vae :ECYSeleteRange<CR>
 nmap var :ECYSeleteRangeParent<CR>
@@ -140,6 +143,7 @@ command! -nargs=0 ECYInstallerList          call ECY#engine#Show()
 command! -nargs=0 ECYSwitchEngine           call ECY#engine#Do()
 command! -nargs=0 ECYNextDiagnostics        call ECY#diagnostics#ShowNextDiagnosis(1)
 command! -nargs=0 ECYCurrentLineDiagnostics call ECY#diagnostics#ShowCurrentLineDiagnosis(0)
+command! -nargs=0 ECYCodeAction             call ECY2_main#DoCodeAction({'range_type': 'current_line'})
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
