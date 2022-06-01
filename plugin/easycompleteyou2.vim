@@ -88,7 +88,7 @@ function! s:AllCommand() abort
         \'ECYSwitchEngine': {'des': 'Switch LS.'},
         \'ECYNextDiagnostics': {'des': 'goto next diagnostics.'},
         \'ECYCurrentLineDiagnostics': {'des': 'show current line diagnostics.'},
-        \'codeAction': {'des': 'Do codeAction.'},
+        \'ECYCodeAction': {'des': 'Do codeAction.'},
         \}
   let l:res = []
   for item in keys(g:ECY_cmd_list)
