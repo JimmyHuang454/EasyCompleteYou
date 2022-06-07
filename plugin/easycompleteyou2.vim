@@ -148,9 +148,6 @@ command! -nargs=0 ECYCodeAction             call ECY2_main#DoCodeAction({'range_
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                     Go                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ECY_preview_windows_size = 
-      \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
-
 call ECY#engine_config#Init()
 call ECY#completion#Init()
 call ECY2_main#Init()
