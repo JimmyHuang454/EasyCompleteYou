@@ -1,6 +1,6 @@
 function! s:AskUser(results) abort
 "{{{
-  let s:show = ''
+  let s:show = []
   let i = 0
   for item in a:results
     if has_key(item, 'disabled')
@@ -9,6 +9,7 @@ function! s:AskUser(results) abort
 
     let l:type = ''
     let l:kind = ''
+    let l:kind_color = 'QuickFixLine'
     let l:title = ''
 
     if has_key(item, 'edit')
@@ -31,6 +32,7 @@ function! s:AskUser(results) abort
         if has_key(l:temp, 'kind')
           let l:kind .= item['kind']
         endif
+        let l:kind_color = 'TabLine'
       else
         let l:type = 'Commnand '
         " code_action with command
@@ -40,18 +42,34 @@ function! s:AskUser(results) abort
       let l:cmd_args = get(l:temp, 'arguments', [])
     endif
     let i += 1
-    let s:show .= printf("%s. %s | %s | %s \n", string(i), l:type, l:kind, l:title)
+    call add(s:show, {'abbr': 
+          \[{'value': l:type}, 
+          \{'value': l:kind, 'hl': l:kind_color}, {'value': l:title, 'hl': 'Comment'}]})
   endfor
 
-  redraw!
-  echo s:show
-  let l:seleted_item = str2nr(input('Index: '))
-  if l:seleted_item > len(a:results) || l:seleted_item == 0
-    call ECY#utils#echo('Quited')
-    return -1
+  call ECY#qf#Open(
+        \{'list': s:show, 'item': [
+          \{'value': 'Type'}, {'value': 'Name'}, {'value': 'Title'}]}, 
+        \{'action': {'open#current_buffer': function('s:DoAction')}})
+"}}}
+endfunction
+
+function! s:DoAction(res) abort
+"{{{
+  if a:res == {}
+    return
   endif
-  let l:seleted_item -= 1
-  return l:seleted_item
+
+  if has_key(a:res, 'command') && 
+        \has_key(a:res['command'], 'arguments')
+    " TODO
+  endif
+
+  let l:params = {'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange(),
+        \'seleted_item': a:res['item_index'], 'context': a:context}
+
+  call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
+  call ECY#utils#echo('Appled action.')
 "}}}
 endfunction
 
@@ -77,24 +95,11 @@ fun! ECY#code_action#Do(context)
   endif
 
   if l:seleted_item == -1
-    let l:seleted_item = s:AskUser(s:results)
-    if l:seleted_item == -1
-      return
-    endif
+    call s:AskUser(s:results)
   else
     call ECY#utils#echo('Appled action.')
+    call s:DoAction(s:results[l:seleted_item])
   endif
-
-  let s:undo = {}
-  if has_key(s:results[l:seleted_item], 'command') && 
-        \has_key(s:results[l:seleted_item]['command'], 'arguments')
-    " TODO
-  endif
-
-  let l:params = {'buffer_id': ECY#rpc#rpc_event#GetBufferIDNotChange(),
-        \'seleted_item': l:seleted_item, 'context': a:context}
-
-  call ECY#rpc#rpc_event#call({'event_name': 'CodeActionCallback', 'params': l:params})
   "}}}
 endf
 

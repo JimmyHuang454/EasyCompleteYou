@@ -1111,15 +1111,21 @@ class Operate(object):
             diagnostic=self._diagnosis_cache).GetResponse()
 
         if len(res) == 0 or res is None:
-            rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
+            self._show_msg('No codeAction.')
             return
 
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
-
         res = res['result']
+
+        i = 0
+        for item in res:
+            item['item_index'] = i
+            i += 1
+
         context['result'] = res
+
         self.code_action_cache = context
 
         rpc.DoCall('ECY#code_action#Do', [context])
