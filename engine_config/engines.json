@@ -11,10 +11,11 @@
     "engine_name": "ECY_engines.cpp.clangd"
   }, {
     "file_type": ["latex", "tex"],
+    "disabled": true,
     "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
     "file_type": ["python"],
-    "disabled": false,
+    "disabled": true,
     "installer_path": "ECY_installer.installer.pyright",
     "engine_name": "ECY_engines.python.pyright"
   }, {
@@ -27,13 +28,10 @@
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY_engines.vim_lsp.vim_lsp"
-  }, {
-    "file_type": ["all"],
-    "disabled": true,
     "engine_name": "ECY_engines.all.fzf.fzf"
   }, {
     "file_type": ["rust"],
+    "disabled": true,
     "engine_name": "ECY_engines.rust.rust_analyzer"
   }, {
     "file_type": ["all"],
@@ -41,9 +39,14 @@
   }, {
     "file_type": ["all"],
     "disabled": true,
+    "engine_name": "ECY_engines.all.tree_sitter"
+  }, {
+    "file_type": ["all"],
+    "disabled": true,
     "engine_name": "ECY_engines.pygment.pygment"
   }, {
     "file_type": ["javascript", "typescript"],
+    "disabled": true,
     "engine_name": "ECY_engines.javascript.theia.theia"
   }, {
     "file_type": ["html", "xhtml", "vue"],
@@ -51,7 +54,8 @@
     "engine_name": "ECY_engines.html.html"
   }, {
     "file_type": ["vim"],
-    "engine_name": "ECY_engines.viml.vim_ts.vim"
+    "installer_path": "ECY_installer.installer.vimlsp",
+    "engine_name": "ECY_engines.viml.vimlsp"
   }, {
     "file_type": ["vue"],
     "installer_path": "ECY_installer.installer.vls",
@@ -62,6 +66,8 @@
     "engine_name": "ECY_engines.yaml.yaml"
   }, {
     "file_type": ["json"],
+    "disabled": false,
+    "installer_path": "ECY_installer.installer.json",
     "engine_name": "ECY_engines.json.json"
   }, {
     "file_type": ["lua"],
@@ -74,7 +80,7 @@
     "engine_name": "ECY_engines.all.spell"
   }, {
     "file_type": ["all"],
-    "disabled": false,
+    "disabled": true,
     "engine_name": "ECY_engines.all.efm"
   }, {
     "file_type": ["all"],

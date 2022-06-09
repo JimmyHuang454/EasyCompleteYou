@@ -251,6 +251,13 @@ fun! ECY#engine#GetBufferEngineName()
   "}}}
 endf
 
+function! ECY#engine#IsInstalled(engine_name) abort
+  if has_key(g:ECY_installer_config, a:engine_name)
+    return v:true
+  endif
+  return v:false
+endfunction
+
 function! ECY#engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "{{{
   let l:file_type = ECY#utils#GetCurrentBufferFileType()
@@ -270,12 +277,24 @@ function! ECY#engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "}}}
 endfunction
 
+function! s:QFInstall(res) abort
+  if a:res != {}
+    exe "ECYInstallLS " . a:res['engine_name']
+  endif
+  return 1
+endfunction
+
 fun! ECY#engine#Show()
+"{{{
   let l:to_show = []
   for item in g:ECY_all_buildin_engine
-    let l:has_installer = has_key(item, 'installer_path') ? '!' : '~'
-    let l:is_installed = has_key(item, 'installer_path') ? 'Y' : 'N'
-    let l:is_install_color = has_key(item, 'installer_path') ? 'Todo' : 'Error'
+    let l:has_installer = has_key(item, 'installer_path')
+    if !l:has_installer
+      continue
+    endif
+    let l:is_installed = 
+          \ECY#engine#IsInstalled(item['engine_name']) ? 'Installed' : 'NotInstalled'
+    let l:is_install_color = ECY#engine#IsInstalled(item['engine_name']) ? 'Todo' : 'Error'
     if has_key(item, 'disabled') && item['disabled']
       continue
     endif
@@ -286,5 +305,10 @@ fun! ECY#engine#Show()
           \'engine_name': item['engine_name']})
   endfor
 
-  call ECY#qf#Open(l:to_show, {})
+  call ECY#qf#Open({'list': l:to_show, 'item': [
+        \{'value': 'Installed?'}, 
+        \{'value': 'Name'},
+        \{'value': 'Name'},
+        \]}, {'action': {'open#current_buffer': function('s:QFInstall')}})
+"}}}
 endf

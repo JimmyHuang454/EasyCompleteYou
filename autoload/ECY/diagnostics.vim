@@ -58,7 +58,7 @@ function ECY#diagnostics#Init() abort
 
   let g:ECY_key_to_show_current_line_diagnostics = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.key_to_show_current_line_diagnostics')
   let g:ECY_key_to_show_next_diagnostics = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.key_to_show_next_diagnostics')
-  exe 'nmap ' . g:ECY_key_to_show_current_line_diagnostics . ' :call ECY#diagnostics#ShowCurrentLineDiagnosis(v:false)<CR>'
+  exe 'nmap ' . g:ECY_key_to_show_current_line_diagnostics . ' :call ECY#diagnostics#ShowCurrentLineDiagnosis(0)<CR>'
   exe 'nmap ' . g:ECY_key_to_show_next_diagnostics . ' :call ECY#diagnostics#ShowNextDiagnosis(1)<CR>'
 "}}}
 endfunction
@@ -575,7 +575,11 @@ function! ECY#diagnostics#ShowSelecting(is_current_engine) abort
           \'path': item['file_path'], 'range': item['range']})
   endfor
 
-  call ECY#qf#Open(l:res, {})
+  call ECY#qf#Open({'list': l:res, 'item': [
+        \{'value': 'Kind'},
+        \{'value': 'Info'},
+        \{'value': 'Position'},
+        \]}, {})
 "}}}
 endfunction
 

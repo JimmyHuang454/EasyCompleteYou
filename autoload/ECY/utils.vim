@@ -50,6 +50,10 @@ fun! ECY#utils#echo(msg)
         \ echohl None
   "TODO
   return
+
+  let g:ECY_preview_windows_size = 
+        \get(g:,'ECY_preview_windows_size',[[30, 70], [2, 14]])
+
   if g:has_floating_windows_support == 'vim'
     "{{{
     let s:show_msg_time = 10

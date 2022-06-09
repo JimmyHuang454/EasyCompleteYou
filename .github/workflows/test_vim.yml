@@ -11,6 +11,7 @@ jobs:
         # vim has no stable tag.
         vim_version: ["nightly", "v8.2.0008", "v8.1.1578", "v8.2.1419"]
     runs-on: ${{ matrix.os }}
+    if: "contains(github.event.head_commit.message, 'test')"
     steps:
       - name: Checkout myself
         uses: actions/checkout@v2

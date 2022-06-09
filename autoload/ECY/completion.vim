@@ -511,16 +511,16 @@ fun! ECY#completion#Init()
   let g:popup_windows_is_selecting = v:false
 
   let g:ECY_floating_windows_normal_matched
-        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.matched')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.color.matched')
 
   let g:ECY_floating_windows_seleted
-        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.seleted')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.color.seleted')
 
   let g:ECY_floating_windows_seleted_matched
-        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.seleted_matched')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.color.seleted_matched')
 
   let g:ECY_floating_windows_background_color
-        \= ECY#engine_config#GetEngineConfig('ECY', 'menu.color.background')
+        \= ECY#engine_config#GetEngineConfig('ECY', 'completion.color.background')
 
   augroup ECY_completion
     autocmd!

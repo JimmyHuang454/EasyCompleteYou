@@ -236,21 +236,6 @@ class Operate(object):
                 del res[item]['undo_text']
         rpc.DoCall('ECY#utils#ApplyTextEdit', [res])
 
-    def _handle_file_status(self):
-        # clangd 8+
-        while 1:
-            try:
-                response = self._lsp.GetRequestOrNotification(
-                    'textDocument/clangd.fileStatus')
-                res_path = response['params']['uri']
-                res_path = self._lsp.UriToPath(res_path)
-                current_buffer_path = rpc.DoCall(
-                    'ECY#utils#GetCurrentBufferPath')
-                if res_path == current_buffer_path:
-                    self._show_msg(response['params']['state'])
-            except:
-                pass
-
     def _show_msg(self, msg):
         if type(msg) is str:
             msg = msg.split('\n')
@@ -390,6 +375,7 @@ class Operate(object):
         if params['change_mode'] == 'n':  # normal mode
             self.GetCodeLens(context)
             self.DocumentLink(context)
+            self.semanticTokens(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -954,10 +940,7 @@ class Operate(object):
             try:
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/semanticTokens/refresh')
-                if self.enabel_semantic_color and self.is_support_full:
-                    rpc.DoCall('ECY#semantic_tokens#AddRefreshID')
-                    rpc.DoCall('ECY#semantic_tokens#Refresh')
-                logger.debug(jobs)
+                rpc.DoCall('ECY#semantic_tokens#Do')
                 self._lsp._build_response(None, jobs['id'])
             except Exception as e:
                 logger.exception(e)
@@ -979,9 +962,6 @@ class Operate(object):
     def CodeActionCallback(self, context):
         params = context['params']
         context = params['context']
-        if context != self.code_action_cache or 'result' not in context:
-            logger.debug('filtered a CodeActionCallback.')
-            return
         res = context['result']
         seleted_item = res[params['seleted_item']]
         if 'edit' in seleted_item:
@@ -1128,14 +1108,17 @@ class Operate(object):
             diagnostic=self._diagnosis_cache).GetResponse()
 
         if len(res) == 0 or res is None:
-            rpc.DoCall('ECY#utils#echo', ['Nothing to act.'])
+            self._show_msg('No codeAction.')
             return
 
         if 'error' in res:
             self._show_msg(res['error']['message'])
             return
-
         res = res['result']
+
+        if res is None:
+            res = []
+
         context['result'] = res
         self.code_action_cache = context
 
@@ -1482,7 +1465,17 @@ class Operate(object):
                 i
             })
             i += 1
-        rpc.DoCall('ECY#hierarchy#Start_res', [to_show])  # }}}
+        rpc.DoCall('ECY#hierarchy#Start_res', [{
+            'list':
+            to_show,
+            'item': [{
+                'value': 'Name'
+            }, {
+                'value': 'Kind'
+            }, {
+                'value': 'Detail'
+            }]
+        }])  # }}}
 
     def RollUpHierarchy(self, context):  # {{{
         if len(self.hierarchy_res_previous) > 1:
@@ -1577,3 +1570,52 @@ class Operate(object):
         del self.rename_info[self.rename_id]  # for now
         res = workspace_edit.WorkspaceEdit(res)
         self._do_action(res)  # }}}
+
+    def Moniker(self, context):  # {{{
+        if 'monikerProvider' not in self.capabilities:
+            self._show_not_support_msg('Moniker')
+            return
+        params = context['params']
+        uri = params['buffer_path']
+        uri = self._lsp.PathToUri(uri)
+        start_position = params['buffer_position']
+        res = self._lsp.Moniker(uri, start_position['line'],
+                                start_position['colum']).GetResponse()
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+
+        res = res['result']
+        if res is None:
+            res = []
+
+        to_show = []
+        for item in res:
+            kind = ''
+            if 'kind' in item:
+                kind = item['kind']
+            to_show.append({
+                'abbr': [{
+                    'value': item['scheme']
+                }, {
+                    'value': item['identifier']
+                }, {
+                    'value': item['unique']
+                }, {
+                    'value': kind
+                }]
+            })
+        rpc.DoCall('ECY#qf#Open', [{
+            'list':
+            to_show,
+            'item': [{
+                'value': 'Scheme'
+            }, {
+                'value': 'Identifier'
+            }, {
+                'value': 'Unique'
+            }, {
+                'value': 'Kind'
+            }]
+        }, {}])
+        # }}}

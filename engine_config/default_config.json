@@ -45,32 +45,32 @@
     "completion.enable": {
       "default_value": true,
       "type": "boolean",
-      "des": [""]
+      "des": ["Enable completion."]
     },
     "completion.triggering_length": {
       "default_value": 1,
       "type": "int",
-      "des": [""]
+      "des": ["Minmun string length to trigger completion menu."]
     },
     "completion.expand_snippets_key": {
       "default_value": "<CR>",
       "type": "string",
-      "des": [""]
+      "des": ["Key to trigger snippet if exists."]
     },
     "completion.select_item": {
       "default_value": ["<tab>", "<s-tab>"],
       "type": "list",
-      "des": [""]
+      "des": ["Seleting."]
     },
     "diagnostics.update_diagnostics_in_insert_mode": {
       "default_value": false,
       "type": "boolean",
-      "des": [""]
+      "des": ["Is update diagnostics in insert mode?"]
     },
     "diagnostics.key_to_show_current_line_diagnostics": {
       "default_value": "H",
       "type": "string",
-      "des": [""]
+      "des": ["Show info."]
     },
     "diagnostics.key_to_show_next_diagnostics": {
       "default_value": "[j",
@@ -167,22 +167,27 @@
       "type": "string",
       "des": [""]
     },
-    "menu.color.background": {
+    "symbols_color.Class": {
+      "default_value": "Special",
+      "type": "string",
+      "des": [""]
+    },
+    "completion.color.background": {
       "default_value": "Pmenu",
       "type": "string",
       "des": [""]
     },
-    "menu.color.seleted": {
+    "completion.color.seleted": {
       "default_value": "PmenuSel",
       "type": "string",
       "des": [""]
     },
-    "menu.color.seleted_matched": {
+    "completion.color.seleted_matched": {
       "default_value": "PmenuSel",
       "type": "string",
       "des": [""]
     },
-    "menu.color.matched": {
+    "completion.color.matched": {
       "default_value": "Keyword",
       "type": "string",
       "des": [""]
@@ -519,7 +524,7 @@
       "des": ["cmd to start theia."]
     }
   },
-  "ECY_engines.viml.vim_ts.vim": {
+  "ECY_engines.viml.vimlsp": {
     "cmd": {
       "default_value": "",
       "type": "string",
@@ -529,6 +534,28 @@
       "default_value": "vim-language-server",
       "type": "string",
       "des": ["cmd to start vim LS."]
+    }
+  },
+  "ECY_engines.all.tree_sitter": {
+    "highlight.python.enable": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["Enable highlight in python."]
+    },
+    "highlight.python.color": {
+      "default_value": [
+        [
+          ["comment"], "Comment"
+        ],
+        [
+          ["class", "classScope", "declaration"], "SpellRare"
+        ],
+        [
+          ["class", "globalScope"], "SpellLocal"
+        ]
+      ],
+      "type": "list",
+      "des": [""]
     }
   }
 }

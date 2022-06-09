@@ -8,8 +8,6 @@ fun! ECY#semantic_tokens#Init() abort
 
   let g:ECY_semantic_tokens_info = {}
 
-  let g:ECY_global_refresh_id = 1
-
   if !g:ECY_enable_semantic_tokens
     return
   endif
@@ -24,7 +22,6 @@ endf
 
 fun! s:BufEnter() abort
   call ECY#semantic_tokens#RenderBuffer()
-  call ECY#semantic_tokens#Refresh()
 endf
 
 fun! s:CursorMoved() abort
@@ -33,7 +30,6 @@ endf
 
 fun! s:InsertLeave() abort
   call ECY#semantic_tokens#RenderBuffer()
-  call ECY#semantic_tokens#Refresh()
 endf
 
 fun! ECY#semantic_tokens#RenderBuffer() abort
@@ -109,23 +105,5 @@ fun! ECY#semantic_tokens#Do() abort
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
   call ECY#rpc#rpc_event#call({'event_name': 'semanticTokens', 'params': l:params})
-"}}}
-endf
-
-fun! ECY#semantic_tokens#AddRefreshID() abort
-  let g:ECY_global_refresh_id += 1
-endf
-
-fun! ECY#semantic_tokens#Refresh() abort
-"{{{
-  if !exists('b:semantic_refresh_id')
-    let b:semantic_refresh_id = 0
-  endif
-
-  if b:semantic_refresh_id != g:ECY_global_refresh_id
-    call ECY#semantic_tokens#Do()
-  endif
-
-  let b:semantic_refresh_id = g:ECY_global_refresh_id
 "}}}
 endf
