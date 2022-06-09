@@ -962,9 +962,6 @@ class Operate(object):
     def CodeActionCallback(self, context):
         params = context['params']
         context = params['context']
-        if context != self.code_action_cache or 'result' not in context:
-            logger.debug('filtered a CodeActionCallback.')
-            return
         res = context['result']
         seleted_item = res[params['seleted_item']]
         if 'edit' in seleted_item:
@@ -1119,13 +1116,10 @@ class Operate(object):
             return
         res = res['result']
 
-        i = 0
-        for item in res:
-            item['item_index'] = i
-            i += 1
+        if res is None:
+            res = []
 
         context['result'] = res
-
         self.code_action_cache = context
 
         rpc.DoCall('ECY#code_action#Do', [context])
