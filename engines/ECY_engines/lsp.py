@@ -394,10 +394,14 @@ class Operate(object):
         res = self._lsp.selectionRange(position, uri).GetResponse()
         res = res['result']
 
-        if res is not None:
-            res = res[0]
-            res['path'] = path
-            rpc.DoCall('ECY#selete_range#Do', [res])
+        if res is None:
+            res = []
+
+        if len(res) == 0:
+            return
+        res = res[0]
+        res['path'] = path
+        rpc.DoCall('ECY#selete_range#Do', [res])
 
     def FoldingRange(self, context):
         if 'foldingRangeProvider' not in self.capabilities:
