@@ -823,7 +823,7 @@ class Operate(object):
                 results_format['kind'] = self._lsp.GetKindNameByNumber(
                     item['kind'])
             else:
-                results_format['kind'] = 'Unkonw'
+                results_format['kind'] = 'Unknow'
 
             menu = []
             if 'detail' in item:
