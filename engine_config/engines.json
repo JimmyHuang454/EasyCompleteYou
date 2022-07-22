@@ -86,5 +86,9 @@
     "file_type": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.tag.tagls"
+  },{
+    "file_type": ["dart"],
+    "disabled": false,
+    "engine_name": "ECY_engines.flutter.dart"
   }]
 }

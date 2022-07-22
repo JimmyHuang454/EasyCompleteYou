@@ -418,6 +418,78 @@
       "des": ["cmd to start gopls."]
     }
   },
+  "ECY_engines.flutter.dart": {
+    "cmd": {
+      "default_value": "",
+      "type": "string",
+      "des": ["cmd to start flutter."]
+    },
+    "cmd2": {
+      "default_value": "dart language-server",
+      "type": "string",
+      "des": ["cmd to start flutter."]
+    },
+    "initializationOptions.onlyAnalyzeProjectsWithOpenFiles": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.suggestFromUnimportedLibraries": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.closingLabels": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.outline": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "initializationOptions.flutterOutline": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "dart.analysisExcludedFolders": {
+      "default_value": [],
+      "type": "list",
+      "des": ["config opts"]
+    },
+    "dart.enableSdkFormatter": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["config opts"]
+    },
+    "dart.lineLength": {
+      "default_value": 80,
+      "type": "int",
+      "des": ["config opts"]
+    },
+    "dart.completeFunctionCalls": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["config opts"]
+    },
+    "dart.showTodos": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["config opts"]
+    },
+    "dart.enableSnippets": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["config opts"]
+    },
+    "dart.updateImportsOnRename": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["config opts"]
+    }
+  },
   "ECY_engines.rust.rust_analyzer": {
     "cmd": {
       "default_value": "",
