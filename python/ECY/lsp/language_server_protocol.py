@@ -608,7 +608,7 @@ class LSP(conec.Operate):
 
     def GetKindNameByNumber(self, kindNr):
         if kindNr not in completion_kind.COMPLETION_KIND:
-            return "Unkonw"
+            return "Unknow"
         return completion_kind.COMPLETION_KIND[kindNr]
 
     def GetSymbolsKindByNumber(self, kindNr):
