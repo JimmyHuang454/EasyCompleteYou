@@ -77,10 +77,6 @@
   }, {
     "file_type": ["all"],
     "disabled": true,
-    "engine_name": "ECY_engines.all.spell"
-  }, {
-    "file_type": ["all"],
-    "disabled": true,
     "engine_name": "ECY_engines.all.efm"
   }, {
     "file_type": ["all"],
