@@ -164,10 +164,12 @@ function! s:SetUpCompleteopt() abort
   else
     set completeopt-=menu
     set completeopt+=menuone
+    set completefunc=ECY#completion#Func
   endif
   set completeopt-=longest
+  set completeopt-=noinsert
+  set completeopt-=noselect
   set shortmess+=c
-  set completefunc=ECY#completion#Func
 "}}}
 endfunction
 
@@ -224,6 +226,7 @@ fun! ECY#completion#Open(context)
   endif
 
   call s:MapSelecting()
+  call s:SetUpCompleteopt()
 
   if g:has_floating_windows_support == 'vim' 
         \&& g:ECY_use_floating_windows_to_be_popup_windows
