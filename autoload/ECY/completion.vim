@@ -238,7 +238,7 @@ fun! ECY#completion#Open(context)
     call s:DoCompletion_old_school(a:context)
   endif
   let l:start = a:context['params']['time_stamp']
-  let g:abc = reltimefloat(reltime()) - l:start
+  let g:ECY_completion_time_slap = reltimefloat(reltime()) - l:start
 "}}}
 endf
 
@@ -340,21 +340,15 @@ function! s:SelectItems_vim(next_or_pre) abort
     endfor
   endif
 
-   if g:ECY_current_popup_windows_info['is_use_text_edit']
-     call setbufline(bufnr(''), line('.'), 
+   call setbufline(bufnr(''), line('.'), 
          \[g:ECY_current_popup_windows_info['original_position']['line_content']])
-     call cursor([line('.'), 
-           \g:ECY_current_popup_windows_info['original_position']['colum']
-           \])
-     let g:ECY_current_popup_windows_info['is_use_text_edit'] = v:false
-  endif
+   call cursor([line('.'), 
+         \g:ECY_current_popup_windows_info['original_position']['colum']
+         \])
 
   if has_key(l:info, 'completion_text_edit') && l:next_item != 0
-     let l:start_colum = l:info['completion_text_edit']['start']['colum']
      call cursor([line('.'), l:info['completion_text_edit']['end']['colum'] + 1])
-     let g:ECY_current_popup_windows_info['is_use_text_edit'] = v:true
   endif
-
 
   if has_key(l:info, 'completion_text_edit')
     call s:CompleteLine2(bufnr(''), 

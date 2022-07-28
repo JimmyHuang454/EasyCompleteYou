@@ -871,7 +871,7 @@ class Operate(object):
                     start_range = item['textEdit']['range']
                     end_range = start_range
                 else:
-                    start_range = item['textEdit']['insert']
+                    start_range = item['textEdit']['replace']
                     end_range = start_range
 
                 temp = {
