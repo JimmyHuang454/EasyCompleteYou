@@ -296,7 +296,7 @@ class Operate(object):
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
-        self._change_workspace_folder(context)
+        # self._change_workspace_folder(context)
         self.GetCodeLens(context)
         self.DocumentLink(context)
 
@@ -1228,6 +1228,9 @@ class Operate(object):
         for item in res:
             if 'uri' in item:
                 item['path'] = self._lsp.UriToPath(item['uri'])
+            elif 'targetUri' in item:
+                item['path'] = self._lsp.UriToPath(item['targetUri'])
+                item['range'] = item['targetRange']
 
         if is_preview:
             rpc.DoCall('ECY#goto#Preview', [res])

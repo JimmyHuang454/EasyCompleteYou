@@ -82,13 +82,23 @@
       "type": "string",
       "des": [""]
     },
-    "diagnostics.erro_sign_highlight": {
+    "diagnostics.warn.sign.highlight": {
+      "default_value": "ECY_warn_sign_highlight",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.error.sign.highlight": {
       "default_value": "ECY_erro_sign_highlight",
       "type": "string",
       "des": [""]
     },
-    "diagnostics.warn_sign_highlight": {
-      "default_value": "ECY_warn_sign_highlight",
+    "diagnostics.error.text.highlight": {
+      "default_value": "ECY_diagnostics_highlight_error",
+      "type": "string",
+      "des": [""]
+    },
+    "diagnostics.warn.text.highlight": {
+      "default_value": "ECY_diagnostics_highlight_warn",
       "type": "string",
       "des": [""]
     },

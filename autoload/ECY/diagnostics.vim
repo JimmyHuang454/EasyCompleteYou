@@ -10,13 +10,15 @@ function ECY#diagnostics#Init() abort
     return
   endif
 
-  hi ECY_diagnostics_highlight  term=undercurl gui=undercurl guisp=DarkRed cterm=underline
-  let g:ECY_diagnostics_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.text_highlight')
+  hi ECY_diagnostics_highlight_error  term=undercurl gui=undercurl guisp=DarkRed cterm=underline
+  hi ECY_diagnostics_highlight_warn  term=undercurl gui=undercurl guisp=DarkYellow cterm=underline
+  let g:ECY_diagnostics_highlight_error = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.error.text.highlight')
+  let g:ECY_diagnostics_highlight_warn = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn.text.highlight')
 
   hi ECY_erro_sign_highlight  guifg=red	    ctermfg=red	
   hi ECY_warn_sign_highlight  guifg=yellow	ctermfg=yellow
-  let g:ECY_erro_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.erro_sign_highlight')
-  let g:ECY_warn_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn_sign_highlight')
+  let g:ECY_erro_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn.sign.highlight')
+  let g:ECY_warn_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.error.sign.highlight')
 
   " 1 means ask diagnostics when there are changes not including user in insert mode, trigger by DoCompletion()
   " 2 means ask diagnostics when there are changes including user in insert mode, trigger by OnBufferTextChanged().
@@ -360,8 +362,14 @@ function! s:PlaceSignAndHighlight(position, diagnostics, items, style, path,
   catch 
   endtry
 
+  if a:style == 1
+    let l:text_style = 'ECY_diagnostics_highlight_error'
+  else
+    let l:text_style = 'ECY_diagnostics_highlight_warn'
+  endif
+
   if a:current_buffer_path == a:path
-    let l:temp = ECY#utils#HighlightRange(a:position['range'], 'ECY_diagnostics_highlight')
+    let l:temp = ECY#utils#HighlightRange(a:position['range'], l:text_style)
     call add(g:ECY_diagnostics_hl[a:path], l:temp)
   endif
 "}}}
