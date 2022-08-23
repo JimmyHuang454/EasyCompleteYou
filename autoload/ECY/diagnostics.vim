@@ -17,8 +17,8 @@ function ECY#diagnostics#Init() abort
 
   hi ECY_erro_sign_highlight  guifg=red	    ctermfg=red	
   hi ECY_warn_sign_highlight  guifg=yellow	ctermfg=yellow
-  let g:ECY_erro_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn.sign.highlight')
-  let g:ECY_warn_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.error.sign.highlight')
+  let g:ECY_erro_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.error.sign.highlight')
+  let g:ECY_warn_sign_highlight = ECY#engine_config#GetEngineConfig('ECY', 'diagnostics.warn.sign.highlight')
 
   " 1 means ask diagnostics when there are changes not including user in insert mode, trigger by DoCompletion()
   " 2 means ask diagnostics when there are changes including user in insert mode, trigger by OnBufferTextChanged().
