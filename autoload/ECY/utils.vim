@@ -3,7 +3,7 @@ let s:show_msg_windows_text_list = []
 let s:show_msg_time = 5
 let s:show_msg_timer_id = -1
 let g:hl_list = {}
-let s:vim_mapped_type = {}
+let g:ECY_vim_mapped_type = {}
 let s:vim_textprop_id = 0
 let s:hl_range_id = 0
 let s:MAX_COL_SIZE = 10000
@@ -659,13 +659,13 @@ function! ECY#utils#AskWindowsStyle()
 "}}}
 endfunction
 
-function! s:VimAddType(hl_name)
+function! ECY#utils#VimAddType(hl_name)
 "{{{
   let s:vim_textprop_id += 1
   let l:hl_id = s:vim_textprop_id
   let l:type = printf('ECY_%s', a:hl_name . string(l:hl_id))
   call prop_type_add(l:type, {'highlight': a:hl_name})
-  let s:vim_mapped_type[l:hl_id] = l:type
+  let g:ECY_vim_mapped_type[l:hl_id] = l:type
   return {'hl_id': l:hl_id, 'type': l:type}
 "}}}
 endfunction
@@ -674,7 +674,7 @@ function! ECY#utils#MatchAdd(hl_name, pos) abort
 "{{{ 1-based.
   if g:is_vim
     if s:use_textprop
-      let l:type_info = s:VimAddType(a:hl_name)
+      let l:type_info = ECY#utils#VimAddType(a:hl_name)
       let l:hl_id = l:type_info['hl_id']
       for item in a:pos
         try
@@ -736,9 +736,12 @@ function! ECY#utils#MatchDelete(hl_id) abort
   if g:is_vim
     if s:use_textprop
       call prop_remove({'id': a:hl_id, 'all': v:true})
-      if has_key(s:vim_mapped_type, a:hl_id)
-        call prop_type_delete(s:vim_mapped_type[a:hl_id])
-        unlet s:vim_mapped_type[a:hl_id]
+      if has_key(g:ECY_vim_mapped_type, a:hl_id)
+        try
+          call prop_type_delete(g:ECY_vim_mapped_type[a:hl_id])
+        catch 
+        endtry
+        unlet g:ECY_vim_mapped_type[a:hl_id]
       endif
     else
       try
@@ -766,7 +769,7 @@ function! s:HighlightRange(range, highlights) abort
   let l:hl_id_list = []
 
   if g:is_vim && s:use_textprop
-    let l:type_info = s:VimAddType(a:highlights)
+    let l:type_info = ECY#utils#VimAddType(a:highlights)
     let l:hl_id = l:type_info['hl_id']
     try
       call prop_add(a:range['start']['line'], a:range['start']['colum'] + 1, {
