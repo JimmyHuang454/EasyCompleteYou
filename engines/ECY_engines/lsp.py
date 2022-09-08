@@ -296,7 +296,7 @@ class Operate(object):
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
-        self._change_workspace_folder(context)
+        # self._change_workspace_folder(context)
         self.GetCodeLens(context)
         self.DocumentLink(context)
 
@@ -823,7 +823,7 @@ class Operate(object):
                 results_format['kind'] = self._lsp.GetKindNameByNumber(
                     item['kind'])
             else:
-                results_format['kind'] = 'Unkonw'
+                results_format['kind'] = ''
 
             menu = []
             if 'detail' in item:
@@ -866,21 +866,28 @@ class Operate(object):
             results_format['info'] = '\n'.join(document)
 
             if 'textEdit' in item:
-                ranges = item['textEdit']['range']
+                newText = item['textEdit']['newText']
+                if 'range' in item['textEdit']:
+                    start_range = item['textEdit']['range']
+                    end_range = start_range
+                else:
+                    start_range = item['textEdit']['replace']
+                    end_range = start_range
+
                 temp = {
-                    'newText': item['textEdit']['newText'],
+                    'newText': newText,
                     'start': {
-                        'line': ranges['start']['line'],
-                        'colum': ranges['start']['character']
+                        'line': start_range['start']['line'],
+                        'colum': start_range['start']['character']
                     },
                     'end': {
-                        'line': ranges['end']['line'],
-                        'colum': ranges['end']['character']
+                        'line': end_range['end']['line'],
+                        'colum': end_range['end']['character']
                     }
                 }
 
                 results_format['completion_text_edit'] = temp
-                results_format['word'] = item['textEdit']['newText']
+                results_format['word'] = newText
 
             show_list.append(results_format)
         context['origin_list'] = context['show_list']
@@ -1221,6 +1228,9 @@ class Operate(object):
         for item in res:
             if 'uri' in item:
                 item['path'] = self._lsp.UriToPath(item['uri'])
+            elif 'targetUri' in item:
+                item['path'] = self._lsp.UriToPath(item['targetUri'])
+                item['range'] = item['targetRange']
 
         if is_preview:
             rpc.DoCall('ECY#goto#Preview', [res])

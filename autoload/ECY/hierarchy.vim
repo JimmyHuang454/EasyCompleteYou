@@ -17,7 +17,6 @@ endfunction
 
 function! s:Incoming(res) abort
 "{{{
-  let g:abcd = a:res
   if a:res != {}
     call ECY#rpc#rpc_event#call({'event_name': 'IncomingCalls', 'params': {'item_index': a:res['item_index']}})
   endif
