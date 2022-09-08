@@ -14,15 +14,15 @@ function! virtual_text#Add(text_line, opts) abort"{{{
   if g:is_vim
     let l:type_info = s:VimAddType(l:hl)
     let l:id = prop_add(l:start_pos['line'] + 1, 
-          \l:start_pos['colum'],
+          \l:start_pos['colum'] + 1,
           \{'text': a:text_line,
           \'id': l:type_info['hl_id'],
           \'text_wrap': 'wrap',
           \'type': l:type_info['type'],
           \})
     return l:id
+  else
   endif
-
 endfunction"}}}
 
 function! virtual_text#AddEOF(text_line, opts) abort"{{{
@@ -34,7 +34,7 @@ function! virtual_text#AddEOF(text_line, opts) abort"{{{
 
   if g:is_vim
     let l:type_info = s:VimAddType(l:hl)
-    let l:id = prop_add(a:opts['start_pos']['line'], 
+    let l:hl_id = prop_add(a:opts['start_pos']['line'] + 1, 
           \0,
           \{'text': a:text_line,
           \'id': l:type_info['hl_id'],
@@ -42,8 +42,17 @@ function! virtual_text#AddEOF(text_line, opts) abort"{{{
           \'text_wrap': 'wrap',
           \'type': l:type_info['type'],
           \})
-    return l:id
+  else
+    let l:hl_id = nvim_create_namespace('')
+    let l:buffer_id = bufnr('')
+    call nvim_buf_set_extmark(l:buffer_id, 
+          \l:hl_id, 
+          \a:opts['start_pos']['line'], 
+          \0,
+          \{'virt_text': [[a:text_line, l:hl]], 
+          \'virt_text_pos': 'eol'})
   endif
+  return l:hl_id
 endfunction"}}}
 
 function! virtual_text#AddLine(text_line, opts) abort"{{{
@@ -64,7 +73,7 @@ function! virtual_text#AddLine(text_line, opts) abort"{{{
       return
     endif
 
-    let l:id = prop_add(l:lineNr, 
+    let l:id = prop_add(l:lineNr + 1, 
           \0,
           \{'text': a:text_line,
           \'id': l:type_info['hl_id'],
@@ -101,8 +110,8 @@ function! s:VimAddType(hl_name)
 endfunction
 
 function! virtual_text#Test() abort
-  let l:opst = {'start_pos': {'line': 1,'colum': 1}, 'hl': 'DiffAdd'}
-  call virtual_text#AddLine('abc', l:opst)
+  let l:opst = {'start_pos': {'line': 14,'colum': 17}, 'hl': 'DiffAdd'}
+  call virtual_text#AddEOF('abc', l:opst)
 endfunction
 
 call virtual_text#Test()
