@@ -1,89 +1,89 @@
 {
   "engines_list": [{
-    "file_type": ["all"],
+    "filetype": ["all"],
     "engine_name": "ECY.engines.default_engine"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "engine_name": "ECY_engines.all.path"
   }, {
-    "file_type": ["c", "cpp", "cuda"],
+    "filetype": ["c", "cpp", "cuda"],
     "installer_path": "ECY_installer.installer.clangd",
     "engine_name": "ECY_engines.cpp.clangd"
   }, {
-    "file_type": ["latex", "tex"],
+    "filetype": ["latex", "tex"],
     "disabled": true,
     "engine_name": "ECY_engines.tex.texlab.texlab"
   }, {
-    "file_type": ["python"],
+    "filetype": ["python"],
     "disabled": true,
     "installer_path": "ECY_installer.installer.pyright",
     "engine_name": "ECY_engines.python.pyright"
   }, {
-    "file_type": ["python"],
+    "filetype": ["python"],
     "installer_path": "ECY_installer.installer.jedi_ls",
     "engine_name": "ECY_engines.python.jedi_ls"
   }, {
-    "file_type": ["go"],
+    "filetype": ["go"],
     "engine_name": "ECY_engines.golang.gopls"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.all.fzf.fzf"
   }, {
-    "file_type": ["rust"],
+    "filetype": ["rust"],
     "disabled": true,
     "engine_name": "ECY_engines.rust.rust_analyzer"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "engine_name": "ECY_engines.snippet.ultisnips.ultisnips"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.all.tree_sitter"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.pygment.pygment"
   }, {
-    "file_type": ["javascript", "typescript"],
+    "filetype": ["javascript", "typescript"],
     "disabled": true,
     "engine_name": "ECY_engines.javascript.theia.theia"
   }, {
-    "file_type": ["html", "xhtml", "vue"],
+    "filetype": ["html", "xhtml", "vue"],
     "installer_path": "ECY_installer.installer.html",
     "engine_name": "ECY_engines.html.html"
   }, {
-    "file_type": ["vim"],
+    "filetype": ["vim"],
     "installer_path": "ECY_installer.installer.vimlsp",
     "engine_name": "ECY_engines.viml.vimlsp"
   }, {
-    "file_type": ["vue"],
+    "filetype": ["vue"],
     "installer_path": "ECY_installer.installer.vls",
     "engine_name": "ECY_engines.html.vls"
   }, {
-    "file_type": ["yaml"],
+    "filetype": ["yaml"],
     "disabled": true,
     "engine_name": "ECY_engines.yaml.yaml"
   }, {
-    "file_type": ["json"],
+    "filetype": ["json"],
     "disabled": false,
     "installer_path": "ECY_installer.installer.json",
     "engine_name": "ECY_engines.json.json"
   }, {
-    "file_type": ["lua"],
+    "filetype": ["lua"],
     "disabled": false,
     "installer_path": "ECY_installer.installer.lua",
     "engine_name": "ECY_engines.lua.lua"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.all.efm"
   }, {
-    "file_type": ["all"],
+    "filetype": ["all"],
     "disabled": true,
     "engine_name": "ECY_engines.tag.tagls"
   },{
-    "file_type": ["dart"],
+    "filetype": ["dart"],
     "disabled": false,
     "engine_name": "ECY_engines.flutter.dart"
   }]

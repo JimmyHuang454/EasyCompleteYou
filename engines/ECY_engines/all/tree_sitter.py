@@ -57,7 +57,7 @@ class Operate(object):
 
     def OnTextChanged(self, context):
         params = context['params']
-        filetype = params['file_type']
+        filetype = params['filetype']
         if filetype not in self.parser or filetype not in self.highlight:
             return
         text = params['buffer_content']

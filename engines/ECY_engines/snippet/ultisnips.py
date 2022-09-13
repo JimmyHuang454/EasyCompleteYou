@@ -8,12 +8,12 @@ class Operate(object):
         self.snippet_cache = {}
 
     def _update_snippets(self, context):
-        if 'file_type' in context:
-            file_type = context['file_type']
+        if 'filetype' in context:
+            filetype = context['filetype']
         else:
-            file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
+            filetype = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
 
-        if file_type in self.snippet_cache:
+        if filetype in self.snippet_cache:
             return
 
         snippets = rpc.DoCall('ECY#utils#GetUltiSnippets')
@@ -39,16 +39,16 @@ class Operate(object):
                 results_format['menu'] = description
             results_list.append(results_format)
 
-        self.snippet_cache[file_type] = results_list
+        self.snippet_cache[filetype] = results_list
 
     def OnBufferEnter(self, context):
         self._update_snippets(context)
 
     def OnCompletion(self, context):
-        file_type = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
-        context['file_type'] = file_type
+        filetype = rpc.DoCall('ECY#utils#GetCurrentBufferFileType')
+        context['filetype'] = filetype
         self._update_snippets(context)
-        if file_type not in self.snippet_cache:
+        if filetype not in self.snippet_cache:
             return
-        context['show_list'] = self.snippet_cache[file_type]
+        context['show_list'] = self.snippet_cache[filetype]
         return context

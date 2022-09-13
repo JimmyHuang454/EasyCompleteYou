@@ -129,7 +129,7 @@ fun! s:OnTextChanged()
                 \'buffer_position': ECY#utils#GetCurrentLineAndPosition(), 
                 \'buffer_content': ECY#utils#GetCurrentBufferContent(), 
                 \'change_mode': mode(), 
-                \'file_type': &filetype, 
+                \'filetype': &filetype, 
                 \'buffer_id': ECY#rpc#rpc_event#GetBufferIDChange()
                 \}
 

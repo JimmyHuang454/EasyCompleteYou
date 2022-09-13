@@ -75,8 +75,8 @@ endfunction
 
 fun! ECY#engine#Do()
   "{{{
-  let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call ECY#engine#InitDefaultEngine(l:file_type)
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
+  call ECY#engine#InitDefaultEngine(l:filetype)
   let s:last_engine = ECY#engine#GetBufferEngineName()
 
   " TODO
@@ -85,24 +85,24 @@ fun! ECY#engine#Do()
   "}}}
 endf
 
-fun! ECY#engine#Set(file_type, engine_name)
+fun! ECY#engine#Set(filetype, engine_name)
   "{{{
-  call ECY#engine#InitDefaultEngine(a:file_type)
-  let g:ECY_file_type_info2[a:file_type]['filetype_using'] = a:engine_name
+  call ECY#engine#InitDefaultEngine(a:filetype)
+  let g:ECY_file_type_info2[a:filetype]['filetype_using'] = a:engine_name
   "}}}
 endf
 
 fun! s:InsertLeave()
 "{{{
-  let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
+  if !exists("g:ECY_file_type_info2[l:filetype]['last_engine_name']")
     return
   endif
 
-  let g:ECY_file_type_info2[l:file_type]['filetype_using'] = 
-        \g:ECY_file_type_info2[l:file_type]['last_engine_name']
+  let g:ECY_file_type_info2[l:filetype]['filetype_using'] = 
+        \g:ECY_file_type_info2[l:filetype]['last_engine_name']
 
-  unlet g:ECY_file_type_info2[l:file_type]['last_engine_name']
+  unlet g:ECY_file_type_info2[l:filetype]['last_engine_name']
   call ECY#rpc#rpc_event#OnBufferEnter()
 "}}}
 endf
@@ -190,7 +190,7 @@ fun! s:InitUsableEngine()
   " let l:temp = readfile(g:ECY_engine_list_file_path)
   " let l:temp = json_decode(join(l:temp, "\n"))
   for item in keys(g:ECY_config)
-    if has_key(g:ECY_config[item], 'file_type')
+    if has_key(g:ECY_config[item], 'filetype')
       let l:info = g:ECY_config[item]
       let l:info['engine_name'] = item
       call ECYAddEngine(l:info)
@@ -226,22 +226,22 @@ fun! s:VimLeave()
   "}}}
 endf
 
-fun! ECY#engine#InitDefaultEngine(file_type)
+fun! ECY#engine#InitDefaultEngine(filetype)
   "{{{
-  if !has_key(g:ECY_file_type_using, a:file_type)
-    let g:ECY_file_type_using[a:file_type] = g:ECY_default_engine
+  if !has_key(g:ECY_file_type_using, a:filetype)
+    let g:ECY_file_type_using[a:filetype] = g:ECY_default_engine
   endif
 
-  if !has_key(g:ECY_file_type_info2, a:file_type)
-    let g:ECY_file_type_info2[a:file_type] = {
+  if !has_key(g:ECY_file_type_info2, a:filetype)
+    let g:ECY_file_type_info2[a:filetype] = {
           \'available_sources': [], 
-          \'filetype_using': g:ECY_file_type_using[a:file_type]
+          \'filetype_using': g:ECY_file_type_using[a:filetype]
           \}
     for item in g:ECY_all_engines
-      if !ECY#utils#IsInList(a:file_type, item['file_type']) && !ECY#utils#IsInList('all', item['file_type'])
+      if !ECY#utils#IsInList(a:filetype, item['filetype']) && !ECY#utils#IsInList('all', item['filetype'])
         continue
       endif
-      call add(g:ECY_file_type_info2[a:file_type]['available_sources'], item['engine_name'])
+      call add(g:ECY_file_type_info2[a:filetype]['available_sources'], item['engine_name'])
     endfor
   endif
   "}}}
@@ -249,9 +249,9 @@ endf
 
 fun! ECY#engine#GetBufferEngineName()
   "{{{
-  let l:file_type = ECY#utils#GetCurrentBufferFileType()
-  call ECY#engine#InitDefaultEngine(l:file_type)
-  return g:ECY_file_type_info2[l:file_type]['filetype_using']
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
+  call ECY#engine#InitDefaultEngine(l:filetype)
+  return g:ECY_file_type_info2[l:filetype]['filetype_using']
   "}}}
 endf
 
@@ -264,13 +264,13 @@ endfunction
 
 function! ECY#engine#UseSpecifyEngineOnce(engine_name, ...) abort
   "{{{
-  let l:file_type = ECY#utils#GetCurrentBufferFileType()
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
   let l:current_engine_name = ECY#engine#GetBufferEngineName()
-  if g:ECY_file_type_info2[l:file_type]['filetype_using'] != a:engine_name
-    if !exists("g:ECY_file_type_info2[l:file_type]['last_engine_name']")
-      let g:ECY_file_type_info2[l:file_type]['last_engine_name'] = l:current_engine_name
+  if g:ECY_file_type_info2[l:filetype]['filetype_using'] != a:engine_name
+    if !exists("g:ECY_file_type_info2[l:filetype]['last_engine_name']")
+      let g:ECY_file_type_info2[l:filetype]['last_engine_name'] = l:current_engine_name
     endif
-    let g:ECY_file_type_info2[l:file_type]['filetype_using'] = a:engine_name
+    let g:ECY_file_type_info2[l:filetype]['filetype_using'] = a:engine_name
     call ECY#rpc#rpc_event#OnBufferEnter()
   endif
   if a:0 == 0

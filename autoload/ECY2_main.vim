@@ -351,9 +351,9 @@ fun! ECY2_main#IsWorkAtCurrentBuffer() abort
     return v:false
   endif
 
-  let l:file_type = ECY#utils#GetCurrentBufferFileType()
+  let l:filetype = ECY#utils#GetCurrentBufferFileType()
   for item in g:ECY_file_type_blacklist
-    if l:file_type =~ item
+    if l:filetype =~ item
       return v:false
     endif
   endfor

@@ -222,21 +222,21 @@
     }
   },
   "ECY.engines.default_engine": {
-    "file_type": {
+    "filetype": {
       "default_value": ["all"],
       "type": "list",
       "des": []
     }
   },
   "ECY_engines.all.path": {
-    "file_type": {
+    "filetype": {
       "default_value": ["all"],
       "type": "list",
       "des": []
     }
   },
   "ECY_engines.snippet.ultisnips": {
-    "file_type": {
+    "filetype": {
       "default_value": ["all"],
       "type": "list",
       "des": []
@@ -253,7 +253,7 @@
       "type": "string",
       "des": ["cmd to start clangd."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["c", "cpp", "cuda"],
       "type": "list",
       "des": []
@@ -335,7 +335,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["vue"],
       "type": "list",
       "des": []
@@ -352,7 +352,7 @@
       "type": "string",
       "des": ["cmd to start yaml."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["yaml"],
       "type": "list",
       "des": []
@@ -374,7 +374,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["json"],
       "type": "list",
       "des": []
@@ -401,7 +401,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["lua"],
       "type": "list",
       "des": []
@@ -423,7 +423,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["html", "xhtml", "vue"],
       "type": "list",
       "des": []
@@ -450,7 +450,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["python"],
       "type": "list",
       "des": []
@@ -467,7 +467,7 @@
       "type": "string",
       "des": ["cmd to start gopls."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["golang", "go"],
       "type": "list",
       "des": []
@@ -484,7 +484,7 @@
       "type": "string",
       "des": ["cmd to start flutter."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["dart"],
       "type": "list",
       "des": []
@@ -561,7 +561,7 @@
       "type": "string",
       "des": ["cmd to start rust_analyzer."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["rust"],
       "type": "list",
       "des": []
@@ -578,7 +578,7 @@
       "type": "string",
       "des": ["cmd to start pyls."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["python"],
       "type": "list",
       "des": []
@@ -670,7 +670,7 @@
       "type": "string",
       "des": ["cmd to start theia."]
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["javascript", "typescript"],
       "type": "list",
       "des": []
@@ -692,7 +692,7 @@
       "type": "list",
       "des": []
     },
-    "file_type": {
+    "filetype": {
       "default_value": ["vim"],
       "type": "list",
       "des": []
