@@ -13,11 +13,11 @@ function! s:T1() abort
 endfunction
 
 function! s:T2() abort
-    call Type("jj")
+    call Type("j")
 endfunction
 
 function! s:T3() abort
-    call Expect(ECY#engine#GetBufferEngineName(), 'ECY_engines.snippet.ultisnips.ultisnips')
+    call Expect(ECY#engine#GetBufferEngineName(), 'ECY_engines.snippet.ultisnips')
 endfunction
 
 function! s:T4() abort
