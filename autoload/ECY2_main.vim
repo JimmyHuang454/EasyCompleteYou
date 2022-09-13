@@ -43,7 +43,7 @@ fun! ECY2_main#CheckAllEngine() abort
 "{{{
 
   let l:engine_list = []
-  for item in g:ECY_all_buildin_engine
+  for item in g:ECY_all_engines
     call add(l:engine_list, item['engine_name'])
   endfor
 

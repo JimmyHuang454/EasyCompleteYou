@@ -128,7 +128,7 @@ endf
 
 fun! ECY#engine#GetEngineInfo(engine_name)
 "{{{
-  for item in g:ECY_all_buildin_engine
+  for item in g:ECY_all_engines
     if item['engine_name'] == a:engine_name
       return item
     endif
@@ -186,26 +186,30 @@ endf
 
 fun! s:InitUsableEngine()
 "{{{
-  let g:ECY_engine_list_file_path = g:ECY_engine_config_dir . '/engines.json'
-  let l:temp = readfile(g:ECY_engine_list_file_path)
-  let l:temp = json_decode(join(l:temp, "\n"))
-  for item in l:temp['engines_list']
-    call ECYAddEngine(item)
+  " let g:ECY_engine_list_file_path = g:ECY_engine_config_dir . '/engines.json'
+  " let l:temp = readfile(g:ECY_engine_list_file_path)
+  " let l:temp = json_decode(join(l:temp, "\n"))
+  for item in keys(g:ECY_config)
+    if has_key(g:ECY_config[item], 'file_type')
+      let l:info = g:ECY_config[item]
+      let l:info['engine_name'] = item
+      call ECYAddEngine(l:info)
+    endif
   endfor
 "}}}
 endf
 
 fun! ECYAddEngine(info)
   "{{{
-  if !exists('g:ECY_all_buildin_engine')
-    let g:ECY_all_buildin_engine = []
+  if !exists('g:ECY_all_engines')
+    let g:ECY_all_engines = []
   endif
   if has_key(a:info, 'disabled')
     if a:info['disabled']
       return
     endif
   endif
-  call add(g:ECY_all_buildin_engine, a:info)
+  call add(g:ECY_all_engines, a:info)
   "}}}
 endf
 
@@ -233,7 +237,7 @@ fun! ECY#engine#InitDefaultEngine(file_type)
           \'available_sources': [], 
           \'filetype_using': g:ECY_file_type_using[a:file_type]
           \}
-    for item in g:ECY_all_buildin_engine
+    for item in g:ECY_all_engines
       if !ECY#utils#IsInList(a:file_type, item['file_type']) && !ECY#utils#IsInList('all', item['file_type'])
         continue
       endif
@@ -287,7 +291,7 @@ endfunction
 fun! ECY#engine#Show()
 "{{{
   let l:to_show = []
-  for item in g:ECY_all_buildin_engine
+  for item in g:ECY_all_engines
     let l:has_installer = has_key(item, 'installer_path')
     if !l:has_installer
       continue
