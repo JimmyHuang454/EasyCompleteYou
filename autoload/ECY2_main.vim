@@ -22,7 +22,7 @@ fun! ECY2_main#Init() abort
 "}}}
 endf
 
-fun! s:GetEngineName(input) abort
+fun! ECY2_main#GetEngineName(input) abort
 "{{{
   if len(a:input) == 0
     return ECY#engine#GetBufferEngineName()
@@ -33,7 +33,7 @@ endf
 
 fun! ECY2_main#GetExecuteCommand(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   call ECY#rpc#rpc_event#call({'event_name': 'GetExecuteCommand', 'params': {},
         \'engine_name': l:engine_name})
 "}}}
@@ -55,7 +55,7 @@ endf
 
 fun! ECY2_main#ReStart(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   call ECY#rpc#rpc_event#call({'event_name': 'ReStart', 'params': {},
         \'engine_name': l:engine_name})
   doautocmd <nomodeline> EasyCompleteYou2 BufEnter " do cmd
@@ -94,7 +94,7 @@ endf
 
 fun! ECY2_main#GetCodeLens(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -110,7 +110,7 @@ endf
 
 fun! ECY2_main#Rename(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:new_name = ECY#utils#Input('New name: ')
   if l:new_name == ''
     return
@@ -145,7 +145,7 @@ endf
 
 fun! ECY2_main#Format(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -160,7 +160,7 @@ endf
 
 fun! ECY2_main#RangeFormat(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -176,7 +176,7 @@ endf
 
 fun! ECY2_main#GetWorkSpaceSymbol(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -191,7 +191,7 @@ endf
 
 fun! ECY2_main#GetDocumentSymbol(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -207,7 +207,7 @@ endf
 
 fun! ECY2_main#FindReferences(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -223,7 +223,7 @@ endf
 
 fun! ECY2_main#SeleteRange(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -255,21 +255,21 @@ endf
 
 fun! ECY2_main#FoldingRangeCurrentLine(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   call s:FoldingRange(l:engine_name, 1)
 "}}}
 endf
 
 fun! ECY2_main#FoldingRange(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   call s:FoldingRange(l:engine_name, 0)
 "}}}
 endf
 
 fun! ECY2_main#ClangdSwitchHeader(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 
@@ -306,7 +306,7 @@ endf
 
 fun! ECY2_main#Hover(...) abort
 "{{{
-  let l:engine_name = s:GetEngineName(a:000)
+  let l:engine_name = ECY2_main#GetEngineName(a:000)
   let l:params = {
                 \'buffer_path': ECY#utils#GetCurrentBufferPath(), 
                 \'buffer_line': ECY#utils#GetCurrentLine(), 

@@ -1,9 +1,4 @@
-let g:is_vim = !has('nvim')
-let g:has_vim9 = has('patch-9.0.0')
-let s:vim_mapped_type = {}
-let s:vim_textprop_id = 0
-
-function! virtual_text#Add(text_line, opts) abort"{{{
+function! ECY#virtual_text#Add(text_line, opts) abort"{{{
   if g:is_vim && !g:has_vim9
     return
   endif
@@ -25,7 +20,7 @@ function! virtual_text#Add(text_line, opts) abort"{{{
   endif
 endfunction"}}}
 
-function! virtual_text#AddEOF(text_line, opts) abort"{{{
+function! ECY#virtual_text#AddEOF(text_line, opts) abort"{{{
   if g:is_vim && !g:has_vim9
     return
   endif
@@ -55,7 +50,7 @@ function! virtual_text#AddEOF(text_line, opts) abort"{{{
   return l:hl_id
 endfunction"}}}
 
-function! virtual_text#AddLine(text_line, opts) abort"{{{
+function! ECY#virtual_text#AddAbove(text_line, opts) abort"{{{
   if g:is_vim && !g:has_vim9
     return
   endif
@@ -65,20 +60,24 @@ function! virtual_text#AddLine(text_line, opts) abort"{{{
   if g:is_vim
     let l:type_info = s:VimAddType(l:hl)
     let l:lineNr = a:opts['start_pos']['line']
-    let l:opts = a:opts
-    let l:opts['start_pos'] = {'line': 1, 'colum': 1}
-    if l:lineNr == 0
+    if l:lineNr == 0 && !has('patch-9.0.0438')
       " https://github.com/vim/vim/issues/11084
-      call virtual_text#AddMiddle(a:text_line, l:opts)
+      let l:opts = a:opts
+      let l:opts['start_pos'] = {'line': 1, 'colum': 1}
+      call ECY#virtual_text#AddMiddle(a:text_line, l:opts)
       return
+    endif
+
+    let l:text_align = 'below'
+    if has('patch-9.0.0438')
+      let l:text_align = 'above'
     endif
 
     let l:hl_id = prop_add(l:lineNr + 1, 
           \0,
           \{'text': a:text_line,
           \'id': l:type_info['hl_id'],
-          \'text_align': 'below',
-          \'text_wrap': 'wrap',
+          \'text_align': l:text_align,
           \'type': l:type_info['type'],
           \})
   else
@@ -94,7 +93,38 @@ function! virtual_text#AddLine(text_line, opts) abort"{{{
   return l:hl_id
 endfunction"}}}
 
-function! virtual_text#Delete(id) abort"{{{
+function! ECY#virtual_text#AddBelow(text_line, opts) abort"{{{
+  if g:is_vim && !g:has_vim9
+    return
+  endif
+
+  let l:hl = a:opts['hl']
+
+  if g:is_vim
+    let l:type_info = s:VimAddType(l:hl)
+    let l:lineNr = a:opts['start_pos']['line']
+
+    let l:hl_id = prop_add(l:lineNr + 1, 
+          \0,
+          \{'text': a:text_line,
+          \'id': l:type_info['hl_id'],
+          \'text_align': 'below',
+          \'type': l:type_info['type'],
+          \})
+  else
+    let l:hl_id = nvim_create_namespace('')
+    let l:buffer_id = bufnr('')
+    call nvim_buf_set_extmark(l:buffer_id, 
+          \l:hl_id, 
+          \a:opts['start_pos']['line'], 
+          \0,
+          \{'virt_lines': [[[a:text_line, l:hl]]], 
+          \'virt_lines_above': v:true})
+  endif
+  return l:hl_id
+endfunction"}}}
+
+function! ECY#virtual_text#Delete(id) abort"{{{
   if g:is_vim && !g:has_vim9
     return
   endif
@@ -118,9 +148,15 @@ function! s:VimAddType(hl_name)
 "}}}
 endfunction
 
-function! virtual_text#Test() abort
-  let l:opst = {'start_pos': {'line': 3,'colum': 1}, 'hl': 'Comment'}
-  call virtual_text#AddLine('abc', l:opst)
+function! ECY#virtual_text#Test() abort
+  let l:opst = {'start_pos': {'line': 0,'colum': 1}, 'hl': 'Comment'}
+  call ECY#virtual_text#AddAbove('abc', l:opst)
 endfunction
 
-call virtual_text#Test()
+function! ECY#virtual_text#Init() abort
+  let g:is_vim = !has('nvim')
+  let g:has_vim9 = has('patch-9.0.0')
+  let s:vim_mapped_type = {}
+  let s:vim_textprop_id = 0
+  let g:has_virtual_text = g:has_vim9
+endfunction

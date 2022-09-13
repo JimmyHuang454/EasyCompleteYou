@@ -901,3 +901,13 @@ function! s:BufEnter() abort
   endfor
 "}}}
 endfunction
+
+function! ECY#utils#GetCurrentWindowsSize() abort
+"{{{
+return {'start_line': line('w0'),
+      \'end_line': line('w$'), 'winnr': winnr(),
+      \'range':{'start': {'line':line('w0') - 1, 'character': 0},
+      \'end':{'line':line('w$') - 1, 'character':0}
+      \}}
+"}}}
+endfunction

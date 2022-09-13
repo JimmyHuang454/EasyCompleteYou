@@ -57,18 +57,19 @@ class Operate(object):
             self.workspaceFolders = workspaceFolders
 
         if initializationOptions is None:
-            initializationOptions = utils.GetEngineConfig(
-                self.engine_name, 'initializationOptions')
-            if initializationOptions == '':
-                initializationOptions = None
+            initializationOptions = self._get_engine_config(
+                'initializationOptions')
         self.initializationOptions = initializationOptions
 
         self.languageId = languageId
 
-        self.enabled_document_link = rpc.GetVaribal(
-            'g:ECY_enable_document_link')
+        self.enabled_document_link = self._get_engine_config(
+            'lsp.document_link.enable')
 
-        self.enabled_code_lens = rpc.GetVaribal('g:ECY_enable_code_lens')
+        self.enabled_code_lens = self._get_engine_config(
+            'lsp.code_lens.enable')
+        self.enabled_inlayhint = self._get_engine_config(
+            'lsp.inlayHint.enable')
 
         self.symbols_color = rpc.GetVaribal('g:ECY_symbols_color')
 
@@ -87,11 +88,12 @@ class Operate(object):
         self.hierarchy_res_previous = []
 
         self._start_server()
-        self._get_format_config()  # }}}
+        self.engine_format_setting = self._get_engine_config('lsp.formatting')
+        # }}}
 
     def GetStartCMD(self):  # {{{
         if self.starting_cmd is None:
-            self.starting_cmd = utils.GetEngineConfig(self.engine_name, 'cmd')
+            self.starting_cmd = self._get_engine_config('cmd')
 
         if self.starting_cmd is None or self.starting_cmd == '':
             self.starting_cmd = utils.GetInstallerConfig(self.engine_name)
@@ -100,8 +102,7 @@ class Operate(object):
                 self.starting_cmd = self.starting_cmd['cmd']
                 logger.debug('using installer cmd')
             else:
-                self.starting_cmd = utils.GetEngineConfig(
-                    self.engine_name, 'cmd2')
+                self.starting_cmd = self._get_engine_config('cmd2')
                 if self.starting_cmd is None or self.starting_cmd == '':
                     raise ValueError("missing cmd.")
                 logger.debug('using cmd2')
@@ -145,29 +146,17 @@ class Operate(object):
 
         self._lsp.initialized()  # }}}
 
-    def _get_format_config(self):
-        self.engine_format_setting = utils.GetEngineConfig(
-            self.engine_name, 'lsp_formatting')
-        if self.engine_format_setting == None:
-            self.engine_format_setting = utils.GetEngineConfig(
-                'GLOBAL_SETTING', 'lsp_formatting')
-
     def _get_timeout(self):
-        self.lsp_timeout = utils.GetEngineConfig(self.engine_name,
-                                                 'lsp_timeout')
-        if self.lsp_timeout == None:
-            self.lsp_timeout = utils.GetEngineConfig('ECY', 'lsp_timeout')
-
+        self.lsp_timeout = self._get_engine_config('lsp.timeout')
         return self.lsp_timeout
 
     def _init_semantic(self):  # {{{
         self.is_support_full = False
         self.is_support_delta = False
         self.is_support_range = False
-        self.semantic_color = utils.GetEngineConfig(self.engine_name,
-                                                    'semantic_color')
-        self.enabel_semantic_color = utils.GetEngineConfig(
-            'ECY', 'semantic_tokens.enable')
+        self.semantic_color = self._get_engine_config('semantic_color')
+        self.enabel_semantic_color = self._get_engine_config(
+            'semantic_tokens.enable')
         # self.semantic_color = self.semantic_color.reverse()
         logger.debug(self.semantic_color)
         if type(self.semantic_color) is not list:
@@ -246,8 +235,17 @@ class Operate(object):
     def _show_not_support_msg(self, features):
         self._show_msg("%s is not supported." % features)
 
+    def _get_engine_config(self, config, filed=None):
+        if filed is None:
+            res = utils.GetEngineConfig(self.engine_name, config)
+            if res is None:  # not exists.
+                res = utils.GetEngineConfig('ECY', config)
+            return res
+        return utils.GetEngineConfig(filed, config)
+
     def _handle_show_msg(self):
-        if not utils.GetEngineConfig('GLOBAL_SETTING', 'lsp.showMessage'):
+        config = self._get_engine_config('lsp.showMessage')
+        if not config or config is None:
             return
         while 1:
             try:
@@ -297,8 +295,7 @@ class Operate(object):
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
         # self._change_workspace_folder(context)
-        self.GetCodeLens(context)
-        self.DocumentLink(context)
+        self._update(context)
 
     def OnSave(self, context):
         if 'textDocumentSync' not in self.capabilities:
@@ -369,13 +366,17 @@ class Operate(object):
             add_workspace = {'uri': self._lsp.PathToUri(path), 'name': path}
             self._lsp.didChangeWorkspaceFolders(add_workspace=[add_workspace])
 
+    def _update(self, context):
+        self.GetCodeLens(context)
+        self.DocumentLink(context)
+        self.semanticTokens(context)
+        # self.GetInlayHint(context)
+
     def OnTextChanged(self, context):
         self._did_open_or_change(context)
         params = context['params']
         if params['change_mode'] == 'n':  # normal mode
-            self.GetCodeLens(context)
-            self.DocumentLink(context)
-            self.semanticTokens(context)
+            self._update(context)
 
     def SelectionRange(self, context):
         if 'selectionRangeProvider' not in self.capabilities:
@@ -644,8 +645,7 @@ class Operate(object):
     def OnInsertLeave(self, context):
         self.completion_position_cache = {}
         self.completion_isInCompleted = False
-        self.GetCodeLens(context)
-        self.DocumentLink(context)
+        self._update(context)
 
     def AfterCompletion(self, context):
         ECY_item_index = context['params']['ECY_item_index']
@@ -941,7 +941,7 @@ class Operate(object):
                 params = jobs['params']
                 res = {}
                 for item in params:
-                    res[item] = utils.GetEngineConfig(self.engine_name, item)
+                    res[item] = self._get_engine_config(item)
                 self._lsp._build_response(res, jobs['id'])
             except Exception as e:
                 logger.exception(e)
@@ -1302,7 +1302,7 @@ class Operate(object):
 
         self._goto_response(res, params['is_preview'])  # }}}
 
-    def OnHover(self, context):
+    def OnHover(self, context):  # {{{
         if 'hoverProvider' not in self.capabilities:
             self._show_not_support_msg('Hover')
             return
@@ -1331,7 +1331,7 @@ class Operate(object):
         if content == []:
             self._show_msg('Nothing to show')
             return
-        rpc.DoCall('ECY#hover#Open', [content])
+        rpc.DoCall('ECY#hover#Open', [content])  # }}}
 
     def _format_markupContent(self, content):  # {{{
         """return list
@@ -1438,6 +1438,26 @@ class Operate(object):
 
         res = {'res': res, 'path': path}
         rpc.DoCall('ECY#code_lens#Do', [res])  # }}}
+
+    def GetInlayHint(self, context):  # {{{
+        if 'inlayHintProvider' not in self.capabilities or not self.enabled_inlayhint:
+            return
+        params = context['params']
+        path = params['buffer_path']
+        uri = self._lsp.PathToUri(path)
+        ranges = rpc.DoCall('ECY#utils#GetCurrentWindowsSize')
+        res = self._lsp.inlayHint(uri, ranges['range']).GetResponse()
+
+        if 'error' in res:
+            self._show_msg(res['error']['message'])
+            return
+        res = res['result']
+        if res is None:
+            res = []
+        res = {'path': path, 'res': res}
+
+        rpc.DoCall('ECY#inlayHint#Update', [res])
+        # }}}
 
     def _build_hierarchy(self, res):  # {{{
         if 'error' in res:

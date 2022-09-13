@@ -8,9 +8,6 @@ from ECY import utils
 
 my_lsp = language_server_protocol.LSP(timeout=1)
 
-# newlineStyle = utils.GetEngineConfig("GLOBAL_SETTING",
-#                                      "lsp_formatting.newlineStyle")
-
 
 def Delete(context, is_check=False):
     path = context['uri']

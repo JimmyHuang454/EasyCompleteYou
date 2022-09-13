@@ -164,7 +164,8 @@ CAPABILITY = {
             "overlappingTokenSupport": False,
             "multilineTokenSupport": False,
             "tokenModifiers": []
-        }
+        },
+        "inlayHint": {}
     },
     "experimental": None
 }

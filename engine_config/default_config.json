@@ -1,46 +1,4 @@
 {
-  "GLOBAL_SETTING": {
-    "lsp_formatting.tabSize": {
-      "default_value": 2,
-      "type": "int",
-      "des": ["LS init opts"]
-    },
-    "lsp_formatting.insertSpaces": {
-      "default_value": true,
-      "type": "boolean",
-      "des": ["LS init opts"]
-    },
-    "lsp_formatting.newlineStyle": {
-      "default_value": "\n",
-      "type": "string",
-      "des": ["LS init opts"]
-    },
-    "lsp_formatting.trimTrailingWhitespace": {
-      "default_value": true,
-      "type": "boolean",
-      "des": ["LS init opts"]
-    },
-    "lsp_formatting.trimFinalNewlines": {
-      "default_value": false,
-      "type": "boolean",
-      "des": ["LS init opts"]
-    },
-    "lsp_formatting.insertFinalNewline": {
-      "default_value": false,
-      "type": "boolean",
-      "des": ["LS init opts"]
-    },
-    "lsp.showMessage": {
-      "default_value": true,
-      "type": "boolean",
-      "des": ["LS opts"]
-    },
-    "lsp_timeout": {
-      "default_value": 5,
-      "type": "",
-      "des": ["timeout after request."]
-    }
-  },
   "ECY": {
     "completion.enable": {
       "default_value": true,
@@ -122,19 +80,34 @@
       "type": "int",
       "des": [""]
     },
-    "document_link.enable": {
-      "default_value": false,
-      "type": "boolean",
+    "lsp.document_link.enable": {
+      "default_value": 5,
+      "type": "",
       "des": [""]
     },
-    "document_link.disable_in_insert_mode": {
+    "lsp.document_link.disable_in_insert_mode": {
       "default_value": true,
       "type": "boolean",
       "des": [""]
     },
-    "document_link.highlight_style": {
+    "lsp.document_link.highlight_style": {
       "default_value": "ECY_document_link_style",
       "type": "string",
+      "des": [""]
+    },
+    "lsp.code_lens.enable": {
+      "default_value": false,
+      "type": "boolean",
+      "des": [""]
+    },
+    "lsp.code_lens.disable_in_insert_mode": {
+      "default_value": true,
+      "type": "boolean",
+      "des": [""]
+    },
+    "lsp.inlayHint.enable": {
+      "default_value": true,
+      "type": "boolean",
       "des": [""]
     },
     "goto.unload_buffer_after_goto": {
@@ -206,6 +179,46 @@
       "default_value": ["DiffAdd", "DiffChange"],
       "type": "list",
       "des": [""]
+    },
+    "lsp.formatting.tabSize": {
+      "default_value": 2,
+      "type": "int",
+      "des": ["LS init opts"]
+    },
+    "lsp.formatting.insertSpaces": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp.formatting.newlineStyle": {
+      "default_value": "\n",
+      "type": "string",
+      "des": ["LS init opts"]
+    },
+    "lsp.formattting.trimTrailingWhitespace": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp.formattting.trimFinalNewlines": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp.formattting.insertFinalNewline": {
+      "default_value": false,
+      "type": "boolean",
+      "des": ["LS init opts"]
+    },
+    "lsp.timeout": {
+      "default_value": 5,
+      "type": "",
+      "des": ["timeout after request."]
+    },
+    "lsp.showMessage": {
+      "default_value": true,
+      "type": "boolean",
+      "des": ["LS opts"]
     }
   },
   "ECY_engines.cpp.clangd": {
@@ -455,12 +468,12 @@
       "des": ["LS init opts"]
     },
     "initializationOptions.outline": {
-      "default_value": true,
+      "default_value": false,
       "type": "boolean",
       "des": ["LS init opts"]
     },
     "initializationOptions.flutterOutline": {
-      "default_value": true,
+      "default_value": false,
       "type": "boolean",
       "des": ["LS init opts"]
     },

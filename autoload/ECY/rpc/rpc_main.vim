@@ -73,6 +73,7 @@ fun! s:NewClient()
   call ECY#engine#Init()
   call ECY#diagnostics#Init()
   call ECY#document_link#Init()
+  call ECY#virtual_text#Init()
 "}}}
 endf
 

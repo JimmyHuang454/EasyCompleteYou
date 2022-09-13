@@ -4,14 +4,14 @@
 fun! ECY#document_link#Init() abort
 "{{{
   let g:ECY_enable_document_link = 
-        \ECY#engine_config#GetEngineConfig('ECY', 'document_link.enable')
+        \ECY#engine_config#GetEngineConfig('ECY', 'lsp.document_link.enable')
 
   let g:ECY_disable_document_link_in_insert_mode = 
-        \ECY#engine_config#GetEngineConfig('ECY', 'document_link.disable_in_insert_mode')
+        \ECY#engine_config#GetEngineConfig('ECY', 'lsp.document_link.disable_in_insert_mode')
 
   hi ECY_document_link_style  term=underline gui=underline cterm=underline
   let g:ECY_document_link_style = 
-        \ECY#engine_config#GetEngineConfig('ECY', 'document_link.highlight_style')
+        \ECY#engine_config#GetEngineConfig('ECY', 'lsp.document_link.highlight_style')
 
   let g:ECY_document_link_info = {}
 "}}}

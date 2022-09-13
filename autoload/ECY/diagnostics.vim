@@ -385,7 +385,7 @@ function! s:PlaceSign(engine_name, style, path, line) abort
     let s:sign_id_dict[a:engine_name]['increment_id'] = l:increment_id
     " l:increment_id will not exceed 45481. so we don't need to consider that id
     " will be invalid. why 454? it doesn't matter, and just a number.
-    let l:increment_id = '454'.string(s:sign_id_dict[a:engine_name]['name_id'] ) . string(l:increment_id)
+    let l:increment_id = '454' . string(s:sign_id_dict[a:engine_name]['name_id'] ) . string(l:increment_id)
     call add(s:sign_id_dict[a:engine_name]['id_lists'] , {'sign_id': l:increment_id, 'file_path': a:path})
     let l:temp = 'sign place '.l:increment_id.' line='.a:line.' name='.a:style.' file='.a:path
   endif

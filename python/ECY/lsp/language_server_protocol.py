@@ -410,6 +410,10 @@ class LSP(conec.Operate):
         params = {'textDocument': {'uri': uri}}
         return self._build_send(params, 'textDocument/codeLens')
 
+    def inlayHint(self, uri, ranges):
+        params = {'textDocument': {'uri': uri}, 'range': ranges}
+        return self._build_send(params, 'textDocument/inlayHint')
+
     def onTypeFormatting(self, uri, line, colum, ch, opts, path_type='uri'):
         params = self.TextDocumentPositionParams(uri,
                                                  line,
