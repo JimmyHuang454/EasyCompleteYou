@@ -46,7 +46,8 @@ Example:
 ```viml
 let g:ECY_config = {
       \'name_of_the_LS':
-      \{'cmd': 'jedi-language-server', 'filetype': ['python'], 'initializationOptions.opts': 'config'},
+      \{'cmd': 'jedi-language-server', 'filetype': ['python'], 
+      \'initializationOptions': {'completion': {'enabled': v:true}}},
       \}
 ```
 

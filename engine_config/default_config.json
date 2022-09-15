@@ -394,7 +394,7 @@
     "Lua.configuration.completion.enable": {
       "default_value": true,
       "type": "boolean",
-      "des": ["cmd to start lua-language-server."]
+      "des": []
     },
     "installer_path": {
       "default_value": "ECY_installer.installer.lua",

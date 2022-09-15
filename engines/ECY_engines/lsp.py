@@ -938,10 +938,13 @@ class Operate(object):
                 jobs = self._lsp.GetRequestOrNotification(
                     'workspace/configuration')
                 logger.debug(jobs)
-                params = jobs['params']
+                params = jobs['params']['items']
                 res = {}
                 for item in params:
-                    res[item] = self._get_engine_config(item)
+                    if item == {} or 'section' not in item:
+                        continue
+                    section = item['section']
+                    res[section] = self._get_engine_config(section)
                 self._lsp._build_response(res, jobs['id'])
             except Exception as e:
                 logger.exception(e)
