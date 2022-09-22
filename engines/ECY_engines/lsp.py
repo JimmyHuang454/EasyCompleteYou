@@ -601,7 +601,7 @@ class Operate(object):
                 active_param = default_active_param
 
             if 'parameters' in SignatureHelp and active_param < len(
-                    SignatureHelp['parameters']):
+                    SignatureHelp['parameters']) and active_param != - 1:
                 param_label = SignatureHelp['parameters'][active_param][
                     'label']
                 start = label.find(param_label)

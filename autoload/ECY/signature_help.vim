@@ -28,11 +28,7 @@ fun! ECY#signature_help#Show(results) abort
     return
   endif
 
-  if g:has_floating_windows_support == 'vim'
-    call s:Vim(a:results)
-  elseif g:has_floating_windows_support == 'neovim'
-    " TODO
-  endif
+  call s:Vim(a:results)
   "}}}
 endf
 
