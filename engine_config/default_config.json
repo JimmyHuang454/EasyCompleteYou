@@ -618,6 +618,21 @@
       "type": "list",
       "des": []
     },
+    "languageId": {
+      "default_value": "python",
+      "type": "string",
+      "des": []
+    },
+    "completion.use_completion_cache": {
+      "default_value": true,
+      "type": "boolean",
+      "des": []
+    },
+    "completion.use_completion_cache_position": {
+      "default_value": true,
+      "type": "boolean",
+      "des": []
+    },
     "initializationOptions.codeAction.nameExtractVariable": {
       "default_value": "jls_extract_var",
       "type": "list",
