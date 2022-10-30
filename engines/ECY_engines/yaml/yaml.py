@@ -9,8 +9,7 @@ class Operate(lsp.Operate):
         lsp.Operate.__init__(self,
                              engine_name,
                              starting_cmd_argv='--stdio',
-                             refresh_regex=r'[\-\w+]',
-                             languageId='yaml')
+                             refresh_regex=r'[\-\w+]')
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):

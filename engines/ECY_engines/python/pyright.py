@@ -6,5 +6,4 @@ class Operate(lsp.Operate):
     def __init__(self, engine_name):
         lsp.Operate.__init__(self,
                              engine_name,
-                             languageId='python',
                              starting_cmd_argv='--stdio')

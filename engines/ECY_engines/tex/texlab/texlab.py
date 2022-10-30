@@ -7,5 +7,4 @@ class Operate(lsp.Operate):
     def __init__(self, engine_name):
         lsp.Operate.__init__(self,
                              engine_name,
-                             refresh_regex=r'[\w+\:]',
-                             languageId='tex')
+                             refresh_regex=r'[\w+\:]')

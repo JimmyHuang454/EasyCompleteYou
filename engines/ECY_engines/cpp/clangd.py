@@ -32,14 +32,12 @@ class Operate(lsp.Operate):
             lsp.Operate.__init__(self,
                                  engine_name,
                                  starting_cmd_argv=starting_cmd_argv,
-                                 languageId='cpp',
                                  use_completion_cache=True,
                                  use_completion_cache_position=True)
         else:
             lsp.Operate.__init__(self,
                                  engine_name,
-                                 starting_cmd_argv=starting_cmd_argv,
-                                 languageId='cpp')
+                                 starting_cmd_argv=starting_cmd_argv)
 
     def SwitchSourceHeader(self, context):
         params = context['params']
