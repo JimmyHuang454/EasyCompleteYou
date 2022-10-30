@@ -39,7 +39,7 @@ class Mannager(object):
 
     def CallFunction(self, obj, method, engine_name, context):
         if not hasattr(obj, method):
-            return None
+            return
         engine_func = getattr(obj, method)
         return engine_func(context)
 
@@ -90,25 +90,37 @@ class Mannager(object):
                     'Something wrong with [%s] causing ECY can NOT go on, check log info for more.'
                     % (engine_name))
 
-    def InstallEngine(self, engine_pack_name):
-        engine_info = {}
+    def _install_engine(self, engine_name):
         try:
-            if type(engine_pack_name) is dict:
-                sys.path.append(engine_pack_name['dir'])
-                module_obj = importlib.import_module(engine_pack_name['name'])
-                engine_name = engine_pack_name['name']
+            if type(engine_name) is dict:
+                sys.path.append(engine_name['dir'])
+                module_obj = importlib.import_module(engine_name['name'])
+                engine_name = engine_name['name']
             else:
-                engine_name = engine_pack_name
-                module_obj = importlib.import_module(engine_pack_name)
-            obj = module_obj.Operate(engine_name)
-            obj.engine_name = engine_name
-            engine_info['engine_obj'] = obj
+                engine_name = engine_name
+                module_obj = importlib.import_module(engine_name)
+            return module_obj
         except Exception as e:
             logger.exception(e)
             return False
+
+    def InstallEngine(self, engine_name):
+        module_obj = self._install_engine(engine_name)
+        if module_obj is False:
+            module_obj = self._install_engine('ECY_engines.lsp')
+            if module_obj is False:
+                return False
+
+        try:
+            obj = module_obj.Operate(engine_name)
+        except Exception as e:
+            logger.exception(e)
+            return False
+        engine_info = {}
+        engine_info['engine_obj'] = obj
         engine_info['handler_queue'] = queue.Queue()
         engine_info['res_queue'] = queue.Queue()
-        engine_info['name'] = engine_pack_name
+        engine_info['name'] = engine_name
 
         threading.Thread(target=self.EngineCallbackThread,
                          args=(engine_info, ),
@@ -118,18 +130,17 @@ class Mannager(object):
                          args=(engine_info, ),
                          daemon=True).start()
 
-        logger.debug("installed engine %s" % (engine_info))
-        self.engine_dict[engine_pack_name] = engine_info
-        return self.engine_dict[engine_pack_name]
+        logger.debug("Installed engine %s" % (engine_info))
+        self.engine_dict[engine_name] = engine_info
+        return self.engine_dict[engine_name]
 
-    def _get_engine_obj(self, engine_pack_name):
-        if engine_pack_name not in self.engine_dict:
-            if self.InstallEngine(engine_pack_name) is False:
+    def _get_engine_obj(self, engine_name):
+        if engine_name not in self.engine_dict:
+            if self.InstallEngine(engine_name) is False:
                 return self._get_default_engine()
-        return self.engine_dict[engine_pack_name]
+        return self.engine_dict[engine_name]
 
     def _get_default_engine(self):
-        print(self.engine_dict)
         return self.engine_dict[self.default_engine_name]
 
     def DoEvent(self, context):

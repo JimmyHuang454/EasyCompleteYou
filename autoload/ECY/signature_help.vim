@@ -66,8 +66,10 @@ fun! s:Vim(results) abort
   let l:signatures = a:results['signatures'][l:activeSignature]
   call s:signature_help_obj._add_match('ECY_document_link_style', [l:activeSignature + 1])
 
+  let l:color = ECY#engine_config#GetEngineConfig('ECY', 'signature_help.activeParameter.color')
+
   if has_key(l:signatures, 'start')
-    call s:signature_help_obj._add_match('Search', [[l:activeSignature + 1, 
+    call s:signature_help_obj._add_match(l:color, [[l:activeSignature + 1, 
           \l:signatures['start'] + 1, l:signatures['str_len']]])
   endif
 "}}}

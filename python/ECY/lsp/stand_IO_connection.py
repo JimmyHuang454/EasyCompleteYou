@@ -22,7 +22,7 @@ class ThreadOfJob(object):
         """
         self.server_id = thread_id
         self._sub_object = sub_object
-        self.is_log_stderr = False
+        self.is_log_stderr = True
         self.__queue = queue_
 
     def Start(self):

@@ -13,63 +13,45 @@ class Operate(object):
     def __init__(
             self,  # {{{
             name,
-            starting_cmd=None,
             starting_cmd_argv=None,
-            refresh_regex=r'[\w+]',
-            rootUri=None,
-            rootPath=None,
-            languageId='',
-            workspaceFolders=None,
-            use_completion_cache=False,
-            use_completion_cache_position=False,
-            initializationOptions=None):
+            refresh_regex=r'[\w+]'):
 
         self.engine_name = name
 
-        self.starting_cmd = starting_cmd
         self.starting_cmd_argv = starting_cmd_argv
+        self.refresh_regex = refresh_regex
         self.GetStartCMD()
 
-        self._lsp = language_server_protocol.LSP(timeout=self._get_timeout())
-        self.use_completion_cache = use_completion_cache
-        self.use_completion_cache_position = use_completion_cache_position
-
-        self.refresh_regex = refresh_regex
+        self._lsp = language_server_protocol.LSP(
+            timeout=self._get_engine_config('lsp.timeout'))
+        self.use_completion_cache = self._get_engine_config(
+            'completion.use_completion_cache')
+        self.use_completion_cache_position = self._get_engine_config(
+            'completion.use_completion_cache_position')
 
         # in favour of `rootUri`.
-        if rootPath is None:
-            self.rootPath = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
-        else:
-            self.rootPath = rootPath
-
-        if rootUri is None:
-            self.rootUri = self._lsp.PathToUri(self.rootPath)
-        else:
-            self.rootUri = rootUri
+        self.rootPath = rpc.DoCall('ECY#rooter#GetCurrentBufferWorkSpace')
+        self.rootUri = self._lsp.PathToUri(self.rootPath)
 
         self.workspace_cache = []
-        if workspaceFolders is None:
-            self.workspaceFolders = None
-            temp = {'uri': self.rootUri, 'name': self.rootPath}
-            self.workspace_cache.append(temp)
-            self.workspaceFolders = [temp]
-        else:
-            self.workspaceFolders = workspaceFolders
+        temp = {'uri': self.rootUri, 'name': self.rootPath}
+        self.workspace_cache.append(temp)
+        self.workspaceFolders = [temp]
 
-        if initializationOptions is None:
-            initializationOptions = self._get_engine_config(
-                'initializationOptions')
-        self.initializationOptions = initializationOptions
+        self.initializationOptions = self._get_engine_config(
+            'initializationOptions')
 
-        self.languageId = languageId
+        self.languageId = self._get_engine_config('languageId')
+        if self.languageId is None:
+            self.languageId = ''
 
         self.enabled_document_link = self._get_engine_config(
             'lsp.document_link.enable')
-
         self.enabled_code_lens = self._get_engine_config(
             'lsp.code_lens.enable')
         self.enabled_inlayhint = self._get_engine_config(
             'lsp.inlayHint.enable')
+        self.engine_format_setting = self._get_engine_config('lsp.formatting')
 
         self.symbols_color = rpc.GetVaribal('g:ECY_symbols_color')
 
@@ -88,13 +70,12 @@ class Operate(object):
         self.hierarchy_res_previous = []
 
         self._start_server()
-        self.engine_format_setting = self._get_engine_config('lsp.formatting')
         # }}}
 
     def GetStartCMD(self):  # {{{
-        if self.starting_cmd is None:
-            self.starting_cmd = self._get_engine_config('cmd')
+        self.starting_cmd = self._get_engine_config('cmd')
 
+        logger.debug(self.engine_name)
         if self.starting_cmd is None or self.starting_cmd == '':
             self.starting_cmd = utils.GetInstallerConfig(self.engine_name)
             logger.debug('installer info:' + str(self.starting_cmd))
@@ -145,10 +126,6 @@ class Operate(object):
                     temp['retriggerCharacters'])
 
         self._lsp.initialized()  # }}}
-
-    def _get_timeout(self):
-        self.lsp_timeout = self._get_engine_config('lsp.timeout')
-        return self.lsp_timeout
 
     def _init_semantic(self):  # {{{
         self.is_support_full = False
@@ -601,7 +578,7 @@ class Operate(object):
                 active_param = default_active_param
 
             if 'parameters' in SignatureHelp and active_param < len(
-                    SignatureHelp['parameters']) and active_param != - 1:
+                    SignatureHelp['parameters']) and active_param != -1:
                 param_label = SignatureHelp['parameters'][active_param][
                     'label']
                 start = label.find(param_label)

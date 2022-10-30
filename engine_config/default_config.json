@@ -10,6 +10,16 @@
       "type": "int",
       "des": ["Minmun string length to trigger completion menu."]
     },
+    "completion.use_completion_cache": {
+      "default_value": false,
+      "type": "boolean",
+      "des": []
+    },
+    "completion.use_completion_cache_position": {
+      "default_value": false,
+      "type": "boolean",
+      "des": []
+    },
     "completion.expand_snippets_key": {
       "default_value": "<CR>",
       "type": "string",
@@ -129,6 +139,11 @@
       "default_value": true,
       "type": "boolean",
       "des": [""]
+    },
+    "signature_help.activeParameter.color": {
+      "default_value": "Search",
+      "type": "string",
+      "des": []
     },
     "preview_windows.enable": {
       "default_value": true,
@@ -391,6 +406,11 @@
       "type": "string",
       "des": ["cmd to start lua-language-server."]
     },
+    "languageId": {
+      "default_value": "lua",
+      "type": "string",
+      "des": []
+    },
     "Lua.configuration.completion.enable": {
       "default_value": true,
       "type": "boolean",
@@ -467,6 +487,11 @@
       "type": "string",
       "des": ["cmd to start gopls."]
     },
+    "languageId": {
+      "default_value": "golang",
+      "type": "string",
+      "des": []
+    },
     "filetype": {
       "default_value": ["golang", "go"],
       "type": "list",
@@ -487,6 +512,11 @@
     "filetype": {
       "default_value": ["dart"],
       "type": "list",
+      "des": []
+    },
+    "languageId": {
+      "default_value": "dart",
+      "type": "string",
       "des": []
     },
     "initializationOptions.onlyAnalyzeProjectsWithOpenFiles": {
