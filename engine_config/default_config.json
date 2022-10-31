@@ -350,6 +350,16 @@
       "type": "list",
       "des": []
     },
+    "refresh_regex": {
+      "default_value": "[\\-\\@\\$\\w+]",
+      "type": "string",
+      "des": []
+    },
+    "languageId": {
+      "default_value": "vue",
+      "type": "string",
+      "des": []
+    },
     "filetype": {
       "default_value": ["vue"],
       "type": "list",
@@ -363,7 +373,7 @@
       "des": ["cmd to start yaml."]
     },
     "cmd2": {
-      "default_value": "yaml-language-server",
+      "default_value": "yaml-language-server --stdio",
       "type": "string",
       "des": ["cmd to start yaml."]
     },
@@ -380,9 +390,19 @@
       "des": ["cmd to start json."]
     },
     "cmd2": {
-      "default_value": "vscode-json-languageserver",
+      "default_value": "vscode-json-languageserver --stdio",
       "type": "string",
       "des": ["cmd to start json."]
+    },
+    "refresh_regex": {
+      "default_value": "[\\-\\@\\w+]",
+      "type": "string",
+      "des": []
+    },
+    "languageId": {
+      "default_value": "json",
+      "type": "string",
+      "des": []
     },
     "installer_path": {
       "default_value": "ECY_installer.installer.json",
@@ -434,13 +454,23 @@
       "des": ["cmd to start html_lsp."]
     },
     "cmd2": {
-      "default_value": "html-languageserver",
+      "default_value": "html-languageserver --stdio",
       "type": "string",
       "des": ["cmd to start html_lsp."]
     },
     "installer_path": {
       "default_value": "ECY_installer.installer.html",
       "type": "list",
+      "des": []
+    },
+    "refresh_regex": {
+      "default_value": "[\\-\\@\\$\\w+]",
+      "type": "string",
+      "des": []
+    },
+    "languageId": {
+      "default_value": "html",
+      "type": "string",
       "des": []
     },
     "filetype": {
@@ -456,7 +486,7 @@
       "des": ["cmd to start pyright."]
     },
     "cmd2": {
-      "default_value": "pyright-langserver",
+      "default_value": "pyright-langserver --stdio",
       "type": "string",
       "des": ["cmd to start pyright."]
     },
@@ -728,13 +758,23 @@
       "des": ["cmd to start vim LS."]
     },
     "cmd2": {
-      "default_value": "vim-language-server",
+      "default_value": "vim-language-server --stdio",
       "type": "string",
       "des": ["cmd to start vim LS."]
     },
     "installer_path": {
       "default_value": "ECY_installer.installer.vimlsp",
       "type": "list",
+      "des": []
+    },
+    "refresh_regex": {
+      "default_value": "[\\@\\#\\&\\w+]",
+      "type": "string",
+      "des": []
+    },
+    "languageId": {
+      "default_value": "viml",
+      "type": "string",
       "des": []
     },
     "filetype": {

@@ -6,9 +6,7 @@ from ECY import utils
 
 class Operate(lsp.Operate):
     def __init__(self, engine_name):
-        lsp.Operate.__init__(self,
-                             engine_name,
-                             refresh_regex=r'[\-\@\w+]')
+        lsp.Operate.__init__(self, engine_name)
         self.snip = ultisnips.Operate()
 
     def OnBufferEnter(self, context):

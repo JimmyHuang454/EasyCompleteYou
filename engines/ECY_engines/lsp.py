@@ -13,13 +13,13 @@ class Operate(object):
     def __init__(
             self,  # {{{
             name,
-            starting_cmd_argv=None,
-            refresh_regex=r'[\w+]'):
+            initializationOptions=None):
 
         self.engine_name = name
 
-        self.starting_cmd_argv = starting_cmd_argv
-        self.refresh_regex = refresh_regex
+        self.refresh_regex = self._get_engine_config('refresh_regex')
+        if self.refresh_regex is None:
+            self.refresh_regex = r'[\w+]'
         self.GetStartCMD()
 
         self._lsp = language_server_protocol.LSP(
@@ -38,8 +38,10 @@ class Operate(object):
         self.workspace_cache.append(temp)
         self.workspaceFolders = [temp]
 
-        self.initializationOptions = self._get_engine_config(
-            'initializationOptions')
+        self.initializationOptions = initializationOptions
+        if self.initializationOptions is None:
+            self.initializationOptions = self._get_engine_config(
+                'initializationOptions')
 
         self.languageId = self._get_engine_config('languageId')
         if self.languageId is None:
@@ -91,7 +93,7 @@ class Operate(object):
             logger.debug('using user setting cmd')  # }}}
 
     def _start_server(self):  # {{{
-        self._lsp.StartJob(self.starting_cmd, self.starting_cmd_argv)
+        self._lsp.StartJob(self.starting_cmd)
 
         res = self._lsp.initialize(
             rootUri=self.rootUri,
