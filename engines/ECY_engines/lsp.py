@@ -273,7 +273,7 @@ class Operate(object):
 
     def OnBufferEnter(self, context):
         self._did_open_or_change(context)
-        # self._change_workspace_folder(context)
+        self._change_workspace_folder(context)
         self._update(context)
 
     def OnSave(self, context):

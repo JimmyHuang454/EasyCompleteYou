@@ -28,6 +28,13 @@ let s:EW = {'anchor': 'NW',
       \'is_created': 0,
       \}
 
+let s:ET = {'name': '', 
+      \'cwd': '', 
+      \'on_exit': 1, 
+      \'alive': 0, 
+      \'closed': 0, 
+      \}
+
 function! s:Callback(winid, CB, event_name) abort
   call CB(a:winid, a:event_name)
 endfunction
@@ -1211,4 +1218,89 @@ endfunction
 function! easy_windows#get_cursor_screen_x() abort
 	let l:pos = win_screenpos('.')
   return pos[1] + wincol() - 1
+endfunction
+
+
+fun! s:OnExit_vim(Fuc_cb, job, status) abort
+"{{{
+  call a:Fuc_cb()
+"}}}
+endf
+
+fun! s:OnExit_neovim(Fuc_cb, job_id, data, event) abort
+"{{{
+  call a:Fuc_cb()
+"}}}
+endf
+
+function! easy_windows#new_term()
+  "{{{
+  return deepcopy(s:ET)
+  "}}}
+endfunction
+
+function! easy_windows#goto_windows(winnr)
+  "{{{
+  execute a:winnr . 'wincmd w'
+  "}}}
+endfunction
+
+function! s:ET._open(cmd, opts)
+  "{{{
+  let l:options = {}
+
+  if has_key(a:opts, 'cwd')
+    let self['cwd'] = a:opts['cwd']
+    let l:options['cwd'] = self['cwd']
+  endif
+
+  if has_key(a:opts, 'exit_cb')
+    if g:is_vim
+      let l:options['exit_cb'] = function('s:s:OnExit_vim', [a:opts['exit_cb']])
+    else
+      let l:options['on_exit'] = function('s:s:OnExit_neovim', [a:opts['exit_cb']])
+    endif
+    let self['exit_cb'] = a:opts['exit_cb']
+  endif
+
+  if g:is_vim
+    let self['bufnr'] = term_start(a:cmd, l:options)
+  else
+    split new
+    call termopen(a:cmd, l:options)
+  endif
+
+  let self['alive'] = 1
+  "}}}
+endfunction
+
+function! s:ET._input(str)
+  "{{{
+  if !self['alive']
+    return
+  endif
+
+  if g:is_vim
+    call term_sendkeys(self['bufnr'], a:str . "\<CR>")
+  else
+    "TODO
+  endif
+  "}}}
+endfunction
+
+function! s:ET._close()
+  "{{{
+  if self['closed']
+    return
+  endif
+
+  if g:is_vim
+    call easy_windows#goto_windows(bufwinnr(self['bufnr']))
+    call feedkeys("a\<C-w>\<C-c>:close!\<Cr>")
+  else
+    "TODO
+  endif
+
+  let self['closed'] = 1
+  "}}}
 endfunction
